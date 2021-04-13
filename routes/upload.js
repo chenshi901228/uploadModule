@@ -32,7 +32,20 @@ var uploadFolder = 'public/upload/';
 createFolder(uploadFolder);
 
 // 创建 multer 对象
-var upload = multer({ storage: storage });
+var upload = multer({
+    limits: { //限制上传文件的大小和数量
+        fileSize: 10 * 1024,
+        files: 2
+    },
+    storage,
+    fileFilter: function (req, file, cb) {
+        if (file.mimetype == 'image/png') {
+            cb(null, true)
+        } else {
+            cb(new Error("格式错误"), false)
+        }
+    }
+})
 
 /* POST upload listing. */
 router.post('/', upload.single('file'), async function (req, res, next) {
@@ -48,13 +61,22 @@ router.post('/', upload.single('file'), async function (req, res, next) {
 	// 接收文件成功后返回数据给前端
 });
 
-router.post('/more', upload.array('files', 2), function (req, res, next) {
-	var file = req.files;
-	console.log(file.length)
-	console.log(file)
-	// 接收文件成功后返回数据给前端
-	res.json({ res_code: '0' });
-});
+let moreUpLoad = upload.array("files")
+router.post('/more', function (req, res, next) {
+    moreUpLoad(req, res, err => {
+        if (err) {
+            res.send({
+                code: 0,
+                err: err.message
+            })
+        } else {
+            res.send({
+                code: 1,
+                message: "sucess"
+            })
+        }
+    })
+})
 
 // 导出模块（在 app.js 中引入）
 module.exports = router;
