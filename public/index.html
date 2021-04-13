@@ -3,77 +3,240 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <style>
-        .imgfile{
-            display: inline-block;
-            padding: 20px;
-            border:1px dashed #666;
+        .imgPreview {
+            display: flex;
+        }
+
+        .prview {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             position: relative;
         }
-        .imgfile input{
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            position:absolute;
+
+        .prview .model {
+            position: absolute;
+            width: inherit;
+            height: inherit;
+            background-color: rgba(0, 0, 0, 0.3);
             left: 0;
             top: 0;
+            display: none;
+            justify-content: center;
+            align-items: center;
         }
-        .imgName p{
-            font-size: 12px;
+
+        .prview>img {
+            width: 50px;
+            height: auto;
+        }
+
+        .prview:hover .model {
+            display: flex;
+        }
+
+        .model img {
+            width: 20px;
+            height: auto;
+        }
+
+        .model img:hover {
+            cursor: pointer;
+        }
+
+        .model .previewBtn {
+            margin-right: 8px;
+        }
+
+        #upload {
+            display: none;
+        }
+
+        .upload {
+            width: 100px;
+            height: 100px;
+            background: url("./upload.png");
+            background-size: 80px auto;
+            background-position: center;
+            background-repeat: no-repeat;
+            border: 1px solid #000;
+            cursor: pointer;
+        }
+
+        .previewShow {
+            position: fixed;
+            z-index: 10;
+            width: 100vw;
+            height: 100vh;
+            left: 0;
+            top: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .previewShow img {
+            width: 20vw;
+            height: auto;
+        }
+
+        .previewAtive {
+            display: flex;
+        }
+
+        .submit {
+            cursor: pointer;
+            border: 1px solid #000;
         }
     </style>
 </head>
 
 <body>
-    <div class="img"></div>
-    <div class="imgfile">
-        <input type="file" accept="png" />
-        <img width="50" src="./static/images/upload.png" alt="">
+    <div class="main">
+        <div class="previewShow">
+
+        </div>
+        <div class="upload">
+            <input type="file" multiple name="file" id="upload">
+        </div>
+        <div class="imgPreview">
+
+        </div>
+        <a class="submit">上传</a>
     </div>
-    <button>上传</button>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
-        let files = null, length = 0
-        // 创建一个FormData对象,用来组装一组用 XMLHttpRequest发送请求的键/值对
-        document.querySelector("input").onchange = function () {
-            document.querySelector(".img").innerHTML = null
-            length = 0
-            files = !!this.files ? this.files : [];
-            if (!files.length || !window.FileReader) {
-                // console.log("浏览器不支持HTML5");
-                return false;
-            };
-            var reader = new FileReader();
-            reader.readAsDataURL(files[length]);
-            reader.onload = function () {
-                document.querySelector(".img").innerHTML += `
-                <img width="100" height="100" src="${this.result}" />
-                `
-                length++
-                if (length < files.length) {
-                    reader.readAsDataURL(files[length])
+        let uploadBtn = document.querySelector("#upload")
+        let wrap = document.querySelector(".main")
+        let data = JSON.stringify({
+            name: "chenshi",
+            age: 18
+        })
+        // document.cookie = "userName=chenshi;expires=Mon Apr 12 2021 14:25:54 GMT"
+        // document.cookie = "age=18;expires=Mon Apr 13 2021 14:25:54 GMT"
+
+        let date = Date()
+
+        function getCookie(name) {
+            let str = document.cookie
+            let arr = str.split(";")
+            for (let i = 0; i < arr.length; i++) {
+                let t = arr[i].split("=")
+                if (t[0].trim() == name) {
+                    return t[1]
                 }
-            };
+            }
+            return ""
         }
-        document.querySelector("button").addEventListener("click", () => {
-            if (document.querySelector(".img img")) {
-                var fd = new FormData();
-                fd.append('file', files[0]);
-                axios.post("http://localhost:3000/upload", fd)
-                    .then(function (res) {
-                        console.log(res)
-                        alert(res.data.message)
-                    })
-                    .catch(function (error) {
-                        console.log(error);
-                    });
+        let result = getCookie("age")
+        console.log(result)
+
+
+
+        axios.interceptors.request.use(config => {
+            return config
+        }, err => {
+            return Promise.reject(err)
+        })
+        axios.interceptors.response.use(res => {
+            if (res.status == 200) {
+                return res.data
+            }
+        }, err => {
+            return Promise.reject(err)
+        })
+
+        function httpRequest(url, params) {
+            return new Promise((resolve, reject) => {
+                axios({
+                    url: "http://localhost:3000/upload/" + url,
+                    method: "post",
+                    data: params
+                }).then(res => {
+                    resolve(res)
+                })
+            })
+        }
+
+
+        let fileList = []
+        document.querySelector(".upload").addEventListener("click", () => {
+            uploadBtn.click()
+        })
+
+        function imgPreviewRender(fileList) {
+            document.querySelector(".imgPreview").innerHTML = ""
+            if (fileList.length == 0) {
+                return false
+            }
+            for (let i = 0; i < fileList.length; i++) {
+                let readFile = new FileReader()
+                readFile.readAsDataURL(fileList[i])
+                readFile.onload = function () {
+                    document.querySelector(".imgPreview").innerHTML += `
+                    <div class="prview">
+                        <div class="model">
+                            <img data-src=${this.result} title="预览" class="previewBtn" src="./preview.png" />
+                            <img data-index=${i} title="删除" class="deleteBtn" src="./delete.png" />    
+                        </div>
+                        <img src=${this.result} />
+                    </div>
+                    `
+                }
+            }
+        }
+        document.querySelector(".imgPreview").addEventListener("click", e => {
+            if (e.target.nodeName == "IMG" && e.target.getAttribute("title") == "预览") {
+                let imgSource = e.target.dataset.src
+                document.querySelector(".previewShow").innerHTML = `
+                    <img src=${imgSource} />
+                `
+                document.querySelector(".previewShow").classList.add("previewAtive")
+
+            } else if (e.target.nodeName == "IMG" && e.target.getAttribute("title") == "删除") {
+                let index = +e.target.dataset.index
+                fileList.splice(index, 1)
+                imgPreviewRender(fileList)
+            }
+        })
+        document.querySelector(".previewShow").addEventListener("click", () => {
+            document.querySelector(".previewShow").innerHTML = ""
+            document.querySelector(".previewShow").classList.remove("previewAtive")
+        })
+
+        uploadBtn.addEventListener("change", e => {
+            for (let i = 0; i < e.target.files.length; i++) {
+                fileList.push(e.target.files[i])
+            }
+            imgPreviewRender(fileList)
+        })
+
+        document.querySelector(".submit").addEventListener("click", async () => {
+            if (fileList.length >= 1) {
+                let formData = new FormData()
+                fileList.map(item => {
+                    formData.append("files", item)
+                })
+                let result = await httpRequest("more", formData)
+                console.log(result)
+                if (result.code == 1) {
+                    fileList = []
+                    document.querySelector(".imgPreview").innerHTML = ""
+                }
             } else {
                 alert("请选择图片")
             }
         })
+    
+        let day = Date.now()
+        console.log(new Date(day))
     </script>
 </body>
 
