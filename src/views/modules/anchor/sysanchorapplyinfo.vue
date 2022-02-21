@@ -8,32 +8,45 @@
         <el-form-item>
           <el-button type="info" @click="exportHandle()">{{ $t('export') }}</el-button>
         </el-form-item>
-        <el-form-item>
-          <el-button v-if="$hasPermission('anchor:sysanchorapplyinfo:save')" type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button v-if="$hasPermission('anchor:sysanchorapplyinfo:delete')" type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
-        </el-form-item>
       </el-form>
       <el-table v-loading="dataListLoading" :data="dataList" border @selection-change="dataListSelectionChangeHandle" style="width: 100%;">
         <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-        <el-table-column prop="id" label="id" header-align="center" align="center"></el-table-column>
         <el-table-column prop="weixinUserId" label="主播ID" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="phone" label="手机号" header-align="center" align="center"></el-table-column>
         <el-table-column prop="username" label="用户名" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="avatarUrl" label="头像" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="avatarUrl" label="头像" header-align="center" align="center">
+           <template slot-scope="scope">
+             <img :src="scope.row.avatarUrl" style="width:100px;height:100px;">
+          </template>
+        </el-table-column>
         <el-table-column prop="introduce" label="介绍" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="legalizeFlg" label="认证用户（0:未认证,1:认证）" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="tutorFlg" label="是否导师（0:未认证,1:认证）" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="status" label="状态（-1:拒绝,0:申请中,1:同意）" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="delFlg" label="删除标记（0:未删除,1:已删除）" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="createDate" label="创建时间" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="createBy" label="创建人" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="updateDate" label="更新时间" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="updateBy" label="更新人" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="legalizeFlg" label="认证用户" header-align="center" align="center">
+          <template slot-scope="scope">
+             {{ scope.row.legalizeFlg === 1 ? '认证' : '未认证' }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="tutorFlg" label="是否导师" header-align="center" align="center">
+          <template slot-scope="scope">
+             {{ scope.row.tutorFlg === 1 ? '认证' : '未认证' }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="createDate" label="申请时间" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="updateDate" label="操作时间" header-align="center" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.status === 0 ? '' : scope.row.updateDate }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="状态" header-align="center" align="center">
+          <template slot-scope="scope">
+             <el-tag v-if="scope.row.status === 0" type="info">待处理</el-tag>
+             <el-tag v-if="scope.row.status === 1" type="success">同意</el-tag>
+             <el-tag v-if="scope.row.status === -1" type="danger">拒绝</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
           <template slot-scope="scope">
-            <el-button v-if="$hasPermission('anchor:sysanchorapplyinfo:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">{{ $t('update') }}</el-button>
-            <el-button v-if="$hasPermission('anchor:sysanchorapplyinfo:delete')" type="text" size="small" @click="deleteHandle(scope.row.id)">{{ $t('delete') }}</el-button>
+            <el-button v-if="scope.row.status === 0" type="text" size="small" @click="updateApplyInfoStatus(scope.row.id, 1)">同意</el-button>
+            <el-button v-if="scope.row.status === 0" type="text" size="small" @click="updateApplyInfoStatus(scope.row.id, -1)">拒绝</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -55,6 +68,8 @@
 <script>
 import mixinViewModule from '@/mixins/view-module'
 import AddOrUpdate from './sysanchorapplyinfo-add-or-update'
+import debounce from 'lodash/debounce'
+
 export default {
   mixins: [mixinViewModule],
   data () {
@@ -74,6 +89,33 @@ export default {
   },
   components: {
     AddOrUpdate
+  },
+  methods: {
+    // 是否同意
+    updateApplyInfoStatus: debounce(function (id, status) {
+      this.$confirm(`是否执行 ${status == -1 ? '拒绝' : '同意'} 操作`, this.$t('prompt.title'), {
+        confirmButtonText: this.$t('confirm'),
+        cancelButtonText: this.$t('cancel'),
+        type: 'warning'
+      }).then(() => {
+        this.$http['put']('/sys/anchor/applyInfo/', {
+          id,
+          status
+        }).then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg)
+          }
+          this.$message({
+            message: this.$t('prompt.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.query();
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {});
+    }, 1000, { 'leading': true, 'trailing': false })
   }
 }
 </script>
