@@ -47,7 +47,7 @@ export default {
     return {
       visible: false,
       mixinViewModuleOptions: {
-        getDataListURL: '/sys/scheduleLog/page',
+        getDataListURL: '/job/scheduleLog/page',
         getDataListIsPage: true
       },
       dataForm: {
@@ -62,7 +62,7 @@ export default {
     },
     // 失败信息
     showErrorInfo (id) {
-      this.$http.get(`/sys/scheduleLog/${id}`).then(({ data: res }) => {
+      this.$http.get(`/job/scheduleLog/${id}`).then(({ data: res }) => {
         if (res.code !== 0) {
           return this.$message.error(res.msg)
         }

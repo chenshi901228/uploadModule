@@ -59,7 +59,7 @@ export default {
           return false
         }
         this.$http.post(
-          '/sys/sms/send',
+          '/message/sms/send',
           this.dataForm,
           { headers: { 'content-type': 'application/x-www-form-urlencoded' } }
         ).then(({ data: res }) => {

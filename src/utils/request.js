@@ -6,7 +6,7 @@ import { clearLoginInfo } from '@/utils'
 import isPlainObject from 'lodash/isPlainObject'
 
 const http = axios.create({
-  baseURL: window.SITE_CONFIG.apiURL,
+  baseURL: window.SITE_CONFIG['apiURL'],
   timeout: 1000 * 180,
   withCredentials: true
 })
@@ -16,14 +16,16 @@ const http = axios.create({
  */
 http.interceptors.request.use(config => {
   config.headers['Accept-Language'] = Cookies.get('language') || 'zh-CN'
-  config.headers.token = Cookies.get('token') || ''
+  if (config.url !== '/auth/oauth/token') {
+    config.headers['Authorization'] = 'Bearer ' + Cookies.get('access_token') || ''
+  }
   // 默认参数
   var defaults = {}
   // 防止缓存，GET请求默认带_t参数
   if (config.method === 'get') {
     config.params = {
       ...config.params,
-      ...{ _t: new Date().getTime() }
+      ...{ '_t': new Date().getTime() }
     }
   }
   if (isPlainObject(config.params)) {

@@ -4,11 +4,6 @@
   </transition>
 </template>
 
-<style>
-  .el-table th.gutter{
-    display: table-cell!important;
-  }
-</style>
 <script>
 import Cookies from 'js-cookie'
 import { messages } from '@/i18n'

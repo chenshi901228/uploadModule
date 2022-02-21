@@ -99,7 +99,7 @@ export default {
     // 获取流程(xml/image)url地址
     getResourceURL (id, name) {
       var params = qs.stringify({
-        'token': Cookies.get('token'),
+        'access_token': Cookies.get('access_token'),
         'deploymentId': id,
         'resourceName': name
       })

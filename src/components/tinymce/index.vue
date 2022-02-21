@@ -33,7 +33,7 @@ export default {
       // eslint-disable-next-line global-require
       require('./zh_CN')
       let conf = {
-        images_upload_url: `${window.SITE_CONFIG['apiURL']}/sys/oss/tinymce/upload?token=${Cookies.get('token')}`,
+        images_upload_url: `${window.SITE_CONFIG['apiURL']}/oss/file/tinymce/upload?access_token=${Cookies.get('access_token')}`,
         selector: `#${this.tinymceId}`,
         language: 'zh_CN',
         menubar: 'file edit insert view format table',

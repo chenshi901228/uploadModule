@@ -3,8 +3,8 @@ const t = {}
 t.loading = 'Loading...'
 
 t.brand = {}
-t.brand.lg = 'Renren Security'
-t.brand.mini = 'RS'
+t.brand.lg = 'Renren Cloud'
+t.brand.mini = 'RC'
 
 t.add = 'Add'
 t.delete = 'Delete'
@@ -79,29 +79,19 @@ t.login.demo = 'Demo'
 t.login.copyright = 'Renren'
 
 t.home = {}
-t.home.sysInfo = {}
-t.home.sysInfo.name = 'System Name'
-t.home.sysInfo.nameVal = 'renren-security [Enterprise]'
-t.home.sysInfo.version = 'Version Information'
-t.home.sysInfo.versionVal = window.SITE_CONFIG['version']
-t.home.sysInfo.osName = 'Operating System'
-t.home.sysInfo.osVersion = 'System Version'
-t.home.sysInfo.osArch = 'System Architecture'
-t.home.sysInfo.processors = 'CPU Core Count'
-t.home.sysInfo.totalPhysical = 'system Memory'
-t.home.sysInfo.freePhysical = 'Remaining Memory'
-t.home.sysInfo.memoryRate = 'Memory Usage'
-t.home.sysInfo.userLanguage = 'System Language'
-t.home.sysInfo.jvmName = 'JVM Information'
-t.home.sysInfo.javaVersion = 'JVM Version'
-t.home.sysInfo.javaHome = 'JAVA_HOME'
-t.home.sysInfo.userDir = 'Working Directory'
-t.home.sysInfo.javaTotalMemory = 'JVM Occupies Memory'
-t.home.sysInfo.javaFreeMemory = 'JVM Free Memory'
-t.home.sysInfo.javaMaxMemory = 'JVM Max Memory'
-t.home.sysInfo.userName = 'Current User'
-t.home.sysInfo.systemCpuLoad = 'CPU Load'
-t.home.sysInfo.userTimezone = 'System Time Zone'
+t.home.desc = {}
+t.home.desc.title = 'Project introduction'
+t.home.desc.list = [
+  'RENREN CLOUD is a micro service platform based on Spring Cloud, providing enterprises with one-stop micro service solutions',
+  'Based on the latest development of Spring Cloud Alibaba, Spring Cloud Gateway, Spring Boot, SpringSecurity OAuth2.0, Sentinel, Skywalking, Seata, Nacos, Mybatis, Element',
+  'The code style is elegant and simple, easy to understand, and meets the specification requirements of "alibaba Java development manual", which can be used as enterprise code specification',
+  'Excellent menu function permissions, the front end can flexibly control the display of pages and buttons, and the back end can intercept unauthorized requests',
+  'Good data access management, just add corresponding annotations without any other code, can achieve data filtering, data access purposes',
+  'Flexible role permission management. When adding a role, the role permission can only be a subset of the creator permission, which can effectively prevent the permission from exceeding the authority',
+  'Flexible log management, can view log, operation log, exception log, easy to audit and BUG location',
+  'The flexible internationalization configuration supports simplified Chinese, traditional Chinese and English. If you need to add a new language, you only need to add a new language [i18n] file',
+  'Flexible front-end dynamic routing, new pages do not need to modify the routing file, can also dynamically add TAB tags in the page'
+]
 
 /* modules */
 t.model = {}
@@ -134,13 +124,11 @@ t.running = {}
 t.running.id = 'Instance ID'
 t.running.definitionKey = 'Define Key'
 t.running.processDefinitionId = 'Define ID'
-t.running.processDefinitionName = 'Process Name'
+t.running.processDefinitionName = 'Define the name'
 t.running.activityId = 'Current Link'
 t.running.suspended = 'Whether Hang'
 t.running.suspended0 = 'No'
 t.running.suspended1 = 'Yes'
-
-t.process.createInstance = 'initiation process'
 
 t.news = {}
 t.news.title = 'Title'
@@ -309,6 +297,7 @@ t.dict.remark = 'Remarks'
 t.dict.createDate = 'Create Date'
 
 t.logError = {}
+t.logError.module = 'Module Name'
 t.logError.requestUri = 'Request URI'
 t.logError.requestMethod = 'Request Method'
 t.logError.requestParams = 'Request Parameters'
@@ -370,6 +359,7 @@ t.post.sort ='Sort'
 t.post.status ='Post Status'
 
 t.logOperation = {}
+t.logOperation.module = 'Module Name'
 t.logOperation.status = 'Status'
 t.logOperation.status0 = 'Failed'
 t.logOperation.status1 = 'Success'
@@ -392,7 +382,7 @@ t.menu.type1 = 'Button'
 t.menu.sort = 'Sort'
 t.menu.url = 'Route'
 t.menu.permissions = 'Auth ID'
-t.menu.permissionsTips = 'Multiple separated by commas, such as: sys:menu:save,sys:menu:update'
+t.menu.permissionsTips = 'eg: sys:menu:save'
 t.menu.parentName = 'Superior'
 t.menu.parentNameDefault = 'Top Menu'
 t.menu.resource = 'Auth Resources'
@@ -432,8 +422,18 @@ t.user.roleIdList = 'Role Config'
 t.user.postIdList = 'Post'
 t.user.validate = {}
 t.user.validate.confirmPassword = 'Confirm password is not consistent with password input'
-t.user.select = 'Selecting Users'
-t.user.selecterror = 'Please select a record'
+
+t.region = {}
+t.region.id = 'Region ID'
+t.region.name = 'Region Name'
+t.region.type = 'Region Type'
+t.region.sort = 'Sort'
+t.region.updateDate = 'Update Date'
+t.region.province = 'Province'
+t.region.city = 'City'
+t.region.county = 'County'
+t.region.parentName = 'Superior Area'
+t.region.select = 'Select Area'
 
 t.correction = {}
 t.correction.post = 'Application post'
@@ -486,16 +486,6 @@ t.task.startTime = 'Task Begin Time'
 t.task.endTime = 'Task End Time'
 t.task.durationInSeconds = 'Task Duration (seconds)'
 
-t.region = {}
-t.region.id = 'Region ID'
-t.region.name = 'Region Name'
-t.region.type = 'Region Type'
-t.region.sort = 'Sort'
-t.region.updateDate = 'Update Date'
-t.region.province = 'Province'
-t.region.city = 'City'
-t.region.county = 'County'
-
 t.oss.type6 = 'MinIO'
 t.oss.minioEndPoint = 'EndPoint'
 t.oss.minioEndPointTips = 'MinIO EndPoint'
@@ -542,8 +532,5 @@ t.notice.release = 'Release Notice'
 t.notice.close = 'Close'
 t.notice.receiverName = 'Recipient'
 t.notice.readDate = 'Reading Time'
-t.notice.new = 'There are new notifications'
-t.notice.disconnect = 'Disconnected'
-t.notice.disconnectMessage = 'WebSocket connection has been disconnected, please check the network'
 
 export default t

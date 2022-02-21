@@ -7,7 +7,7 @@
   <!-- 站点配置 -->
   <script>
     window.SITE_CONFIG = {};
-    window.SITE_CONFIG['version'] = 'v2.10.0';
+    window.SITE_CONFIG['version'] = 'v3.5.0';
     window.SITE_CONFIG['nodeEnv'] = '<%= process.env.VUE_APP_NODE_ENV %>';
     window.SITE_CONFIG['apiURL'] = '';                      // api请求地址
     window.SITE_CONFIG['storeState'] = {};                  // vuex本地储存初始化状态（用于不刷新页面的情况下，也能重置初始化项目中所有状态）
@@ -29,35 +29,19 @@
 
   <!-- 开发环境 -->
   <% if (process.env.VUE_APP_NODE_ENV === 'dev') { %>
-    <script>
-    window.SITE_CONFIG['apiURL'] = 'http://192.168.250.195:8081/admin';
-    // WebSocket地址
-    window.SITE_CONFIG['socketURL'] ='ws://localhost:8080/renren-admin/websocket';
-    </script>
+    <script>window.SITE_CONFIG['apiURL'] = 'http://192.168.1.112:8080';</script>
   <% } %>
   <!-- 集成测试环境 -->
   <% if (process.env.VUE_APP_NODE_ENV === 'prod:sit') { %>
-    <script>
-      window.SITE_CONFIG['apiURL'] = 'http://localhost:8080/renren-admin';
-      // WebSocket地址
-      window.SITE_CONFIG['socketURL'] ='ws://localhost:8080/renren-admin/websocket';
-    </script>
+    <script>window.SITE_CONFIG['apiURL'] = 'http://localhost:8080';</script>
   <% } %>
   <!-- 验收测试环境 -->
   <% if (process.env.VUE_APP_NODE_ENV === 'prod:uat') { %>
-    <script>
-      window.SITE_CONFIG['apiURL'] = 'http://localhost:8080/renren-admin';
-      // WebSocket地址
-      window.SITE_CONFIG['socketURL'] ='ws://localhost:8080/renren-admin/websocket';
-    </script>
+    <script>window.SITE_CONFIG['apiURL'] = 'http://localhost:8080';</script>
   <% } %>
   <!-- 生产环境 -->
   <% if (process.env.VUE_APP_NODE_ENV === 'prod') { %>
-    <script>
-      window.SITE_CONFIG['apiURL'] = 'http://localhost:8080/renren-admin';
-      // WebSocket地址
-      window.SITE_CONFIG['socketURL'] ='ws://localhost:8080/renren-admin/websocket';
-    </script>
+    <script>window.SITE_CONFIG['apiURL'] = 'http://localhost:8080';</script>
   <% } %>
 </head>
 <body>

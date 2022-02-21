@@ -48,9 +48,9 @@
         </div>
         <div class="login-footer">
           <p>
-            <a href="https://demo.renren.io/security-enterprise" target="_blank">{{ $t('login.demo') }}</a>
+            <a href="https://demo.cloud.renren.io/renren-cloud" target="_blank">{{ $t('login.demo') }}</a>
           </p>
-          <p><a href="https://www.renren.io/" target="_blank">{{ $t('login.copyright') }}</a>2021 © renren.io</p>
+          <p><a href="https://www.renren.io/" target="_blank">{{ $t('login.copyright') }}</a>2022 © renren.io</p>
         </div>
       </main>
     </div>
@@ -71,7 +71,8 @@ export default {
         username: '',
         password: '',
         uuid: '',
-        captcha: ''
+        captcha: '',
+        grant_type: 'password'
       }
     }
   },
@@ -97,7 +98,7 @@ export default {
     // 获取验证码
     getCaptcha () {
       this.dataForm.uuid = getUUID()
-      this.captchaPath = `${window.SITE_CONFIG['apiURL']}/captcha?uuid=${this.dataForm.uuid}`
+      this.captchaPath = `${window.SITE_CONFIG['apiURL']}/auth/captcha?uuid=${this.dataForm.uuid}`
     },
     // 表单提交
     dataFormSubmitHandle: debounce(function () {
@@ -105,12 +106,19 @@ export default {
         if (!valid) {
           return false
         }
-        this.$http.post('/login', this.dataForm).then(({ data: res }) => {
+        this.$http.post('/auth/oauth/token', this.dataForm,
+          {
+            headers: {
+              'content-type': 'application/x-www-form-urlencoded',
+              'Authorization': 'Basic cmVucmVuaW86cmVucmVuaW8='
+            }
+          }
+        ).then(({ data: res }) => {
           if (res.code !== 0) {
             this.getCaptcha()
             return this.$message.error(res.msg)
           }
-          Cookies.set('token', res.data.token)
+          Cookies.set('access_token', res.access_token)
           this.$router.replace({ name: 'home' })
         }).catch(() => {})
       })

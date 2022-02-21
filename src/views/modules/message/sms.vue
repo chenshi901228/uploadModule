@@ -71,9 +71,9 @@ export default {
   data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: '/sys/sms/page',
+        getDataListURL: '/message/sms/page',
         getDataListIsPage: true,
-        deleteURL: '/sys/sms',
+        deleteURL: '/message/sms',
         deleteIsBatch: true
       },
       dataForm: {

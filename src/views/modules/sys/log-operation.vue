@@ -3,6 +3,9 @@
     <div class="mod-sys__log-operation">
       <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
         <el-form-item>
+          <el-input v-model="dataForm.module" :placeholder="$t('logOperation.module')" clearable></el-input>
+        </el-form-item>
+        <el-form-item>
           <el-select v-model="dataForm.status" :placeholder="$t('logOperation.status')" clearable>
             <el-option :label="$t('logOperation.status0')" :value="0"></el-option>
             <el-option :label="$t('logOperation.status1')" :value="1"></el-option>
@@ -18,6 +21,7 @@
       <el-table v-loading="dataListLoading" :data="dataList" border @sort-change="dataListSortChangeHandle" style="width: 100%;">
         <el-table-column prop="creatorName" :label="$t('logOperation.creatorName')" header-align="center" align="center"></el-table-column>
         <el-table-column prop="operation" :label="$t('logOperation.operation')" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="module" :label="$t('logOperation.module')" header-align="center" align="center"></el-table-column>
         <el-table-column prop="requestUri" :label="$t('logOperation.requestUri')" header-align="center" align="center"></el-table-column>
         <el-table-column prop="requestMethod" :label="$t('logOperation.requestMethod')" header-align="center" align="center"></el-table-column>
         <el-table-column prop="requestParams" :label="$t('logOperation.requestParams')" header-align="center" align="center" width="150" :show-overflow-tooltip="true"></el-table-column>
@@ -61,6 +65,7 @@ export default {
         exportURL: '/sys/log/operation/export'
       },
       dataForm: {
+        module: '',
         status: ''
       }
     }

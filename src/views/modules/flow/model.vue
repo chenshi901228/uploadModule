@@ -72,15 +72,15 @@ export default {
   },
   methods: {
     addModel () {
-      window.open( `${window.SITE_CONFIG['apiURL']}/modeler/index.html`)
+      window.open( `${window.SITE_CONFIG['apiURL']}/flow/modeler/index.html`)
     },
     // 获取在线设计url地址
     getModelerURL (id) {
-      return `${window.SITE_CONFIG['apiURL']}/modeler/index.html#/editor/${id}`
+      return `${window.SITE_CONFIG['apiURL']}/flow/modeler/index.html#/editor/${id}`
     },
     // 获取导出url地址
     getExportURL (id) {
-      return `${window.SITE_CONFIG['apiURL']}/app/rest/models/${id}//bpmn20`
+      return `${window.SITE_CONFIG['apiURL']}/flow/app/rest/models/${id}//bpmn20`
     },
     // 部署
     deployHandle (id) {

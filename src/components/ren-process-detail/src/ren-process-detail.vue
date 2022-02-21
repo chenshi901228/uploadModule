@@ -66,7 +66,7 @@ export default {
   methods: {
     getDiagramImage () {
       const params = qs.stringify({
-        token: Cookies.get('token'),
+        access_token: Cookies.get('access_token'),
         processInstanceId: this.dataForm.processInstanceId
       })
       return `${window.SITE_CONFIG.apiURL}/flow/common/diagram/image?${params}`

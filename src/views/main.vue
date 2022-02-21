@@ -103,6 +103,7 @@ export default {
         }
         this.$store.state.user.id = res.data.id
         this.$store.state.user.name = res.data.username
+        this.$store.state.user.realName = res.data.realName
         this.$store.state.user.superAdmin = res.data.superAdmin
       }).catch(() => {})
     },

@@ -63,7 +63,7 @@ export default {
           return false
         }
         this.$http.post(
-          '/sys/mailtemplate/send',
+          '/message/mailtemplate/send',
           this.dataForm,
           { headers: { 'content-type': 'application/x-www-form-urlencoded' } }
         ).then(({ data: res }) => {

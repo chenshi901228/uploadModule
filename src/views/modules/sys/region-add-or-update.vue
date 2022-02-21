@@ -1,8 +1,8 @@
 <template>
   <el-dialog :visible.sync="visible" :title="insert ? $t('add') : $t('update')" :close-on-click-modal="false" :close-on-press-escape="false">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
-      <el-form-item prop="parentName" label="上级区域">
-        <ren-region-tree v-model="dataForm.pid" placeholder="选择区域" :parent-name.sync="dataForm.parentName"></ren-region-tree>
+      <el-form-item prop="parentName" :label="$t('region.parentName')">
+        <ren-region-tree v-model="dataForm.pid" :placeholder="$t('region.select')" :parent-name.sync="dataForm.parentName"></ren-region-tree>
       </el-form-item>
       <el-form-item prop="name" :label="$t('region.name')">
         <el-input v-model="dataForm.name" :placeholder="$t('region.name')"></el-input>

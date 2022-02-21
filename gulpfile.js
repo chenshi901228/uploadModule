@@ -15,19 +15,19 @@ var et               = require('element-theme')
 var etOptions        = require('./package.json')['element-theme']
 var themeFileName    = etOptions.config.replace(/.*\/(.+\.scss)/, '$1')
 
+
 /**
  * 构建生成主题
  */
 gulp.task('themes', () => {
+  //console.log(colors.green('-------------------- 构建中，主题============= -------------------------'))
   if (themeList.length <= 0) { return del(styleFileDirTemp) }
 
   // 删除临时文件，保证本次操作正常执行
   //del(styleFileDirTemp)
-  console.log('del(styleFileDirTemp)');
 
   // 拷贝一份scss样式文件夹，作为构建的临时处理文件夹
   //child_process.spawnSync('cp', ['-r', styleFileDir, styleFileDirTemp])
-  console.log('copy styleFileDirTemp');
 
   // 拷贝element组件scss变量样式文件至临时处理文件夹中，并修改相应配置信息
   //child_process.spawnSync('cp', ['-r', etOptions.config, styleFileDirTemp])
@@ -42,10 +42,10 @@ gulp.task('themes', () => {
       theme = themeList[0]
 
       console.log('\n')
-      console.log('-------------------- 待构建，主题 -------------------------')
+      //console.log(colors.green('-------------------- 待构建，主题 -------------------------'))
       console.log(themeList)
       console.log('\n')
-      console.log('-------------------- 构建中，主题 -------------------------')
+      //console.log(colors.green('-------------------- 构建中，主题 -------------------------'))
       console.log(theme)
       console.log('\n')
 
@@ -73,7 +73,7 @@ gulp.task('themes', () => {
       // 删除临时文件
       del(styleFileDirTemp)
       console.log('\n')
-      console.log('-------------------- 构建完毕，删除临时文件 -------------------------')
+      //console.log(colors.green('-------------------- 构建完毕，删除临时文件 -------------------------'))
       console.log(styleFileDirTemp)
       console.log('\n')
 
@@ -85,7 +85,7 @@ gulp.task('themes', () => {
         `!${themeFileDir}/**/fonts`
       ]
       del(files)
-      console.log('-------------------- 构建完毕，删除主题独立组件文件 -------------------------')
+      //console.log(colors.green('-------------------- 构建完毕，删除主题独立组件文件 -------------------------'))
       console.log(files)
       console.log('\n')
     }

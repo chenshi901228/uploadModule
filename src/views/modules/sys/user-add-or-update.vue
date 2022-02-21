@@ -16,8 +16,12 @@
       <el-form-item prop="realName" :label="$t('user.realName')">
         <el-input v-model="dataForm.realName" :placeholder="$t('user.realName')"></el-input>
       </el-form-item>
-      <el-form-item prop="gender" :label="$t('user.gender')">
-        <ren-radio-group v-model="dataForm.gender" dict-type="gender"></ren-radio-group>
+      <el-form-item prop="gender" :label="$t('user.gender')" size="mini">
+        <el-radio-group v-model="dataForm.gender">
+          <el-radio :label="0">{{ $t('user.gender0') }}</el-radio>
+          <el-radio :label="1">{{ $t('user.gender1') }}</el-radio>
+          <el-radio :label="2">{{ $t('user.gender2') }}</el-radio>
+        </el-radio-group>
       </el-form-item>
       <el-form-item prop="email" :label="$t('user.email')">
         <el-input v-model="dataForm.email" :placeholder="$t('user.email')"></el-input>
@@ -62,7 +66,7 @@ export default {
       dataForm: {
         id: '',
         username: '',
-        deptId: '',
+        deptId: '0',
         deptName: '',
         password: '',
         confirmPassword: '',
@@ -94,13 +98,13 @@ export default {
         callback()
       }
       var validateEmail = (rule, value, callback) => {
-        if (value && !isEmail(value)) {
+        if (!isEmail(value)) {
           return callback(new Error(this.$t('validate.format', { 'attr': this.$t('user.email') })))
         }
         callback()
       }
       var validateMobile = (rule, value, callback) => {
-        if (value && !isMobile(value)) {
+        if (!isMobile(value)) {
           return callback(new Error(this.$t('validate.format', { 'attr': this.$t('user.mobile') })))
         }
         callback()
@@ -122,9 +126,11 @@ export default {
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ],
         email: [
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
           { validator: validateEmail, trigger: 'blur' }
         ],
         mobile: [
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
           { validator: validateMobile, trigger: 'blur' }
         ]
       }
@@ -147,15 +153,6 @@ export default {
         })
       })
     },
-    // 获取角色列表
-    getRoleList () {
-      return this.$http.get('/sys/role/list').then(({ data: res }) => {
-        if (res.code !== 0) {
-          return this.$message.error(res.msg)
-        }
-        this.roleList = res.data
-      }).catch(() => {})
-    },
     // 获取岗位列表
     getPostList () {
       return this.$http.get('/sys/post/list').then(({ data: res }) => {
@@ -163,6 +160,15 @@ export default {
           return this.$message.error(res.msg)
         }
         this.postList = res.data
+      }).catch(() => {})
+    },
+    // 获取角色列表
+    getRoleList () {
+      return this.$http.get('/sys/role/list').then(({ data: res }) => {
+        if (res.code !== 0) {
+          return this.$message.error(res.msg)
+        }
+        this.roleList = res.data
       }).catch(() => {})
     },
     // 获取信息
@@ -220,6 +226,12 @@ export default {
 
 <style lang="scss">
 .mod-sys__user {
+  .dept-list {
+    .el-input__inner,
+    .el-input__suffix {
+      cursor: pointer;
+    }
+  }
   .role-list {
     .el-select {
       width: 100%;

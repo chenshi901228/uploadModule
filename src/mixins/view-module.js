@@ -155,7 +155,7 @@ export default {
     // 导出
     exportHandle () {
       var params = qs.stringify({
-        'token': Cookies.get('token'),
+        'access_token': Cookies.get('access_token'),
         ...this.dataForm
       })
       window.location.href = `${window.SITE_CONFIG['apiURL']}${this.mixinViewModuleOptions.exportURL}?${params}`

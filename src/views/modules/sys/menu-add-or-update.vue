@@ -33,9 +33,6 @@
       <el-form-item prop="sort" :label="$t('menu.sort')">
         <el-input-number v-model="dataForm.sort" controls-position="right" :min="0" :label="$t('menu.sort')"></el-input-number>
       </el-form-item>
-      <el-form-item prop="permissions" :label="$t('menu.permissions')">
-        <el-input v-model="dataForm.permissions" :placeholder="$t('menu.permissionsTips')"></el-input>
-      </el-form-item>
       <el-form-item v-if="dataForm.type === 0" prop="icon" :label="$t('menu.icon')" class="icon-list">
         <el-popover v-model="iconListVisible" ref="iconListPopover" placement="bottom-start" trigger="click" popper-class="mod-sys__menu-icon-popover">
           <div class="mod-sys__menu-icon-inner">
@@ -51,6 +48,9 @@
           </div>
         </el-popover>
         <el-input v-model="dataForm.icon" v-popover:iconListPopover :readonly="true" :placeholder="$t('menu.icon')"></el-input>
+      </el-form-item>
+      <el-form-item prop="permissions" :label="$t('menu.permissions')">
+        <el-input v-model="dataForm.permissions" :placeholder="$t('menu.permissionsTips')"></el-input>
       </el-form-item>
     </el-form>
     <template slot="footer">

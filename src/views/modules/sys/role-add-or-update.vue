@@ -123,8 +123,8 @@ export default {
           return false
         }
         this.dataForm.menuIdList = [
-          ...this.$refs.menuListTree.getHalfCheckedKeys(),
-          ...this.$refs.menuListTree.getCheckedKeys()
+          ...this.$refs.menuListTree.getCheckedKeys(),
+          ...this.$refs.menuListTree.getHalfCheckedKeys()
         ]
         this.dataForm.deptIdList = this.$refs.deptListTree.getCheckedKeys()
         this.$http[!this.dataForm.id ? 'post' : 'put']('/sys/role', this.dataForm).then(({ data: res }) => {

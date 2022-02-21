@@ -29,19 +29,19 @@
             <svg class="icon-svg aui-navbar__icon-menu" aria-hidden="true"><use xlink:href="#icon-earth"></use></svg>
           </a>
         </el-menu-item>
-        <el-menu-item index="3" v-if="$hasPermission('sys:notice:all')">
+        <el-menu-item index="4" v-if="$hasPermission('sys:notice:all')">
           <el-badge :is-dot="messageTip">
             <a href="#"  @click="myNoticeRouter()"><i class="el-icon-bell"></i></a>
           </el-badge>
         </el-menu-item>
-        <el-menu-item index="4" @click="fullscreenHandle()">
+        <el-menu-item index="3" @click="fullscreenHandle()">
           <svg class="icon-svg aui-navbar__icon-menu" aria-hidden="true"><use xlink:href="#icon-fullscreen"></use></svg>
         </el-menu-item>
-        <el-menu-item index="5" class="aui-navbar__avatar">
+        <el-menu-item index="4" class="aui-navbar__avatar">
           <el-dropdown placement="bottom" :show-timeout="0">
             <span class="el-dropdown-link">
               <img src="~@/assets/img/avatar.png">
-              <span>{{ $store.state.user.name }}</span>
+              <span>{{ $store.state.user.realName }}</span>
               <i class="el-icon-arrow-down"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
@@ -56,13 +56,12 @@
     <update-password v-if="updatePasswordVisible" ref="updatePassword"></update-password>
   </nav>
 </template>
+
 <script>
 import { messages } from '@/i18n'
 import screenfull from 'screenfull'
 import UpdatePassword from './main-navbar-update-password'
 import { clearLoginInfo } from '@/utils'
-import Cookies from 'js-cookie'
-var socket = null
 export default {
   inject: ['refresh'],
   data () {
@@ -76,36 +75,12 @@ export default {
     UpdatePassword
   },
   created () {
-    var vue = this
-    socket = new WebSocket(`${window.SITE_CONFIG['socketURL']}?token=${Cookies.get('token')}`)
-    socket.onopen = function () {}
-    socket.onerror = function () {
-      vue.$notify.error({
-        title: vue.$t('notice.disconnect'),
-        message: vue.$t('notice.disconnectMessage')
-      })
-    }
-    socket.onmessage = function (evt) {
-      const result = JSON.parse(evt.data)
-
-      // 如果是有新文本通知，则提示有新通知
-      if (result.type === 0) {
-        vue.messageTip = true
-        vue.$notify({
-          title: vue.$t('notice.new'),
-          message: result.msg,
-          type: 'info',
-          duration: 5000
-        })
-      }
-    }
-
     // 未读通知数
     this.getUnReadCount()
   },
   methods: {
     myNoticeRouter () {
-      this.$router.replace('notice-notice-user')
+      this.$router.replace('sys-notice-user')
     },
     getUnReadCount () {
       this.$http.get(`/sys/notice/mynotice/unread`).then(({ data: res }) => {
@@ -142,7 +117,7 @@ export default {
         cancelButtonText: this.$t('cancel'),
         type: 'warning'
       }).then(() => {
-        this.$http.post('/logout').then(({ data: res }) => {
+        this.$http.post('/auth/oauth/logout').then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg)
           }

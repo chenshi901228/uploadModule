@@ -64,6 +64,9 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-form-item label="后端访问路径" prop="backendUrl">
+          <el-input v-model="dataForm.backendUrl" placeholder="后端访问路径"></el-input>
+        </el-form-item>
         <el-form-item label="后端生成路径" prop="backendPath">
           <el-input v-model="dataForm.backendPath" placeholder="后端生成路径"></el-input>
         </el-form-item>
@@ -91,6 +94,7 @@ export default {
         baseclassId: '',
         backendPath: '',
         frontendPath: '',
+        backendUrl: '',
         packageName: ''
       }
     }
@@ -107,13 +111,13 @@ export default {
         className: [
           { required: true, message: '必填项不能为空', trigger: 'blur' }
         ],
-        moduleName: [
-          { required: true, message: '必填项不能为空', trigger: 'blur' }
-        ],
         packageName: [
           { required: true, message: '必填项不能为空', trigger: 'blur' }
         ],
         author: [
+          { required: true, message: '必填项不能为空', trigger: 'blur' }
+        ],
+        backendUrl: [
           { required: true, message: '必填项不能为空', trigger: 'blur' }
         ],
         backendPath: [

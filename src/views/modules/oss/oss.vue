@@ -54,9 +54,9 @@ export default {
   data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: '/sys/oss/page',
+        getDataListURL: '/oss/file/page',
         getDataListIsPage: true,
-        deleteURL: '/sys/oss',
+        deleteURL: '/oss/file',
         deleteIsBatch: true
       },
       dataForm: {},

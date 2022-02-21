@@ -100,7 +100,7 @@ export default {
     generatorMenuHandle: function (row) {
       this.generatorMenuVisible = true
       this.$nextTick(() => {
-        this.$refs.generatorMenu.dataForm.moduleName = row.moduleName
+        this.$refs.generatorMenu.dataForm.backendUrl = row.backendUrl
         this.$refs.generatorMenu.dataForm.className = row.className
         this.$refs.generatorMenu.init()
       })

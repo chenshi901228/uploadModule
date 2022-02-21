@@ -46,7 +46,7 @@ export function getDictLabel (dictType, dictValue) {
  */
 export function clearLoginInfo () {
   store.commit('resetStore')
-  Cookies.remove('token')
+  Cookies.remove('access_token')
   window.SITE_CONFIG['dynamicMenuRoutesHasAdded'] = false
 }
 
@@ -64,11 +64,9 @@ export function getUUID () {
  */
 export function getIconList () {
   var res = []
-  var list = document.querySelectorAll('svg symbol')
-  for (var i = 0; i < list.length; i++) {
-    res.push(list[i].id)
-  }
-
+  document.querySelectorAll('svg symbol').forEach(item => {
+    res.push(item.id)
+  })
   return res
 }
 

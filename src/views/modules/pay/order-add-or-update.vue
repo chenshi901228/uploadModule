@@ -53,7 +53,7 @@ export default {
     },
     // 获取信息
     getInfo () {
-      this.$http.get('/pay/order/' + this.dataForm.id).then(({ data: res }) => {
+      this.$http.get('/sys/pay/order/' + this.dataForm.id).then(({ data: res }) => {
         if (res.code !== 0) {
           return this.$message.error(res.msg)
         }
@@ -69,7 +69,7 @@ export default {
         if (!valid) {
           return false
         }
-        this.$http[!this.dataForm.id ? 'post' : 'put']('/pay/order/', this.dataForm).then(({ data: res }) => {
+        this.$http[!this.dataForm.id ? 'post' : 'put']('/sys/pay/order/', this.dataForm).then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg)
           }

@@ -147,7 +147,7 @@ export default {
     },
     // 获取信息
     getInfo () {
-      this.$http.get(`/sys/sms/${this.dataForm.id}`).then(({ data: res }) => {
+      this.$http.get(`/message/sms/${this.dataForm.id}`).then(({ data: res }) => {
         if (res.code !== 0) {
           return this.$message.error(res.msg)
         }
@@ -163,7 +163,7 @@ export default {
         if (!valid) {
           return false
         }
-        this.$http[!this.dataForm.id ? 'post' : 'put']('/sys/sms', this.dataForm).then(({ data: res }) => {
+        this.$http[!this.dataForm.id ? 'post' : 'put']('/message/sms', this.dataForm).then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg)
           }

@@ -3,7 +3,7 @@ const t = {}
 t.loading = '加載中...'
 
 t.brand = {}
-t.brand.lg = '人人權限企業版'
+t.brand.lg = '人人微服務平台'
 t.brand.mini = '人人'
 
 t.add = '新增'
@@ -79,29 +79,19 @@ t.login.demo = '在線演示'
 t.login.copyright = '人人開源'
 
 t.home = {}
-t.home.sysInfo = {}
-t.home.sysInfo.name = '系統名稱'
-t.home.sysInfo.nameVal = 'renren-security【企業版】'
-t.home.sysInfo.version = '版本信息'
-t.home.sysInfo.versionVal = window.SITE_CONFIG['version']
-t.home.sysInfo.osName = '操作系統'
-t.home.sysInfo.osVersion = '系統版本'
-t.home.sysInfo.osArch = '系統架構'
-t.home.sysInfo.processors = 'CPU核數'
-t.home.sysInfo.totalPhysical = '系統內存'
-t.home.sysInfo.freePhysical = '剩餘內存'
-t.home.sysInfo.memoryRate = '内存使用'
-t.home.sysInfo.userLanguage = '系統語言'
-t.home.sysInfo.jvmName = 'JVM信息'
-t.home.sysInfo.javaVersion = 'JVM版本'
-t.home.sysInfo.javaHome = 'JAVA_HOME'
-t.home.sysInfo.userDir = '工作目錄'
-t.home.sysInfo.javaTotalMemory = 'JVM佔用內存'
-t.home.sysInfo.javaFreeMemory = 'JVM空閒內存'
-t.home.sysInfo.javaMaxMemory = 'JVM最大內存'
-t.home.sysInfo.userName = '當前用戶'
-t.home.sysInfo.systemCpuLoad = 'CPU負載'
-t.home.sysInfo.userTimezone = '系統時區'
+t.home.desc = {}
+t.home.desc.title = '項目介紹'
+t.home.desc.list = [
+  '人人微服務平台，是基於Spring Cloud打造的微服務平台，為企業提供一站式微服務解決方案',
+  '基於最新的Spring Cloud Alibaba、Spring Cloud Gateway、Spring Boot、SpringSecurity OAuth2.0、Sentinel、Skywalking、Seata、Nacos、Mybatis、Element開發',
+  '代碼風格優雅簡潔、通俗易懂，且符合《阿里巴巴Java開發手冊》規範要求，可作為企業代碼規範',
+  '優秀的菜單功能權限，前端可靈活控制頁面及按鈕的展示，後端可對未授權的請求進行攔截',
+  '優秀的數據權限管理，只需增加相應註解，無需其他任何代碼，即可實現數據過濾，達到數據權限目的',
+  '靈活的角色權限管理，新增角色時，角色權限只能是創建者權限的子集，可有效防止權限越權',
+  '靈活的日誌管理，可查看登錄日誌、操作日誌、異常日誌，方便審計及BUG定位',
+  '靈活的國際化配置，目前已支持簡體中文、繁體中文、English，如需增加新語言，只需增加新語言[i18n]文件即可',
+  '靈活的前端動態路由，新增頁面無需修改路由文件，也可在頁面動態新增tab標籤'
+]
 
 /* 模塊 */
 t.model = {}
@@ -134,7 +124,7 @@ t.running = {}
 t.running.id = '實例ID'
 t.running.definitionKey = '定義Key'
 t.running.processDefinitionId = '定義ID'
-t.running.processDefinitionName = '流程名稱'
+t.running.processDefinitionName = '定義名稱'
 t.running.activityId = '當前環節'
 t.running.suspended = '是否掛起'
 t.running.suspended0 = '否'
@@ -307,6 +297,7 @@ t.dict.remark = '備註'
 t.dict.createDate = '創建時間'
 
 t.logError = {}
+t.logError.module = '模塊名稱'
 t.logError.requestUri = '請求URI'
 t.logError.requestMethod = '請求方式'
 t.logError.requestParams = '請求參數'
@@ -368,6 +359,7 @@ t.post.sort = '排序'
 t.post.status = '崗位狀態'
 
 t.logOperation = {}
+t.logOperation.module = '模塊名稱'
 t.logOperation.status = '狀態'
 t.logOperation.status0 = '失敗'
 t.logOperation.status1 = '成功'
@@ -390,7 +382,7 @@ t.menu.type1 = '按鈕'
 t.menu.sort = '排序'
 t.menu.url = '路由'
 t.menu.permissions = '授權標識'
-t.menu.permissionsTips = '多個用逗號分隔，如：sys:menu:save,sys:menu:update'
+t.menu.permissionsTips = '如: sys:menu:save'
 t.menu.parentName = '上級菜單'
 t.menu.parentNameDefault = '一級菜單'
 t.menu.resource = '授權資源'
@@ -430,8 +422,18 @@ t.user.roleIdList = '角色配置'
 t.user.postIdList = '所在崗位'
 t.user.validate = {}
 t.user.validate.confirmPassword = '確認密碼與密碼輸入不一致'
-t.user.select = '選擇用戶'
-t.user.selecterror = '請選擇一條記錄'
+
+t.region = {}
+t.region.id = '區域標識'
+t.region.name = '區域名稱'
+t.region.type = '區域類型'
+t.region.sort = '排序'
+t.region.updateDate = '更新時間'
+t.region.province = '省份直轄市'
+t.region.city = '地市'
+t.region.county = '區縣'
+t.region.parentName = '上級區域'
+t.region.select = '選擇區域'
 
 t.correction = {}
 t.correction.post = '申請崗位'
@@ -484,16 +486,6 @@ t.task.startTime = '任務開始時間'
 t.task.endTime = '任務結束時間'
 t.task.durationInSeconds = '任務時長 (秒)'
 
-t.region = {}
-t.region.id = '區域標識'
-t.region.name = '區域名稱'
-t.region.type = '區域類型'
-t.region.sort = '排序'
-t.region.updateDate = '更新時間'
-t.region.province = '省份直轄市'
-t.region.city = '地市'
-t.region.county = '區縣'
-
 t.oss.type6 = 'MinIO'
 t.oss.minioEndPoint = 'EndPoint'
 t.oss.minioEndPointTips = 'MinIO EndPoint'
@@ -540,8 +532,5 @@ t.notice.release = '發布通知'
 t.notice.close = '關閉'
 t.notice.receiverName = '接收者'
 t.notice.readDate = '閱讀時間'
-t.notice.new = '有新通知'
-t.notice.disconnect = '連接斷開'
-t.notice.disconnectMessage = 'WebSocket連接已斷開，請檢查網絡'
 
 export default t

@@ -60,7 +60,7 @@ export default {
         pid: '0',
         parentName: '',
         icon: '',
-        moduleName: '',
+        backendUrl: '',
         className: ''
       }
     }

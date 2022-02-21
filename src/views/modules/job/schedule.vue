@@ -81,9 +81,9 @@ export default {
   data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: '/sys/schedule/page',
+        getDataListURL: '/job/schedule/page',
         getDataListIsPage: true,
-        deleteURL: '/sys/schedule',
+        deleteURL: '/job/schedule',
         deleteIsBatch: true
       },
       dataForm: {
@@ -111,7 +111,7 @@ export default {
         cancelButtonText: this.$t('cancel'),
         type: 'warning'
       }).then(() => {
-        this.$http.put('/sys/schedule/pause', id ? [id] : this.dataListSelections.map(item => item.id)).then(({ data: res }) => {
+        this.$http.put('/job/schedule/pause', id ? [id] : this.dataListSelections.map(item => item.id)).then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg)
           }
@@ -140,7 +140,7 @@ export default {
         cancelButtonText: this.$t('cancel'),
         type: 'warning'
       }).then(() => {
-        this.$http.put('/sys/schedule/resume', id ? [id] : this.dataListSelections.map(item => item.id)).then(({ data: res }) => {
+        this.$http.put('/job/schedule/resume', id ? [id] : this.dataListSelections.map(item => item.id)).then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg)
           }
@@ -169,7 +169,7 @@ export default {
         cancelButtonText: this.$t('cancel'),
         type: 'warning'
       }).then(() => {
-        this.$http.put('/sys/schedule/run', id ? [id] : this.dataListSelections.map(item => item.id)).then(({ data: res }) => {
+        this.$http.put('/job/schedule/run', id ? [id] : this.dataListSelections.map(item => item.id)).then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg)
           }

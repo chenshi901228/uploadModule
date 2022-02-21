@@ -100,16 +100,16 @@
       </template>
       <template v-else-if="dataForm.type === 6">
         <el-form-item prop="minioEndPoint" :label="$t('oss.minioEndPoint')">
-            <el-input v-model="dataForm.minioEndPoint" :placeholder="$t('oss.minioEndPointTips')"></el-input>
+          <el-input v-model="dataForm.minioEndPoint" :placeholder="$t('oss.minioEndPointTips')"></el-input>
         </el-form-item>
         <el-form-item prop="minioAccessKey" :label="$t('oss.minioAccessKey')">
-            <el-input v-model="dataForm.minioAccessKey" :placeholder="$t('oss.minioAccessKeyTips')"></el-input>
+          <el-input v-model="dataForm.minioAccessKey" :placeholder="$t('oss.minioAccessKeyTips')"></el-input>
         </el-form-item>
         <el-form-item prop="minioSecretKey" :label="$t('oss.minioSecretKey')">
-            <el-input v-model="dataForm.minioSecretKey" :placeholder="$t('oss.minioSecretKeyTips')"></el-input>
+          <el-input v-model="dataForm.minioSecretKey" :placeholder="$t('oss.minioSecretKeyTips')"></el-input>
         </el-form-item>
         <el-form-item prop="minioBucketName" :label="$t('oss.minioBucketName')">
-            <el-input v-model="dataForm.minioBucketName" :placeholder="$t('oss.minioBucketNameTips')"></el-input>
+          <el-input v-model="dataForm.minioBucketName" :placeholder="$t('oss.minioBucketNameTips')"></el-input>
         </el-form-item>
         <el-form-item prop="minioPrefix" :label="$t('oss.minioPrefix')">
           <el-input v-model="dataForm.minioPrefix" :placeholder="$t('oss.minioPrefixTips')"></el-input>
@@ -243,7 +243,7 @@ export default {
     },
     // 获取信息
     getInfo () {
-      this.$http.get('/sys/oss/info').then(({ data: res }) => {
+      this.$http.get('/oss/file/info').then(({ data: res }) => {
         if (res.code !== 0) {
           return this.$message.error(res.msg)
         }
@@ -256,7 +256,7 @@ export default {
         if (!valid) {
           return false
         }
-        this.$http.post('/sys/oss', this.dataForm).then(({ data: res }) => {
+        this.$http.post('/oss/file', this.dataForm).then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg)
           }

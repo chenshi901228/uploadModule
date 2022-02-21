@@ -6,13 +6,6 @@
           <el-input v-model="dataForm.creatorName" :placeholder="$t('logLogin.creatorName')" clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-select v-model="dataForm.status" :placeholder="$t('logLogin.status')" clearable>
-            <el-option :label="$t('logLogin.status0')" :value="0"></el-option>
-            <el-option :label="$t('logLogin.status1')" :value="1"></el-option>
-            <el-option :label="$t('logLogin.status2')" :value="2"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
           <el-button @click="getDataList()">{{ $t('query') }}</el-button>
         </el-form-item>
         <el-form-item>
@@ -26,16 +19,9 @@
             {{ scope.row.operation === 0 ? $t('logLogin.operation0') : $t('logLogin.operation1') }}
           </template>
         </el-table-column>
-        <el-table-column prop="status" :label="$t('logLogin.status')" sortable="custom" header-align="center" align="center">
-          <template slot-scope="scope">
-            <el-tag v-if="scope.row.status === 0" size="small" type="danger">{{ $t('logLogin.status0') }}</el-tag>
-            <el-tag v-else-if="scope.row.status === 1" size="small" type="success">{{ $t('logLogin.status1') }}</el-tag>
-            <el-tag v-else size="small" type="warning">{{ $t('logLogin.status2') }}</el-tag>
-          </template>
-        </el-table-column>
         <el-table-column prop="ip" :label="$t('logLogin.ip')" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="userAgent" :label="$t('logLogin.userAgent')" header-align="center" align="center" width="150" :show-overflow-tooltip="true"></el-table-column>
-        <el-table-column prop="createDate" :label="$t('logLogin.createDate')" sortable="custom" header-align="center" align="center" width="180"></el-table-column>
+        <el-table-column prop="userAgent" :label="$t('logLogin.userAgent')" header-align="center" align="center" :show-overflow-tooltip="true"></el-table-column>
+        <el-table-column prop="createDate" :label="$t('logLogin.createDate')" sortable="custom" header-align="center" align="center"></el-table-column>
       </el-table>
       <el-pagination
         :current-page="page"
@@ -62,8 +48,7 @@ export default {
         exportURL: '/sys/log/login/export'
       },
       dataForm: {
-        creatorName: '',
-        status: ''
+        creatorName: ''
       }
     }
   }

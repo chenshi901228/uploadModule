@@ -66,9 +66,9 @@ export default {
   data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: '/sys/mailtemplate/page',
+        getDataListURL: '/message/mailtemplate/page',
         getDataListIsPage: true,
-        deleteURL: '/sys/mailtemplate',
+        deleteURL: '/message/mailtemplate',
         deleteIsBatch: true
       },
       dataForm: {

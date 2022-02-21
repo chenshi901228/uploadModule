@@ -24,7 +24,8 @@ export default {
   data () {
     return {
       browserTabOpenList: [
-        '1156748733921165314',
+        '1067246875800000042',
+        '1340949288542347268'
       ]
     }
   },

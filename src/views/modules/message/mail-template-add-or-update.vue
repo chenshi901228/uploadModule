@@ -108,7 +108,7 @@ export default {
         theme: 'snow'
       })
       // 自定义上传图片功能 (使用element upload组件)
-      this.uploadUrl = `${window.SITE_CONFIG['apiURL']}/sys/oss/upload?token=${Cookies.get('token')}`
+      this.uploadUrl = `${window.SITE_CONFIG['apiURL']}/oss/file/upload?access_token=${Cookies.get('access_token')}`
       this.quillEditor.getModule('toolbar').addHandler('image', () => {
         this.$refs.uploadBtn.$el.click()
       })
@@ -129,11 +129,11 @@ export default {
       if (res.code !== 0) {
         return this.$message.error(res.msg)
       }
-      this.quillEditor.insertEmbed(this.quillEditor.getSelection().index, 'image', res.data.src)
+      this.quillEditor.insertEmbed(this.quillEditor.getSelection().index, 'image', res.data.url)
     },
     // 获取信息
     getInfo () {
-      this.$http.get(`/sys/mailtemplate/${this.dataForm.id}`).then(({ data: res }) => {
+      this.$http.get(`/message/mailtemplate/${this.dataForm.id}`).then(({ data: res }) => {
         if (res.code !== 0) {
           return this.$message.error(res.msg)
         }
@@ -148,7 +148,7 @@ export default {
           return false
         }
         this.$http[!this.dataForm.id ? 'post' : 'put'](
-          '/sys/mailtemplate',
+          '/message/mailtemplate',
           this.dataForm,
           { headers: { 'content-type': 'application/x-www-form-urlencoded' } }
         ).then(({ data: res }) => {

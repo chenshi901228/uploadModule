@@ -18,7 +18,7 @@
           <el-button @click="getDataList()">{{ $t('query') }}</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button v-if="$hasPermission('sys:smslog:all')" type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
+          <el-button type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
         </el-form-item>
       </el-form>
       <el-table v-loading="dataListLoading" :data="dataList" border @selection-change="dataListSelectionChangeHandle" style="width: 100%;">
@@ -38,7 +38,7 @@
         <el-table-column prop="createDate" :label="$t('sms.createDate')" header-align="center" align="center" width="170"></el-table-column>
         <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
           <template slot-scope="scope">
-            <el-button v-if="$hasPermission('sys:smslog:all')" type="text" size="small" @click="deleteHandle(scope.row.id)">{{ $t('delete') }}</el-button>
+            <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">{{ $t('delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -62,9 +62,9 @@ export default {
   data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: '/sys/smslog/page',
+        getDataListURL: '/message/smslog/page',
         getDataListIsPage: true,
-        deleteURL: '/sys/smslog',
+        deleteURL: '/message/smslog',
         deleteIsBatch: true
       },
       dataForm: {

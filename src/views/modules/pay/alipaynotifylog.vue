@@ -45,7 +45,7 @@ export default {
   data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: '/pay/alipayNotifyLog/page',
+        getDataListURL: '/sys/pay/alipayNotifyLog/page',
         getDataListIsPage: true,
         deleteIsBatch: true
       },

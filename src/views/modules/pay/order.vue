@@ -61,9 +61,9 @@ export default {
   data () {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: '/pay/order/page',
+        getDataListURL: '/sys/pay/order/page',
         getDataListIsPage: true,
-        deleteURL: '/pay/order',
+        deleteURL: '/sys/pay/order',
         deleteIsBatch: true
       },
       dataForm: {
@@ -78,7 +78,7 @@ export default {
   },
   methods: {
     payHandle (orderId) {
-      window.open(`${window.SITE_CONFIG['apiURL']}/pay/alipay/webPay?orderId=` + orderId);
+      window.open(`${window.SITE_CONFIG['apiURL']}/sys/pay/alipay/webPay?orderId=` + orderId);
     }
   }
 }

@@ -3,7 +3,7 @@ const t = {}
 t.loading = '加载中...'
 
 t.brand = {}
-t.brand.lg = '人人权限企业版'
+t.brand.lg = '人人微服务平台'
 t.brand.mini = '人人'
 
 t.add = '新增'
@@ -79,29 +79,19 @@ t.login.demo = '在线演示'
 t.login.copyright = '人人开源'
 
 t.home = {}
-t.home.sysInfo = {}
-t.home.sysInfo.name = '系统名称'
-t.home.sysInfo.nameVal = 'renren-security【企业版】'
-t.home.sysInfo.version = '版本信息'
-t.home.sysInfo.versionVal = window.SITE_CONFIG['version']
-t.home.sysInfo.osName = '操作系统'
-t.home.sysInfo.osVersion = '系统版本'
-t.home.sysInfo.osArch = '系统架构'
-t.home.sysInfo.processors = 'CPU核数'
-t.home.sysInfo.totalPhysical = '系统内存'
-t.home.sysInfo.freePhysical = '剩余内存'
-t.home.sysInfo.memoryRate = '内存使用'
-t.home.sysInfo.userLanguage = '系统语言'
-t.home.sysInfo.jvmName = 'JVM信息'
-t.home.sysInfo.javaVersion = 'JVM版本'
-t.home.sysInfo.javaHome = 'JAVA_HOME'
-t.home.sysInfo.userDir = '工作目录'
-t.home.sysInfo.javaTotalMemory = 'JVM占用内存'
-t.home.sysInfo.javaFreeMemory = 'JVM空闲内存'
-t.home.sysInfo.javaMaxMemory = 'JVM最大内存'
-t.home.sysInfo.userName = '当前用户'
-t.home.sysInfo.systemCpuLoad = 'CPU负载'
-t.home.sysInfo.userTimezone = '系统时区'
+t.home.desc = {}
+t.home.desc.title = '项目介绍'
+t.home.desc.list = [
+  '人人微服务平台，是基于Spring Cloud打造的微服务平台，为企业提供一站式微服务解决方案',
+  '基于最新的Spring Cloud Alibaba、Spring Cloud Gateway、Spring Boot、SpringSecurity OAuth2.0、Sentinel、Skywalking、Seata、Nacos、Mybatis、Element开发',
+  '代码风格优雅简洁、通俗易懂，且符合《阿里巴巴Java开发手册》规范要求，可作为企业代码规范',
+  '优秀的菜单功能权限，前端可灵活控制页面及按钮的展示，后端可对未授权的请求进行拦截',
+  '优秀的数据权限管理，只需增加相应注解，无需其他任何代码，即可实现数据过滤，达到数据权限目的',
+  '灵活的角色权限管理，新增角色时，角色权限只能是创建者权限的子集，可有效防止权限越权',
+  '灵活的日志管理，可查看登录日志、操作日志、异常日志，方便审计及BUG定位',
+  '灵活的国际化配置，目前已支持简体中文、繁体中文、English，如需增加新语言，只需增加新语言[i18n]文件即可',
+  '灵活的前端动态路由，新增页面无需修改路由文件，也可在页面动态新增tab标签'
+]
 
 /* 模块 */
 t.model = {}
@@ -134,7 +124,7 @@ t.running = {}
 t.running.id = '实例ID'
 t.running.definitionKey = '定义Key'
 t.running.processDefinitionId = '定义ID'
-t.running.processDefinitionName = '流程名称'
+t.running.processDefinitionName = '定义名称'
 t.running.activityId = '当前环节'
 t.running.suspended = '是否挂起'
 t.running.suspended0 = '否'
@@ -307,6 +297,7 @@ t.dict.remark = '备注'
 t.dict.createDate = '创建时间'
 
 t.logError = {}
+t.logError.module = '模块名称'
 t.logError.requestUri = '请求URI'
 t.logError.requestMethod = '请求方式'
 t.logError.requestParams = '请求参数'
@@ -327,6 +318,7 @@ t.logLogin.operation1 = '退出'
 t.logLogin.ip = '操作IP'
 t.logLogin.userAgent = 'User-Agent'
 t.logLogin.createDate = '创建时间'
+
 
 t.online = {}
 t.online.kickout = '踢出'
@@ -368,6 +360,7 @@ t.post.sort = '排序'
 t.post.status = '岗位状态'
 
 t.logOperation = {}
+t.logOperation.module = '模块名称'
 t.logOperation.status = '状态'
 t.logOperation.status0 = '失败'
 t.logOperation.status1 = '成功'
@@ -390,7 +383,7 @@ t.menu.type1 = '按钮'
 t.menu.sort = '排序'
 t.menu.url = '路由'
 t.menu.permissions = '授权标识'
-t.menu.permissionsTips = '多个用逗号分隔，如：sys:menu:save,sys:menu:update'
+t.menu.permissionsTips = '如: sys:menu:save'
 t.menu.parentName = '上级菜单'
 t.menu.parentNameDefault = '一级菜单'
 t.menu.resource = '授权资源'
@@ -430,8 +423,18 @@ t.user.roleIdList = '角色配置'
 t.user.postIdList = '所在岗位'
 t.user.validate = {}
 t.user.validate.confirmPassword = '确认密码与密码输入不一致'
-t.user.select = '选择用户'
-t.user.selecterror = '请选择一条记录'
+
+t.region = {}
+t.region.id = '区域标识'
+t.region.name = '区域名称'
+t.region.type = '区域类型'
+t.region.sort = '排序'
+t.region.updateDate = '更新时间'
+t.region.province = '省份直辖市'
+t.region.city = '地市'
+t.region.county = '区县'
+t.region.parentName = '上级区域'
+t.region.select = '选择区域'
 
 t.correction = {}
 t.correction.post = '申请岗位'
@@ -484,16 +487,6 @@ t.task.startTime = '任务开始时间'
 t.task.endTime = '任务结束时间'
 t.task.durationInSeconds = '任务时长（秒）'
 
-t.region = {}
-t.region.id = '区域标识'
-t.region.name = '区域名称'
-t.region.type = '区域类型'
-t.region.sort = '排序'
-t.region.updateDate = '更新时间'
-t.region.province = '省份直辖市'
-t.region.city = '地市'
-t.region.county = '区县'
-
 t.oss.type6 = 'MinIO'
 t.oss.minioEndPoint = 'EndPoint'
 t.oss.minioEndPointTips = 'MinIO EndPoint'
@@ -540,8 +533,5 @@ t.notice.release = '发布通知'
 t.notice.close = '关闭'
 t.notice.receiverName = '接收者'
 t.notice.readDate = '阅读时间'
-t.notice.new = '有新通知'
-t.notice.disconnect = '连接断开'
-t.notice.disconnectMessage = 'WebSocket连接已断开，请检查网络'
 
 export default t

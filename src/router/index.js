@@ -33,14 +33,14 @@ export const moduleRoutes = {
   meta: { title: '主入口布局' },
   children: [
     { path: '/home', component: () => import('@/views/modules/home'), name: 'home', meta: { title: '首页', isTab: true } },
-    { path: '/iframe', component: null, name: 'iframe', meta: { title: 'iframe', isTab: true } }
+    { path: '/iframe', component: null, name: 'iframe', meta: { title: 'iframe', isTab: true } },
   ]
 }
 
 export function addDynamicRoute (routeParams, router) {
   // 组装路由名称, 并判断是否已添加, 如是: 则直接跳转
   var routeName = routeParams.routeName
-  var dynamicRoute = window.SITE_CONFIG.dynamicRoutes.filter(item => item.name === routeName)[0]
+  var dynamicRoute = window.SITE_CONFIG['dynamicRoutes'].filter(item => item.name === routeName)[0]
   if (dynamicRoute) {
     return router.push({ name: routeName, params: routeParams.params })
   }
@@ -50,7 +50,7 @@ export function addDynamicRoute (routeParams, router) {
     component: () => import(`@/views/modules/${routeParams.path}`),
     name: routeName,
     meta: {
-      ...window.SITE_CONFIG.contentTabDefault,
+      ...window.SITE_CONFIG['contentTabDefault'],
       menuId: routeParams.menuId,
       title: `${routeParams.title}`
     }
@@ -62,7 +62,7 @@ export function addDynamicRoute (routeParams, router) {
       children: [dynamicRoute]
     }
   ])
-  window.SITE_CONFIG.dynamicRoutes.push(dynamicRoute)
+  window.SITE_CONFIG['dynamicRoutes'].push(dynamicRoute)
   router.push({ name: dynamicRoute.name, params: routeParams.params })
 }
 
@@ -75,7 +75,7 @@ const router = new Router({
 router.beforeEach((to, from, next) => {
   // 添加动态(菜单)路由
   // 已添加或者当前路由为页面路由, 可直接访问
-  if (window.SITE_CONFIG.dynamicMenuRoutesHasAdded || fnCurrentRouteIsPageRoute(to, pageRoutes)) {
+  if (window.SITE_CONFIG['dynamicMenuRoutesHasAdded'] || fnCurrentRouteIsPageRoute(to, pageRoutes)) {
     return next()
   }
   // 获取字典列表, 添加并全局变量保存
@@ -83,7 +83,7 @@ router.beforeEach((to, from, next) => {
     if (res.code !== 0) {
       return
     }
-    window.SITE_CONFIG.dictList = res.data
+    window.SITE_CONFIG['dictList'] = res.data
   }).catch(() => {})
   // 获取菜单列表, 添加并全局变量保存
   http.get('/sys/menu/nav').then(({ data: res }) => {
@@ -91,8 +91,8 @@ router.beforeEach((to, from, next) => {
       Vue.prototype.$message.error(res.msg)
       return next({ name: 'login' })
     }
-    window.SITE_CONFIG.menuList = res.data
-    fnAddDynamicMenuRoutes(window.SITE_CONFIG.menuList)
+    window.SITE_CONFIG['menuList'] = res.data
+    fnAddDynamicMenuRoutes(window.SITE_CONFIG['menuList'])
     next({ ...to, replace: true })
   }).catch(() => {
     next({ name: 'login' })
@@ -135,7 +135,7 @@ function fnAddDynamicMenuRoutes (menuList = [], routes = []) {
       component: null,
       name: '',
       meta: {
-        ...window.SITE_CONFIG.contentTabDefault,
+        ...window.SITE_CONFIG['contentTabDefault'],
         menuId: menuList[i].id,
         title: menuList[i].name
       }
@@ -144,12 +144,12 @@ function fnAddDynamicMenuRoutes (menuList = [], routes = []) {
     //let URL = (menuList[i].url || '').replace(/{{([^}}]+)?}}/g, (s1, s2) => eval(s2)) // URL支持{{ window.xxx }}占位符变量
     let URL = (menuList[i].url || '').replace('{{ApiUrl}}', `${window.SITE_CONFIG.apiURL}`)
     if (isURL(URL)) {
-      route.path = route.name = `i-${menuList[i].id}`
-      route.meta.iframeURL = URL
+      route['path'] = route['name'] = `i-${menuList[i].id}`
+      route['meta']['iframeURL'] = URL
     } else {
       URL = URL.replace(/^\//, '').replace(/_/g, '-')
-      route.path = route.name = URL.replace(/\//g, '-')
-      route.component = () => import(`@/views/modules/${URL}`)
+      route['path'] = route['name'] = URL.replace(/\//g, '-')
+      route['component'] = () => import(`@/views/modules/${URL}`)
     }
     routes.push(route)
   }
@@ -165,8 +165,8 @@ function fnAddDynamicMenuRoutes (menuList = [], routes = []) {
     },
     { path: '*', redirect: { name: '404' } }
   ])
-  window.SITE_CONFIG.dynamicMenuRoutes = routes
-  window.SITE_CONFIG.dynamicMenuRoutesHasAdded = true
+  window.SITE_CONFIG['dynamicMenuRoutes'] = routes
+  window.SITE_CONFIG['dynamicMenuRoutesHasAdded'] = true
 }
 
 export default router

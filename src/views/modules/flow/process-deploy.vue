@@ -28,7 +28,7 @@ export default {
   methods: {
     init () {
       this.visible = true
-      this.url = `${window.SITE_CONFIG['apiURL']}/flow/process/deploy?token=${Cookies.get('token')}`
+      this.url = `${window.SITE_CONFIG['apiURL']}/flow/process/deploy?access_token=${Cookies.get('access_token')}`
       this.fileList = []
     },
     // 上传之前
