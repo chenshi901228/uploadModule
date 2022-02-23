@@ -19,6 +19,18 @@
              <img :src="scope.row.avatarUrl" style="width:100px;height:100px;">
           </template>
         </el-table-column>
+        <el-table-column prop="backgroundImage" label="背景图" header-align="center" align="center">
+           <template slot-scope="scope">
+             <img :src="scope.row.backgroundImage" style="width:100px;height:100px;">
+          </template>
+        </el-table-column>
+        <el-table-column prop="gender" label="性别" header-align="center" align="center">
+          <template slot-scope="scope">
+             <el-tag v-if="scope.row.status === 0" type="info">男</el-tag>
+             <el-tag v-if="scope.row.status === 1" type="info">女</el-tag>
+             <el-tag v-if="scope.row.status === 2" type="info">保密</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="introduce" label="介绍" header-align="center" align="center"></el-table-column>
         <el-table-column prop="legalizeFlg" label="认证用户" header-align="center" align="center">
           <template slot-scope="scope">
