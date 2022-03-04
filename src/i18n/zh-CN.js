@@ -3,8 +3,8 @@ const t = {}
 t.loading = '加载中...'
 
 t.brand = {}
-t.brand.lg = '人人微服务平台'
-t.brand.mini = '人人'
+t.brand.lg = '直播微服务平台'
+t.brand.mini = '直播'
 
 t.add = '新增'
 t.delete = '删除'
@@ -76,21 +76,13 @@ t.login.username = '用户名'
 t.login.password = '密码'
 t.login.captcha = '验证码'
 t.login.demo = '在线演示'
-t.login.copyright = '人人开源'
+t.login.copyright = '直播'
 
 t.home = {}
 t.home.desc = {}
 t.home.desc.title = '项目介绍'
 t.home.desc.list = [
-  '人人微服务平台，是基于Spring Cloud打造的微服务平台，为企业提供一站式微服务解决方案',
-  '基于最新的Spring Cloud Alibaba、Spring Cloud Gateway、Spring Boot、SpringSecurity OAuth2.0、Sentinel、Skywalking、Seata、Nacos、Mybatis、Element开发',
-  '代码风格优雅简洁、通俗易懂，且符合《阿里巴巴Java开发手册》规范要求，可作为企业代码规范',
-  '优秀的菜单功能权限，前端可灵活控制页面及按钮的展示，后端可对未授权的请求进行拦截',
-  '优秀的数据权限管理，只需增加相应注解，无需其他任何代码，即可实现数据过滤，达到数据权限目的',
-  '灵活的角色权限管理，新增角色时，角色权限只能是创建者权限的子集，可有效防止权限越权',
-  '灵活的日志管理，可查看登录日志、操作日志、异常日志，方便审计及BUG定位',
-  '灵活的国际化配置，目前已支持简体中文、繁体中文、English，如需增加新语言，只需增加新语言[i18n]文件即可',
-  '灵活的前端动态路由，新增页面无需修改路由文件，也可在页面动态新增tab标签'
+  '直播微服务平台'
 ]
 
 /* 模块 */

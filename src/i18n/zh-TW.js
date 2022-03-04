@@ -3,8 +3,8 @@ const t = {}
 t.loading = '加載中...'
 
 t.brand = {}
-t.brand.lg = '人人微服務平台'
-t.brand.mini = '人人'
+t.brand.lg = '直播微服務平台'
+t.brand.mini = '直播'
 
 t.add = '新增'
 t.delete = '刪除'
@@ -76,13 +76,13 @@ t.login.username = '用戶名'
 t.login.password = '密碼'
 t.login.captcha = '驗證碼'
 t.login.demo = '在線演示'
-t.login.copyright = '人人開源'
+t.login.copyright = '直播開源'
 
 t.home = {}
 t.home.desc = {}
 t.home.desc.title = '項目介紹'
 t.home.desc.list = [
-  '人人微服務平台，是基於Spring Cloud打造的微服務平台，為企業提供一站式微服務解決方案',
+  '直播微服務平台，是基於Spring Cloud打造的微服務平台，為企業提供一站式微服務解決方案',
   '基於最新的Spring Cloud Alibaba、Spring Cloud Gateway、Spring Boot、SpringSecurity OAuth2.0、Sentinel、Skywalking、Seata、Nacos、Mybatis、Element開發',
   '代碼風格優雅簡潔、通俗易懂，且符合《阿里巴巴Java開發手冊》規範要求，可作為企業代碼規範',
   '優秀的菜單功能權限，前端可靈活控制頁面及按鈕的展示，後端可對未授權的請求進行攔截',

@@ -25,7 +25,7 @@
           </el-dropdown>
         </el-menu-item>
         <el-menu-item index="2">
-          <a href="//www.renren.io/" target="_blank">
+          <a href="javascript:void(0);" target="_blank">
             <svg class="icon-svg aui-navbar__icon-menu" aria-hidden="true"><use xlink:href="#icon-earth"></use></svg>
           </a>
         </el-menu-item>

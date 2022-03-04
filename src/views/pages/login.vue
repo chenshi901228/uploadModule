@@ -48,9 +48,9 @@
         </div>
         <div class="login-footer">
           <p>
-            <a href="https://demo.cloud.renren.io/renren-cloud" target="_blank">{{ $t('login.demo') }}</a>
+            <a href="javascript:void(0);" target="_blank">{{ $t('login.demo') }}</a>
           </p>
-          <p><a href="https://www.renren.io/" target="_blank">{{ $t('login.copyright') }}</a>2022 © renren.io</p>
+          <p><a href="javascript:void(0);" target="_blank">{{ $t('login.copyright') }}</a>2022</p>
         </div>
       </main>
     </div>
