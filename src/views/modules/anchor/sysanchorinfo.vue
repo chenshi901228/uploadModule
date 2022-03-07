@@ -104,7 +104,7 @@ export default {
   methods: {
     // 是否同意
     updateApplyInfoStatus: debounce(function (id, status) {
-      this.$confirm(`是否执行 ${status == -1 ? '拒绝' : '同意'} 操作`, this.$t('prompt.title'), {
+      this.$confirm(`是否执行 [${status == -1 ? '拒绝' : '同意'}[ 操作`, this.$t('prompt.title'), {
         confirmButtonText: this.$t('confirm'),
         cancelButtonText: this.$t('cancel'),
         type: 'warning'
