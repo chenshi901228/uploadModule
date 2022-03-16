@@ -21,6 +21,7 @@
                 :data="dataList"
                 border
                 @selection-change="dataListSelectionChangeHandle()"
+                :height="siteContentViewHeight"
                 style="width: 100%"
             >
                 <el-table-column
@@ -69,7 +70,9 @@
 </template>
 
 <script>
+import mixinTableHeight from '@/mixins/tableHeight'
 export default {
+    mixins: [ mixinTableHeight ],
     components: {},     
     data() {
         return {
@@ -89,10 +92,11 @@ export default {
                 { prop: "anchorUser", label: "主播" },
                 { prop: "anchorTel", label: "手机号码" },
                 { prop: "beginDate", label: "开播时间" },
-            ]
+            ],
+            // 搜索部分高度
+            otherViewHeight: 64,
         };
     },
-    watch: {},
     created () {
         // this.query()
     },
