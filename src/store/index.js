@@ -8,6 +8,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   namespaced: true,
   state: {
+    // 页面文档可视高度(随窗口改变大小)
+    documentClientHeight: 0,
     // 导航条, 布局风格, defalut(白色) / colorful(鲜艳)
     navbarLayoutType: 'colorful',
     // 侧边栏, 布局皮肤, default(白色) / dark(黑色)
@@ -38,6 +40,10 @@ export default new Vuex.Store({
       Object.keys(state).forEach((key) => {
         state[key] = cloneDeep(window.SITE_CONFIG['storeState'][key])
       })
-    }
+    },
+    // 更新窗口高度
+    updateDocumentClientHeight(state, height) {
+      state.documentClientHeight = height
+    },
   }
 })

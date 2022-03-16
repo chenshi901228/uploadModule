@@ -3,8 +3,8 @@
     <template v-if="!loading">
       <main-navbar />
       <main-sidebar />
-      <div class="aui-content__wrapper">
-        <main-content v-if="!$store.state.contentIsNeedRefresh" />
+      <div class="aui-content__wrapper" :style="{ 'min-height': (documentClientHeight - 50) + 'px' }">
+        <main-content v-if="!$store.state.contentIsNeedRefresh"/>
       </div>
       <main-theme-tools />
     </template>
@@ -44,6 +44,16 @@ export default {
   watch: {
     $route: 'routeHandle'
   },
+  computed: {
+    documentClientHeight: {
+      get() {
+        return this.$store.state.documentClientHeight;
+      },
+      set(val) {
+        this.$store.commit("updateDocumentClientHeight", val);
+      },
+    },
+  },
   created () {
     this.windowResizeHandle()
     this.routeHandle(this.$route)
@@ -57,9 +67,11 @@ export default {
   methods: {
     // 窗口改变大小
     windowResizeHandle () {
+      this.documentClientHeight = document.documentElement["clientHeight"];
       this.$store.state.sidebarFold = document.documentElement['clientWidth'] <= 992 || false
       window.addEventListener('resize', debounce(() => {
         this.$store.state.sidebarFold = document.documentElement['clientWidth'] <= 992 || false
+        this.documentClientHeight = document.documentElement["clientHeight"];
       }, 150))
     },
     // 路由, 监听
