@@ -5,6 +5,7 @@
     <el-card shadow="never" class="aui-card--fill">
         <div class="mod-live__liveList">
             <el-form
+                class="headerTool"
                 :inline="true"
                 :model="dataForm"
                 @keyup.enter.native="getDataList()"
@@ -29,6 +30,7 @@
                     header-align="center"
                     align="center"
                     width="50"
+                    fixed="left"
                 ></el-table-column>
 
                 <el-table-column
@@ -38,18 +40,19 @@
                     :key="item.prop"
                     :prop="item.prop"
                     :label="item.label"
+                    :width="item.width || 120"
                     show-overflow-tooltip
                 >
                     <template slot-scope="{ row }">
-                        <div v-if="item.prop == 'frontCoverUrl'">
+                        <span v-if="item.prop == 'frontCoverUrl'">
                             <img class="frontCoverImg" :src="row.frontCoverUrl || 'https://picsum.photos/400/300?random=1'" alt="">
-                        </div>
-                        <div v-else-if="item.prop == 'showMode'">
+                        </span>
+                        <span v-else-if="item.prop == 'showMode'">
                             {{row.showMode ? "横屏" : "竖屏"}}
-                        </div>
-                        <div v-else>
-                            {{ row[item.prop] }}
-                        </div>
+                        </span>
+                        <span v-else>
+                            {{ row[item.prop] || "-" }}
+                        </span>
                     </template>
                     <template>
                     </template>
@@ -91,10 +94,12 @@ export default {
                 { prop: "liveTheme", label: "直播主题" },
                 { prop: "anchorUser", label: "主播" },
                 { prop: "anchorTel", label: "手机号码" },
-                { prop: "beginDate", label: "开播时间" },
+                { prop: "beginDate", label: "开播时间", width: 180 },
+                { prop: "endDate", label: "结束时间", width: 180 },
+                { prop: "liveTime", label: "直播时长（分）" },
+                { prop: "cumulativeNum", label: "投放人群" },
             ],
-            // 搜索部分高度
-            otherViewHeight: 64,
+            otherViewHeight: 64
         };
     },
     created () {
@@ -146,6 +151,7 @@ export default {
         },
         // 多选
         dataListSelectionChangeHandle (val) {
+            console.log(val)
             this.dataListSelections = val
         },
 
@@ -156,7 +162,7 @@ export default {
     .mod-live__liveList{
         .frontCoverImg{
             width: 100%;
-            height: 80px;
+            height: 60px;
         }
     }
 </style>
