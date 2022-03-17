@@ -4,6 +4,7 @@ export default {
     data() {
         return {
             otherViewHeight: 0,
+            isOpen: false
         }
     },
     computed: {
@@ -17,12 +18,25 @@ export default {
             return height;
         },
     },
+    watch: {
+        isOpen() {
+            this.setOtherViewHeight()
+        }
+    },
     activated() {
-        setTimeout(() => {
-            if(document.querySelector(".headerTool")) {
-                let h = document.querySelector(".headerTool").getBoundingClientRect().height
-                this.otherViewHeight = Math.ceil(h)
-            }
-        },150)
+        this.setOtherViewHeight()
+    },
+    methods: {
+        setOtherViewHeight() {
+            setTimeout(() => {
+                if(document.querySelector(".headerTool")) {
+                    let h = document.querySelector(".headerTool").getBoundingClientRect().height
+                    this.otherViewHeight = Math.ceil(h)
+                }
+            },150)
+        },
+        open() {
+            this.isOpen = !this.isOpen
+        },
     },
 }
