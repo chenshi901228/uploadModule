@@ -6,57 +6,45 @@
         :model="dataForm"
         @keyup.enter.native="getDataList()"
       >
-        <el-form-item label="用户昵称">
-          <el-input v-model="dataForm.nickName" clearable></el-input>
+        <el-form-item label="主播昵称">
+          <el-input v-model="dataForm.anchorName" clearable></el-input>
         </el-form-item>
+        <el-form-item label="真实姓名">
+          <el-input v-model="dataForm.realName" clearable></el-input>
+        </el-form-item>
+
         <el-form-item label="手机号码">
           <el-input v-model="dataForm.phone" clearable></el-input>
         </el-form-item>
-        <!-- <el-form-item label="是否认证">
-          <el-select v-model="dataForm.status">
-            <el-option value="1" label="是"></el-option>
-            <el-option value="0" label="否"></el-option>
+        <el-form-item label="身份证号">
+          <el-input v-model="dataForm.idCard" clearable></el-input>
+        </el-form-item>
+        <el-form-item label="性别">
+          <el-select v-model="dataForm.gender" clearable>
+            <el-option :value="0" label="男"></el-option>
+            <el-option :value="1" label="女"></el-option>
+            <el-option :value="2" label="保密"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="是否是指导师">
-          <el-select v-model="dataForm.status">
-            <el-option value="1" label="是"></el-option>
-            <el-option value="0" label="否"></el-option>
-          </el-select>
-        </el-form-item> -->
-        <el-form-item label="邀请人">
-          <el-input v-model="dataForm.userId" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="邀请人号码">
-          <el-input v-model="dataForm.userId" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="dataForm.delFlg" clearable>
+        <!-- <el-form-item label="状态">
+          <el-select v-model="dataForm.disabledFlg" clearable>
             <el-option value="1" label="禁用"></el-option>
             <el-option value="0" label="正常"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item>
           <el-button @click="getDataList()">{{ $t("query") }}</el-button>
         </el-form-item>
       </el-form>
-      <div class="forbiddenAllBtn" @click="forbiddenAll()">禁用</div>
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
         border
-        @selection-change="dataListSelectionChangeHandle"
         style="width: 100%"
       >
         <el-table-column
-          type="selection"
-          header-align="center"
-          align="center"
-          width="50"
-        ></el-table-column>
-        <el-table-column
           prop="avatarUrl"
-          label="用户头像"
+          label="主播头像"
           header-align="center"
           align="center"
         >
@@ -69,8 +57,14 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="nickName"
-          label="用户昵称"
+          prop="username"
+          label="主播昵称"
+          header-align="center"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="realName"
+          label="真实姓名"
           header-align="center"
           align="center"
         ></el-table-column>
@@ -81,38 +75,66 @@
           align="center"
         >
         </el-table-column>
-        <!-- <el-table-column
-          prop="payAt"
-          label="是否认证"
+        <el-table-column
+          prop="idCard"
+          label="身份证号"
+          header-align="center"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="gender"
+          label="性别"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <div>
+              {{
+                scope.row.gender === 0
+                  ? "男"
+                  : scope.row.gender === 1
+                  ? "女"
+                  : "保密"
+              }}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="introduce"
+          label="主播介绍"
+          show-overflow-tooltip
           header-align="center"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="createDate"
-          label="是否是指导师"
-          header-align="center"
-          align="center"
-        ></el-table-column> -->
-        <el-table-column
-          prop="aaa1"
-          label="邀请人"
+          prop="attentionNum"
+          label="关注人数"
+          show-overflow-tooltip
           header-align="center"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="aaa2"
-          label="邀请人号码"
+          prop="fansNum"
+          label="粉丝团成员"
+          show-overflow-tooltip
           header-align="center"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="createDate"
-          label="注册时间"
+          prop="liveState"
+          label="正在直播"
+          show-overflow-tooltip
           header-align="center"
           align="center"
-        ></el-table-column>
+        >
+          <template slot-scope="scope">
+            <div>{{ scope.row.liveState ? "未直播" : "直播中" }}</div>
+          </template>
+        </el-table-column>
+
         <el-table-column
-          prop="createDate"
+          prop="disabledFlg"
           label="状态"
           header-align="center"
           align="center"
@@ -121,6 +143,12 @@
             <div>{{ scope.row.delFlg ? "禁用" : "正常" }}</div>
           </template>
         </el-table-column>
+        <el-table-column
+          prop="createDate"
+          label="通过时间"
+          header-align="center"
+          align="center"
+        ></el-table-column>
         <el-table-column
           :label="$t('handle')"
           fixed="right"
@@ -160,39 +188,49 @@
       >
       </el-pagination>
       <!-- 弹窗, 详情-->
-      <el-dialog title="用户详情" :visible.sync="dialogVisible" width="90%">
+      <el-dialog title="主播详情" :visible.sync="dialogVisible" width="90%">
         <div class="diaBox">
           <div class="diaBoxLeft">
-            <div class="diaBoxLeft_title">基本信息</div>
+            <div class="diaBoxLeft_title">主播信息</div>
             <div class="diaBoxLeft_mes">
               <el-avatar
                 :size="75"
                 :src="diaForm.avatarUrl"
                 style="margin: 0px 85px 10px"
               ></el-avatar>
-              <div>用户昵称：{{ diaForm.nickName }}</div>
+              <div>主播昵称：{{ diaForm.username }}</div>
               <!-- <div>是否认证：{{ diaForm.nickName }}</div>
               <div>是否指导师：{{ diaForm.nickName }}</div> -->
-              <div>邀请注册：{{ diaForm.aaa1 }}</div>
-              <div>TA邀请人：{{ diaForm.aaa2 }}</div>
-              <div>注册时间：{{ diaForm.createDate }}</div>
+              <div>真实姓名：{{ diaForm.realName }}</div>
+              <div>身份证号：{{ diaForm.idCard }}</div>
+              <div>主播简介：{{ diaForm.introduce }}</div>
             </div>
 
-            <div class="diaBoxLeft_title">账户信息</div>
+            <div class="diaBoxLeft_title">银行信息</div>
             <div class="diaBoxLeft_mes">
               <div>
-                累计消费：￥{{
+                开户银行：￥{{
                   diaForm.priceConsumption ? diaForm.priceConsumption : 0
                 }}元
               </div>
-              <div>刷礼物消费：￥{{ diaForm.aaa5 }}元</div>
-              <div>粉丝团加入消费：￥{{ diaForm.aaa3 }}元</div>
-              <div>购买商品消费：￥{{ diaForm.aaa4 }}元</div>
+              <div>支行名称：￥{{ diaForm.aaa5 }}元</div>
+              <div>账号名称：￥{{ diaForm.aaa3 }}元</div>
+              <div>银行账号：￥{{ diaForm.aaa4 }}元</div>
               <div>
-                可用大豆余额：{{
+                开户行所在地：{{
                   diaForm.priceBalance ? diaForm.priceBalance : 0
                 }}
               </div>
+            </div>
+            <div class="diaBoxLeft_title">账户信息</div>
+            <div class="diaBoxLeft_mes">
+              <div>
+                累计收益：￥{{
+                  diaForm.priceConsumption ? diaForm.priceConsumption : 0
+                }}元
+              </div>
+              <div>已提现金额：￥{{ diaForm.aaa5 }}元</div>
+              <div>可提现金额：￥{{ diaForm.aaa3 }}元</div>
             </div>
           </div>
           <div class="diaBoxRight">
@@ -202,42 +240,42 @@
                 @click="changeTbas(1)"
                 :class="{ 'is-active': diaTbas === 1 }"
               >
-                充值记录
+                收益记录
               </div>
               <div
                 class="diaBoxRight_tabBtns"
                 @click="changeTbas(2)"
                 :class="{ 'is-active': diaTbas === 2 }"
               >
-                礼物记录
+                提现记录
               </div>
               <div
                 class="diaBoxRight_tabBtns"
                 @click="changeTbas(3)"
                 :class="{ 'is-active': diaTbas === 3 }"
               >
-                商品记录
+                关注记录
               </div>
               <div
                 class="diaBoxRight_tabBtns"
                 @click="changeTbas(4)"
                 :class="{ 'is-active': diaTbas === 4 }"
               >
-                加入粉丝团
+                粉丝团成员
               </div>
               <div
                 class="diaBoxRight_tabBtns"
                 @click="changeTbas(5)"
                 :class="{ 'is-active': diaTbas === 5 }"
               >
-                粉丝团消费
+                推荐商品
               </div>
               <div
                 class="diaBoxRight_tabBtns"
                 @click="changeTbas(6)"
                 :class="{ 'is-active': diaTbas === 6 }"
               >
-                分享记录
+                推荐主播
               </div>
             </div>
             <el-form
@@ -268,27 +306,43 @@
                 </el-select>
               </el-form-item>
               <el-form-item
-                label="粉丝团名称"
-                v-if="diaTbas === 4 || diaTbas === 5"
+                label="用户昵称"
+                v-if="diaTbas === 3 || diaTbas === 4"
               >
-                <el-input v-model="diaSearchForm.title" clearable></el-input>
-              </el-form-item>
-              <el-form-item
-                label="主播昵称"
-                v-if="diaTbas === 4 || diaTbas === 5"
-              >
-                <el-input
-                  v-model="diaSearchForm.anchorName"
-                  clearable
-                ></el-input>
+                <el-input v-model="diaSearchForm.userName" clearable></el-input>
               </el-form-item>
               <el-form-item
                 label="手机号码"
-                v-if="diaTbas === 4 || diaTbas === 5"
+                v-if="diaTbas === 3 || diaTbas === 4||diaTbas === 6"
               >
                 <el-input v-model="diaSearchForm.phone" clearable></el-input>
               </el-form-item>
-              <el-form-item v-if="diaTbas !== 6">
+              <el-form-item label="粉丝团身份" v-if="diaTbas === 4">
+                <el-select v-model="diaSearchForm.userType" clearable>
+                  <el-option :value="0" label="普通会员"></el-option>
+                  <el-option :value="1" label="会长"></el-option>
+                  <el-option :value="2" label="副会长"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="状态" v-if="diaTbas === 4">
+                <el-select v-model="diaSearchForm.delFlg" clearable>
+                  <el-option :value="0" label="正常"></el-option>
+                  <el-option :value="1" label="取消关注"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item
+                label="主播昵称"
+                v-if="diaTbas === 6"
+              >
+                <el-input v-model="diaSearchForm.anchorName" clearable></el-input>
+              </el-form-item>
+              <el-form-item label="状态" v-if="diaTbas === 6">
+                <el-select v-model="diaSearchForm.delFlg" clearable>
+                  <el-option :value="0" label="上架"></el-option>
+                  <el-option :value="1" label="下架"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item>
                 <el-button @click="queryPost_dia()">{{
                   $t("query")
                 }}</el-button>
@@ -335,6 +389,22 @@
                   :key="prop"
                   header-align="center"
                   align="center"
+                  v-else-if="prop === 'avatarUrl'"
+                >
+                  <template slot-scope="scope">
+                    <img
+                      :src="scope.row.avatarUrl"
+                      alt=""
+                      style="width: 75px; height: 50px"
+                    />
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  :prop="prop"
+                  :label="label"
+                  :key="prop"
+                  header-align="center"
+                  align="center"
                   v-else-if="prop === 'userTyoe'"
                 >
                   <template slot-scope="scope">
@@ -346,6 +416,23 @@
                           ? "副会长"
                           : "普通会员"
                       }}
+                    </div>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  :prop="prop"
+                  :label="label"
+                  :key="prop"
+                  header-align="center"
+                  align="center"
+                  v-else-if="prop === 'delFlg'"
+                >
+                  <template slot-scope="scope">
+                    <div v-if="!scope.row.anchorName">
+                      {{ scope.row.delFlg === 1 ? "取消关注" : "正常" }}
+                    </div>
+                     <div v-else>
+                      {{ scope.row.delFlg === 1 ? "下架" : "上架" }}
                     </div>
                   </template>
                 </el-table-column>
@@ -387,7 +474,7 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/manage/weixinUser/page",
+        getDataListURL: "/sys/anchor/info/pageWithUserManage",
         getDataListIsPage: true,
         deleteURL: "/sys/pay/order",
         deleteIsBatch: true,
@@ -395,7 +482,10 @@ export default {
       dataForm: {
         nickName: "",
         phone: "",
-        delFlg: "",
+        disabledFlg: "",
+        realName: "",
+        idCard: "",
+        gender: "",
       },
       dataList: [{ createDate: 1 }],
       userId: "",
@@ -410,15 +500,17 @@ export default {
         name: "",
         title: "",
         anchorName: "",
+        userName: "",
         phone: "",
+        userType: "",
+        delFlg: "",
       },
       diaDataList: [],
       diaTableTitle: {
-        price: "充值大豆",
-        amount: "支付金额",
-        payType: "支付方式",
-        paySource: "充值来源",
-        createDate: "充值时间",
+        price: "收益金额",
+        amount: "收益类型",
+        payType: "收益描述",
+        createDate: "结算时间",
       },
       page_dia: 1, // 当前页码
       limit_dia: 10, // 每页数
@@ -437,9 +529,13 @@ export default {
         name: "",
         title: "",
         anchorName: "",
+        userName: "",
         phone: "",
+        userType: "",
+        delFlg: "",
       };
       this.diaTbas = 1;
+      
       this.$http
         .get(`/sys/manage/userDetail/${data.id}`)
         .then(({ data: res }) => {
@@ -455,8 +551,7 @@ export default {
           };
         })
         .catch(() => {});
-        this.changeTbas(1);
-
+      this.changeTbas(1);
     },
     changeTbas(n) {
       this.diaTbas = n;
@@ -466,74 +561,72 @@ export default {
         name: "",
         title: "",
         anchorName: "",
+        userName: "",
         phone: "",
+        userType: "",
+        delFlg: "",
       };
       switch (n) {
         case 1:
           this.diaTableTitle = {
-            price: "充值大豆",
-            amount: "支付金额",
-            payType: "支付方式",
-            paySource: "充值来源",
-            createDate: "充值时间",
+            price: "收益金额",
+            amount: "收益类型",
+            payType: "收益描述",
+            createDate: "结算时间",
           };
           break;
         case 2:
           this.diaTableTitle = {
-            name: "礼物名称",
-            giftNum: "数量",
-            price: "礼物单价",
-            allPrice: "消费合计",
-            payType: "支付方式",
-            paySource: "消费来源",
-            createDate: "创建时间",
+            name: "提现金额",
+            giftNum: "账户姓名",
+            price: "银行账户",
+            allPrice: "开户银行",
+            payType: "支行名称",
+            paySource: "开户行所在地",
+            createDate: "提现时间",
+            createDate: "审批状态",
+            createDate: "提现状态",
           };
           break;
         case 3:
           this.diaTableTitle = {
-            aaa1: "商品图片",
-            aaa2: "商品名称",
-            aaa3: "商品类型",
-            aaa4: "是否免费",
-            aaa5: "销售价格",
-            aaa6: "支付金额",
-            aaa7: "支付方式",
-            aaa8: "消费来源",
-            aaa9: "关联产品编号",
-            aaa10: "购买时间",
-            aaa11: "使用状态",
+            avatarUrl: "用户头像",
+            userName: "用户昵称",
+            phone: "手机号码",
+            createDate: "关注时间",
           };
           break;
         case 4:
           this.diaTableTitle = {
-            title: "粉丝团名称",
-            anchorName: "主播",
+            avatarUrl: "用户头像",
+            userName: "用户昵称",
             phone: "手机号码",
-            userTyoe: "粉丝团身份",
-            createDate: "创建时间",
+            level: "用户等级",
+            userType: "粉丝团身份",
+            groupName: "所在群组",
+            createDate: "入团时间",
+            delFlg: "状态",
           };
           break;
         case 5:
           this.diaTableTitle = {
-            title: "粉丝团名称",
-            anchorName: "主播",
-            phone: "手机号码",
-            aaa4: "消费类型",
-            price: "支付金额",
-            payType: "支付方式",
-            paySource: "消费来源",
-            createDate: "创建时间",
+            title: "商品图片",
+            anchorName: "商品名称",
+            phone: "商品价格",
+            aaa4: "销售价格",
+            price: "商品类型",
+            payType: "是否免费",
+            paySource: "更新时间",
+            createDate: "上架状态",
           };
           break;
         case 6:
           this.diaTableTitle = {
-            aaa1: "分享类型",
-            aaa2: "页面路由",
-            aaa3: "创建时间",
-            aaa4: "分享状态",
-            aaa5: "成功事件",
-            aaa6: "被分享人",
-            aaa7: "手机号码",
+            avatarUrl: "主播头像",
+            anchorName: "主播昵称",
+            phone: "手机号码",
+            createDate: "更新时间",
+            delFlg: "上架状态",
           };
           break;
 
@@ -569,47 +662,49 @@ export default {
           break;
         case 3:
           data = {
-            // limit: this.limit_dia,
-            // page: this.page_dia,
-            // weixinUserId: this.userId,
-            // phone: this.diaSearchForm.phone,
-            // anchorName: this.diaSearchForm.anchorName,
-            // title: this.diaSearchForm.title,
+            limit: this.limit_dia,
+            page: this.page_dia,
+            anchorId: this.userId,
+            phone: this.diaSearchForm.phone,
+            userName: this.diaSearchForm.userName,
           };
-          url = "";
+          url =
+            "/sys/manage/weixinUser/anchor/attention/anchorAttentionWeixinUserInfoPage";
           break;
         case 4:
           data = {
             limit: this.limit_dia,
             page: this.page_dia,
-            weixinUserId: this.userId,
+            anchorId: this.userId,
             phone: this.diaSearchForm.phone,
-            anchorName: this.diaSearchForm.anchorName,
-            title: this.diaSearchForm.title,
+            userName: this.diaSearchForm.userName,
+            userType: this.diaSearchForm.userType,
+            delFlg: this.diaSearchForm.delFlg,
           };
-          url = "/sys/manage/weixinUser/anchor/fans/anchorFansInfoPage";
+          url =
+            "/sys/manage/weixinUser/anchor/fans/achorFansWeixinUserInfoPage";
           break;
         case 5:
-          data = {
-            limit: this.limit_dia,
-            page: this.page_dia,
-            weixinUserId: this.userId,
-            phone: this.diaSearchForm.phone,
-            anchorName: this.diaSearchForm.anchorName,
-            title: this.diaSearchForm.title,
-          };
-          url = "/sys/user/consumption/selectUserJoinFansPage";
+          // data = {
+          //   limit: this.limit_dia,
+          //   page: this.page_dia,
+          //   anchorId: this.userId,
+          //   phone: this.diaSearchForm.phone,
+          //   anchorName: this.diaSearchForm.anchorName,
+          //   delFlg: this.diaSearchForm.delFlg,
+          // };
+          // url = "/sys/manage/anchor/recommend/listWithAnchorId";
           break;
         case 6:
-          data = {
-            // limit: this.limit_dia,
-            // page: this.page_dia,
-            // weixinUserId: this.userId,
-            // phone: this.diaSearchForm.phone,
-            // anchorName: this.diaSearchForm.anchorName,
-            // title: this.diaSearchForm.title,
+              data = {
+            limit: this.limit_dia,
+            page: this.page_dia,
+            anchorId: this.userId,
+            phone: this.diaSearchForm.phone,
+            anchorName: this.diaSearchForm.anchorName,
+            delFlg: this.diaSearchForm.delFlg,
           };
-          url = "";
+          url = "/sys/manage/anchor/recommend/listWithAnchorId";
           break;
 
         default:
