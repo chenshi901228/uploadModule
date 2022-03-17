@@ -21,20 +21,31 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="开播时间">
-          <el-input
+          <el-date-picker
             v-model="dataForm.startDate"
-            placeholder="请输入"
-          ></el-input>
+            type="datetime"
+            placeholder="选择日期时间"
+            :formatter="dateFormat"
+            :editable="false"
+          >
+          </el-date-picker>
         </el-form-item>
         <el-form-item label="结束时间">
-          <el-input v-model="dataForm.endDate" placeholder="请输入"></el-input>
+          <el-date-picker
+            v-model="dataForm.endDate"
+            type="datetime"
+            placeholder="选择日期时间"
+            :formatter="dateFormat"
+            :editable="false"
+          >
+          </el-date-picker>
         </el-form-item>
-        <el-form-item label="投放人群">
+        <!-- <el-form-item label="投放人群">
           <el-input
             v-model="dataForm.userGroup"
             placeholder="请输入"
           ></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="是否录制">
           <el-select v-model="dataForm.transcribeFlg" placeholder="是否录制">
             <el-option label="未录制" value="0"></el-option>
@@ -64,33 +75,39 @@
         <el-form-item>
           <el-button @click="getDataList()">{{ $t("query") }}</el-button>
         </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="addPreview()">添加预告</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="exportT()">导出</el-button>
+        </el-form-item>
       </el-form>
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
         border
-        @selection-change="dataListSelectionChangeHandle()"
+        @selection-change="dataListSelectionChangeHandle"
         style="width: 100%"
+        :height="siteContentViewHeight"
       >
         <el-table-column
           type="selection"
           header-align="center"
           align="center"
           width="50"
+          fixed="left"
+          :height="siteContentViewHeight"
         ></el-table-column>
-
         <el-table-column
-          header-align="center"
+          width="150"
+          label="封面图"
+          prop="frontCoverUrl"
           align="center"
-          v-for="item in tableItem"
-          :key="item.prop"
-          :prop="item.prop"
-          :label="item.label"
-          show-overflow-tooltip
         >
           <template slot-scope="{ row }">
-            <div v-if="item.prop == 'frontCoverUrl'">
+            <div>
               <img
+                style="width: '100%'; height: '100%'"
                 class="frontCoverImg"
                 :src="
                   row.frontCoverUrl || 'https://picsum.photos/400/300?random=1'
@@ -98,14 +115,160 @@
                 alt=""
               />
             </div>
-            <div v-else-if="item.prop == 'showMode'">
-              {{ row.showMode ? "横屏" : "竖屏" }}
-            </div>
-            <div v-else>
-              {{ row[item.prop] }}
-            </div>
           </template>
-          <template> </template>
+        </el-table-column>
+        <el-table-column
+          width="120"
+          label="直播主题"
+          prop="liveTheme"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          width="100%"
+          label="主播"
+          prop="anchorUser"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          width="120"
+          label="手机号码"
+          prop="anchorTel"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          width="150"
+          label="开播时间"
+          prop="startDate"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          width="150"
+          label="结束时间"
+          prop="endDate"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          width="100%"
+          label="预计直播时长"
+          prop="estimateLiveTime"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          width="100%"
+          label="实际直播时长"
+          prop="liveTime"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.liveTime || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          width="100%"
+          label="预约人数"
+          prop="appointmentNum"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          width="100%"
+          label="新增用户"
+          prop="addUserNum"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          width="100%"
+          label="预约状态"
+          prop="appointmentState"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{
+              scope.row.appointmentState === 0 ? "已结束" : "预约中"
+            }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          width="100%"
+          label="直播状态"
+          prop="liveState"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{
+              scope.row.liveState === 0
+                ? "已下播"
+                : scope.row.liveState === 1
+                ? "直播中"
+                : scope.row.liveState === 2
+                ? "已禁播"
+                : "未开播"
+            }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          width="100%"
+          label="显示状态"
+          prop="showState"
+          align="center"
+        >
+          <template slot-scope="scope" align="center">
+            <span>{{ scope.row.showState === 0 ? "隐藏" : "显示" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          width="100%"
+          label="直播间ID"
+          prop="livingRoomId"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.livingRoomId || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column width="100%" label="备注" prop="remark" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.remark || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          width="160"
+          label="创建时间"
+          prop="createDate"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          width="120"
+          label="操作"
+          fixed="right"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <el-button size="mini" @click="createRoom(scope.$index, scope.row)"
+              >创建直播</el-button
+            >
+            <el-button size="mini" @click="showThis(scope.$index, scope.row)"
+              >隐藏</el-button
+            >
+            <el-button size="mini" @click="handle(scope.$index, scope.row)"
+              >编辑</el-button
+            >
+            <el-button
+              size="mini"
+              type="danger"
+              @click="handleDelete(scope.$index, scope.row)"
+              >删除</el-button
+            >
+          </template>
         </el-table-column>
       </el-table>
       <el-pagination
@@ -123,7 +286,9 @@
 </template>
 
 <script>
+import mixinTableModule from "@/mixins/table-module";
 export default {
+  mixins: [mixinTableModule],
   components: {},
   data() {
     return {
@@ -133,7 +298,7 @@ export default {
         anchorUser: "",
         startDate: "",
         endDate: "",
-        userGroup: "",
+        // userGroup: "",
         transcribeFlg: "",
         livingRoomId: "",
         liveState: "",
@@ -144,27 +309,6 @@ export default {
       total: 0, // 总条数
       dataList: [], // 数据列表
       dataListSelections: [], // 数据列表，多选项
-
-      tableItem: [
-        { prop: "frontCoverUrl", label: "封面图" },
-        { prop: "liveTheme", label: "直播主题" },
-        { prop: "anchorUser", label: "主播" },
-        { prop: "anchorTel", label: "手机号码" },
-        { prop: "anchorUser", label: "开播时间" },
-        { prop: "startDate", label: "结束时间" },
-        { prop: "estimateLiveTime", label: "预计直播时长" },
-        { prop: "liveTime", label: "实际直播时长" },
-        { prop: "liveTime", label: "投放人群" },
-        { prop: "appointmentNum", label: "预约人数" },
-        { prop: "addUserNum", label: "新增用户" },
-        { prop: "appointmentState", label: "预约状态" },
-        { prop: "liveState", label: "直播状态" },
-        { prop: "showState", label: "显示状态" },
-        { prop: "startDate", label: "直播间ID" },
-        { prop: "remark", label: "备注" },
-        { prop: "createDate", label: "创建时间" },
-        // { prop: "beginDate", label: "操作" },
-      ],
     };
   },
   watch: {},
@@ -177,12 +321,32 @@ export default {
   methods: {
     query() {
       this.dataListLoading = true;
+      let dataObj = {};
+
+      for (const key in this.dataForm) {
+        if (this.dataForm[key].length !== 0) {
+          dataObj[key] = this.dataForm[key];
+        }
+      }
+
+      if (this.dataForm.startDate) {
+        dataObj.startDate = this.dateFormat(this.dataForm.startDate);
+      } else if (this.dataForm.endDate) {
+        dataObj.endDate = this.dateFormat(this.dataForm.endDate);
+      } else if (this.dataForm.liveState) {
+        dataObj.liveState = Number(this.dataForm.liveState);
+      } else if (this.dataForm.showState) {
+        dataObj.showState = Number(this.dataForm.showState);
+      } else if (this.dataForm.transcribeFlg) {
+        dataObj.transcribeFlg = Number(this.dataForm.transcribeFlg);
+      }
+
       this.$http
         .get("/sys/livePreview/page", {
           params: {
             page: this.page,
             limit: this.limit,
-            // ...this.dataForm,
+            ...dataObj,
           },
         })
         .then(({ data: res }) => {
@@ -201,7 +365,52 @@ export default {
           throw err;
         });
     },
-
+    //创建直播
+    createRoom(index, row) {
+      console.log(index, row);
+    },
+    //显示与隐藏
+    showThis(index, row) {
+      console.log(index, row);
+    },
+    //编辑
+    handle(index, row) {
+      console.log(index, row);
+    },
+    //删除
+    handleDelete(index, row) {
+      console.log(index, row);
+    },
+    // 时间格式化
+    dateFormat(time) {
+      var t = new Date(time);
+      if (!t) {
+        return "";
+      }
+      let year = t.getFullYear();
+      let month = this.dateIfAddZero(t.getMonth() + 1);
+      let day = this.dateIfAddZero(t.getDate());
+      let hours = this.dateIfAddZero(t.getHours());
+      let minutes = this.dateIfAddZero(t.getMinutes());
+      let seconds = this.dateIfAddZero(t.getSeconds());
+      return (
+        year +
+        "-" +
+        month +
+        "-" +
+        day +
+        " " +
+        hours +
+        ":" +
+        minutes +
+        ":" +
+        seconds
+      );
+    },
+    //补零
+    dateIfAddZero: function (time) {
+      return time < 10 ? "0" + time : time;
+    },
     getDataList() {
       this.page = 1;
       this.query();
@@ -220,7 +429,59 @@ export default {
     },
     // 多选
     dataListSelectionChangeHandle(val) {
+      console.log(val)
       this.dataListSelections = val;
+    },
+    //添加预告
+    addPreview() {
+      this.$router.push({
+        path: "/preview-createPreview-CreatePreview.vue",
+      });
+    },
+    //导出
+    exportT() {
+      let dataObj = {};
+
+      for (const key in this.dataForm) {
+        if (this.dataForm[key].length !== 0) {
+          dataObj[key] = this.dataForm[key];
+        }
+      }
+
+      if (this.dataForm.startDate) {
+        dataObj.startDate = this.dateFormat(this.dataForm.startDate);
+      } else if (this.dataForm.endDate) {
+        dataObj.endDate = this.dateFormat(this.dataForm.endDate);
+      } else if (this.dataForm.liveState) {
+        dataObj.liveState = Number(this.dataForm.liveState);
+      } else if (this.dataForm.showState) {
+        dataObj.showState = Number(this.dataForm.showState);
+      } else if (this.dataForm.transcribeFlg) {
+        dataObj.transcribeFlg = Number(this.dataForm.transcribeFlg);
+      }
+
+      this.$http
+        .get("/sys/livePreview/export", {
+          params: {
+            ...dataObj,
+          },
+        })
+        .then(({ data: res }) => {
+          // if (res.code !== 0) {
+          //   return this.$message.error(res.msg)
+          // }
+          // this.$message({
+          //   message: this.$t('prompt.success'),
+          //   type: 'success',
+          //   duration: 500,
+          //   onClose: () => {
+          //     this.visible = false
+          //     this.$emit('refreshDataList')
+          //   }
+          // })
+          console.log(res);
+        })
+        .catch(() => {});
     },
   },
 };
