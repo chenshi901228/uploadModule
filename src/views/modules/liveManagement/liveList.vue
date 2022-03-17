@@ -12,7 +12,7 @@
                 @keyup.enter.native="getDataList"
             >
                 <el-row>
-                    <el-col :span="12">
+                    <el-col :span="6">
                         <el-form-item
                             label="直播主题"
                             prop="liveTheme"
@@ -25,6 +25,8 @@
                             >
                             </el-input>
                         </el-form-item>
+                    </el-col>
+                    <el-col :span="6">
                         <el-form-item
                             label="主播"
                             prop="anchorUser"
@@ -40,7 +42,7 @@
                     </el-col>
                     <el-col :span="12">
                         <el-form-item style="float:right; padding-right:10px">
-                            <el-button size="small" type="info">{{ $t("export") }}</el-button>
+                            <el-button size="small" type="primary" @click="exportHandle">{{ $t("export") }}</el-button>
                             <el-button size="small" type="primary" @click="getDataList">{{ $t("query") }}</el-button>
                             <el-button size="small" @click="resetDataForm">{{ $t("reset") }}</el-button>
                             <el-button 
@@ -101,7 +103,7 @@
                                 label="是否录制"
                                 prop="transcribeFlg"
                             >
-                                <el-select size="small" v-model="dataForm.transcribeFlg" placeholder="请选择">
+                                <el-select clearable size="small" v-model="dataForm.transcribeFlg" placeholder="请选择">
                                     <el-option label="是" :value="1"></el-option>
                                     <el-option label="否" :value="0"></el-option>
                                 </el-select>
@@ -124,7 +126,7 @@
                                 label="直播状态"
                                 prop="liveState"
                             >
-                                <el-select size="small" v-model="dataForm.liveState" placeholder="请选择">
+                                <el-select clearable size="small" v-model="dataForm.liveState" placeholder="请选择">
                                     <el-option label="直播中" :value="1"></el-option>
                                     <el-option label="已下播" :value="0"></el-option>
                                     <el-option label="已禁播" :value="2"></el-option>
@@ -136,7 +138,7 @@
                                 label="显示状态"
                                 prop="showState"
                             >
-                                <el-select size="small" v-model="dataForm.showState" placeholder="请选择">
+                                <el-select clearable size="small" v-model="dataForm.showState" placeholder="请选择">
                                     <el-option label="显示" :value="1"></el-option>
                                     <el-option label="隐藏" :value="0"></el-option>
                                 </el-select>
@@ -245,27 +247,25 @@
 </template>
 
 <script>
-import mixinTableHeight from '@/mixins/tableHeight'
+import mixinTableModule from '@/mixins/table-module'
 export default {
-    mixins: [ mixinTableHeight ],
-    components: {},     
+    mixins: [ mixinTableModule ],
     data() {
         return {
-            dataListLoading: false, // 数据列表，loading状态
+            mixinTableModuleOptions: {
+                getDataListURL: "/sys/liveList/page", // 数据列表接口，API地址
+                exportURL: "/sys/liveList/export", // 导出接口，API地址
+            },
             dataForm: {
                 liveTheme: "",
                 anchorUser: "",
-                beginDate: "",
+                startDate: "",
                 endDate: "",
                 transcribeFlg: null,
                 liveState: null,
                 showState: null
             },
-            page: 1, // 当前页码
-            limit: 10, // 每页数
-            total: 0, // 总条数
-            dataList: [], // 数据列表
-            dataListSelections: [], // 数据列表，多选项
+
 
             tableItem: [
                 { prop: "frontCoverUrl", label: "封面图" },
@@ -304,34 +304,6 @@ export default {
         this.query()
     },
     methods: {
-        query() {
-            this.dataListLoading = true;
-            this.$http.get("/sys/liveList/page", {
-                params: {
-                    page: this.page,
-                    limit: this.limit,
-                    ...this.$httpParams(this.dataForm),
-                },
-            }).then(({ data: res }) => {
-                this.dataListLoading = false;
-                if (res.code !== 0) {
-                    this.dataList = [];
-                    this.total = 0;
-                    return this.$message.error(res.msg);
-                }
-                this.dataList = res.data.list;
-                this.total = res.data.total;
-            }).catch((err) => {
-                this.dataListLoading = false;
-                throw err
-            });
-        },
-
-        getDataList() {
-            this.page = 1
-            this.query()
-        },
-
         // 禁播
         banLiveHandle(id) {
             if(!id) return
@@ -360,29 +332,6 @@ export default {
                 throw err
             })
         },
-
-        
-        resetDataForm() {
-            this.$refs.dataForm.resetFields()
-            this.getDataList()
-        },
-        // 分页, 每页条数
-        pageSizeChangeHandle(val) {
-            this.page = 1
-            this.limit = val
-            this.query()
-        },
-        // 分页, 当前页
-        pageCurrentChangeHandle(val) {
-            this.page = val
-            this.query()
-        },
-        // 多选
-        dataListSelectionChangeHandle (val) {
-            console.log(val)
-            this.dataListSelections = val
-        },
-
     },
 };
 </script>
