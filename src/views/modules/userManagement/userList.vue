@@ -2,16 +2,36 @@
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-pay__order">
       <el-form
+        class="headerTool"
         :inline="true"
         :model="dataForm"
+        ref="dataForm"
         @keyup.enter.native="getDataList()"
       >
-        <el-form-item label="用户昵称">
-          <el-input v-model="dataForm.nickName" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="手机号码">
-          <el-input v-model="dataForm.phone" clearable></el-input>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="用户昵称" prop="nickName">
+              <el-input size="small" v-model="dataForm.nickName" clearable></el-input>
+            </el-form-item>
+            <el-form-item label="手机号码" prop="phone">
+              <el-input size="small" v-model="dataForm.phone" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item style="float:right; padding-right:10px">
+              <el-button size="small" type="danger" @click="forbiddenAll()">禁用</el-button>
+              <el-button size="small" type="primary" @click="getDataList()">{{ $t("query") }}</el-button>
+              <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
+              <el-button 
+                  size="small" 
+                  type="primary"
+                  @click="open"
+              >
+                  {{ isOpen ? "收起" : "展开"}}<i style="margin-left:10px" :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              </el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
         <!-- <el-form-item label="是否认证">
           <el-select v-model="dataForm.status">
             <el-option value="1" label="是"></el-option>
@@ -24,28 +44,35 @@
             <el-option value="0" label="否"></el-option>
           </el-select>
         </el-form-item> -->
-        <el-form-item label="邀请人">
-          <el-input v-model="dataForm.userId" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="邀请人号码">
-          <el-input v-model="dataForm.userId" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="dataForm.delFlg" clearable>
-            <el-option value="1" label="禁用"></el-option>
-            <el-option value="0" label="正常"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="getDataList()">{{ $t("query") }}</el-button>
-        </el-form-item>
+        <div v-if="isOpen">
+          <el-row>
+            <el-col :span="6">
+              <el-form-item label="邀请人" prop="userId">
+                <el-input size="small" v-model="dataForm.userId" clearable></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="邀请人号码" prop="userId">
+                <el-input size="small" v-model="dataForm.userId" clearable></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="状态" prop="delFlg">
+                <el-select size="small" v-model="dataForm.delFlg" clearable>
+                  <el-option value="1" label="禁用"></el-option>
+                  <el-option value="0" label="正常"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
       </el-form>
-      <div class="forbiddenAllBtn" @click="forbiddenAll()">禁用</div>
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
         border
         @selection-change="dataListSelectionChangeHandle"
+        :height="siteContentViewHeight"
         style="width: 100%"
       >
         <el-table-column
@@ -160,7 +187,7 @@
       >
       </el-pagination>
       <!-- 弹窗, 详情-->
-      <el-dialog title="用户详情" :visible.sync="dialogVisible" width="90%">
+      <el-dialog title="用户详情" top="20px" :visible.sync="dialogVisible" width="90%">
         <div class="diaBox">
           <div class="diaBoxLeft">
             <div class="diaBoxLeft_title">基本信息</div>
@@ -423,10 +450,44 @@ export default {
       page_dia: 1, // 当前页码
       limit_dia: 10, // 每页数
       total_dia: 0,
+      otherViewHeight: 0, //搜索栏高度
+      isOpen: false //搜索栏展开/收起
     };
   },
   components: { Template },
+  computed: {
+    documentClientHeight: {
+      get() {
+          return this.$store.state.documentClientHeight;
+      },
+    },
+    siteContentViewHeight() {
+      var height = this.documentClientHeight - this.otherViewHeight - ( 50 + 40 + 30 + 40 + 47 );
+      return height;
+    },
+  },
+  watch: {
+    isOpen() {
+        this.setOtherViewHeight()
+    }
+  },
+  activated() {
+    this.setOtherViewHeight()
+  },
   methods: {
+    // 搜索栏高度设置
+    setOtherViewHeight() {
+      setTimeout(() => {
+          if(document.querySelector(".headerTool")) {
+              let h = document.querySelector(".headerTool").getBoundingClientRect().height
+              this.otherViewHeight = Math.ceil(h)
+          }
+      },150)
+    },
+    // 搜索栏收起/展开
+    open() {
+      this.isOpen = !this.isOpen
+    },
     // 打开用户详情弹窗
     openDetail(data) {
       this.dialogVisible = true;
@@ -629,6 +690,12 @@ export default {
           this.total_dia = res.data.total;
         })
         .catch(() => {});
+    },
+
+    // 重置搜索条件
+    resetDataForm() {
+      this.$refs.dataForm.resetFields()
+      this.getDataList()
     },
     // 分页, 每页条数
     pageSizeChangeHandle_dia(val) {
