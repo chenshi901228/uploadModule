@@ -1,5 +1,5 @@
 
-//   直播管理-直播列表
+<!-- 直播管理-直播列表 -->
 
 <template>
     <el-card shadow="never" class="aui-card--fill">
@@ -44,17 +44,29 @@
                     show-overflow-tooltip
                 >
                     <template slot-scope="{ row }">
-                        <span v-if="item.prop == 'frontCoverUrl'">
+                        <div v-if="item.prop == 'frontCoverUrl'">
                             <img class="frontCoverImg" :src="row.frontCoverUrl || 'https://picsum.photos/400/300?random=1'" alt="">
-                        </span>
+                        </div>
                         <span v-else-if="item.prop == 'showMode'">
                             {{row.showMode ? "横屏" : "竖屏"}}
+                        </span>
+                        <span v-else-if="item.prop == 'transcribeFlg'">
+                            {{row.transcribeFlg ? "是" : "否"}}
+                        </span>
+                        <span v-else-if="item.prop == 'liveState'">
+                            {{row.liveState == 1 ? "直播中" : row.liveState == 0 ? "已下播" : "已禁播"}}
+                        </span>
+                        <span v-else-if="item.prop == 'showState'">
+                            {{row.liveState ? "显示" : "隐藏"}}
                         </span>
                         <span v-else>
                             {{ row[item.prop] || "-" }}
                         </span>
                     </template>
-                    <template>
+                </el-table-column>
+                <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center">
+                    <template slot-scope="{ row }">
+                        <el-button v-if="row.liveState == 1" type="text" size="small" @click="banLive(row.id)">禁播</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -97,9 +109,20 @@ export default {
                 { prop: "beginDate", label: "开播时间", width: 180 },
                 { prop: "endDate", label: "结束时间", width: 180 },
                 { prop: "liveTime", label: "直播时长（分）" },
-                { prop: "cumulativeNum", label: "投放人群" },
+                // { prop: "cumulativeNum", label: "投放人群" },
+                { prop: "audienceNum", label: "观众总数" },
+                { prop: "maxOnlineNum", label: "最高同时在线" },
+                { prop: "giveLikeNum", label: "点赞次数" },
+                // { prop: "giveLikeNum", label: "互动次数" },
+                { prop: "shareNum", label: "分享次数" },
+                { prop: "addUserNum", label: "新增用户" },
+                { prop: "transcribeFlg", label: "是否录制" },
+                { prop: "liveState", label: "直播状态" },
+                { prop: "showState", label: "显示状态" },
+                { prop: "livingRoomId", label: "直播间ID", width: 180 },
+                { prop: "remark", label: "备注" },
+                { prop: "createDate", label: "创建时间", width: 180 },
             ],
-            otherViewHeight: 64
         };
     },
     created () {
@@ -118,7 +141,6 @@ export default {
                     ...this.dataForm,
                 },
             }).then(({ data: res }) => {
-                console.log(res.data.list)
                 this.dataListLoading = false;
                 if (res.code !== 0) {
                     this.dataList = [];
@@ -137,6 +159,12 @@ export default {
             this.page = 1
             this.query()
         },
+
+        // 禁播
+        banLive(id) {
+            
+        },
+
 
         // 分页, 每页条数
         pageSizeChangeHandle(val) {
