@@ -58,13 +58,14 @@
                         <el-col :span="6">
                             <el-form-item
                                 label="开播时间"
-                                prop="beginDate"
+                                prop="startDate"
                             >
                                 <el-date-picker
                                     size="small"
-                                    v-model="dataForm.beginDate"
+                                    v-model="dataForm.startDate"
                                     type="datetime"
-                                    value-format="yyyy-MM-dd hh:mm:ss"
+                                    format="yyyy-MM-dd hh:mm"
+                                    value-format="yyyy-MM-dd hh:mm"
                                     placeholder="请选择开播时间">
                                 </el-date-picker>
                             </el-form-item>
@@ -78,7 +79,8 @@
                                     size="small"
                                     v-model="dataForm.endDate"
                                     type="datetime"
-                                    value-format="yyyy-MM-dd hh:mm:ss"
+                                    format="yyyy-MM-dd hh:mm"
+                                    value-format="yyyy-MM-dd hh:mm"
                                     placeholder="请选择结束时间">
                                 </el-date-picker>
                             </el-form-item>
@@ -168,6 +170,7 @@
                     :label="item.label"
                     :width="item.width || 120"
                     show-overflow-tooltip
+                    :sortable="['transcribeFlg', 'liveState', 'showState'].includes(item.prop)"
                 >
                     <template slot-scope="{ row }">
                         <div v-if="item.prop == 'frontCoverUrl'">
@@ -261,7 +264,7 @@ export default {
                 { prop: "liveTheme", label: "直播主题" },
                 { prop: "anchorUser", label: "主播" },
                 { prop: "anchorTel", label: "手机号码" },
-                { prop: "beginDate", label: "开播时间", width: 180 },
+                { prop: "startDate", label: "开播时间", width: 180 },
                 { prop: "endDate", label: "结束时间", width: 180 },
                 { prop: "liveTime", label: "直播时长（分）" },
                 // { prop: "cumulativeNum", label: "投放人群" },

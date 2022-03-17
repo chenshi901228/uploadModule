@@ -103,7 +103,7 @@ export function treeDataTranslate (data, id = 'id', pid = 'pid') {
  */
 export function httpParams(obj) {
   for(let i in obj){
-    if(obj[i] == null || obj[i] == ""){
+    if(obj[i] == null || ( obj[i] == "" && Object.prototype.toString.call(obj[i]) != "[object Number]" )){
       delete obj[i]
     }
   }
