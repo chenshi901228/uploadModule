@@ -14,7 +14,7 @@ import renProcessRunning from '@/components/ren-process-running'
 import renProcessDetail from '@/components/ren-process-detail'
 import renDeptTree from '@/components/ren-dept-tree'
 import renRegionTree from '@/components/ren-region-tree'
-import { hasPermission, getDictLabel, handleParams } from '@/utils'
+import { hasPermission, getDictLabel, httpParams } from '@/utils'
 import cloneDeep from 'lodash/cloneDeep'
 
 import Tinymce from '@/components/tinymce/index.vue'
@@ -47,7 +47,7 @@ Vue.use(renProcessDetail)
 Vue.prototype.$http = http
 Vue.prototype.$hasPermission = hasPermission
 Vue.prototype.$getDictLabel = getDictLabel
-Vue.prototype.$handleParams = handleParams
+Vue.prototype.$httpParams = httpParams
 
 // 保存整站vuex本地储存初始状态
 window.SITE_CONFIG['storeState'] = cloneDeep(store.state)

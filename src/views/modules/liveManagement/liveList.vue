@@ -64,7 +64,7 @@
                                     size="small"
                                     v-model="dataForm.beginDate"
                                     type="datetime"
-                                    value-format="yyyy-MM-dd hh:mm"
+                                    value-format="yyyy-MM-dd hh:mm:ss"
                                     placeholder="请选择开播时间">
                                 </el-date-picker>
                             </el-form-item>
@@ -78,7 +78,7 @@
                                     size="small"
                                     v-model="dataForm.endDate"
                                     type="datetime"
-                                    value-format="yyyy-MM-dd hh:mm"
+                                    value-format="yyyy-MM-dd hh:mm:ss"
                                     placeholder="请选择结束时间">
                                 </el-date-picker>
                             </el-form-item>
@@ -222,8 +222,8 @@
                     </el-input>
                 </div>
                 <span slot="footer" class="dialog-footer">
-                    <el-button @click="banLiveVisible = false">取 消</el-button>
-                    <el-button :disabled="confirmLoading" :loading="confirmLoading" type="primary" @click="banLiveConfirm">确 定</el-button>
+                    <el-button size="small" @click="banLiveVisible = false">取 消</el-button>
+                    <el-button size="small" :disabled="confirmLoading" :loading="confirmLoading" type="primary" @click="banLiveConfirm">确 定</el-button>
                 </span>
             </el-dialog>
 
@@ -297,7 +297,7 @@ export default {
                 params: {
                     page: this.page,
                     limit: this.limit,
-                    ...this.$handleParams(this.dataForm),
+                    ...this.$httpParams(this.dataForm),
                 },
             }).then(({ data: res }) => {
                 this.dataListLoading = false;

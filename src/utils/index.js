@@ -101,7 +101,7 @@ export function treeDataTranslate (data, id = 'id', pid = 'pid') {
  * 请求参数处理,去掉空和null
  * 
  */
-export function handleParams(obj) {
+export function httpParams(obj) {
   for(let i in obj){
     if(obj[i] == null || obj[i] == ""){
       delete obj[i]
