@@ -173,23 +173,33 @@
                     :sortable="['transcribeFlg', 'liveState', 'showState'].includes(item.prop)"
                 >
                     <template slot-scope="{ row }">
+                        <!-- 封面图 -->
                         <div v-if="item.prop == 'frontCoverUrl'">
                             <img class="frontCoverImg" :src="row.frontCoverUrl || 'https://picsum.photos/400/300?random=1'" alt="">
                         </div>
+                        <!-- 显示方式 -->
                         <span v-else-if="item.prop == 'showMode'">
                             {{row.showMode ? "横屏" : "竖屏"}}
                         </span>
+                        <!-- 是否录制 -->
                         <span v-else-if="item.prop == 'transcribeFlg'">
                             {{row.transcribeFlg ? "是" : "否"}}
                         </span>
+                        <!-- 直播状态 -->
                         <span v-else-if="item.prop == 'liveState'">
                             {{row.liveState == 1 ? "直播中" : row.liveState == 0 ? "已下播" : "已禁播"}}
                         </span>
+                        <!-- 显示状态 -->
                         <span v-else-if="item.prop == 'showState'">
                             {{row.liveState ? "显示" : "隐藏"}}
                         </span>
+                        <!-- 直播间ID -->
                         <span v-else-if="item.prop == 'livingRoomId'" style="color: #409EFF; text-decoration: underline;">
                             {{row[item.prop]}}
+                        </span>
+                        <!-- 直播时长 -->
+                        <span v-else-if="item.prop == 'liveTime'">
+                            {{row.liveTime ? row.liveTime + "分钟" : "-"}}
                         </span>
                         <span v-else>
                             {{ row[item.prop] || "-" }}
