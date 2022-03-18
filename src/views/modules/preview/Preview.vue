@@ -397,10 +397,10 @@ export default {
     },
     //编辑
     handle(index, row) {
-      window.sessionStorage.setItem("dataForm",JSON.stringify(row))
+      window.sessionStorage.setItem("dataForm", JSON.stringify(row));
       this.$router.push({
-        path:"/preview-editePreview-EditePreview"
-      })
+        path: "/preview-editePreview-EditePreview",
+      });
     },
     //删除
     handleDelete(index, row) {
@@ -518,8 +518,9 @@ export default {
           params: {
             ...dataObj,
           },
+          responseType: "blob",
         })
-        .then(({ data: res }) => {
+        .then((res) => {
           // if (res.code !== 0) {
           //   return this.$message.error(res.msg)
           // }
@@ -532,6 +533,16 @@ export default {
           //     this.$emit('refreshDataList')
           //   }
           // })
+          const link = document.createElement("a");
+          let blob = new Blob([res.data], { type: "application/vnd.ms-excel" });
+          link.style.display = "none";
+          link.href = URL.createObjectURL(blob);
+
+          // link.download = res.headers['content-disposition'] //下载后文件名
+          link.download = "直播预告列表"; //下载的文件名
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
           console.log(res);
         })
         .catch(() => {});
