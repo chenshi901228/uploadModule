@@ -74,6 +74,7 @@
         @selection-change="dataListSelectionChangeHandle"
         :height="siteContentViewHeight"
         style="width: 100%"
+        ref="table"
       >
         <el-table-column
           type="selection"
@@ -473,6 +474,9 @@ export default {
   },
   activated() {
     this.setOtherViewHeight()
+    this.$nextTick(()=>{
+      this.$refs.table.doLayout()
+    })
   },
   methods: {
     // 搜索栏高度设置
