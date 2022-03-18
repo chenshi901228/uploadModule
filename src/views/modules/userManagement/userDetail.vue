@@ -138,7 +138,7 @@
               :data="diaDataList"
               border
               style="width: 100%"
-              height="calc(calc(100vh - 345px) - 2px)"
+              height="calc(calc(100vh - 380px) - 2px)"
             >
               <template v-for="(label, prop) in diaTableTitle">
                 <el-table-column
@@ -462,7 +462,7 @@ export default {
 
 <style lang="scss" scoped>
 .diaBox {
-  height: calc(calc(100vh - 50px - 38px - 30px) - 2px);
+  height: calc(calc(100vh - 50px - 38px - 66px) - 2px);
   position: relative;
   background: #fff;
 }
