@@ -21,7 +21,7 @@ export const pageRoutes = [
       next()
     }
   },
-  { path: '/login', component: () => import('@/views/pages/login'), name: 'login', meta: { title: '登录' } }
+  { path: '/login', component: () => import('@/views/pages/login'), name: 'login', meta: { title: '登录' } },
 ]
 
 // 模块路由(基于主入口布局页面)
@@ -33,7 +33,11 @@ export const moduleRoutes = {
   meta: { title: '主入口布局' },
   children: [
     { path: '/home', component: () => import('@/views/modules/home'), name: 'home', meta: { title: '首页', isTab: true } },
+    
     { path: '/iframe', component: null, name: 'iframe', meta: { title: 'iframe', isTab: true } },
+    { path: '/userManagement-userDetail', component: () => import('@/views/modules/userManagement/userDetail'), name: 'userManagement-userDetail', meta: { title: '用户详情' } },
+    { path: '/userManagement-hostDetail', component: () => import('@/views/modules/userManagement/hostDetail'), name: 'userManagement-hostDetail', meta: { title: '主播详情' } }
+
   ]
 }
 
@@ -60,7 +64,8 @@ export function addDynamicRoute (routeParams, router) {
       ...moduleRoutes,
       name: `main-dynamic__${dynamicRoute.name}`,
       children: [dynamicRoute]
-    }
+    },
+    
   ])
   window.SITE_CONFIG['dynamicRoutes'].push(dynamicRoute)
   router.push({ name: dynamicRoute.name, params: routeParams.params })
@@ -163,7 +168,8 @@ function fnAddDynamicMenuRoutes (menuList = [], routes = []) {
       name: 'main-dynamic-menu',
       children: routes
     },
-    { path: '*', redirect: { name: '404' } }
+    { path: '*', redirect: { name: '404' } },
+    
   ])
   window.SITE_CONFIG['dynamicMenuRoutes'] = routes
   window.SITE_CONFIG['dynamicMenuRoutesHasAdded'] = true

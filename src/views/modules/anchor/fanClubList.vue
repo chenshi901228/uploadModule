@@ -9,17 +9,17 @@
         <el-form-item label="粉丝团名称">
           <el-input
             v-model="dataForm.title"
-            placeholder="粉丝团名称"
+            placeholder="粉丝团名称" clearable
           ></el-input>
         </el-form-item>
         <el-form-item label="主播昵称">
           <el-input
-            v-model="dataForm.anchorName"
-            placeholder="主播昵称"
+            v-model="dataForm.username"
+            placeholder="主播昵称" clearable
           ></el-input>
         </el-form-item>
         <el-form-item label="手机号码">
-          <el-input v-model="dataForm.phone" placeholder="手机号码"></el-input>
+          <el-input v-model="dataForm.phone" placeholder="手机号码" clearable></el-input>
         </el-form-item>
         <el-form-item label="状态">
           <el-select v-model="dataForm.disabledFlg" clearable>
@@ -28,13 +28,14 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button @click="getDataList()">{{ $t("query") }}</el-button>
+          <el-button type="primary" size="small" @click="getDataList()">{{ $t("query") }}</el-button>
         </el-form-item>
       </el-form>
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
         border
+        :height="siteContentViewHeight"
         @sort-change="dataListSortChangeHandle"
         style="width: 100%"
       >
@@ -45,7 +46,7 @@
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="anchorName"
+          prop="username"
           label="主播昵称"
           header-align="center"
           align="center"
@@ -91,7 +92,7 @@
             <el-button
               type="text"
               size="small"
-              @click="openfansListDIa(scope.row.id)"
+              @click="openfansListDIa(scope.row)"
               >成员列表</el-button
             >
           </template>
@@ -112,7 +113,7 @@
       <el-dialog
         title="粉丝团成员列表"
         :visible.sync="dialogVisible_fans"
-        width="60%"
+        width="1300px"
       >
         <div style="margin: 10px 0">
           <el-form
@@ -122,7 +123,7 @@
           >
             <el-form-item label="用户昵称">
               <el-input
-                v-model="dataForm_fans.nickName"
+                v-model="dataForm_fans.userName"
                 placeholder="用户昵称"
               ></el-input>
             </el-form-item>
@@ -146,14 +147,14 @@
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-button @click="queryPost_fans()">{{ $t("query") }}</el-button>
+              <el-button type="primary" size="small" @click="queryPost_fans()">{{ $t("query") }}</el-button>
             </el-form-item>
           </el-form>
         </div>
-        <div style="display:flex;margin: 10px 0">
-          <div>粉丝团名称：</div>
-          <div style="margin:0 30px">主播昵称：</div>
-          <div>成员总数：</div>
+        <div style="display:flex;margin: 10px 0 20px">
+          <div>粉丝团名称：{{detailForm.title}}</div>
+          <div style="margin:0 60px">主播昵称：{{detailForm.username}}</div>
+          <div>成员总数：{{detailForm.fansNum}}人</div>
         </div>
         <el-table :data="dataList_fans" style="width: 100%" height="400px">
           <el-table-column
@@ -171,13 +172,13 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="nickName"
+            prop="userName"
             label="用户昵称"
             header-align="center"
             align="center"
           ></el-table-column>
           <el-table-column
-            prop="nickName"
+            prop="intimacyNum"
             label="亲密度"
             header-align="center"
             align="center"
@@ -227,23 +228,29 @@ export default {
   mixins: [mixinViewModule],
   data() {
     return {
+      dataList:[{
+        aaa:1
+      }],
+      otherViewHeight:65,
       mixinViewModuleOptions: {
-        getDataListURL: "/project/page",
+        getDataListURL: "/sys/anchor/info/pageWithFans",
         getDataListIsPage: true,
-        deleteURL: "project/delete",
-        deleteIsBatch: true,
       },
+      
       dataForm: {
-        customerName: "",
-        salesName: "",
+        title: "",
+        username: "",
+        phone: "",
+        disabledFlg: "",
       },
       sendVisible: false,
 
       // 粉丝团成员列表弹窗
       dialogVisible_fans: false,
       fansId: "",
+      detailForm:{},
       dataForm_fans: {
-        nickName: "",
+        userName: "",
         phone: "",
         userType: "",
         level: "",
@@ -257,15 +264,17 @@ export default {
   components: {},
   methods: {
     // 打开粉丝团成员列表弹窗
-    openfansListDIa(id) {
+    openfansListDIa(row) {
       this.dialogVisible_fans = true;
-      this.fansId = id;
-      (this.dataForm_fans = {
-        nickName: "",
+      this.fansId = row.id;
+      this.detailForm=row
+      this.dataForm_fans = {
+        userName: "",
         phone: "",
         level: "",
         userType: "",
-      }),
+      },
+      
         this.queryPost_fans();
     },
     // 获取粉丝团成员列表数据
@@ -273,14 +282,14 @@ export default {
       let data = {
         page: this.page_fans,
         limit: this.limit_fans,
-        projectId: this.fansId,
+        anchorId: this.fansId,
         nickName: this.dataForm_fans.nickName,
         userType: this.dataForm_fans.userType,
         phone: this.dataForm_fans.phone,
         level: this.dataForm_fans.level,
       };
       this.$http
-        .get(`record/page`, { params: data })
+        .get(`/sys/manage/weixinUser/anchor/fans/achorFansWeixinUserInfoPage`, { params: data })
         .then(({ data: res }) => {
           if (res.code !== 0) {
             this.dataList_fans = [];
@@ -302,6 +311,17 @@ export default {
     pageCurrentChangeHandle_fans(val) {
       this.page_fans = val;
       this.queryPost_fans();
+    },
+  },
+   computed: {
+    documentClientHeight: {
+      get() {
+          return this.$store.state.documentClientHeight;
+      },
+    },
+    siteContentViewHeight() {
+      var height = this.documentClientHeight - this.otherViewHeight - ( 50 + 40 + 30 + 40 + 47 );
+      return height;
     },
   },
   created() {},
