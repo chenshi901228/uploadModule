@@ -35,8 +35,8 @@ export const moduleRoutes = {
     { path: '/home', component: () => import('@/views/modules/home'), name: 'home', meta: { title: '首页', isTab: true } },
     
     { path: '/iframe', component: null, name: 'iframe', meta: { title: 'iframe', isTab: true } },
-    { path: '/userManagement-userDetail', component: () => import('@/views/modules/userManagement/userDetail'), name: 'userManagement-userDetail', meta: { title: '用户详情' } },
-    { path: '/userManagement-hostDetail', component: () => import('@/views/modules/userManagement/hostDetail'), name: 'userManagement-hostDetail', meta: { title: '主播详情' } }
+    // { path: '/userManagement-userDetail', component: () => import('@/views/modules/userManagement/userDetail'), name: 'userManagement-userDetail', meta: { title: '用户详情' } },
+    // { path: '/userManagement-hostDetail', component: () => import('@/views/modules/userManagement/hostDetail'), name: 'userManagement-hostDetail', meta: { title: '主播详情' } }
 
   ]
 }
