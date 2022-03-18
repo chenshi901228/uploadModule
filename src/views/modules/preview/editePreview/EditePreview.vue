@@ -1,4 +1,4 @@
-// 添加列表
+// 编辑列表
 
 <template>
   <el-card shadow="never" class="aui-card--fill">
@@ -27,19 +27,21 @@
           <el-input v-model="ruleForm.estimateLiveTime"></el-input>
         </el-form-item>
         <el-form-item label="直播宣传图" prop="frontCoverUrl" class="img-item">
-          <div v-for="item in defaultImg" :key="item" class="img-box">
-            <el-image
-              style="width: 100px; height: 100px"
-              :src="item"
-              fit="cover"
-              @click="choosePic(item)"
-            ></el-image>
-            <img
-              v-if="item === ruleForm.frontCoverUrl"
-              class="like-img"
-              src="@/assets/img/like_red.png"
-              alt=""
-            />
+          <div v-if="fileList.length === 0" class="img-box-content">
+            <div v-for="item in defaultImg" :key="item" class="img-box">
+              <el-image
+                style="width: 100px; height: 100px"
+                :src="item"
+                fit="cover"
+                @click="choosePic(item)"
+              ></el-image>
+              <img
+                v-if="item === ruleForm.frontCoverUrl"
+                class="like-img"
+                src="@/assets/img/like_red.png"
+                alt=""
+              />
+            </div>
           </div>
           <div v-for="item in fileList" :key="item" class="img-box">
             <el-image
@@ -62,6 +64,7 @@
             />
           </div>
           <el-upload
+            v-if="fileList.length === 0"
             class="upload-demo"
             action="http://192.168.250.195:28080/oss/file/upload"
             :on-success="handleSuccess"
@@ -139,8 +142,9 @@
           </quill-editor>
         </el-form-item>
         <el-form-item>
+          <el-button @click="cancel()">取消</el-button>
           <el-button type="primary" @click="submitForm('ruleForm')"
-            >立即创建</el-button
+            >确定</el-button
           >
           <!-- <el-button @click="resetForm('ruleForm')">重置</el-button> -->
         </el-form-item>
@@ -181,6 +185,7 @@ export default {
   data() {
     return {
       ruleForm: {
+        id: "",
         liveTheme: "",
         startDate: "",
         estimateLiveTime: "",
@@ -234,7 +239,27 @@ export default {
     };
   },
   created() {
-    this.ruleForm.frontCoverUrl = this.defaultImg[0];
+    let dataForm = JSON.parse(window.sessionStorage.getItem("dataForm"));
+    if (dataForm) {
+      this.ruleForm.id = dataForm.id;
+      this.ruleForm.liveTheme = dataForm.liveTheme;
+      this.ruleForm.startDate = dataForm.startDate;
+      this.ruleForm.estimateLiveTime = dataForm.estimateLiveTime;
+      this.ruleForm.frontCoverUrl = dataForm.frontCoverUrl;
+      this.fileList.push(dataForm.frontCoverUrl);
+      this.ruleForm.liveIntroduce = dataForm.liveIntroduce;
+    } else {
+      this.$router.push({
+        path: "/preview-Preview",
+      });
+      this.$message({
+        message: "111",
+        type: "warning",
+        duration: 500,
+        onClose: () => {},
+      });
+    }
+    // this.ruleForm.frontCoverUrl = this.defaultImg[0];
   },
   methods: {
     //提交表单
@@ -243,11 +268,15 @@ export default {
         if (valid) {
           this.ruleForm.startDate = this.dateFormat(this.ruleForm.startDate);
           this.$http
-            .post("/sys/livePreview/createLivePreview", this.ruleForm)
+            .put("/sys/livePreview/update", this.ruleForm)
             .then(({ data: res }) => {
               if (res.code !== 0) {
                 return this.$message.error(res.msg);
               }
+              window.sessionStorage.removeItem("dataForm");
+              this.$router.push({
+                path: "/preview-Preview",
+              });
             })
             .catch((err) => {
               console.log(err);
@@ -256,6 +285,13 @@ export default {
           console.log("error submit!!");
           return false;
         }
+      });
+    },
+    //取消
+    cancel() {
+      window.sessionStorage.removeItem("dataForm");
+      this.$router.push({
+        path: "/preview-Preview",
       });
     },
     //重置
@@ -325,6 +361,9 @@ export default {
   }
   /deep/.img-item {
     .el-form-item__content {
+      display: flex;
+    }
+    .img-box-content{
       display: flex;
     }
     .img-box {
