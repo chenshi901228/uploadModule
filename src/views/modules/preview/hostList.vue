@@ -463,7 +463,6 @@
 
 <script>
 import mixinViewModule from "@/mixins/view-module";
-import { addDynamicRoute } from "@/router";
 import Template from "../devtools/template.vue";
 export default {
   mixins: [mixinViewModule],
