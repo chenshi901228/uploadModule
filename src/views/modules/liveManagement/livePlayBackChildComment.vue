@@ -1,9 +1,9 @@
 
-<!-- 直播管理-评论详情 -->
+<!-- 直播管理-回复详情 -->
 
 <template>
     <div>
-        <page-header navTitle="评论详情"></page-header>
+        <page-header></page-header>
         <el-card shadow="never" class="aui-card--fill">
             <div class="mod-livePlayBackComment">
                 <el-form
@@ -16,7 +16,7 @@
                     <el-row>
                         <el-col :span="6">
                             <el-form-item
-                                label="评论人"
+                                label="回复人"
                                 prop="commentUserName"
                             >
                                 <el-input
@@ -30,7 +30,7 @@
                         </el-col>
                         <el-col :span="6">
                             <el-form-item
-                                label="评论内容"
+                                label="回复内容"
                                 prop="commentValue"
                             >
                                 <el-input
@@ -112,7 +112,7 @@
                     </el-table-column>
                     <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center">
                         <template slot-scope="{ row }">
-                            <el-button type="text" size="small" @click="checkComment(row.id)">查看回复</el-button>
+                            <el-button type="text" size="small" @click="detail(row.id)">回复详情</el-button>
                             <el-button v-if="!row.delFlg" type="text" size="small" @click="deleteComment(row.id)">删除</el-button>
                         </template>
                     </el-table-column>
@@ -149,7 +149,7 @@ export default {
     data() {
         return {
             mixinTableModuleOptions: {
-                getDataListURL: "/sys/liveComment/getCommentByLivePlaybackId", // 数据列表接口，API地址
+                getDataListURL: "/sys/liveComment/getChildCommentById", // 数据列表接口，API地址
                 exportURL: "/sys/liveList/export", // 导出接口，API地址
             },
             dataForm: {
@@ -160,14 +160,13 @@ export default {
             limit: 10,
             page: 1,
             params: {
-                commentLiveListId: null,
+                fatherId: null,
             },
 
             tableItem: [
-                { prop: "commentUserName", label: "评论人" },
+                { prop: "commentUserName", label: "回复人" },
                 { prop: "phone", label: "手机号码" },
-                { prop: "commentValue", label: "评论内容" },
-                { prop: "giveLikeNum", label: "点赞次数" },
+                { prop: "commentValue", label: "回复内容" },
                 { prop: "delFlg", label: "删除状态" },
                 { prop: "remark", label: "备注" },
                 { prop: "createDate", label: "创建时间", width: 180 },
@@ -175,25 +174,21 @@ export default {
         };
     },
     mounted() {
-        this.params.commentLiveListId = this.$route.query.id;
+        this.params.fatherId = this.$route.query.id;
         this.query()
     },
     methods: {
-        // 查看回复
-        checkComment(id) {
-            if(id) this.$router.push({ name: "livePlayBackChildComment", query: { id: data.id }})
-        },
-        // 删除评论
+        // 删除回复
         deleteComment(id) {
             if(!id) return
             this.$refs.remarkModal.init(id)
         },
-        // 确认删除评论
+        // 确认删除回复
         confirmHandle(remark, id, cb) {
             this.$http.put("/sys/liveComment/deleteComment", { id, remark }).then(({ data: res }) => {
                 cb()
                 if(res.code == 0){
-                    this.$message.success("删除评论成功");
+                    this.$message.success("删除回复成功");
                     this.$refs.remarkModal.close()
                     this.query()
                 }else{

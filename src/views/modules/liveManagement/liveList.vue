@@ -297,7 +297,6 @@ export default {
         },
         // 确认禁播
         banLiveConfirm(remark, id, cb) {
-            if(!remark) return this.$message.error("请输入禁播原因");
             this.$http.put("/sys/liveList/stopLive", { id, remark }).then(({ data: res }) => {
                 cb()
                 if(res.code == 0){

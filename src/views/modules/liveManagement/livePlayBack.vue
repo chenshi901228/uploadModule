@@ -259,6 +259,7 @@ export default {
                     if(data.relationLiveUrl) downloadFile(data.relationLiveUrl,data.livingRoomId);
                     break;
                 case "2": // 查看评论详情
+                    if(data.id) this.$router.push({ name: "livePlayBackComment", query: { id: data.id }})
                     break;
                 case "3": // 删除
                     if(!data.id) return
@@ -271,7 +272,7 @@ export default {
         },
         // 确认删除
         confirmHandle(remark, id, cb) {
-            if(!remark) return this.$message.error("请输入禁播原因");
+            
             
         },
     },

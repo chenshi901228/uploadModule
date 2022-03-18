@@ -10,6 +10,7 @@ export default {
                 exportURL: '' // 导出接口，API地址
             },
             dataListLoading: false, // 数据列表，loading状态
+            params: {}, //get请求额外参数
             page: 1, // 当前页码
             limit: 10, // 每页数
             total: 0, // 总条数
@@ -60,6 +61,7 @@ export default {
                     page: this.page,
                     limit: this.limit,
                     ...this.$httpParams(this.dataForm),
+                    ...this.$httpParams(this.params)
                 },
             }).then(({ data: res }) => {
                 this.dataListLoading = false;

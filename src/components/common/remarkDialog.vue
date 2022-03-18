@@ -45,6 +45,7 @@ export default {
          * @description: 返回remark, init传的参数, cb(必须)关闭loading icon
          */
         confirmHandle() {
+            if(!this.remark) return this.$message.error("请输入备注");
             this.confirmLoading = true
             this.$emit("confirm", this.remark, this.formData, ()=>{
                 this.confirmLoading = false
