@@ -27,17 +27,37 @@
           <el-input v-model="ruleForm.estimateLiveTime"></el-input>
         </el-form-item>
         <el-form-item label="直播宣传图" prop="frontCoverUrl" class="img-item">
-          <div v-for="(item, index) in fileList" :key="index" class="img-box">
+          <div v-for="item in defaultImg" :key="item" class="img-box">
             <el-image
               style="width: 100px; height: 100px"
-              :src="item.url"
+              :src="item"
               fit="cover"
               @click="choosePic(item)"
             ></el-image>
             <img
-              v-if="item.chooseFlag"
+              v-if="item === ruleForm.frontCoverUrl"
               class="like-img"
               src="@/assets/img/like_red.png"
+              alt=""
+            />
+          </div>
+          <div v-for="item in fileList" :key="item" class="img-box">
+            <el-image
+              style="width: 100px; height: 100px"
+              :src="item"
+              fit="cover"
+              @click="choosePic(item)"
+            ></el-image>
+            <img
+              v-if="item === ruleForm.frontCoverUrl"
+              class="like-img"
+              src="@/assets/img/like_red.png"
+              alt=""
+            />
+            <img
+              @click="handleRemove(item)"
+              class="close-img"
+              src="@/assets/img/close.png"
               alt=""
             />
           </div>
@@ -45,7 +65,6 @@
             class="upload-demo"
             action="http://192.168.250.195:28080/oss/file/upload"
             :on-success="handleSuccess"
-            :file-list="fileList"
             list-type="picture-card"
             :multiple="false"
             :show-file-list="false"
@@ -173,28 +192,23 @@ export default {
       dialogVisible: false,
       disabled: false,
       chooseFlag: false,
-      fileList: [
-        {
-          name: "pic1",
-          url: "https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg",
-        },
-        {
-          name: "pic2",
-          url: "https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg",
-        },
+      defaultImg: [
+        "https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg",
+        "https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg",
       ],
+      fileList: [],
       rules: {
         liveTheme: [
           { required: true, message: "请输入直播主题", trigger: "blur" },
         ],
-        startDate: [
-          {
-            type: "date",
-            required: true,
-            message: "请选择预计开播时间",
-            trigger: "change",
-          },
-        ],
+        // startDate: [
+        //   {
+        //     type: "string",
+        //     required: true,
+        //     message: "请选择预计开播时间",
+        //     trigger: "change",
+        //   },
+        // ],
         estimateLiveTime: [
           { required: true, message: "请输入预计时长", trigger: "blur" },
         ],
@@ -219,21 +233,25 @@ export default {
       },
     };
   },
+  created() {
+    this.ruleForm.frontCoverUrl = this.defaultImg[0];
+  },
   methods: {
     //提交表单
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-        //   this.fileList.forEach((v) => {
-        //     if (v.chooseFlag === true) {
-        //         if(v){
-
-        //         }
-        //         this.ruleForm.frontCoverUrl = 
-        //     };
-        //   });
           this.ruleForm.startDate = this.dateFormat(this.ruleForm.startDate);
-          console.log(this.ruleForm);
+          this.$http
+            .post("/sys/livePreview/createLivePreview", this.ruleForm)
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                return this.$message.error(res.msg);
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         } else {
           console.log("error submit!!");
           return false;
@@ -246,33 +264,22 @@ export default {
     },
     //上传后
     handleSuccess(response, file, fileList) {
-      this.fileList.push(file);
-      this.fileList.forEach((v, i) => {
-        if (v.url === file.url) {
-          v.chooseFlag = true;
-        } else {
-          v.chooseFlag = false;
-        }
-      });
+      this.fileList.push(response.data.url);
+      this.ruleForm.frontCoverUrl = response.data.url;
     },
     //删除照片
-    handleRemove(file) {
+    handleRemove(url) {
       this.fileList.forEach((v, i) => {
-        if (v.url === file.url) {
+        if (url === v) {
           this.fileList.splice(i, 1);
         }
       });
     },
     //选择照片
-    choosePic(file) {
-        console.log(file)
-      this.fileList.forEach((v, i) => {
-        if (v.url === file.url) {
-          v.chooseFlag = true;
-        } else {
-          v.chooseFlag = false;
-        }
-      });
+    choosePic(url) {
+      if (url && this.ruleForm.frontCoverUrl !== url) {
+        this.ruleForm.frontCoverUrl = url;
+      }
     },
     // 时间格式化
     dateFormat(time) {
@@ -326,11 +333,18 @@ export default {
         margin-right: 10px;
       }
       .like-img {
-        width: 25px;
-        height: 20px;
         position: absolute;
-        right: 10px;
+        width: 24px;
+        height: 20px;
+        left: 0;
         top: 0;
+      }
+      .close-img {
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        top: 0;
+        right: 10px;
       }
     }
     .el-upload {

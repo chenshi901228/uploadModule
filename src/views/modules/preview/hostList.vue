@@ -248,58 +248,5 @@ export default {
   cursor: pointer;
   margin: 10px 0;
 }
-.diaBox {
-  height: 500px;
-  position: relative;
-}
-.diaBoxLeft {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 300px;
-  bottom: 0;
-  overflow: auto;
-  padding: 10px;
-  border: 5px solid #cccccc69;
-}
-.diaBoxRight {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 300px;
-  bottom: 0;
-  overflow: auto;
-  padding: 10px;
-  border: 5px solid #cccccc69;
-}
-.diaBoxLeft_title {
-  margin-bottom: 20px;
-  border-left: 5px solid #409eff;
-  padding-left: 5px;
-  line-height: 19px;
-  height: 16px;
-}
-.diaBoxLeft_mes {
-  padding: 0 10px 20px 10px;
-}
 
-.diaBoxRight_tabBtns {
-  border-width: 0px;
-  width: 100px;
-  height: 45px;
-  text-align: center;
-  cursor: pointer;
-  line-height: 45px;
-  background: inherit;
-  background-color: rgba(242, 242, 242, 1);
-  border: none;
-  border-radius: 0px;
-  -moz-box-shadow: none;
-  -webkit-box-shadow: none;
-  box-shadow: none;
-}
-.is-active {
-  background-color: rgba(107, 107, 107, 1);
-  color: #fff;
-}
 </style>
