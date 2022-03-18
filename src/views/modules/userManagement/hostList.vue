@@ -208,14 +208,10 @@
 
             <div class="diaBoxLeft_title">银行信息</div>
             <div class="diaBoxLeft_mes">
-              <div>
-                开户银行：￥{{
-                  diaForm.priceConsumption ? diaForm.priceConsumption : 0
-                }}元
-              </div>
-              <div>支行名称：￥{{ diaForm.aaa5 }}元</div>
-              <div>账号名称：￥{{ diaForm.aaa3 }}元</div>
-              <div>银行账号：￥{{ diaForm.aaa4 }}元</div>
+              <div>开户银行：{{diaForm.priceConsumption}} </div>
+              <div>支行名称：{{ diaForm.aaa5 }}</div>
+              <div>账号名称：{{ diaForm.aaa3 }}</div>
+              <div>银行账号：{{ diaForm.aaa4 }}</div>
               <div>
                 开户行所在地：{{
                   diaForm.priceBalance ? diaForm.priceBalance : 0

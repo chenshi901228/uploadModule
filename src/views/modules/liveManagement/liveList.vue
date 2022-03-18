@@ -193,7 +193,7 @@
                         </span>
                         <!-- 显示状态 -->
                         <span v-else-if="item.prop == 'showState'">
-                            {{row.liveState ? "显示" : "隐藏"}}
+                            {{row.showState ? "显示" : "隐藏"}}
                         </span>
                         <!-- 直播间ID -->
                         <span v-else-if="item.prop == 'livingRoomId'" style="color: #409EFF; text-decoration: underline;">
