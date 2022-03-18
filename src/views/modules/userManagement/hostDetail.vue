@@ -322,7 +322,28 @@ export default {
         .catch(() => {});
         this.changeTbas(1);
     },
-
+  watch: {
+       '$route.params.data' (val) {
+         console.log(val)
+      this.userId =this.$route.params.data.id;
+      this.$http
+        .get(`/sys/manage/userDetail/${this.$route.params.data.id}`)
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          this.diaForm = {
+            priceConsumption: res.data.priceConsumption,
+            priceBalance: res.data.priceBalance,
+            ...this.$route.params.data,
+            // priceConsumption:res.data.priceConsumption,
+            // priceConsumption:res.data.priceConsumption,
+          };
+        })
+        .catch(() => {});
+        this.changeTbas(1);
+    }
+    },
     methods: {
     changeTbas(n) {
       this.diaTbas = n;
