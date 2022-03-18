@@ -81,6 +81,10 @@ export default {
             this.query()
         },
 
+        // 新增 / 修改
+        addOrUpdateHandle (id) {
+            this.$refs.addOrUpdate.init(id)
+        },
 
         // 导出
         exportHandle () {

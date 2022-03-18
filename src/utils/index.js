@@ -109,3 +109,58 @@ export function httpParams(obj) {
   }
   return obj
 }
+
+
+/**
+ * 视频大小转换
+ * 
+ */
+ export function sizeTostr(size) {
+  var data = "";
+  if (size < 0.1 * 1024) { //如果小于0.1KB转化成B  
+    data = size.toFixed(2) + "B";
+  } else if (size < 0.1 * 1024 * 1024) {//如果小于0.1MB转化成KB  
+    data = (size / 1024).toFixed(2) + "KB";
+  } else if (size < 0.1 * 1024 * 1024 * 1024) { //如果小于0.1GB转化成MB  
+    data = (size / (1024 * 1024)).toFixed(2) + "MB";
+  } else { //其他转化成GB  
+    data = (size / (1024 * 1024 * 1024)).toFixed(2) + "GB";
+  }
+  var sizestr = data + "";
+  var len = sizestr.indexOf("\.");
+  var dec = sizestr.slice(len + 1, 2);
+  if (dec == "00") {//当小数点后为00时 去掉小数部分  
+      return sizestr.substring(0, len) + sizestr.slice(len + 3, 2);
+  }
+  return sizestr;
+} 
+
+/**
+ * 附件下载
+ * 
+ */
+export function downloadFile(url, name, _this) {
+  let xhr = new XMLHttpRequest()
+  xhr.open("get", `${window.SITE_CONFIG['apiURL']}/oss/file/downloadNew?access_token=${Cookies.get('access_token')}&fileUrl=${url}`, true)
+  xhr.responseType = 'blob';    // 返回类型blob
+  xhr.onload = function () {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+      let blob = this.response;
+      // 转换一个blob链接
+      let u = window.URL.createObjectURL(new Blob([blob]));
+      let a = document.createElement('a');
+      a.download = name || new Date().getTime() + "";
+      a.href = u;
+      a.style.display = 'none'
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      // 释放
+      window.URL.revokeObjectURL(u);
+    }
+  };
+  xhr.onerror = function(){
+    console.log('失败');
+  }
+  xhr.send()
+}
