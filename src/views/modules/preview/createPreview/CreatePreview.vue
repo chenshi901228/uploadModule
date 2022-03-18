@@ -1,4 +1,4 @@
-// 预告列表
+// 添加列表
 
 <template>
   <el-card shadow="never" class="aui-card--fill">
