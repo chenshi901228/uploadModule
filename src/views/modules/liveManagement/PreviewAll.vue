@@ -75,9 +75,9 @@
         <el-form-item>
           <el-button @click="getDataList()">{{ $t("query") }}</el-button>
         </el-form-item>
-        <el-form-item>
+        <!-- <el-form-item>
           <el-button type="primary" @click="addPreview()">添加预告</el-button>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item>
           <el-button type="primary" @click="exportT()">导出</el-button>
         </el-form-item>
@@ -261,15 +261,10 @@
           align="center"
         >
           <template slot-scope="scope">
-            <el-button size="mini" @click="createRoom(scope.$index, scope.row)"
-              >创建直播</el-button
-            >
             <el-button size="mini" @click="showThis(scope.$index, scope.row)">{{
               scope.row.showState === 0 ? "显示" : "隐藏"
             }}</el-button>
-            <el-button size="mini" @click="handle(scope.$index, scope.row)"
-              >编辑</el-button
-            >
+            <el-button size="mini">禁播</el-button>
             <el-button
               size="mini"
               type="danger"
@@ -297,6 +292,7 @@
 import mixinTableModule from "@/mixins/table-module";
 export default {
   mixins: [mixinTableModule],
+  components: {},
   data() {
     return {
       dataListLoading: false, // 数据列表，loading状态
@@ -316,11 +312,12 @@ export default {
       total: 0, // 总条数
       dataList: [], // 数据列表
       dataListSelections: [], // 数据列表，多选项
-      dataForm: {}, //编辑内容
     };
   },
   watch: {},
-  created() {},
+  created() {
+    // this.query()
+  },
   activated() {
     this.query();
   },
@@ -348,7 +345,7 @@ export default {
       }
 
       this.$http
-        .get("/sys/livePreview/pageOwn", {
+        .get("/sys/livePreview/page", {
           params: {
             page: this.page,
             limit: this.limit,
@@ -397,10 +394,7 @@ export default {
     },
     //编辑
     handle(index, row) {
-      window.sessionStorage.setItem("dataForm",JSON.stringify(row))
-      this.$router.push({
-        path:"/preview-editePreview-EditePreview"
-      })
+      console.log(index, row);
     },
     //删除
     handleDelete(index, row) {
@@ -520,18 +514,6 @@ export default {
           },
         })
         .then(({ data: res }) => {
-          // if (res.code !== 0) {
-          //   return this.$message.error(res.msg)
-          // }
-          // this.$message({
-          //   message: this.$t('prompt.success'),
-          //   type: 'success',
-          //   duration: 500,
-          //   onClose: () => {
-          //     this.visible = false
-          //     this.$emit('refreshDataList')
-          //   }
-          // })
           console.log(res);
         })
         .catch(() => {});
