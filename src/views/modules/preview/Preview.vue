@@ -521,29 +521,15 @@ export default {
           responseType: "blob",
         })
         .then((res) => {
-          // if (res.code !== 0) {
-          //   return this.$message.error(res.msg)
-          // }
-          // this.$message({
-          //   message: this.$t('prompt.success'),
-          //   type: 'success',
-          //   duration: 500,
-          //   onClose: () => {
-          //     this.visible = false
-          //     this.$emit('refreshDataList')
-          //   }
-          // })
           const link = document.createElement("a");
           let blob = new Blob([res.data], { type: "application/vnd.ms-excel" });
           link.style.display = "none";
           link.href = URL.createObjectURL(blob);
 
-          // link.download = res.headers['content-disposition'] //下载后文件名
           link.download = "直播预告列表"; //下载的文件名
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-          console.log(res);
         })
         .catch(() => {});
     },
