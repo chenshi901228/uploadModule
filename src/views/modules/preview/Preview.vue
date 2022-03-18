@@ -290,16 +290,13 @@
       >
       </el-pagination>
     </div>
-    <EditePreview :dialogForm="dialogForm" :dataForm="dataForm"></EditePreview>
   </el-card>
 </template>
 
 <script>
 import mixinTableModule from "@/mixins/table-module";
-import EditePreview from "./components/EditePreview.vue";
 export default {
   mixins: [mixinTableModule],
-  components: { EditePreview },
   data() {
     return {
       dataListLoading: false, // 数据列表，loading状态
@@ -319,13 +316,11 @@ export default {
       total: 0, // 总条数
       dataList: [], // 数据列表
       dataListSelections: [], // 数据列表，多选项
-      dialogForm: false, //显示编辑弹窗
       dataForm: {}, //编辑内容
     };
   },
   watch: {},
-  created() {
-  },
+  created() {},
   activated() {
     this.query();
   },
@@ -402,8 +397,10 @@ export default {
     },
     //编辑
     handle(index, row) {
-      this.dialogForm = true
-      this.dataForm = row
+      window.sessionStorage.setItem("dataForm",JSON.stringify(row))
+      this.$router.push({
+        path:"/preview-editePreview-EditePreview"
+      })
     },
     //删除
     handleDelete(index, row) {
