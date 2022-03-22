@@ -12,7 +12,7 @@
             </div>
             <img v-if="item.type.includes('image') && item.url" :src="item.url" alt="">
             <div v-else class="other">
-                <i class="el-icon-video-camera-solid"></i>
+                <i style="font-size:30px" class="el-icon-video-camera-solid"></i>
             </div>
         </div>
         <el-upload
@@ -36,7 +36,7 @@
             width="60%"
             append-to-body
             :visible.sync="previewVisible">
-            <div>
+            <div style="display: flex;justify-content: center;-items: center;">
                 <video style="max-width:100%" v-if="previewInfo && previewInfo.type.includes('video')" :src="previewInfo && previewInfo.url" controls></video>
                 <img v-else style="max-width:100%" :src="previewInfo && previewInfo.url" alt="">
             </div>
@@ -106,35 +106,37 @@ export default {
     methods: {
         // 上传前
         beforeUpload(file) {
-            let type = file.type.split("/")
+            let type = file.type ? file.type.split("/") : file.name.split(".") 
             type = type[type.length - 1]
             let fileType = this.fileType.includes(type.toLocaleLowerCase())
 
-            let fileSize = file.size / 1024 / 1024 < 60
+            let fileSize = file.size / 1024 / 1024 < 1024
 
-            if(!fileSize) this.$message.error("上传附件大小不能超过 60MB!")
-
-            if(!fileType) this.$message.error(`上传格式错误（${this.fileType.join(",")}）`)
-
-            if( fileSize && fileType ){
-                this.uploadList.push({ 
-                    uid: file.uid, 
-                    uploading: true, 
-                    progress: 0,
-                    type: file.type,
-                    name: file.name
-                })
-                return true
-            }else{
+            if(!fileSize) {
+                this.$message.error("上传附件大小不能超过 1G!")
                 return false
             }
+
+            if(!fileType) {
+                this.$message.error(`上传格式错误（${this.fileType.join(",")}）`)
+                return false
+            }
+
+            this.uploadList.push({ 
+                uid: file.uid, 
+                uploading: true, 
+                progress: 0,
+                type: file.type,
+                name: file.name
+            })
+            return true
 
         },
         // 上传中
         uploadProgress(event, file, fileList) {
             this.uploadList = this.uploadList.map(item => {
                 if(item.uid == file.uid) {
-                    item.progress = Math.floor(event.loaded / event.total) * 100
+                    item.progress = Math.floor((event.loaded / event.total) * 100) 
                 }
                 return item
             })
@@ -177,6 +179,9 @@ export default {
         previewImg(data) {
             this.previewInfo = data
             if(data.url){
+                if(!data.type){
+                   return this.$message.error("此格式附件暂不支持预览")
+                }
                 this.previewVisible = true
             }
         },
