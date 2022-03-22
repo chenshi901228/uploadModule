@@ -174,14 +174,14 @@ export default {
             ],
         };
     },
-    mounted() {
+    activated() {
         this.params.commentLiveListId = this.$route.query.id;
         this.query()
     },
     methods: {
         // 查看回复
         checkComment(id) {
-            if(id) this.$router.push({ name: "livePlayBackChildComment", query: { id: data.id }})
+            if(id) this.$router.push({ name: "livePlayBackChildComment", query: { id }})
         },
         // 删除评论
         deleteComment(id) {

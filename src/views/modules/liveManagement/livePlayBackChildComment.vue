@@ -112,7 +112,7 @@
                     </el-table-column>
                     <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center">
                         <template slot-scope="{ row }">
-                            <el-button type="text" size="small" @click="detail(row.id)">回复详情</el-button>
+                            <el-button type="text" size="small" @click="detail(row)">回复详情</el-button>
                             <el-button v-if="!row.delFlg" type="text" size="small" @click="deleteComment(row.id)">删除</el-button>
                         </template>
                     </el-table-column>
@@ -133,6 +133,22 @@
         </el-card>
         <!-- 备注弹框 -->
         <remark-modal ref="remarkModal" @confirm="confirmHandle" title="删除"></remark-modal>
+
+
+        <!-- 回复详情弹框 -->
+        <el-dialog
+            title="回复详情"
+            :visible.sync="commentDetailsVisible"
+            width="30%">
+            <el-descriptions title="" :column="1">
+                <el-descriptions-item label="回复人">{{commentDetailsInfo && commentDetailsInfo.commentUserName || "-"}}</el-descriptions-item>
+                <el-descriptions-item label="手机号码">{{commentDetailsInfo && commentDetailsInfo.phone || "-"}}</el-descriptions-item>
+                <el-descriptions-item label="回复详情">{{commentDetailsInfo && commentDetailsInfo.commentValue || "-"}}</el-descriptions-item>
+            </el-descriptions>
+            <span slot="footer" class="dialog-footer">
+                <el-button type="primary" @click="commentDetailsVisible = false">关 闭</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -160,7 +176,7 @@ export default {
             limit: 10,
             page: 1,
             params: {
-                fatherId: null,
+                id: null,
             },
 
             tableItem: [
@@ -171,13 +187,22 @@ export default {
                 { prop: "remark", label: "备注" },
                 { prop: "createDate", label: "创建时间", width: 180 },
             ],
+            // 回复详情弹框
+            commentDetailsVisible: false,
+            commentDetailsInfo: null
         };
     },
-    mounted() {
-        this.params.fatherId = this.$route.query.id;
+    activated(){
+        this.params.id = this.$route.query.id;
+        this.dataList = []
         this.query()
     },
     methods: {
+        // 查看回复详情
+        detail(data) {
+            if(data.id)this.commentDetailsInfo = data
+            this.commentDetailsVisible = true
+        },
         // 删除回复
         deleteComment(id) {
             if(!id) return

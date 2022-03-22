@@ -162,19 +162,24 @@
                         </span>
                     </template>
                 </el-table-column>
-                <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center">
+                <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
                     <template slot-scope="{ row }">
-                        <el-dropdown trigger="click" @command="actionHandle">
+                        <el-dropdown v-if="row.liveState != 0" trigger="click" @command="actionHandle" size="small">
                             <span style="cursor: pointer;color: #409EFF;">
-                                Action<i class="el-icon-arrow-down el-icon--right"></i>
+                                更多<i class="el-icon-arrow-down el-icon--right"></i>
                             </span>
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item :command="{action: '1', data: row}" v-if="row.liveState == 1" icon="el-icon-download">下载视频</el-dropdown-item>
                                 <el-dropdown-item :command="{action: '2', data: row}" v-if="row.liveState == 1" icon="el-icon-document">评论详情</el-dropdown-item>
                                 <el-dropdown-item :command="{action: '3', data: row}" v-if="row.liveState != 0" icon="el-icon-delete">删除</el-dropdown-item>
-                                <el-dropdown-item :command="{action: '4', data: row}" v-if="row.liveState == 1" icon="el-icon-turn-off">{{ row.showState ? "隐藏" : "显示" }}</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
+                        <el-popconfirm
+                            :title="'确定' + (row.showState ? '隐藏' : '显示') + '？'"
+                            @confirm="showOrHide(row)"
+                        >
+                            <el-button slot="reference" style="margin-left:10px" type="text" v-if="row.liveState == 1">{{ row.showState ? "隐藏" : "显示" }}</el-button>
+                        </el-popconfirm>
                     </template>
                 </el-table-column>
             </el-table>
@@ -188,10 +193,13 @@
                 @current-change="pageCurrentChangeHandle"
             >
             </el-pagination>
-
+            
+            <!-- 备注弹框 -->
             <remark-modal ref="remarkModal" @confirm="confirmHandle" title="删除"></remark-modal>
-    
 
+
+            <!-- 新增 -->
+            <add-or-update ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
         </div>
     </el-card>
 </template>
@@ -200,10 +208,12 @@
 import mixinTableModule from '@/mixins/table-module'
 import { sizeTostr, downloadFile } from "@/utils/index"
 import RemarkModal from "@/components/common/remarkDialog"
+import AddOrUpdate from "./livePlayBack-add-or-update.vue"
 export default {
     mixins: [ mixinTableModule ],
     components: {
-        RemarkModal
+        RemarkModal,
+        AddOrUpdate
     },
     data() {
         return {
@@ -265,15 +275,37 @@ export default {
                     if(!data.id) return
                     this.$refs.remarkModal.init(data.id)
                     break;
-                case "4": // 视频显示/隐藏
-                    break;
 
             }
         },
+        // 视频显示/隐藏
+        showOrHide(data) {
+            if(!data.id) return
+            this.$http.put("/sys/livePlayback/showOrHide", { id: data.id, showState: data.showState ? 0 : 1}).then(({data:res}) => {
+                if(res.code == 0){
+                    this.$message.success("操作成功")
+                    this.query()
+                }else{
+                    this.$message.error(res.msg)
+                }
+            }).catch(err => console.log(err))
+        },
         // 确认删除
         confirmHandle(remark, id, cb) {
-            
-            
+            this.$http.delete("/sys/livePlayback/delete", { data: { id, remark } }).then(({ data: res }) => {
+                cb()
+                if(res.code == 0){
+                    this.$message.success("删除视频成功");
+                    this.$refs.remarkModal.close()
+                    this.query()
+                }else{
+                    this.$message.error(res.msg);
+                }
+            }).catch(err => {
+                cb()
+                this.$refs.remarkModal.close()
+                throw err
+            })
         },
     },
 };
