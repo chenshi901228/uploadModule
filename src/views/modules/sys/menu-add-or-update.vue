@@ -30,6 +30,12 @@
       <el-form-item v-if="dataForm.type === 0" prop="url" :label="$t('menu.url')">
         <el-input v-model="dataForm.url" :placeholder="$t('menu.url')"></el-input>
       </el-form-item>
+      <el-form-item prop="type" label="是否显示" size="mini">
+        <el-radio-group v-model="dataForm.isShow">
+          <el-radio :label=1>显示</el-radio>
+          <el-radio :label=0>不显示</el-radio>
+        </el-radio-group>
+      </el-form-item>
       <el-form-item prop="sort" :label="$t('menu.sort')">
         <el-input-number v-model="dataForm.sort" controls-position="right" :min="0" :label="$t('menu.sort')"></el-input-number>
       </el-form-item>
@@ -80,7 +86,8 @@ export default {
         url: '',
         permissions: '',
         sort: 0,
-        icon: ''
+        icon: '',
+        isShow: 1
       }
     }
   },
