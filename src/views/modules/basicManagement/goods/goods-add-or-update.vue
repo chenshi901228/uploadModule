@@ -30,8 +30,7 @@
                 <el-form-item label="分成比例：" prop="proportion">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<el-input-number 
                         v-model="dataForm.proportion" 
-                        :controls="false" 
-                        :precision="2"
+                        :controls="false"
                         :min="10" 
                         :max="20">
                     </el-input-number> %

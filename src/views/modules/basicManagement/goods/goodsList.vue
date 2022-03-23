@@ -235,7 +235,7 @@ export default {
                         res.data.map(item => {
                             arr.push({
                                 id: item.id,
-                                value: item.productName,
+                                value: item.id,
                                 label: item.productName
                             })
                         })
