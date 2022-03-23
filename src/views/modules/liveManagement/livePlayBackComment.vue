@@ -3,7 +3,7 @@
 
 <template>
     <div>
-        <page-header navTitle="评论详情"></page-header>
+        <page-header></page-header>
         <el-card shadow="never" class="aui-card--fill">
             <div class="mod-livePlayBackComment">
                 <el-form
