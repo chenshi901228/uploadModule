@@ -27,5 +27,11 @@ export default {
         background-color: #fff;
         padding-left: 20px;
         line-height: 38px;
+        /deep/i{
+            font-size: 15px !important;
+        }
+        /deep/span{
+            font-size: 15px !important;
+        }
     }
 </style>

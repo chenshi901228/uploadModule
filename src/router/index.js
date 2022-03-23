@@ -39,6 +39,7 @@ export const moduleRoutes = {
     { path: '/userManagement-hostDetail', component: () => import('@/views/modules/userManagement/hostDetail'), name: 'userManagement-hostDetail', meta: { title: '主播详情' } },
     { path: '/livePlayBackComment', component: () => import('@/views/modules/liveManagement/livePlayBackComment'), name: 'livePlayBackComment', meta: { title: '评论详情' } },
     { path: '/livePlayBackChildComment', component: () => import('@/views/modules/liveManagement/livePlayBackChildComment'), name: 'livePlayBackChildComment', meta: { title: '回复详情' } },
+    { path: '/downGoodsList', component: () => import('@/views/modules/basicManagement/goods/downGoodsList'), name: 'downGoodsList', meta: { title: '商品上架' } },
     // { path: '/userManagement-userDetail', component: () => import('@/views/modules/userManagement/userDetail'), name: 'userManagement-userDetail', meta: { title: '用户详情' } },
     // { path: '/userManagement-hostDetail', component: () => import('@/views/modules/userManagement/hostDetail'), name: 'userManagement-hostDetail', meta: { title: '主播详情' } }
 

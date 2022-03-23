@@ -18,17 +18,18 @@
                             prop="productName"
                         >
                             <el-select
+                                size="small"
                                 v-model="dataForm.productName"
                                 filterable
                                 remote
                                 reserve-keyword
                                 clearable
                                 placeholder="请输入选择"
-                                :remote-method="getAnchorInfo"
+                                :remote-method="getGoodsName"
                                 :loading="loading">
                                     <el-option
                                         v-for="item in goodsNameOptions"
-                                        :key="item.value"
+                                        :key="item.id"
                                         :label="item.label"
                                         :value="item.value">
                                     </el-option>
@@ -223,18 +224,19 @@ export default {
         getGoodsName(s) {
             if(s != ""){
                 this.loading = true
-                this.$http.get("/sys/anchor/info/getSysAnchorInfos/" + s).then(({ data: res }) => {
+                this.$http.get("/sys/course/searchByName", {
+                    params: { 
+                        productName: s
+                    }
+                }).then(({ data: res }) => {
                     this.loading = false
                     if(res.code == 0) {
                         let arr = []
                         res.data.map(item => {
                             arr.push({
-                                value: JSON.stringify({
-                                    anchorUser: item.username,
-                                    anchorTel: item.phone,
-                                    anchorUserId: item.weixinUserId
-                                }),
-                                label: `主播：${item.username}  手机号：${item.phone}`
+                                id: item.id,
+                                value: item.productName,
+                                label: item.productName
                             })
                         })
                         this.goodsNameOptions = arr
@@ -251,9 +253,9 @@ export default {
                 this.goodsNameOptions = []
             }
         },
-        // 上架
+        // 商品上架
         upGoods(){
-
+            this.$router.push({ name: "downGoodsList" })
         },
         downGoodsHandle(data) {
             this.$http.post("/sys/course/down", data).then(({ data: res }) => {
@@ -281,7 +283,7 @@ export default {
                         let arr = this.dataListSelections.map(item => item.id)
                         this.downGoodsHandle(arr)
                     }).catch(() => {
-                        this.$message.info("已取消删除");          
+                        this.$message.info("已取消下架");          
                     });
                 }
             }else{ //单个操作
