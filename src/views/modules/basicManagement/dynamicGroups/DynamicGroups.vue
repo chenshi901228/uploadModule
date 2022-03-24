@@ -46,9 +46,7 @@
             <el-button type="primary" @click="addUser">添加</el-button>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="dialogInputVisible = true"
-              >导入</el-button
-            >
+            <el-button type="primary" @click="importXlx">导入</el-button>
           </el-form-item>
           <el-form-item>
             <el-button
@@ -301,33 +299,36 @@
 
     <el-dialog title="导入" :visible.sync="dialogInputVisible" width="600">
       <div style="margin-bottom: 20px">
-        导入模板：模板.XLS <span>下载</span>
+        导入模板：模板.XLS
+        <span @click="dowloadXlx" style="cursor: pointer; color: #66b1ff"
+          >下载</span
+        >
       </div>
       <el-upload
         class="upload-demo"
-        action="https://jsonplaceholder.typicode.com/posts/"
-        :on-preview="handlePreview"
-        :on-remove="handleRemove"
-        :before-remove="beforeRemove"
+        accept=".xls, .xlsx"
+        :action="`http://192.168.250.195:28080/sys/dynamicGroupUser/import/${sysGroupId}?access_token=${access_token}`"
+        :on-error="handleError"
+        :on-progress="handleProgress"
+        :on-success="handleSuccess"
+        :before-upload="beforeUploadFile"
         multiple
         :show-file-list="false"
-        :limit="3"
+        :limit="1"
         :on-exceed="handleExceed"
         :file-list="fileList"
       >
         <el-button size="small" type="primary">+上传文件</el-button>
       </el-upload>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogFormVisible = false"
-          >确 定</el-button
-        >
+        <el-button @click="dialogFormVisible = false">完成</el-button>
       </div>
     </el-dialog>
   </el-card>
 </template>
 
 <script>
+import Cookies from "js-cookie";
 import mixinTableModule from "@/mixins/table-module";
 export default {
   mixins: [mixinTableModule],
@@ -367,28 +368,81 @@ export default {
       userListLimit: 10, // 每页数
       dataListSelectionUsers: [],
       sysGroupId: "",
+      access_token: "",
     };
   },
   watch: {},
-  created() {},
-  activated() {
+  created() {
+    this.access_token = Cookies.get("access_token");
   },
+  activated() {},
   methods: {
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
+    dowloadXlx() {
+      window.open(
+        "https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/gruopUserImport.xlsx"
+      );
     },
-    handlePreview(file) {
-      console.log(file);
+    importXlx() {
+      if (this.sysGroupId.length === 0) {
+        this.$message({
+          message: "未选择动态组",
+          type: "warning",
+          duration: 1000,
+        });
+        return;
+      }
+      this.dialogInputVisible = true;
     },
     handleExceed(files, fileList) {
       this.$message.warning(
-        `当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
+        `当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
           files.length + fileList.length
         } 个文件`
       );
     },
-    beforeRemove(file, fileList) {
-      return this.$confirm(`确定移除 ${file.name}？`);
+    handleError(err, file, fileList) {
+      this.$message.error("上传文件失败！");
+      this.fileList = [];
+    },
+    handleProgress(event, file, fileList) {
+      console.log(event);
+    },
+    handleSuccess(response, file, fileList) {
+      if (response.code === 0) {
+        this.$message({
+          message: "导入成功!",
+          type: "success",
+          duration: 1000,
+        });
+      }
+      this.fileList = [];
+      this.query(this.sysGroupId);
+      this.dialogInputVisible = false;
+    },
+    beforeUploadFile(file) {
+      // const extension = file.name.substring(file.name.lastIndexOf(".") + 1);
+      const size = file.size / 1024 / 1024;
+      // if (extension !== "xls") {
+      //   console.log(extension)
+      //   this.$message({
+      //     message: "只能上传excel的文件",
+      //     type: "warning",
+      //     duration: 1000,
+      //   });
+      // } else if (extension !== "xlsx") {
+      //   this.$message({
+      //     message: "只能上传excel的文件",
+      //     type: "warning",
+      //     duration: 1000,
+      //   });
+      // }
+      if (size > 10) {
+        this.$message({
+          message: "文件大小不得超过10M",
+          type: "warning",
+          duration: 1000,
+        });
+      }
     },
     //查询动态组列表
     getGroupInfo(id) {
@@ -676,13 +730,13 @@ export default {
       }
     },
     //重置
-    reset(){
-      this.userForm ={
+    reset() {
+      this.userForm = {
         name: "",
         tel: "",
-      }
-      this.queryUserList()
-    }
+      };
+      this.queryUserList();
+    },
   },
 };
 </script>
