@@ -75,7 +75,6 @@
             :height="siteContentViewHeight"
           ></el-table-column>
           <el-table-column
-            width="150"
             label="用户昵称"
             prop="name"
             align="center"
@@ -85,7 +84,6 @@
             </template>
           </el-table-column>
           <el-table-column
-            width="150"
             label="手机号码"
             prop="phone"
             align="center"
@@ -95,7 +93,6 @@
             </template>
           </el-table-column>
           <el-table-column
-            width="120"
             label="设备类型"
             prop="phoneModel"
             align="center"
@@ -105,7 +102,6 @@
             </template>
           </el-table-column>
           <el-table-column
-            width="150"
             label="token值"
             prop="token"
             align="center"
@@ -115,7 +111,6 @@
             </template>
           </el-table-column>
           <el-table-column
-            width="180"
             label="创建时间"
             prop="createDate"
             align="center"
@@ -125,9 +120,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            width="120"
             label="操作"
-            fixed="right"
             header-align="center"
             align="center"
           >
