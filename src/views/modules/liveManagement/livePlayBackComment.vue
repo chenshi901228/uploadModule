@@ -181,7 +181,7 @@ export default {
     methods: {
         // 查看回复
         checkComment(id) {
-            if(id) this.$router.push({ name: "livePlayBackChildComment", query: { id }})
+            if(id) this.$router.push({ name: "liveManagement-livePlayBackChildComment", query: { id }})
         },
         // 删除评论
         deleteComment(id) {

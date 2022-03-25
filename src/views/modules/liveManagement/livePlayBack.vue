@@ -276,7 +276,7 @@ export default {
                     if(data.relationLiveUrl) downloadFile(data.relationLiveUrl,data.livingRoomId);
                     break;
                 case "2": // 查看评论详情
-                    if(data.id) this.$router.push({ name: "livePlayBackComment", query: { id: data.id }})
+                    if(data.id) this.$router.push({ name: "liveManagement-livePlayBackComment", query: { id: data.id }})
                     break;
                 case "3": // 删除
                     if(!data.id) return

@@ -255,7 +255,7 @@ export default {
         },
         // 商品上架
         upGoods(){
-            this.$router.push({ name: "downGoodsList" })
+            this.$router.push({ name: "basicManagement-goods-downGoodsList" })
         },
         downGoodsHandle(data) {
             this.$http.post("/sys/course/down", data).then(({ data: res }) => {
