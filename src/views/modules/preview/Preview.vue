@@ -488,7 +488,7 @@ export default {
     //添加预告
     addPreview() {
       this.$router.push({
-        path: "/preview-createPreview-CreatePreview.vue",
+        path: "/preview-createPreview-CreatePreview",
       });
     },
     //导出
