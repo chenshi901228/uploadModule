@@ -6,7 +6,7 @@
     </template>
     <sub-menu v-for="item in menu.children" :key="item.id" :menu="item"></sub-menu>
   </el-submenu>
-  <el-menu-item v-else :index="menu.id" ref="li" v-show="menu.isShow">
+  <el-menu-item v-else-if="menu.isShow" :index="menu.id" ref="li">
     <a
       :href="isBrowserTabOpen(menu.id) ? getBrowserTabOpenURL(menu.id) : 'javascript:;'"
       :target="isBrowserTabOpen(menu.id) ? '_blank' : '_self'"
