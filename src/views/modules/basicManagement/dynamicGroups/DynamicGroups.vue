@@ -670,6 +670,7 @@ export default {
           this.dialogFormVisible = false;
           this.groupMensPage = 1;
           this.loadingGroup = false;
+          this.groupMens = [];
           this.queryDynamicGroup();
           this.groupForm.name = "";
         })
