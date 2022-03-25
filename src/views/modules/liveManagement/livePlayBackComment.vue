@@ -3,7 +3,6 @@
 
 <template>
     <div>
-        <page-header></page-header>
         <el-card shadow="never" class="aui-card--fill">
             <div class="mod-livePlayBackComment">
                 <el-form
@@ -139,12 +138,10 @@
 <script>
 import mixinTableModule from '@/mixins/table-module'
 import RemarkModal from "@/components/common/remarkDialog"
-import PageHeader from "@/components/common/pageHeader"
 export default {
     mixins: [ mixinTableModule ],
     components: {
-        RemarkModal,
-        PageHeader
+        RemarkModal
     },
     data() {
         return {

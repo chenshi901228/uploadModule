@@ -2,7 +2,6 @@
 
 <template>
     <div>
-        <page-header></page-header>
         <el-card shadow="never" class="aui-card--fill">
             <el-form
                 class="headerTool"
@@ -179,12 +178,10 @@
 </template>
 <script>
 import mixinTableModule from '@/mixins/table-module'
-import PageHeader from "@/components/common/pageHeader"
 import GoodsAddOrUpdate from "./goods-add-or-update.vue"
 export default {
     mixins: [ mixinTableModule ],
     components: {
-        PageHeader,
         GoodsAddOrUpdate
     },
     data() {
