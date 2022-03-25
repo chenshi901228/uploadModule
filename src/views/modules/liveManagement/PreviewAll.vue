@@ -264,7 +264,7 @@
             <el-button size="mini" @click="showThis(scope.$index, scope.row)">{{
               scope.row.showState === 0 ? "显示" : "隐藏"
             }}</el-button>
-            <el-button size="mini">禁播</el-button>
+            <!-- <el-button size="mini">禁播</el-button> -->
             <el-button
               size="mini"
               type="danger"
