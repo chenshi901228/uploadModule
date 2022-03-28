@@ -177,12 +177,7 @@
                                 <el-dropdown-item :command="{action: '3', data: row}" v-if="row.liveState != 0" icon="el-icon-delete">删除</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
-                        <el-popconfirm
-                            :title="'确定' + (row.showState ? '隐藏' : '显示') + '？'"
-                            @confirm="showOrHide(row)"
-                        >
-                            <el-button slot="reference" style="margin-left:10px" type="text" v-if="row.liveState == 1">{{ row.showState ? "隐藏" : "显示" }}</el-button>
-                        </el-popconfirm>
+                        <el-button style="margin-left:10px" type="text" v-if="row.liveState == 1" @click="showOrHide(row)">{{ row.showState ? "隐藏" : "显示" }}</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -287,15 +282,20 @@ export default {
         },
         // 视频显示/隐藏
         showOrHide(data) {
-            if(!data.id) return
-            this.$http.put("/sys/livePlayback/showOrHide", { id: data.id, showState: data.showState ? 0 : 1}).then(({data:res}) => {
-                if(res.code == 0){
-                    this.$message.success("操作成功")
-                    this.query()
-                }else{
-                    this.$message.error(res.msg)
-                }
-            }).catch(err => console.log(err))
+            this.customConfirm(`确认${data.showState ? "隐藏" : "显示"}？`, (cb) => {
+                this.$http.put("/sys/livePlayback/showOrHide", { id: data.id, showState: data.showState ? 0 : 1}).then(({data:res}) => {
+                    if(res.code == 0){
+                        this.$message.success("操作成功")
+                        this.query()
+                    }else{
+                        this.$message.error(res.msg)
+                    }
+                    cb()
+                }).catch(err => {
+                    console.log(err)
+                    cb()
+                })
+            })
         },
         // 确认删除
         confirmHandle(remark, id, cb) {

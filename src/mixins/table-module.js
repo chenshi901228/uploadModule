@@ -119,5 +119,28 @@ export default {
         dataListSelectionChangeHandle (val) {
             this.dataListSelections = val
         },
+
+        // 自定义消息提示框
+        customConfirm(text = "", cb) {
+            this.$confirm(text, '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+                beforeClose:(action, instance, done) => {
+                    if (action === 'confirm') {
+                        instance.confirmButtonLoading = true;
+                        instance.confirmButtonText = "确定";
+                        cb(()=>{
+                            done()
+                            setTimeout(() => {
+                                instance.confirmButtonLoading = false;
+                            }, 300);
+                        })
+                    } else {
+                        done();
+                    }
+                }
+            })
+        }
     },
 }

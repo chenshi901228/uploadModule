@@ -153,12 +153,7 @@
                 </el-table-column>
                 <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center">
                     <template slot-scope="{ row }">
-                        <el-popconfirm
-                            title="确认下架？"
-                            @confirm="downGoods(row.id)"
-                            >
-                            <el-button slot="reference" type="text" size="small">下架</el-button>
-                        </el-popconfirm>
+                        <el-button type="text" size="small" @click="downGoods(row.id)">下架</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -287,7 +282,15 @@ export default {
                     });
                 }
             }else{ //单个操作
-                this.downGoodsHandle([id])
+                this.$confirm('确认下架?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    this.downGoodsHandle([id])
+                }).catch(() => {
+                    this.$message.info("已取消下架");          
+                });
             }
         },
     },
