@@ -10,18 +10,21 @@
       >
         <el-form-item label="直播主题">
           <el-input
+            :clearable="true"
             v-model="dataForm.liveTheme"
             placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item label="主播">
           <el-input
+            :clearable="true"
             v-model="dataForm.anchorUser"
             placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item label="开播时间">
           <el-date-picker
+            :clearable="true"
             v-model="dataForm.startDate"
             type="datetime"
             placeholder="选择日期时间"
@@ -32,6 +35,7 @@
         </el-form-item>
         <el-form-item label="结束时间">
           <el-date-picker
+            :clearable="true"
             v-model="dataForm.endDate"
             type="datetime"
             placeholder="选择日期时间"
@@ -42,24 +46,34 @@
         </el-form-item>
         <el-form-item label="投放人群">
           <el-input
+            :clearable="true"
             v-model="dataForm.dynamicGroupName"
             placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item label="是否录制">
-          <el-select v-model="dataForm.transcribeFlg" placeholder="是否录制">
+          <el-select
+            :clearable="true"
+            v-model="dataForm.transcribeFlg"
+            placeholder="是否录制"
+          >
             <el-option label="未录制" value="0"></el-option>
             <el-option label="已录制" value="1"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="关联直播">
           <el-input
+            :clearable="true"
             v-model="dataForm.livingRoomId"
             placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item label="直播状态">
-          <el-select v-model="dataForm.liveState" placeholder="直播状态">
+          <el-select
+            :clearable="true"
+            v-model="dataForm.liveState"
+            placeholder="直播状态"
+          >
             <el-option label="已下播" value="0"></el-option>
             <el-option label="直播中" value="1"></el-option>
             <el-option label="已禁播" value="2"></el-option>
@@ -67,7 +81,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="显示状态">
-          <el-select v-model="dataForm.showState" placeholder="直播状态">
+          <el-select
+            :clearable="true"
+            v-model="dataForm.showState"
+            placeholder="直播状态"
+          >
             <el-option label="显示" value="0"></el-option>
             <el-option label="隐藏" value="1"></el-option>
           </el-select>
@@ -281,6 +299,7 @@
               >编辑</el-button
             >
             <el-button
+              v-if="scope.row.appointmentState !== 0"
               size="mini"
               type="danger"
               @click="handleDelete(scope.$index, scope.row)"
