@@ -10,7 +10,7 @@
         </el-form-item>
       </el-form>
       <el-table v-loading="dataListLoading" :data="dataList" border @selection-change="dataListSelectionChangeHandle" style="width: 100%;">
-        <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
+        <!-- <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
         <el-table-column prop="weixinUserId" label="主播ID" header-align="center" align="center"></el-table-column>
         <el-table-column prop="phone" label="手机号" header-align="center" align="center"></el-table-column>
         <el-table-column prop="username" label="用户名" header-align="center" align="center"></el-table-column>
@@ -44,6 +44,41 @@
         </el-table-column>
         <el-table-column prop="createDate" label="申请时间" header-align="center" align="center"></el-table-column>
         <el-table-column prop="updateDate" label="操作时间" header-align="center" align="center">
+          <template slot-scope="scope">
+            {{ scope.row.status === 0 ? '' : scope.row.updateDate }}
+          </template>
+        </el-table-column> -->
+
+        <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
+        <el-table-column prop="avatarUrl" label="主播头像" header-align="center" align="center">
+           <template slot-scope="scope">
+             <img :src="scope.row.avatarUrl" style="width:100px;height:100px;">
+          </template>
+        </el-table-column>
+        <el-table-column prop="username" label="主播昵称" header-align="center" align="center"></el-table-column> 
+        <el-table-column prop="username" label="真实姓名" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="phone" label="手机号码" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="username" label="身份证号" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="gender" label="性别" header-align="center" align="center">
+          <template slot-scope="scope">
+             <el-tag v-if="scope.row.status === 0" type="info">男</el-tag>
+             <el-tag v-if="scope.row.status === 1" type="info">女</el-tag>
+             <el-tag v-if="scope.row.status === 2" type="info">保密</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="introduce" label="主播介绍" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="legalizeFlg" label="是否认证" header-align="center" align="center">
+          <template slot-scope="scope">
+             {{ scope.row.legalizeFlg === 1 ? '认证' : '未认证' }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="tutorFlg" label="是否是指导师" header-align="center" align="center">
+          <template slot-scope="scope">
+             {{ scope.row.tutorFlg === 1 ? '认证' : '未认证' }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="createDate" label="申请时间" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="updateDate" label="审批时间" header-align="center" align="center">
           <template slot-scope="scope">
             {{ scope.row.status === 0 ? '' : scope.row.updateDate }}
           </template>

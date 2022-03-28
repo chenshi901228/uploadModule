@@ -190,6 +190,10 @@
                         <span v-else-if="item.prop == 'liveTime'">
                             {{row.liveTime ? row.liveTime + "分钟" : "-"}}
                         </span>
+                        <!-- 投放人群 -->
+                        <span v-else-if="item.prop == 'dynamicGroupName'">
+                            {{row.dynamicGroupName || '-'}}
+                        </span>
                         <span v-else>
                             {{ row[item.prop] || "-" }}
                         </span>
@@ -253,7 +257,7 @@ export default {
                 { prop: "startDate", label: "开播时间", width: 180 },
                 { prop: "endDate", label: "结束时间", width: 180 },
                 { prop: "liveTime", label: "直播时长（分）" },
-                // { prop: "cumulativeNum", label: "投放人群" },
+                { prop: "dynamicGroupName", label: "投放人群" },
                 { prop: "audienceNum", label: "观众总数" },
                 { prop: "maxOnlineNum", label: "最高同时在线" },
                 { prop: "giveLikeNum", label: "点赞次数" },

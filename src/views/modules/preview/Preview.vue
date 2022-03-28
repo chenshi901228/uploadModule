@@ -40,12 +40,12 @@
           >
           </el-date-picker>
         </el-form-item>
-        <!-- <el-form-item label="投放人群">
+        <el-form-item label="投放人群">
           <el-input
-            v-model="dataForm.userGroup"
+            v-model="dataForm.dynamicGroupName"
             placeholder="请输入"
           ></el-input>
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item label="是否录制">
           <el-select v-model="dataForm.transcribeFlg" placeholder="是否录制">
             <el-option label="未录制" value="0"></el-option>
@@ -179,6 +179,16 @@
         </el-table-column>
         <el-table-column
           width="100%"
+          label="投放人群"
+          prop="dynamicGroupName"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.dynamicGroupName || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          width="100%"
           label="预约人数"
           prop="appointmentNum"
           align="center"
@@ -305,7 +315,7 @@ export default {
         anchorUser: "",
         startDate: "",
         endDate: "",
-        // userGroup: "",
+        dynamicGroupName: "",
         transcribeFlg: "",
         livingRoomId: "",
         liveState: "",
