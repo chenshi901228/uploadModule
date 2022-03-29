@@ -35,23 +35,30 @@
         <el-dialog
             width="60%"
             append-to-body
+            :destroy-on-close="true"
             :visible.sync="previewVisible">
             <div style="display: flex;justify-content: center;-items: center;">
-                <video style="max-width:100%" v-if="previewInfo && previewInfo.type.includes('video')" :src="previewInfo && previewInfo.url" controls></video>
-                <img v-else style="max-width:100%" :src="previewInfo && previewInfo.url" alt="">
+                <img v-if="previewInfo && imgTypes.includes(previewInfo.previewType)" style="max-width:100%" :src="previewInfo && previewInfo.url" alt="">
+                <video style="max-width:100%" v-else-if="previewInfo && previewInfo.previewType == 'mp4'" :src="previewInfo && previewInfo.url" controls></video>
+                <video-flv-component v-else :url="previewInfo && previewInfo.url"></video-flv-component>
             </div>
         </el-dialog>
     </div>
 </template>
 <script>
+import VideoFlvComponent from "@/components/common/videoFlvComponent"
 export default {
+    components: {
+        VideoFlvComponent
+    },
     data() {
         return {
             uploadList: [],
             deleteUid: null, //删除的附件uid
             // 预览
             previewVisible: false,
-            previewInfo: null
+            previewInfo: null,
+            imgTypes: ["png", "jpg", "jpeg", "webp", "gif"],  //图片格式
         }
     },
     props: {
@@ -72,7 +79,7 @@ export default {
             type: Boolean,
             default: false
         },
-        //附件格式
+        //自定义可上传附件格式
         fileType: {
             type: Array,
             default: () => {
@@ -179,9 +186,10 @@ export default {
         previewImg(data) {
             this.previewInfo = data
             if(data.url){
-                if(!data.type){
-                   return this.$message.error("此格式附件暂不支持预览")
-                }
+                let type = data.url.split(".")
+                type = type[type.length - 1].toLocaleLowerCase()
+
+                this.previewInfo.previewType = type
                 this.previewVisible = true
             }
         },

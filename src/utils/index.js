@@ -139,9 +139,8 @@ export function httpParams(obj) {
  * 附件下载
  * 
  */
-export function downloadFile(url) {
-  url = `${window.SITE_CONFIG['apiURL']}/oss/file/downloadNew?access_token=${Cookies.get('access_token')}&fileUrl=${url}`
-  window.open(url)
+export function downloadFileUrl(url) {
+  return `${window.SITE_CONFIG['apiURL']}/oss/file/downloadNew?access_token=${Cookies.get('access_token')}&fileUrl=${url}`
   // let xhr = new XMLHttpRequest()
   // xhr.open("get", `${window.SITE_CONFIG['apiURL']}/oss/file/downloadNew?access_token=${Cookies.get('access_token')}&fileUrl=${url}`, true)
   // xhr.responseType = 'blob';    // 返回类型blob

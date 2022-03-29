@@ -212,7 +212,7 @@
 
 <script>
 import mixinTableModule from '@/mixins/table-module'
-import { sizeTostr, downloadFile } from "@/utils/index"
+import { sizeTostr, downloadFileUrl } from "@/utils/index"
 export default {
     mixins: [ mixinTableModule ],
     data() {
@@ -273,7 +273,7 @@ export default {
         actionHandle({action, data}) {
             switch(action) {
                 case "1": // 下载视频
-                    if(data.relationLiveUrl) downloadFile(data.relationLiveUrl);
+                    if(data.relationLiveUrl) window.open(downloadFileUrl(data.relationLiveUrl));
                     break;
                 case "2": // 查看评论详情
                     if(data.id) this.$router.push({ name: "liveManagement-livePlayBackComment", query: { id: data.id }})
