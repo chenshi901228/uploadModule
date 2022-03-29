@@ -45,11 +45,20 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="投放人群">
-          <el-input
-            :clearable="true"
+          <el-select
             v-model="dataForm.dynamicGroupName"
-            placeholder="请输入"
-          ></el-input>
+            filterable
+            placeholder="请选择"
+            :clearable="true"
+          >
+            <el-option
+              v-for="(item, index) in options"
+              :key="index"
+              :label="item.name"
+              :value="item.name"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="是否录制">
           <el-select
@@ -319,6 +328,23 @@
       >
       </el-pagination>
     </div>
+    <el-dialog title="删除" :visible.sync="dialogFormVisible">
+      <el-form
+        :model="ruleForm"
+        :rules="rules"
+        ref="ruleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+      >
+        <el-form-item label="备注" prop="desc">
+          <el-input type="textarea" v-model="ruleForm.desc"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirm('ruleForm')">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -345,13 +371,22 @@ export default {
       total: 0, // 总条数
       dataList: [], // 数据列表
       dataListSelections: [], // 数据列表，多选项
-      dataForm: {}, //编辑内容
+      options: [],
+      dialogFormVisible: false,
+      ruleForm: {
+        desc: "",
+      },
+      rules: {
+        desc: [{ required: true, message: "请填写备注内容", trigger: "blur" }],
+      },
+      ids: [],
     };
   },
   watch: {},
   created() {},
   activated() {
     this.query();
+    this.getDynamicGroupList();
   },
   methods: {
     query() {
@@ -433,35 +468,15 @@ export default {
     },
     //删除
     handleDelete(index, row) {
-      let ids = [];
-      ids.push(row.id);
-      this.$http
-        .delete("/sys/livePreview/delete", { data: { ids: ids } })
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          }
-        })
-        .catch((err) => {
-          throw err;
-        });
+      this.dialogFormVisible = true;
+      this.ids.push(row.id);
     },
     //批量删除
     deleteSelect() {
-      let ids = [];
+      this.dialogFormVisible = true;
       this.dataListSelections.forEach((v) => {
-        ids.push(v.id);
+        this.ids.push(v.id);
       });
-      this.$http
-        .delete("/sys/livePreview/delete", { data: { ids: ids } })
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          }
-        })
-        .catch((err) => {
-          throw err;
-        });
     },
     // 时间格式化
     dateFormat(time) {
@@ -561,6 +576,49 @@ export default {
           document.body.removeChild(link);
         })
         .catch(() => {});
+    },
+    //获取投放人群
+    getDynamicGroupList() {
+      this.$http
+        .get("/sys/dynamicGroup/getDynamicGroupList")
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          this.options = res.data;
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
+    //删除
+    confirm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$http
+            .delete("/sys/livePreview/delete", {
+              data: { ids: this.ids, remark: this.ruleForm.desc },
+            })
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                this.ids = [];
+                this.ruleForm.desc = "";
+                return this.$message.error(res.msg);
+              }
+              this.ids = [];
+              this.ruleForm.desc = "";
+              this.query();
+              this.$message.success("删除成功!");
+              this.dialogFormVisible = false;
+            })
+            .catch((err) => {
+              throw err;
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     },
   },
 };

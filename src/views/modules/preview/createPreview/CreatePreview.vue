@@ -72,12 +72,23 @@
             <i slot="default" class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
-        <!-- <el-form-item label="选择投放人群" prop="userGroup">
-          <el-select v-model="ruleForm.userGroup" placeholder="选择投放人群">
-            <el-option label="一" value="0"></el-option>
-            <el-option label="二" value="1"></el-option>
+        <el-form-item label="选择投放人群" prop="dynamicGroupIds">
+          <el-select
+            v-model="ruleForm.dynamicGroupIds"
+            filterable
+            multiple
+            placeholder="请选择"
+            :clearable="true"
+          >
+            <el-option
+              v-for="(item, index) in options"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
           </el-select>
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item label="直播介绍" prop="liveIntroduce">
           <quill-editor
             v-model="ruleForm.liveIntroduce"
@@ -185,7 +196,7 @@ export default {
         startDate: "",
         estimateLiveTime: "",
         frontCoverUrl: "",
-        // userGroup: "",
+        dynamicGroupIds: [],
         liveIntroduce: "",
       },
       dialogImageUrl: "",
@@ -231,9 +242,19 @@ export default {
           },
         },
       },
+      options: [],
     };
   },
   created() {
+    this.getDynamicGroupList();
+    this.ruleForm = {
+      liveTheme: "",
+      startDate: null,
+      estimateLiveTime: "",
+      frontCoverUrl: "",
+      dynamicGroupIds: [],
+      liveIntroduce: "",
+    };
     this.ruleForm.frontCoverUrl = this.defaultImg[0];
   },
   methods: {
@@ -248,6 +269,19 @@ export default {
               if (res.code !== 0) {
                 return this.$message.error(res.msg);
               }
+              this.$message.success("创建预告成功！");
+              this.$router.push({
+                path: "preview-Preview",
+              });
+              this.ruleForm = {
+                liveTheme: "",
+                startDate: null,
+                estimateLiveTime: "",
+                frontCoverUrl: "",
+                dynamicGroupIds: [],
+                liveIntroduce: "",
+              };
+              this.ruleForm.frontCoverUrl = this.defaultImg[0];
             })
             .catch((err) => {
               console.log(err);
@@ -310,6 +344,20 @@ export default {
     //补零
     dateIfAddZero: function (time) {
       return time < 10 ? "0" + time : time;
+    },
+    //获取投放人群
+    getDynamicGroupList() {
+      this.$http
+        .get("/sys/dynamicGroup/getDynamicGroupList")
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          this.options = res.data;
+        })
+        .catch((err) => {
+          throw err;
+        });
     },
   },
 };
