@@ -74,17 +74,41 @@
                                 </el-date-picker>
                             </el-form-item>
                         </el-col>
-                        <!-- <el-form-item
-                            label="投放人群"
-                            prop="endDate"
-                        >
-                            <el-select v-model="value" placeholder="请选择投放人群">
-                                <el-option
-                                    label="群组1"
-                                    value="群组1">
-                                </el-option>
-                            </el-select>
-                        </el-form-item> -->
+                        <el-col :span="6">
+                            <el-form-item
+                                label="投放人群"
+                                prop="dynamicGroupName"
+                            >
+                                <el-select 
+                                    size="small"
+                                    v-model="dataForm.dynamicGroupName" 
+                                    placeholder="请选择投放人群"
+                                    :loading="getDynamicGroupLoading"
+                                    @visible-change="getDynamicGroup"
+                                    clearable>
+                                        <el-option 
+                                            v-for="item in dynamicGroupOptions" 
+                                            :key="item.id"
+                                            :label="item.name"
+                                            :value="item.name">
+                                        </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="关联直播"
+                                prop="livingRoomId"
+                            >
+                                <el-input
+                                    size="small"
+                                    v-model.trim="dataForm.livingRoomId"
+                                    placeholder="请输入关联直播"
+                                    clearable
+                                >
+                                </el-input>
+                            </el-form-item>
+                        </el-col>
                         <el-col :span="6">
                             <el-form-item
                                 label="是否录制"
@@ -96,18 +120,6 @@
                                 </el-select>
                             </el-form-item>
                         </el-col>
-                        <!-- <el-form-item
-                            label="关联直播"
-                            prop="transcribeFlg"
-                        >
-                            <el-input
-                                size="small"
-                                v-model.trim="dataForm.liveTheme"
-                                placeholder="请输入关联直播"
-                                clearable
-                            >
-                            </el-input>
-                        </el-form-item> -->
                         <el-col :span="6">
                             <el-form-item
                                 label="直播状态"
@@ -190,10 +202,6 @@
                         <span v-else-if="item.prop == 'liveTime'">
                             {{row.liveTime ? row.liveTime + "分钟" : "-"}}
                         </span>
-                        <!-- 投放人群 -->
-                        <span v-else-if="item.prop == 'dynamicGroupName'">
-                            {{row.dynamicGroupName || '-'}}
-                        </span>
                         <span v-else>
                             {{ row[item.prop] || "-" }}
                         </span>
@@ -242,6 +250,8 @@ export default {
                 liveTheme: "",
                 startDate: "",
                 endDate: "",
+                livingRoomId: "",
+                dynamicGroupName: "",
                 transcribeFlg: null,
                 liveState: null,
                 showState: null
@@ -271,6 +281,9 @@ export default {
                 { prop: "remark", label: "备注" },
                 { prop: "createDate", label: "创建时间", width: 180 },
             ],
+
+            dynamicGroupOptions: [], //投放人群
+            getDynamicGroupLoading: false, //下拉框加载数据loading
         };
     },
     created () {
@@ -280,6 +293,27 @@ export default {
         this.query()
     },
     methods: {
+
+        // 投放人群下拉请求数据
+        getDynamicGroup(value) {
+            if(value) { //展开下拉框 请求数据
+                this.getDynamicGroupLoading = true
+                this.$http.get("/sys/dynamicGroup/getDynamicGroupList").then(({ data: res }) => {
+                    if(res.code == 0) {
+                        this.dynamicGroupOptions = res.data
+                    }else {
+                        this.$message.error(res.msg)
+                        this.dynamicGroupOptions = []
+                        this.dataForm.dynamicGroupName = ""
+                    }
+                    this.getDynamicGroupLoading = false
+                }).catch(err => {
+                    this.getDynamicGroupLoading = false
+                    this.dynamicGroupOptions = []
+                    this.dataForm.dynamicGroupName = ""
+                })
+            }
+        },
         // 创建直播
         newLive() {
             this.$prompt('直播主题', '提示', {

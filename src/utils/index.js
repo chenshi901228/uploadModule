@@ -139,28 +139,30 @@ export function httpParams(obj) {
  * 附件下载
  * 
  */
-export function downloadFile(url, name, _this) {
-  let xhr = new XMLHttpRequest()
-  xhr.open("get", `${window.SITE_CONFIG['apiURL']}/oss/file/downloadNew?access_token=${Cookies.get('access_token')}&fileUrl=${url}`, true)
-  xhr.responseType = 'blob';    // 返回类型blob
-  xhr.onload = function () {
-    if (xhr.readyState === 4 && xhr.status === 200) {
-      let blob = this.response;
-      // 转换一个blob链接
-      let u = window.URL.createObjectURL(new Blob([blob]));
-      let a = document.createElement('a');
-      a.download = name || new Date().getTime() + "";
-      a.href = u;
-      a.style.display = 'none'
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      // 释放
-      window.URL.revokeObjectURL(u);
-    }
-  };
-  xhr.onerror = function(){
-    console.log('失败');
-  }
-  xhr.send()
+export function downloadFile(url) {
+  url = `${window.SITE_CONFIG['apiURL']}/oss/file/downloadNew?access_token=${Cookies.get('access_token')}&fileUrl=${url}`
+  window.open(url)
+  // let xhr = new XMLHttpRequest()
+  // xhr.open("get", `${window.SITE_CONFIG['apiURL']}/oss/file/downloadNew?access_token=${Cookies.get('access_token')}&fileUrl=${url}`, true)
+  // xhr.responseType = 'blob';    // 返回类型blob
+  // xhr.onload = function () {
+  //   if (xhr.readyState === 4 && xhr.status === 200) {
+  //     let blob = this.response;
+  //     // 转换一个blob链接
+  //     let u = window.URL.createObjectURL(new Blob([blob]));
+  //     let a = document.createElement('a');
+  //     a.download = name || new Date().getTime() + "";
+  //     a.href = u;
+  //     a.style.display = 'none'
+  //     document.body.appendChild(a);
+  //     a.click();
+  //     a.remove();
+  //     // 释放
+  //     window.URL.revokeObjectURL(u);
+  //   }
+  // };
+  // xhr.onerror = function(){
+  //   console.log('失败');
+  // }
+  // xhr.send()
 }

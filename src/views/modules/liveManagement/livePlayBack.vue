@@ -58,17 +58,6 @@
                 </el-row>
                 <div v-if="isOpen">
                     <el-row>
-                        <!-- <el-form-item
-                            label="投放人群"
-                            prop="endDate"
-                        >
-                            <el-select v-model="value" placeholder="请选择投放人群">
-                                <el-option
-                                    label="群组1"
-                                    value="群组1">
-                                </el-option>
-                            </el-select>
-                        </el-form-item> -->
                         <el-col :span="6">
                             <el-form-item
                                 label="视频显示"
@@ -77,6 +66,27 @@
                                 <el-select clearable size="small" v-model="dataForm.showMode" placeholder="请选择">
                                     <el-option label="横屏" :value="1"></el-option>
                                     <el-option label="竖屏" :value="0"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="6">
+                            <el-form-item
+                                label="投放人群"
+                                prop="dynamicGroupName"
+                            >
+                                <el-select 
+                                    size="small"
+                                    v-model="dataForm.dynamicGroupName" 
+                                    placeholder="请选择投放人群"
+                                    :loading="getDynamicGroupLoading"
+                                    @visible-change="getDynamicGroup"
+                                    clearable>
+                                        <el-option 
+                                            v-for="item in dynamicGroupOptions" 
+                                            :key="item.id"
+                                            :label="item.name"
+                                            :value="item.name">
+                                        </el-option>
                                 </el-select>
                             </el-form-item>
                         </el-col>
@@ -171,13 +181,13 @@
                 </el-table-column>
                 <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
                     <template slot-scope="{ row }">
-                        <el-dropdown v-if="row.liveState != 0" trigger="click" @command="actionHandle" size="small">
+                        <el-dropdown trigger="click" @command="actionHandle" size="small">
                             <span style="cursor: pointer;color: #409EFF;">
                                 更多<i class="el-icon-arrow-down el-icon--right"></i>
                             </span>
                             <el-dropdown-menu slot="dropdown">
                                 <el-dropdown-item :command="{action: '1', data: row}" v-if="row.liveState == 1" icon="el-icon-download">下载视频</el-dropdown-item>
-                                <el-dropdown-item :command="{action: '2', data: row}" v-if="row.liveState == 1" icon="el-icon-document">评论详情</el-dropdown-item>
+                                <el-dropdown-item :command="{action: '2', data: row}" icon="el-icon-document">评论详情</el-dropdown-item>
                                 <el-dropdown-item :command="{action: '3', data: row}" v-if="row.liveState != 0" icon="el-icon-delete">删除</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
@@ -229,6 +239,7 @@ export default {
                 showMode: null,
                 showState: null,
                 liveState: null,
+                dynamicGroupName: ""
             },
 
 
@@ -252,6 +263,8 @@ export default {
                 { prop: "remark", label: "备注" },
                 { prop: "createDate", label: "创建时间", width: 180 },
             ],
+            dynamicGroupOptions: [], //投放人群
+            getDynamicGroupLoading: false, //下拉框加载数据loading
         };
     },
     created () {
@@ -272,7 +285,7 @@ export default {
         actionHandle({action, data}) {
             switch(action) {
                 case "1": // 下载视频
-                    if(data.relationLiveUrl) downloadFile(data.relationLiveUrl,data.livingRoomId);
+                    if(data.relationLiveUrl) downloadFile(data.relationLiveUrl);
                     break;
                 case "2": // 查看评论详情
                     if(data.id) this.$router.push({ name: "liveManagement-livePlayBackComment", query: { id: data.id }})
@@ -284,6 +297,27 @@ export default {
 
             }
         },
+        // 投放人群下拉请求数据
+        getDynamicGroup(value) {
+            if(value) { //展开下拉框 请求数据
+                this.getDynamicGroupLoading = true
+                this.$http.get("/sys/dynamicGroup/getAllDynamicGroupList").then(({ data: res }) => {
+                    if(res.code == 0) {
+                        this.dynamicGroupOptions = res.data
+                    }else {
+                        this.$message.error(res.msg)
+                        this.dynamicGroupOptions = []
+                        this.dataForm.dynamicGroupName = ""
+                    }
+                    this.getDynamicGroupLoading = false
+                }).catch(err => {
+                    this.getDynamicGroupLoading = false
+                    this.dynamicGroupOptions = []
+                    this.dataForm.dynamicGroupName = ""
+                })
+            }
+        },
+
         // 视频显示/隐藏
         showOrHide(data) {
             this.customConfirm(`确认${data.showState ? "隐藏" : "显示"}？`, (cb) => {

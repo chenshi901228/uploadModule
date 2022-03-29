@@ -51,16 +51,22 @@
                             <el-option label="横屏" :value="1"></el-option>
                     </el-select>
                 </el-form-item>
-                <!-- <el-form-item label="投放人群" prop="showMode" required>
-                    <el-select
+                <el-form-item label="投放人群" prop="dynamicGroupIds">
+                    <el-select 
                         style="width:100%"
-                        v-model="dataForm.showMode"
-                        clearable
-                        placeholder="请选择">
-                            <el-option label="竖屏" :value="0"></el-option>
-                            <el-option label="横屏" :value="1"></el-option>
+                        v-model="dataForm.dynamicGroupIds" 
+                        placeholder="请选择投放人群"
+                        :loading="getDynamicGroupLoading"
+                        @visible-change="getDynamicGroup"
+                        clearable>
+                            <el-option 
+                                v-for="item in dynamicGroupOptions" 
+                                :key="item.id"
+                                :label="item.name"
+                                :value="item.id">
+                            </el-option>
                     </el-select>
-                </el-form-item> -->
+                </el-form-item>
                 <el-form-item label="回放视频" required>
                     <custom-upload 
                         ref="relationLiveUpload"
@@ -91,7 +97,8 @@ export default {
                 frontCoverUrl: "",
                 anchor: "",
                 showMode: null,
-                relationLiveUrl: ""
+                relationLiveUrl: "",
+                dynamicGroupIds: ""
             },
             frontCoverList: [], //封面列表
             loading: false, //输入主播选择loading
@@ -109,6 +116,8 @@ export default {
                 ],
             },
             submitLoading: false,
+            dynamicGroupOptions: [], //投放人群
+            getDynamicGroupLoading: false, //下拉框加载数据loading
         }
     },
     methods: {
@@ -162,6 +171,28 @@ export default {
                 this.anchorOptions = []
             }
         },
+        // 投放人群下拉请求数据
+        getDynamicGroup(value) {
+            if(value) { //展开下拉框 请求数据
+                if(!this.dataForm.anchor) return this.$message.warning("请先输入搜索选择主播")
+                let t = JSON.parse(this.dataForm.anchor)
+                this.getDynamicGroupLoading = true
+                this.$http.get("/sys/dynamicGroup/getDynamicGroupList", {
+                    params: { id: t.anchorUserId}
+                }).then(({ data: res }) => {
+                    if(res.code == 0) {
+                        this.dynamicGroupOptions = res.data
+                    }else {
+                        this.$message.error(res.msg)
+                        this.dynamicGroupOptions = []
+                    }
+                    this.getDynamicGroupLoading = false
+                }).catch(err => {
+                    this.getDynamicGroupLoading = false
+                    this.dynamicGroupOptions = []
+                })
+            }
+        },
         // 取消添加
         cancel() {
             this.$refs.dataForm.resetFields()
@@ -169,6 +200,8 @@ export default {
             this.dataForm.relationLiveUrl = ""
             this.frontCoverList = []
             this.relationLiveList = []
+
+            this.dynamicGroupOptions = []
         },
         // 表单提交
         submit() {
@@ -192,11 +225,20 @@ export default {
                     delete params.id
                     delete params.anchor
 
+                    // 主播信息处理
                     let o = JSON.parse(this.dataForm.anchor)
 
+                    // 附件处理
                     params.frontCoverUrl = this.frontCoverList[0].url
                     params.relationLiveUrl = this.relationLiveList[0].url
                     params.videoSize = this.relationLiveList[0].size
+
+                    // 投放人群处理
+                    if(this.dataForm.dynamicGroupIds) {
+                        params.dynamicGroupIds = [ params.dynamicGroupIds ]
+                    }else{
+                        delete params.dynamicGroupIds
+                    }
 
                     this.submitLoading = true
                     this.$http.post("/sys/livePlayback/save", {...params, ...o}).then(({ data: res }) => {
