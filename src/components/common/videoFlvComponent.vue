@@ -26,6 +26,9 @@ export default {
             this.flvVideoHandle(this.url)
         })
     },
+    destroyed() {
+        if(this.flvPlayer) this.flvPlayer.dispose()
+    },
     methods: {
         flvVideoHandle(url) {
             this.$nextTick(() => {
