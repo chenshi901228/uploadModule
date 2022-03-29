@@ -10,18 +10,21 @@
       >
         <el-form-item label="直播主题">
           <el-input
+            :clearable="true"
             v-model="dataForm.liveTheme"
             placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item label="主播">
           <el-input
+            :clearable="true"
             v-model="dataForm.anchorUser"
             placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item label="开播时间">
           <el-date-picker
+            :clearable="true"
             v-model="dataForm.startDate"
             type="datetime"
             placeholder="选择日期时间"
@@ -32,6 +35,7 @@
         </el-form-item>
         <el-form-item label="结束时间">
           <el-date-picker
+            :clearable="true"
             v-model="dataForm.endDate"
             type="datetime"
             placeholder="选择日期时间"
@@ -41,25 +45,44 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="投放人群">
-          <el-input
+          <el-select
             v-model="dataForm.dynamicGroupName"
-            placeholder="请输入"
-          ></el-input>
+            filterable
+            placeholder="请选择"
+            :clearable="true"
+          >
+            <el-option
+              v-for="(item, index) in options"
+              :key="index"
+              :label="item.name"
+              :value="item.name"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="是否录制">
-          <el-select v-model="dataForm.transcribeFlg" placeholder="是否录制">
+          <el-select
+            :clearable="true"
+            v-model="dataForm.transcribeFlg"
+            placeholder="是否录制"
+          >
             <el-option label="未录制" value="0"></el-option>
             <el-option label="已录制" value="1"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="关联直播">
           <el-input
+            :clearable="true"
             v-model="dataForm.livingRoomId"
             placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item label="直播状态">
-          <el-select v-model="dataForm.liveState" placeholder="直播状态">
+          <el-select
+            :clearable="true"
+            v-model="dataForm.liveState"
+            placeholder="直播状态"
+          >
             <el-option label="已下播" value="0"></el-option>
             <el-option label="直播中" value="1"></el-option>
             <el-option label="已禁播" value="2"></el-option>
@@ -67,7 +90,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="显示状态">
-          <el-select v-model="dataForm.showState" placeholder="直播状态">
+          <el-select
+            :clearable="true"
+            v-model="dataForm.showState"
+            placeholder="直播状态"
+          >
             <el-option label="显示" value="0"></el-option>
             <el-option label="隐藏" value="1"></el-option>
           </el-select>
@@ -276,6 +303,7 @@
             }}</el-button>
             <!-- <el-button size="mini">禁播</el-button> -->
             <el-button
+              v-if="scope.row.appointmentState !== 0"
               size="mini"
               type="danger"
               @click="handleDelete(scope.$index, scope.row)"
@@ -295,6 +323,23 @@
       >
       </el-pagination>
     </div>
+    <el-dialog title="删除" :visible.sync="dialogFormVisible">
+      <el-form
+        :model="ruleForm"
+        :rules="rules"
+        ref="ruleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+      >
+        <el-form-item label="备注" prop="desc">
+          <el-input type="textarea" v-model="ruleForm.desc"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirm('ruleForm')">确 定</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -322,6 +367,15 @@ export default {
       total: 0, // 总条数
       dataList: [], // 数据列表
       dataListSelections: [], // 数据列表，多选项
+      options: [],
+      dialogFormVisible: false,
+      ruleForm: {
+        desc: "",
+      },
+      rules: {
+        desc: [{ required: true, message: "请填写备注内容", trigger: "blur" }],
+      },
+      ids: [],
     };
   },
   watch: {},
@@ -330,6 +384,7 @@ export default {
   },
   activated() {
     this.query();
+    this.getDynamicGroupList();
   },
   methods: {
     query() {
@@ -408,35 +463,15 @@ export default {
     },
     //删除
     handleDelete(index, row) {
-      let ids = [];
-      ids.push(row.id);
-      this.$http
-        .delete("/sys/livePreview/delete", { data: { ids: ids } })
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          }
-        })
-        .catch((err) => {
-          throw err;
-        });
+      this.dialogFormVisible = true;
+      this.ids.push(row.id);
     },
     //批量删除
     deleteSelect() {
-      let ids = [];
+      this.dialogFormVisible = true;
       this.dataListSelections.forEach((v) => {
-        ids.push(v.id);
+        this.ids.push(v.id);
       });
-      this.$http
-        .delete("/sys/livePreview/delete", { data: { ids: ids } })
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          }
-        })
-        .catch((err) => {
-          throw err;
-        });
     },
     // 时间格式化
     dateFormat(time) {
@@ -536,6 +571,49 @@ export default {
           document.body.removeChild(link);
         })
         .catch(() => {});
+    },
+    //删除
+    confirm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          this.$http
+            .delete("/sys/livePreview/delete", {
+              data: { ids: this.ids, remark: this.ruleForm.desc },
+            })
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                this.ids = [];
+                this.ruleForm.desc = "";
+                return this.$message.error(res.msg);
+              }
+              this.ids = [];
+              this.ruleForm.desc = "";
+              this.query();
+              this.$message.success("删除成功!");
+              this.dialogFormVisible = false;
+            })
+            .catch((err) => {
+              throw err;
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
+    //获取投放人群
+    getDynamicGroupList() {
+      this.$http
+        .get("/sys/dynamicGroup/getAllDynamicGroupList")
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          this.options = res.data;
+        })
+        .catch((err) => {
+          throw err;
+        });
     },
   },
 };
