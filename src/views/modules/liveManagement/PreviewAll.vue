@@ -340,6 +340,14 @@
         <el-button type="primary" @click="confirm('ruleForm')">确 定</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
+      <span>确认{{ showState === 0 ? "显示" : "隐藏" }}吗？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmShowState">确 定</el-button>
+      </span>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -376,12 +384,13 @@ export default {
         desc: [{ required: true, message: "请填写备注内容", trigger: "blur" }],
       },
       ids: [],
+      dialogVisible: false,
+      showState: 0,
+      id: "",
     };
   },
   watch: {},
-  created() {
-    // this.query()
-  },
+  created() {},
   activated() {
     this.query();
     this.getDynamicGroupList();
@@ -438,19 +447,23 @@ export default {
     },
     //显示与隐藏
     showThis(index, row) {
+      this.dialogVisible = true;
+      this.id = row.id;
+      this.showState = row.showState;
+    },
+    //确认隐藏显示
+    confirmShowState() {
       this.$http
         .put("/sys/livePreview/showOrHide", {
-          id: row.id,
-          showState: row.showState,
+          id: this.id,
+          showState: this.showState === 1 ? 0 : 1,
         })
         .then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg);
-          }
-          if (row.showState === 1) {
-            row.showState = 0;
-          } else if (row.showState === 0) {
-            row.showState = 1;
+          } else {
+            this.dialogVisible = false;
+            this.query();
           }
         })
         .catch((err) => {
