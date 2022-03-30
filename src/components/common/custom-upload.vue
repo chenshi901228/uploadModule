@@ -17,7 +17,7 @@
         </div>
         <el-upload
             class="upload-demo"
-            action="http://192.168.250.195:28080/oss/file/upload"
+            :action="uploadUrl"
             :multiple="multiple"
             :show-file-list="false"
             :file-list="uploadList"
@@ -59,6 +59,11 @@ export default {
             previewVisible: false,
             previewInfo: null,
             imgTypes: ["png", "jpg", "jpeg", "webp", "gif"],  //图片格式
+        }
+    },
+    computed: {
+        uploadUrl() {
+            return window.SITE_CONFIG['apiURL'] + '/oss/file/upload'
         }
     },
     props: {
