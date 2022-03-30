@@ -66,8 +66,8 @@
                                     size="small"
                                     v-model="dataForm.startDate"
                                     type="datetime"
-                                    format="yyyy-MM-dd hh:mm"
-                                    value-format="yyyy-MM-dd hh:mm"
+                                    format="yyyy-MM-dd HH:mm"
+                                    value-format="yyyy-MM-dd HH:mm"
                                     placeholder="请选择开播时间">
                                 </el-date-picker>
                             </el-form-item>
@@ -81,8 +81,8 @@
                                     size="small"
                                     v-model="dataForm.endDate"
                                     type="datetime"
-                                    format="yyyy-MM-dd hh:mm"
-                                    value-format="yyyy-MM-dd hh:mm"
+                                    format="yyyy-MM-dd HH:mm"
+                                    value-format="yyyy-MM-dd HH:mm"
                                     placeholder="请选择结束时间">
                                 </el-date-picker>
                             </el-form-item>

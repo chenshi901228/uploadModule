@@ -4,7 +4,7 @@
     <div class="upload-item">
         <div v-for="item in uploadList" :key="item.url" class="custom-upload-fileList">
             <div v-if="item.uploading" class="uploadLoading">
-                <el-progress type="circle" :percentage="item.progress"></el-progress>
+                <el-progress type="circle" :width="90" :percentage="item.progress"></el-progress>
             </div>
             <div v-if="item.url" class="fileHandle">
                 <i @click="previewImg(item)" class="el-icon-view"></i>
@@ -245,10 +245,13 @@ export default {
                 width: 100%;
                 height: 100%;
                 background-color: #fff;
-                /deep/.el-progress-circle{
-                    width: 100% !important;
-                    height: 100% !important;
-                }
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                // /deep/.el-progress-circle{
+                //     width: 100% !important;
+                //     height: 100% !important;
+                // }
             }
             .fileHandle{
                 position: absolute;
