@@ -4,7 +4,7 @@
     <div class="upload-item">
         <div v-for="item in uploadList" :key="item.url" class="custom-upload-fileList">
             <div v-if="item.uploading" class="uploadLoading">
-                <el-progress type="circle" :percentage="item.progress"></el-progress>
+                <el-progress type="circle" :width="90" :percentage="item.progress"></el-progress>
             </div>
             <div v-if="item.url" class="fileHandle">
                 <i @click="previewImg(item)" class="el-icon-view"></i>
@@ -17,7 +17,7 @@
         </div>
         <el-upload
             class="upload-demo"
-            action="http://192.168.250.195:28080/oss/file/upload"
+            :action="uploadUrl"
             :multiple="multiple"
             :show-file-list="false"
             :file-list="uploadList"
@@ -35,23 +35,35 @@
         <el-dialog
             width="60%"
             append-to-body
+            :destroy-on-close="true"
             :visible.sync="previewVisible">
             <div style="display: flex;justify-content: center;-items: center;">
-                <video style="max-width:100%" v-if="previewInfo && previewInfo.type.includes('video')" :src="previewInfo && previewInfo.url" controls></video>
-                <img v-else style="max-width:100%" :src="previewInfo && previewInfo.url" alt="">
+                <img v-if="previewInfo && imgTypes.includes(previewInfo.previewType)" style="max-width:100%" :src="previewInfo && previewInfo.url" alt="">
+                <video style="max-width:100%" v-else-if="previewInfo && previewInfo.previewType == 'mp4'" :src="previewInfo && previewInfo.url" controls></video>
+                <video-flv-component v-else :url="previewInfo && previewInfo.url"></video-flv-component>
             </div>
         </el-dialog>
     </div>
 </template>
 <script>
+import VideoFlvComponent from "@/components/common/videoFlvComponent"
 export default {
+    components: {
+        VideoFlvComponent
+    },
     data() {
         return {
             uploadList: [],
             deleteUid: null, //删除的附件uid
             // 预览
             previewVisible: false,
-            previewInfo: null
+            previewInfo: null,
+            imgTypes: ["png", "jpg", "jpeg", "webp", "gif"],  //图片格式
+        }
+    },
+    computed: {
+        uploadUrl() {
+            return window.SITE_CONFIG['apiURL'] + '/oss/file/upload'
         }
     },
     props: {
@@ -72,7 +84,7 @@ export default {
             type: Boolean,
             default: false
         },
-        //附件格式
+        //自定义可上传附件格式
         fileType: {
             type: Array,
             default: () => {
@@ -179,9 +191,10 @@ export default {
         previewImg(data) {
             this.previewInfo = data
             if(data.url){
-                if(!data.type){
-                   return this.$message.error("此格式附件暂不支持预览")
-                }
+                let type = data.url.split(".")
+                type = type[type.length - 1].toLocaleLowerCase()
+
+                this.previewInfo.previewType = type
                 this.previewVisible = true
             }
         },
@@ -232,10 +245,13 @@ export default {
                 width: 100%;
                 height: 100%;
                 background-color: #fff;
-                /deep/.el-progress-circle{
-                    width: 100% !important;
-                    height: 100% !important;
-                }
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                // /deep/.el-progress-circle{
+                //     width: 100% !important;
+                //     height: 100% !important;
+                // }
             }
             .fileHandle{
                 position: absolute;
