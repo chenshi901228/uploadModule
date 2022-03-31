@@ -8,7 +8,11 @@
       @keyup.enter.native="queryDynamicGroup()"
     >
       <el-form-item label="动态组">
-        <el-input v-model="dataForm.name" placeholder="请输入"></el-input>
+        <el-input
+          clearable
+          v-model="dataForm.name"
+          placeholder="请输入"
+        ></el-input>
       </el-form-item>
       <el-form-item label="显示状态">
         <el-select
@@ -120,6 +124,9 @@
       <el-form :model="groupForm">
         <el-form-item label="动态组名称" :label-width="formLabelWidth">
           <el-input
+            @input="changeValueNum"
+            clearable
+            maxlength="20"
             style="width: 400px"
             v-model="groupForm.name"
             autocomplete="off"
@@ -140,6 +147,9 @@
       <el-form :model="editeGroupForm">
         <el-form-item label="动态组名称" :label-width="formLabelWidth">
           <el-input
+            @input="changeValueNum"
+            clearable
+            maxlength="20"
             style="width: 400px"
             v-model="editeGroupForm.name"
             autocomplete="off"
@@ -232,6 +242,13 @@ export default {
   },
   activated() {},
   methods: {
+    changeValueNum() {
+      if (this.groupForm.name.length >= 20) {
+        this.$message.warning("最大字数为20字！");
+      }else if (this.editeGroupForm.name.length >= 20) {
+        this.$message.warning("最大字数为20字！");
+      }
+    },
     changeShowState(i, row) {
       this.dialogVisible = true;
       this.id = row.id;
