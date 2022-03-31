@@ -1,6 +1,6 @@
 <template>
     <!-- 备注弹框 -->
-    <el-dialog :title="title" :visible.sync="dialogVisible" width="30%">
+    <el-dialog :title="title" :visible.sync="dialogVisible" top="0" custom-class="custom-dialog-top" width="30%">
         <div class="dialog" style="display:flex;">
             <p style="width:50px; margin:0">备注<span style="color:red">*</span></p>
             <el-input
@@ -55,3 +55,8 @@ export default {
 
 }
 </script>
+<style lang="scss">
+    .custom-dialog-top{
+        transform: translateY(50%);
+    }
+</style>
