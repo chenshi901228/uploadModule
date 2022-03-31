@@ -31,6 +31,7 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<el-input-number 
                         v-model="dataForm.proportion" 
                         :controls="false"
+                        :precision="0"
                         :min="10" 
                         :max="20">
                     </el-input-number> %
@@ -60,7 +61,7 @@ export default {
     },
     methods: {
         init(data) {
-            if(data) this.dataForm = data
+            if(data) this.dataForm = JSON.parse(JSON.stringify(data))
             this.visible = true
         },
         // 取消添加
