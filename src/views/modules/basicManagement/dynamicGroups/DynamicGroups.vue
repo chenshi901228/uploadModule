@@ -2,16 +2,27 @@
 
 <template>
   <el-card shadow="never" class="aui-card--fill">
-    <el-form :inline="true" :model="dataForm" @keyup.enter.native="groupMens()">
+    <el-form
+      :inline="true"
+      :model="dataForm"
+      @keyup.enter.native="queryDynamicGroup()"
+    >
       <el-form-item label="动态组">
         <el-input v-model="dataForm.name" placeholder="请输入"></el-input>
       </el-form-item>
       <el-form-item label="显示状态">
-        <el-input v-model="dataForm.showState" placeholder="请输入"></el-input>
+        <el-select
+          :clearable="true"
+          v-model="dataForm.showState"
+          placeholder="显示状态"
+        >
+          <el-option label="显示" value="1"></el-option>
+          <el-option label="隐藏" value="0"></el-option>
+        </el-select>
       </el-form-item>
 
       <el-form-item>
-        <el-button @click="groupMens()">查询</el-button>
+        <el-button @click="queryDynamicGroup()">查询</el-button>
       </el-form-item>
       <el-form-item>
         <el-button
@@ -54,7 +65,7 @@
       </el-table-column>
       <el-table-column label="显示状态" prop="showState" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.showState || "--" }}</span>
+          <span>{{ scope.row.showState === 1 ? "显示" : "隐藏" || "--" }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建人" prop="createBy" align="center">
@@ -80,7 +91,11 @@
           <el-button @click="edite(scope.$index, scope.row)" size="mini"
             >编辑</el-button
           >
-          <el-button size="mini">显示</el-button>
+          <el-button
+            @click="changeShowState(scope.$index, scope.row)"
+            size="mini"
+            >{{ scope.row.showState === 1 ? "隐藏" : "显示" }}</el-button
+          >
           <el-button
             @click="toDetail(scope.$index, scope.row)"
             size="mini"
@@ -164,6 +179,14 @@
         <el-button @click="dialogFormVisible = false">完成</el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
+      <span>确认{{ showState === 0 ? "显示" : "隐藏" }}吗？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmShowState">确 定</el-button>
+      </span>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -197,6 +220,9 @@ export default {
       fileList: [],
       dialogInputVisible: false,
       groupId: "",
+      showState: 0,
+      id: "",
+      dialogVisible: false,
     };
   },
   watch: {},
@@ -206,15 +232,40 @@ export default {
   },
   activated() {},
   methods: {
+    changeShowState(i, row) {
+      this.dialogVisible = true;
+      this.id = row.id;
+      this.showState = row.showState;
+    },
+    //确认隐藏显示
+    confirmShowState() {
+      this.$http
+        .put("/sys/dynamicGroup/showOrHide", {
+          id: this.id,
+          showState: this.showState === 1 ? 0 : 1,
+        })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          } else {
+            this.dialogVisible = false;
+            this.queryDynamicGroup();
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
     edite(i, row) {
       this.dialogEditeFormVisible = true;
       this.groupId = row.id;
+      this.showState = row.showState;
       this.editeGroupForm.name = row.name;
-    }, 
+    },
     toDetail(i, row) {
       this.groupId = row.id;
       this.$router.push({
-        path: "/DynamicMens",
+        path: "/basicManagement-dynamicGroups-DynamicMens",
       });
       window.localStorage.setItem("groupId", this.groupId);
     },
@@ -280,24 +331,37 @@ export default {
     },
     //动态组人员
     queryDynamicGroup() {
-      if (this.loadingGroup) {
-        return;
+      this.loadingGroup = true;
+
+      let dataObj = {};
+
+      for (const key in this.dataForm) {
+        if (this.dataForm[key].length !== 0) {
+          dataObj[key] = this.dataForm[key];
+        }
       }
+      if (this.dataForm.showState) {
+        dataObj.showState = Number(this.dataForm.showState);
+      }
+
       this.$http
         .get("/sys/dynamicGroup/page", {
           params: {
             page: this.groupMensPage,
             limit: this.groupMensLimit,
+            ...dataObj,
           },
         })
         .then(({ data: res }) => {
           if (res.code !== 0) {
             this.groupMens = [];
             this.groupMensTotal = 0;
+            this.loadingGroup = false;
             return this.$message.error(res.msg);
           }
           this.groupMens = res.data.list;
           this.groupMensTotal = res.data.total;
+          this.loadingGroup = false;
         })
         .catch((err) => {
           throw err;
@@ -332,7 +396,6 @@ export default {
           this.$message.success("添加成功!");
           this.dialogFormVisible = false;
           this.groupMensPage = 1;
-          this.loadingGroup = false;
           this.groupMens = [];
           this.queryDynamicGroup();
           this.groupForm.name = "";
@@ -344,9 +407,10 @@ export default {
     // 编辑动态组
     editeGroup() {
       this.$http
-        .put("/sys/dynamicGroup", {
+        .put("/sys/dynamicGroup/update", {
           name: this.editeGroupForm.name,
           id: this.groupId,
+          showState: this.showState,
         })
         .then(({ data: res }) => {
           if (res.code !== 0) {
@@ -356,7 +420,6 @@ export default {
           this.$message.success("修改成功!");
           this.dialogEditeFormVisible = false;
           this.groupMensPage = 1;
-          this.loadingGroup = false;
           this.queryDynamicGroup();
           this.editeGroupForm.name = "";
         })

@@ -5,7 +5,7 @@
     <el-form
       :inline="true"
       :model="dataForm"
-      @keyup.enter.native="queryDynamicGroup()"
+      @keyup.enter.native="queryPageWithGroupId()"
     >
       <el-form-item label="用户昵称">
         <el-input v-model="dataForm.name" placeholder="请输入"></el-input>
@@ -15,14 +15,16 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="queryDynamicGroup()">查询</el-button>
+        <el-button type="primary" @click="queryPageWithGroupId(this.groupId)"
+          >查询</el-button
+        >
       </el-form-item>
       <el-form-item>
         <el-button
           v-if="dataListSelections.length !== 0"
           type="danger"
           @click="deleteSelect()"
-          >批量删除</el-button
+          >批量移除</el-button
         >
       </el-form-item>
     </el-form>
@@ -75,9 +77,9 @@
       </el-table-column>
     </el-table>
     <el-pagination
-      :current-groupMensPage="groupMensPage"
+      :current-groupMensPage="page"
       :groupMensPage-sizes="[10, 20, 50, 100]"
-      :groupMensPage-size="groupMensLimit"
+      :groupMensPage-size="limit"
       :total="groupMensTotal"
       layout="total, sizes, prev, pager, next, jumper"
       @size-change="pageSizeChangeHandle"
@@ -227,8 +229,8 @@ export default {
       dataListSelections: [], // 数据列表，多选项
       loadingGroup: false,
       groupMens: [],
-      groupMensPage: 1,
-      groupMensLimit: 10,
+      page: 1,
+      limit: 10,
       groupMensTotal: 0,
       userForm: {
         name: "",
@@ -240,25 +242,21 @@ export default {
       userListPage: 1, // 当前页码
       userListLimit: 10, // 每页数
       dataListSelectionUsers: [],
-      dataUserListTotal:0
-
+      dataUserListTotal: 0,
+      groupId: "",
     };
   },
   watch: {},
-  created() {
-    this.queryDynamicGroup();
+  created() {},
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.groupId = window.localStorage.getItem("groupId");
+      vm.queryPageWithGroupId(vm.groupId);
+    });
   },
   activated() {},
   methods: {
     addUser() {
-      // if (this.sysGroupId.length === 0) {
-      //   this.$message({
-      //     message: "请选择动态组",
-      //     type: "warning",
-      //     duration: 1000,
-      //   });
-      //   return;
-      // }
       this.queryUserList();
       this.dialogUserFormVisible = true;
     },
@@ -359,7 +357,7 @@ export default {
         this.$http
           .post("/sys/dynamicGroupUser", {
             weixinUserId: this.dataListSelectionUsers[0].id,
-            sysGroupId: this.sysGroupId,
+            sysGroupId: this.groupId,
           })
           .then(({ data: res }) => {
             if (res.code !== 0) {
@@ -368,7 +366,7 @@ export default {
             }
             this.$message.success("添加成功!");
             this.dialogUserFormVisible = false;
-            this.query(this.sysGroupId);
+            this.queryPageWithGroupId(this.groupId);
           })
           .catch((err) => {
             throw err;
@@ -378,7 +376,7 @@ export default {
         this.dataListSelectionUsers.forEach((v) => {
           list.push({
             weixinUserId: v.id,
-            sysGroupId: this.sysGroupId,
+            sysGroupId: this.groupId,
           });
         });
         this.$http
@@ -390,7 +388,7 @@ export default {
             }
             this.$message.success("添加成功!");
             this.dialogUserFormVisible = false;
-            this.query(this.sysGroupId);
+            this.queryPageWithGroupId(this.groupId);
           })
           .catch((err) => {
             throw err;
@@ -416,21 +414,22 @@ export default {
             return this.$message.error(res.msg);
           }
           this.$message.success("删除成功!");
-          this.queryDynamicGroup();
+          this.queryPageWithGroupId(this.groupId);
         })
         .catch((err) => {
           throw err;
         });
     },
     //动态组人员
-    queryDynamicGroup() {
+    queryPageWithGroupId(groupId) {
       this.loadingGroup = true;
 
       this.$http
-        .get("/sys/dynamicGroup/page", {
+        .get("/sys/dynamicGroupUser/pageWithGroupId", {
           params: {
-            page: this.groupMensPage,
-            limit: this.groupMensLimit,
+            page: this.page,
+            limit: this.limit,
+            groupId: groupId,
           },
         })
         .then(({ data: res }) => {
@@ -450,14 +449,14 @@ export default {
     },
     // 分页, 每页条数
     pageSizeChangeHandle(val) {
-      this.groupMensPage = 1;
-      this.groupMensLimit = val;
-      this.queryDynamicGroup();
+      this.page = 1;
+      this.limit = val;
+      this.queryPageWithGroupId(this.groupId);
     },
     // 分页, 当前页
     pageCurrentChangeHandle(val) {
-      this.groupMensPage = val;
-      this.queryDynamicGroup();
+      this.page = val;
+      this.queryPageWithGroupId(this.groupId);
     },
     //批量删除
     deleteSelect() {
@@ -472,7 +471,7 @@ export default {
             return this.$message.error(res.msg);
           }
           this.$message.success("删除成功!");
-          this.query(this.sysGroupId);
+          this.queryPageWithGroupId(this.groupId);
         })
         .catch((err) => {
           throw err;
