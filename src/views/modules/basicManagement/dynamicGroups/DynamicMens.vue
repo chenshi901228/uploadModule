@@ -210,33 +210,6 @@
         <el-button type="primary" @click="saveUser">添加</el-button>
       </div>
     </el-dialog>
-    <el-dialog title="导入" :visible.sync="dialogInputVisible" width="600">
-      <div style="margin-bottom: 20px">
-        导入模板：模板.XLS
-        <span @click="dowloadXlx" style="cursor: pointer; color: #66b1ff"
-          >下载</span
-        >
-      </div>
-      <el-upload
-        class="upload-demo"
-        accept=".xls, .xlsx"
-        :action="`http://192.168.250.195:28080/sys/dynamicGroupUser/import/${sysGroupId}?access_token=${access_token}`"
-        :on-error="handleError"
-        :on-progress="handleProgress"
-        :on-success="handleSuccess"
-        :before-upload="beforeUploadFile"
-        multiple
-        :show-file-list="false"
-        :limit="1"
-        :on-exceed="handleExceed"
-        :file-list="fileList"
-      >
-        <el-button size="small" type="primary">+上传文件</el-button>
-      </el-upload>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">完成</el-button>
-      </div>
-    </el-dialog>
   </el-card>
 </template>
 
@@ -257,9 +230,6 @@ export default {
       groupMensPage: 1,
       groupMensLimit: 10,
       groupMensTotal: 0,
-      sysGroupId: "",
-      fileList: [],
-      dialogInputVisible: false,
       userForm: {
         name: "",
         tel: "",
@@ -277,7 +247,6 @@ export default {
   watch: {},
   created() {
     this.queryDynamicGroup();
-    this.access_token = Cookies.get("access_token");
   },
   activated() {},
   methods: {
@@ -292,22 +261,6 @@ export default {
       // }
       this.queryUserList();
       this.dialogUserFormVisible = true;
-    },
-    dowloadXlx() {
-      window.open(
-        "https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/gruopUserImport.xlsx"
-      );
-    },
-    importXlx() {
-      if (this.sysGroupId.length === 0) {
-        this.$message({
-          message: "未选择动态组",
-          type: "warning",
-          duration: 1000,
-        });
-        return;
-      }
-      this.dialogInputVisible = true;
     },
     //获取未加入用户组
     queryUserList() {
@@ -447,57 +400,6 @@ export default {
     //批量选择
     userListSelectionChangeHandle(val) {
       this.dataListSelectionUsers = val;
-    },
-    handleExceed(files, fileList) {
-      this.$message.warning(
-        `当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
-          files.length + fileList.length
-        } 个文件`
-      );
-    },
-    handleError(err, file, fileList) {
-      this.$message.error("上传文件失败！");
-      this.fileList = [];
-    },
-    handleProgress(event, file, fileList) {
-      console.log(event);
-    },
-    handleSuccess(response, file, fileList) {
-      if (response.code === 0) {
-        this.$message({
-          message: "导入成功!",
-          type: "success",
-          duration: 1000,
-        });
-      }
-      this.fileList = [];
-      this.query(this.sysGroupId);
-      this.dialogInputVisible = false;
-    },
-    beforeUploadFile(file) {
-      // const extension = file.name.substring(file.name.lastIndexOf(".") + 1);
-      const size = file.size / 1024 / 1024;
-      // if (extension !== "xls") {
-      //   console.log(extension)
-      //   this.$message({
-      //     message: "只能上传excel的文件",
-      //     type: "warning",
-      //     duration: 1000,
-      //   });
-      // } else if (extension !== "xlsx") {
-      //   this.$message({
-      //     message: "只能上传excel的文件",
-      //     type: "warning",
-      //     duration: 1000,
-      //   });
-      // }
-      if (size > 10) {
-        this.$message({
-          message: "文件大小不得超过10M",
-          type: "warning",
-          duration: 1000,
-        });
-      }
     },
     // 多选
     dataListSelectionChangeHandle(val) {
