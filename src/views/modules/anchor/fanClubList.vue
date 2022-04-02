@@ -38,6 +38,7 @@
         :height="siteContentViewHeight"
         @sort-change="dataListSortChangeHandle"
         style="width: 100%"
+        ref="table"
       >
         <el-table-column
           prop="title"
@@ -262,6 +263,11 @@ export default {
     };
   },
   components: {},
+  activated(){
+    this.$nextTick(()=>{
+      this.$refs.table.doLayout()
+    })
+  },
   methods: {
     // 打开粉丝团成员列表弹窗
     openfansListDIa(row) {

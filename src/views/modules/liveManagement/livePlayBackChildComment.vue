@@ -136,10 +136,12 @@
 
         <!-- 回复详情弹框 -->
         <el-dialog
+            top="0" 
+            custom-class="custom-dialog-top"
             title="回复详情"
             :visible.sync="commentDetailsVisible"
             width="30%">
-            <el-descriptions title="" :column="1">
+            <el-descriptions title="" :column="1" :labelStyle="{ width: '100px'}" :contentStyle="{ width: '80%' }">
                 <el-descriptions-item label="回复人">{{commentDetailsInfo && commentDetailsInfo.commentUserName || "-"}}</el-descriptions-item>
                 <el-descriptions-item label="手机号码">{{commentDetailsInfo && commentDetailsInfo.phone || "-"}}</el-descriptions-item>
                 <el-descriptions-item label="回复详情">{{commentDetailsInfo && commentDetailsInfo.commentValue || "-"}}</el-descriptions-item>
@@ -225,5 +227,8 @@ export default {
     },
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+    .custom-dialog-top{
+        transform: translateY(50%);
+    }
 </style>
