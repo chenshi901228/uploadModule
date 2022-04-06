@@ -1,227 +1,214 @@
 <template>
-    <div>
-        <div class="diaBoxLeft_title">用户详情</div>
-         <div class="diaBox">
-          <div class="diaBoxLeft">
-            <div class="diaBoxLeft_title">基本信息</div>
-            <div class="diaBoxLeft_mes">
-              <el-avatar
-                :size="75"
-                :src="diaForm.avatarUrl"
-                style="margin: 0px 85px 10px"
-              ></el-avatar>
-              <div>用户昵称：{{ diaForm.nickName }}</div>
-              <!-- <div>是否认证：{{ diaForm.nickName }}</div>
+  <div>
+    <div class="diaBoxLeft_title">用户详情</div>
+    <div class="diaBox">
+      <div class="diaBoxLeft">
+        <div class="diaBoxLeft_title">基本信息</div>
+        <div class="diaBoxLeft_mes">
+          <el-avatar
+            :size="75"
+            :src="diaForm.avatarUrl"
+            style="margin: 0px 85px 10px"
+          ></el-avatar>
+          <div>用户昵称：{{ diaForm.nickName }}</div>
+          <!-- <div>是否认证：{{ diaForm.nickName }}</div>
               <div>是否指导师：{{ diaForm.nickName }}</div> -->
-              <div>邀请注册：{{ diaForm.aaa1 }}</div>
-              <div>TA邀请人：{{ diaForm.aaa2 }}</div>
-              <div>注册时间：{{ diaForm.createDate }}</div>
-            </div>
+          <div>邀请注册：{{ diaForm.aaa1 }}</div>
+          <div>TA邀请人：{{ diaForm.aaa2 }}</div>
+          <div>注册时间：{{ diaForm.createDate }}</div>
+        </div>
 
-            <div class="diaBoxLeft_title">账户信息</div>
-            <div class="diaBoxLeft_mes">
-              <div>
-                累计消费：￥{{
-                  diaForm.priceConsumption ? diaForm.priceConsumption : 0
-                }}元
-              </div>
-              <div>刷礼物消费：￥{{ diaForm.aaa5 }}元</div>
-              <div>粉丝团加入消费：￥{{ diaForm.aaa3 }}元</div>
-              <div>购买商品消费：￥{{ diaForm.aaa4 }}元</div>
-              <div>
-                可用大豆余额：{{
-                  diaForm.priceBalance ? diaForm.priceBalance : 0
-                }}
-              </div>
-            </div>
+        <div class="diaBoxLeft_title">账户信息</div>
+        <div class="diaBoxLeft_mes">
+          <div>
+            累计消费：￥{{
+              diaForm.priceConsumption ? diaForm.priceConsumption : 0
+            }}元
           </div>
-          <div class="diaBoxRight">
-            <div style="display: flex">
-              <div
-                class="diaBoxRight_tabBtns"
-                @click="changeTbas(1)"
-                :class="{ 'is-active': diaTbas === 1 }"
-              >
-                充值记录
-              </div>
-              <div
-                class="diaBoxRight_tabBtns"
-                @click="changeTbas(2)"
-                :class="{ 'is-active': diaTbas === 2 }"
-              >
-                礼物记录
-              </div>
-              <div
-                class="diaBoxRight_tabBtns"
-                @click="changeTbas(3)"
-                :class="{ 'is-active': diaTbas === 3 }"
-              >
-                商品记录
-              </div>
-              <div
-                class="diaBoxRight_tabBtns"
-                @click="changeTbas(4)"
-                :class="{ 'is-active': diaTbas === 4 }"
-              >
-                加入粉丝团
-              </div>
-              <div
-                class="diaBoxRight_tabBtns"
-                @click="changeTbas(5)"
-                :class="{ 'is-active': diaTbas === 5 }"
-              >
-                粉丝团消费
-              </div>
-              <div
-                class="diaBoxRight_tabBtns"
-                @click="changeTbas(6)"
-                :class="{ 'is-active': diaTbas === 6 }"
-              >
-                分享记录
-              </div>
-            </div>
-            <el-form
-              :inline="true"
-              :style="{ margin: '20px', 'text-align': 'right' }"
-              :model="diaSearchForm"
-              @keyup.enter.native="queryPost_dia()"
-            >
-              <el-form-item label="支付方式" v-if="diaTbas === 1">
-                <el-select v-model="diaSearchForm.payType" clearable>
-                  <el-option :value="1" label="微信"></el-option>
-                  <el-option :value="2" label="支付宝"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="充值来源" v-if="diaTbas === 1">
-                <el-select v-model="diaSearchForm.paySource" clearable>
-                  <el-option :value="1" label="小程序端"></el-option>
-                  <el-option :value="2" label="大于众学"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="礼物名称" v-if="diaTbas === 2">
-                <el-input v-model="diaSearchForm.name" clearable></el-input>
-              </el-form-item>
-              <el-form-item label="消费来源" v-if="diaTbas === 2">
-                <el-select v-model="diaSearchForm.paySource" clearable>
-                  <el-option :value="1" label="小程序端"></el-option>
-                  <el-option :value="2" label="大于众学"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item
-                label="粉丝团名称"
-                v-if="diaTbas === 4 || diaTbas === 5"
-              >
-                <el-input v-model="diaSearchForm.title" clearable></el-input>
-              </el-form-item>
-              <el-form-item
-                label="主播昵称"
-                v-if="diaTbas === 4 || diaTbas === 5"
-              >
-                <el-input
-                  v-model="diaSearchForm.anchorName"
-                  clearable
-                ></el-input>
-              </el-form-item>
-              <el-form-item
-                label="手机号码"
-                v-if="diaTbas === 4 || diaTbas === 5"
-              >
-                <el-input v-model="diaSearchForm.phone" clearable></el-input>
-              </el-form-item>
-              <el-form-item v-if="diaTbas !== 6">
-                <el-button @click="queryPost_dia()">{{
-                  $t("query")
-                }}</el-button>
-              </el-form-item>
-            </el-form>
-            <el-table
-              :data="diaDataList"
-              border
-              style="width: 100%"
-              height="calc(calc(100vh - 380px) - 2px)"
-            >
-              <template v-for="(label, prop) in diaTableTitle">
-                <el-table-column
-                  :prop="prop"
-                  :label="label"
-                  :key="prop"
-                  header-align="center"
-                  align="center"
-                  v-if="prop === 'paySource'"
-                >
-                  <template slot-scope="scope">
-                    <div>
-                      {{ scope.row.paySource === 1 ? "小程序" : "大于众学" }}
-                    </div>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  :prop="prop"
-                  :label="label"
-                  :key="prop"
-                  header-align="center"
-                  align="center"
-                  v-else-if="prop === 'payType'"
-                >
-                  <template slot-scope="scope">
-                    <div>
-                      {{ scope.row.paySource === 1 ? "微信" : "支付宝" }}
-                    </div>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  :prop="prop"
-                  :label="label"
-                  :key="prop"
-                  header-align="center"
-                  align="center"
-                  v-else-if="prop === 'userTyoe'"
-                >
-                  <template slot-scope="scope">
-                    <div>
-                      {{
-                        scope.row.userTyoe === 1
-                          ? "会长"
-                          : scope.row.userTyoe === 2
-                          ? "副会长"
-                          : "普通会员"
-                      }}
-                    </div>
-                  </template>
-                </el-table-column>
-                <el-table-column
-                  :prop="prop"
-                  :label="label"
-                  :key="prop"
-                  header-align="center"
-                  align="center"
-                  v-else
-                >
-                </el-table-column>
-              </template>
-            </el-table>
-            <el-pagination
-              :current-page="page_dia"
-              :page-sizes="[10, 20, 50, 100]"
-              :page-size="limit_dia"
-              :total="total_dia"
-              layout="total, sizes, prev, pager, next, jumper"
-              @size-change="pageSizeChangeHandle_dia"
-              @current-change="pageCurrentChangeHandle_dia"
-            >
-            </el-pagination>
+          <div>刷礼物消费：￥{{ diaForm.aaa5 }}元</div>
+          <div>粉丝团加入消费：￥{{ diaForm.aaa3 }}元</div>
+          <div>购买商品消费：￥{{ diaForm.aaa4 }}元</div>
+          <div>
+            可用大豆余额：{{ diaForm.priceBalance ? diaForm.priceBalance : 0 }}
           </div>
         </div>
+      </div>
+      <div class="diaBoxRight">
+        <div style="display: flex">
+          <div
+            class="diaBoxRight_tabBtns"
+            @click="changeTbas(1)"
+            :class="{ 'is-active': diaTbas === 1 }"
+          >
+            充值记录
+          </div>
+          <div
+            class="diaBoxRight_tabBtns"
+            @click="changeTbas(2)"
+            :class="{ 'is-active': diaTbas === 2 }"
+          >
+            礼物记录
+          </div>
+          <div
+            class="diaBoxRight_tabBtns"
+            @click="changeTbas(3)"
+            :class="{ 'is-active': diaTbas === 3 }"
+          >
+            商品记录
+          </div>
+          <div
+            class="diaBoxRight_tabBtns"
+            @click="changeTbas(4)"
+            :class="{ 'is-active': diaTbas === 4 }"
+          >
+            加入粉丝团
+          </div>
+          <div
+            class="diaBoxRight_tabBtns"
+            @click="changeTbas(5)"
+            :class="{ 'is-active': diaTbas === 5 }"
+          >
+            粉丝团消费
+          </div>
+          <div
+            class="diaBoxRight_tabBtns"
+            @click="changeTbas(6)"
+            :class="{ 'is-active': diaTbas === 6 }"
+          >
+            分享记录
+          </div>
+        </div>
+        <el-form
+          :inline="true"
+          :style="{ margin: '20px', 'text-align': 'right' }"
+          :model="diaSearchForm"
+          @keyup.enter.native="queryPost_dia()"
+        >
+          <el-form-item label="支付方式" v-if="diaTbas === 1">
+            <el-select v-model="diaSearchForm.payType" clearable>
+              <el-option :value="1" label="微信"></el-option>
+              <el-option :value="2" label="支付宝"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="充值来源" v-if="diaTbas === 1">
+            <el-select v-model="diaSearchForm.paySource" clearable>
+              <el-option :value="1" label="小程序端"></el-option>
+              <el-option :value="2" label="大于众学"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="礼物名称" v-if="diaTbas === 2">
+            <el-input v-model="diaSearchForm.name" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="消费来源" v-if="diaTbas === 2">
+            <el-select v-model="diaSearchForm.paySource" clearable>
+              <el-option :value="1" label="小程序端"></el-option>
+              <el-option :value="2" label="大于众学"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            label="粉丝团名称"
+            v-if="diaTbas === 4 || diaTbas === 5"
+          >
+            <el-input v-model="diaSearchForm.title" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="主播昵称" v-if="diaTbas === 4 || diaTbas === 5">
+            <el-input v-model="diaSearchForm.anchorName" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="手机号码" v-if="diaTbas === 4 || diaTbas === 5">
+            <el-input v-model="diaSearchForm.phone" clearable></el-input>
+          </el-form-item>
+          <el-form-item v-if="diaTbas !== 6">
+            <el-button @click="queryPost_dia()">{{ $t("query") }}</el-button>
+          </el-form-item>
+        </el-form>
+        <el-table
+          :data="diaDataList"
+          border
+          style="width: 100%"
+          height="calc(calc(100vh - 380px) - 2px)"
+        >
+          <template v-for="(label, prop) in diaTableTitle">
+            <el-table-column
+              :prop="prop"
+              :label="label"
+              :key="prop"
+              header-align="center"
+              align="center"
+              v-if="prop === 'paySource'"
+            >
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.paySource === 1 ? "小程序" : "大于众学" }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :prop="prop"
+              :label="label"
+              :key="prop"
+              header-align="center"
+              align="center"
+              v-else-if="prop === 'payType'"
+            >
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.paySource === 1 ? "微信" : "支付宝" }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :prop="prop"
+              :label="label"
+              :key="prop"
+              header-align="center"
+              align="center"
+              v-else-if="prop === 'userTyoe'"
+            >
+              <template slot-scope="scope">
+                <div>
+                  {{
+                    scope.row.userTyoe === 1
+                      ? "会长"
+                      : scope.row.userTyoe === 2
+                      ? "副会长"
+                      : "普通会员"
+                  }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :prop="prop"
+              :label="label"
+              :key="prop"
+              header-align="center"
+              align="center"
+              v-else
+            >
+            </el-table-column>
+          </template>
+        </el-table>
+        <el-pagination
+          :current-page="page_dia"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="limit_dia"
+          :total="total_dia"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="pageSizeChangeHandle_dia"
+          @current-change="pageCurrentChangeHandle_dia"
+        >
+        </el-pagination>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
 export default {
-    name: 'LiveWebmanageUserdetail',
-    data() {
-        return {
-            userId:'',
-             diaForm: {},
+  name: "LiveWebmanageUserdetail",
+  data() {
+    return {
+      userId: "",
+      diaForm: {},
       diaTbas: 1,
       diaSearchForm: {
         payType: "",
@@ -242,52 +229,53 @@ export default {
       page_dia: 1, // 当前页码
       limit_dia: 10, // 每页数
       total_dia: 0,
+    };
+  },
+
+  mounted() {
+    this.userId = this.$route.params.data.id;
+    this.$http
+      .get(`/sys/manage/userDetail/${this.$route.params.data.id}`)
+      .then(({ data: res }) => {
+        if (res.code !== 0) {
+          return this.$message.error(res.msg);
+        }
+        this.diaForm = {
+          priceConsumption: res.data.priceConsumption,
+          priceBalance: res.data.priceBalance,
+          ...this.$route.params.data,
+          // priceConsumption:res.data.priceConsumption,
+          // priceConsumption:res.data.priceConsumption,
         };
-    },
-
-    mounted() {
-      this.userId =this.$route.params.data.id;
-      this.$http
-        .get(`/sys/manage/userDetail/${this.$route.params.data.id}`)
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          }
-          this.diaForm = {
-            priceConsumption: res.data.priceConsumption,
-            priceBalance: res.data.priceBalance,
-            ...this.$route.params.data,
-            // priceConsumption:res.data.priceConsumption,
-            // priceConsumption:res.data.priceConsumption,
-          };
-        })
-        .catch(() => {});
+      })
+      .catch(() => {});
+    this.changeTbas(1);
+  },
+  watch: {
+    "$route.params.data"(val) {
+      if (val) {
+        this.userId = val.id;
+        this.$http
+          .get(`/sys/manage/userDetail/${val.id}`)
+          .then(({ data: res }) => {
+            if (res.code !== 0) {
+              return this.$message.error(res.msg);
+            }
+            this.diaForm = {
+              priceConsumption: res.data.priceConsumption,
+              priceBalance: res.data.priceBalance,
+              ...val,
+              // priceConsumption:res.data.priceConsumption,
+              // priceConsumption:res.data.priceConsumption,
+            };
+          })
+          .catch(() => {});
         this.changeTbas(1);
+      }
     },
-    watch: {
-       '$route.params.data' (val) {
-
-          this.userId =val.id;
-      this.$http
-        .get(`/sys/manage/userDetail/${val.id}`)
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          }
-          this.diaForm = {
-            priceConsumption: res.data.priceConsumption,
-            priceBalance: res.data.priceBalance,
-            ...val,
-            // priceConsumption:res.data.priceConsumption,
-            // priceConsumption:res.data.priceConsumption,
-          };
-        })
-        .catch(() => {});
-        this.changeTbas(1);
-    }
-    },
-    methods: {
-          changeTbas(n) {
+  },
+  methods: {
+    changeTbas(n) {
       this.diaTbas = n;
       this.diaSearchForm = {
         payType: "",
@@ -462,8 +450,8 @@ export default {
 
     // 重置搜索条件
     resetDataForm() {
-      this.$refs.dataForm.resetFields()
-      this.getDataList()
+      this.$refs.dataForm.resetFields();
+      this.getDataList();
     },
     // 分页, 每页条数
     pageSizeChangeHandle_dia(val) {
@@ -476,7 +464,7 @@ export default {
       this.page_dia = val;
       this.queryPost_dia();
     },
-    },
+  },
 };
 </script>
 

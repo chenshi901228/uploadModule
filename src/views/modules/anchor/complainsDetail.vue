@@ -1,0 +1,158 @@
+<template>
+  <div class="detalilBox">
+    <div class="detalilBox_top">
+      <div style="display: flex">
+        <div>直播昵称：{{ diaForm.username }}</div>
+        <div style="margin: 0 80px">手机号码：{{ diaForm.phone }}</div>
+      </div>
+      <div style="display: flex; margin: 20px 0">
+        <div class="tag" v-for="(i, k) in diaForm.tag" :key="k">{{ i }}</div>
+      </div>
+      <div style="display: flex; margin: 20px 0 10px">投诉内容：</div>
+      <div style="display: flex; margin: 0 20px">{{ diaForm.content }}</div>
+      <div style="display: flex; margin: 20px 0 10px">投诉图片：</div>
+      <div style="display: flex; margin: 0 20px">
+        <img
+          v-for="(i, k) in diaForm.fileUrl"
+          :key="k"
+          :src="i"
+          alt=""
+          style="width: 140px; height: 80px; margin-right: 20px"
+        />
+      </div>
+      <div style="display: flex; margin: 20px 0 10px">
+        联系方式：{{ diaForm.contactPhone }}
+      </div>
+      <div style="display: flex; margin: 20px 0 10px">处理方案：</div>
+      <div style="display: flex; margin: 0 20px">
+        <el-input
+          v-model="diaForm.solution"
+          type="textarea"
+          :rows="6"
+          maxlength="200"
+          show-word-limit
+        ></el-input>
+      </div>
+    </div>
+
+    <div class="detalilBox_bottom">
+      <el-button size="small" type="" @click="closeCurrentTab()"
+        >取消</el-button
+      >
+      <!-- <el-button size="small" type="primary" @click="updateCheckStatus()"
+        >处理</el-button
+      > -->
+    </div>
+  </div>
+</template>
+
+<script>
+import mixinViewModule from "@/mixins/view-module";
+export default {
+  mixins: [mixinViewModule],
+  name: "complainsRecords_detail",
+  data() {
+    return {
+      userId: "",
+      diaForm: {},
+    };
+  },
+
+  mounted() {
+    this.userId = this.$route.params.data.id;
+    this.$http
+      .get(`/sys/manage/complaint/${this.$route.params.data.id}`)
+      .then(({ data: res }) => {
+        if (res.code !== 0) {
+          return this.$message.error(res.msg);
+        }
+        this.diaForm = res.data;
+        this.diaForm.tag = this.diaForm.tag ? this.diaForm.tag.split(",") : [];
+        this.diaForm.fileUrl = this.diaForm.fileUrl
+          ? this.diaForm.fileUrl.split(",")
+          : [];
+      })
+      .catch(() => {});
+  },
+  watch: {
+    "$route.params.data"(val) {
+      if (val) {
+        this.userId = val.id;
+        this.$http
+          .get(`/sys/manage/complaint/${val.id}`)
+          .then(({ data: res }) => {
+            if (res.code !== 0) {
+              return this.$message.error(res.msg);
+            }
+            this.diaForm = res.data;
+            this.diaForm.tag = this.diaForm.tag
+              ? this.diaForm.tag.split(",")
+              : [];
+            this.diaForm.fileUrl = this.diaForm.fileUrl
+              ? this.diaForm.fileUrl.split(",")
+              : [];
+          })
+          .catch(() => {});
+      }
+    },
+  },
+  methods: {
+    // 审核
+    updateCheckStatus(type) {
+      this.$confirm(`是否处理该条投诉`, {
+        confirmButtonText: this.$t("confirm"),
+        cancelButtonText: this.$t("cancel"),
+        type: "warning",
+      })
+        .then(() => {
+          this.$http
+            .get("sys/sensitiveWordCheck/updateCheckStatus", {
+              params: {
+                id: this.diaForm.id,
+                status: type,
+                remark: this.diaForm.remark,
+              },
+            })
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                return this.$message.error(res.msg);
+              }
+              this.$message.success(res.data);
+              this.closeCurrentTab();
+              this.$bus.$emit("change");
+            })
+            .catch(() => {});
+        })
+        .catch(() => {});
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.detalilBox {
+  height: 100%;
+  background: #fff;
+  min-height: calc(calc(100vh - 50px - 38px - 30px));
+  padding: 40px 30px;
+
+  .detalilBox_top {
+    height: calc(calc(100vh - 240px));
+    overflow: auto;
+  }
+  .detalilBox_bottom {
+    height: 40px;
+    text-align: right;
+    padding: 0 20px;
+  }
+}
+.tag {
+  width: 150px;
+  text-align: center;
+  background: #ccc;
+  margin-right: 20px;
+  height: 40px;
+  line-height: 40px;
+  border-radius: 20px;
+}
+</style>
