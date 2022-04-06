@@ -298,9 +298,12 @@
           align="center"
         >
           <template slot-scope="scope">
-            <el-button size="mini" @click="showThis(scope.$index, scope.row)">{{
-              scope.row.showState === 0 ? "显示" : "隐藏"
-            }}</el-button>
+            <el-button
+              v-if="scope.row.appointmentState !== 0"
+              size="mini"
+              @click="showThis(scope.$index, scope.row)"
+              >{{ scope.row.showState === 0 ? "显示" : "隐藏" }}</el-button
+            >
             <!-- <el-button size="mini">禁播</el-button> -->
             <el-button
               v-if="scope.row.appointmentState !== 0"
