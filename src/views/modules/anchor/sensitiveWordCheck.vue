@@ -35,6 +35,9 @@
               <el-button size="small" @click="resetDataForm()">{{
                 $t("reset")
               }}</el-button>
+                 <el-button type="primary" size="small" @click="exportHandle()">{{
+          $t("export")
+        }}</el-button>
               <el-button size="small" type="primary" @click="open">
                 {{ isOpen ? "收起" : "展开"
                 }}<i
@@ -69,11 +72,7 @@
           </el-row>
         </div>
       </el-form>
-      <div style="margin: 0 0 20px 0">
-        <el-button type="primary" size="small" @click="exportHandle()">{{
-          $t("export")
-        }}</el-button>
-      </div>
+    
 
       <el-table
         v-loading="dataListLoading"
