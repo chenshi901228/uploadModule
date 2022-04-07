@@ -3,7 +3,12 @@
     <div class="diaBoxLeft_title">主播详情</div>
     <div class="diaBox">
       <div class="diaBoxLeft">
-        <div class="diaBoxLeft_title">主播信息</div>
+        <div class="diaBoxLeft_title">
+          <span>主播信息</span
+          ><el-button type="primary" size="mini" @click="editeUserInfo"
+            >编辑</el-button
+          >
+        </div>
         <div class="diaBoxLeft_mes">
           <el-avatar
             :size="75"
@@ -18,7 +23,12 @@
           <div>主播简介：{{ diaForm.introduce }}</div>
         </div>
 
-        <div class="diaBoxLeft_title">银行信息</div>
+        <div class="diaBoxLeft_title">
+          <span>银行信息</span
+          ><el-button type="primary" size="mini" @click="editeUserBank"
+            >编辑</el-button
+          >
+        </div>
         <div class="diaBoxLeft_mes">
           <div>开户银行：{{ diaForm.priceConsumption }}</div>
           <div>支行名称：{{ diaForm.aaa5 }}</div>
@@ -28,7 +38,12 @@
             开户行所在地：{{ diaForm.priceBalance ? diaForm.priceBalance : 0 }}
           </div>
         </div>
-        <div class="diaBoxLeft_title">账户信息</div>
+        <div class="diaBoxLeft_title">
+          <span>账户信息</span
+          ><el-button type="primary" size="mini" @click="editeUserMoney"
+            >编辑</el-button
+          >
+        </div>
         <div class="diaBoxLeft_mes">
           <div>
             累计收益：￥{{
@@ -157,12 +172,12 @@
             </el-select>
           </el-form-item>
           <el-form-item>
-            <!-- <el-button
+            <el-button
               v-if="diaTbas === 5"
               @click="updateProduct"
               type="primary"
               >上架商品</el-button
-            > -->
+            >
             <el-button
               v-if="diaTbas === 5 && dataListSelections.length !== 0"
               type="danger"
@@ -598,7 +613,7 @@ export default {
   },
 
   mounted() {
-    this.userId = this.$route.params.data.id;
+    this.userId = this.$store.state.user.id;
     this.$http
       .get(`/sys/manage/userDetail/${this.userId}`)
       .then(({ data: res }) => {
@@ -619,9 +634,9 @@ export default {
   watch: {
     "$route.params.data"(val) {
       console.log(val);
-      this.userId = this.$route.params.data.id;
+      this.userId = this.$store.state.user.id;
       this.$http
-        .get(`/sys/manage/userDetail/${this.$route.params.data.id}`)
+        .get(`/sys/manage/userDetail/${this.$store.state.user.id}`)
         .then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg);
@@ -1022,6 +1037,16 @@ export default {
       this.userListPage = val;
       this.queryUserList();
     },
+    //编辑主播信息
+    editeUserInfo() {
+      this.$router.push({
+        name: "preview-editeUserInfo-EditeUserInfo",
+      });
+    },
+    //编辑银行卡信息
+    editeUserBank() {},
+    //编辑账户信息
+    editeUserMoney() {},
   },
 };
 </script>
@@ -1053,6 +1078,9 @@ export default {
   border: 5px solid #cccccc69;
 }
 .diaBoxLeft_title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
   border-left: 5px solid #409eff;
   padding-left: 5px;
