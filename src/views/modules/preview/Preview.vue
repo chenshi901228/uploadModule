@@ -22,7 +22,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item label="开播时间">
+        <el-form-item label="预计开播时间">
           <el-date-picker
             :clearable="true"
             v-model="dataForm.startDate"
@@ -175,7 +175,14 @@
         </el-table-column>
         <el-table-column
           width="150"
-          label="开播时间"
+          label="预计开播时间"
+          prop="startDate"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          width="150"
+          label="实际开播时间"
           prop="startDate"
           align="center"
         >
@@ -429,7 +436,7 @@ export default {
       } else if (this.dataForm.transcribeFlg) {
         dataObj.transcribeFlg = Number(this.dataForm.transcribeFlg);
       }
-
+      console.log(dataObj.endDate)
       this.$http
         .get("/sys/livePreview/pageOwn", {
           params: {
