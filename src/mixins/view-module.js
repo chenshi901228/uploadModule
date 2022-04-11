@@ -52,7 +52,7 @@ export default {
             orderField: this.orderField,
             page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
             limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null,
-            ...this.dataForm
+            ...this.$httpParams(this.dataForm)
           }
         }
       ).then(({ data: res }) => {
@@ -97,6 +97,10 @@ export default {
     getDataList: function () {
       this.page = 1
       this.query()
+    },
+    resetDataForm(formName = "dataForm") {
+      this.$refs[formName].resetFields()
+      this.getDataList()
     },
     // 新增 / 修改
     addOrUpdateHandle (id) {

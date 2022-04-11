@@ -19,7 +19,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item style="float:right; padding-right:10px">
-              <el-button size="small" type="danger" @click="forbiddenAll()">禁用</el-button>
+              <el-button size="small" type="danger" @click="forbidden()">禁用</el-button>
               <el-button size="small" type="primary" @click="getDataList()">{{ $t("query") }}</el-button>
               <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
               <el-button 
@@ -57,10 +57,10 @@
               </el-form-item>
             </el-col>
             <el-col :span="6">
-              <el-form-item label="状态" prop="delFlg">
-                <el-select size="small" v-model="dataForm.delFlg" clearable>
-                  <el-option value="1" label="禁用"></el-option>
-                  <el-option value="0" label="正常"></el-option>
+              <el-form-item label="状态" prop="status">
+                <el-select size="small" v-model="dataForm.status" clearable>
+                  <el-option :value="1" label="正常"></el-option>
+                  <el-option :value="0" label="禁用"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -164,15 +164,8 @@
               type="text"
               size="small"
               v-if="!scope.row.delFlg"
-              @click="forbidden(scope.row.id)"
-              >禁用</el-button
-            >
-            <el-button
-              type="text"
-              size="small"
-              v-else
-              @click="forbidden(scope.row.id)"
-              >解除</el-button
+              @click="forbidden(scope.row)"
+              >{{scope.row.status != 0 ? "禁用" : "解除"}}</el-button
             >
           </template>
         </el-table-column>
@@ -209,7 +202,7 @@ export default {
       dataForm: {
         nickName: "",
         phone: "",
-        delFlg: "",
+        status: "",
       },
       dataList: [{ createDate: 1 }],
       userId: "",
@@ -265,12 +258,54 @@ export default {
 
     },
 
+    resetDataForm() {
+      this.$refs.dataForm.resetFields()
+      this.getDataList()
+    },
 
-    forbiddenAll() {
-      console.log(this.dataListSelections);
+    // 
+    forbiddenHandle(type, data) {
+      let url = type ? "/sys/manage/weixinUser/startUsing" : "/sys/manage/weixinUser/forbiddenUsere"
+      this.$http.put(url, { userIds: data }).then(({data:res}) => {
+        if(res.code == 0) {
+            this.$message.success("操作成功")
+            this.query()
+        }else{
+            this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        console.log(err)
+      })
     },
     // 禁用，解除用户
-    forbidden(id) {},
+    forbidden(row) {
+      if(!row) { //批量操作---禁用
+        if(!this.dataListSelections.length) { //未选中
+          return this.$message.warning("请选择禁用用户")
+        }else {
+          this.$confirm(`此操作将禁用选中用户, 是否继续?`, '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+          }).then(() => {
+            let arr = this.dataListSelections.map(item => item.id)
+            this.forbiddenHandle(0, arr)
+          }).catch(() => {
+              this.$message.info("已取消操作");          
+          });
+        }
+      }else { //单个操作
+        this.$confirm(`确认${ row.status != 0 ? "禁用" : "解除" }?`, '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(() => {
+            this.forbiddenHandle(row.status != 0 ? 0 : 1, [row.id])
+        }).catch(() => {
+            this.$message.info("已取消操作");          
+        });
+      }
+    },
   },
 };
 </script>
