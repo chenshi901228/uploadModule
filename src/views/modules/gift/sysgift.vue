@@ -1,19 +1,70 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-gift__sysgift">
-      <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-        <el-form-item>
-          <el-button @click="getDataList()">{{ $t('query') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="info" @click="exportHandle()">{{ $t('export') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
-        </el-form-item>
+      <el-form
+        class="headerTool"
+        :inline="true"
+        :model="dataForm"
+        ref="dataForm"
+        @keyup.enter.native="getDataList"
+      >
+        <el-row>
+          <el-col :span="6">
+            <el-form-item
+              label="礼物名称"
+              prop="name"
+            >
+              <el-input
+                  size="small"
+                  v-model.trim="dataForm.name"
+                  placeholder="请输入"
+                  clearable
+              >
+              </el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item
+              label="是否免费"
+              prop="isFree"
+            >
+              <el-select clearable size="small" v-model="dataForm.isFree" placeholder="请选择">
+                  <el-option label="是" :value="1"></el-option>
+                  <el-option label="否" :value="0"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+              <el-form-item style="float:right; padding-right:10px">
+                <el-button size="small" type="primary" icon="el-icon-plus" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
+                <el-button size="small" type="primary" @click="exportHandle()">{{ $t('export') }}</el-button>
+                <el-button size="small" type="primary" @click="getDataList">{{ $t("query") }}</el-button>
+                <el-button size="small" @click="resetDataForm('dataForm')">{{ $t("reset") }}</el-button>
+                <el-button 
+                    size="small" 
+                    type="primary"
+                    @click="open"
+                >
+                    {{ isOpen ? "收起" : "展开"}}<i style="margin-left:10px" :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+                </el-button>
+              </el-form-item>
+          </el-col>
+        </el-row>
+        <div v-if="isOpen">
+          <el-row>
+            <el-col :span="6">
+                <el-form-item
+                    label="上架状态"
+                    prop="status"
+                >
+                    <el-select clearable size="small" v-model="dataForm.status" placeholder="请选择">
+                        <el-option label="上架" :value="1"></el-option>
+                        <el-option label="下架" :value="0"></el-option>
+                    </el-select>
+                </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
       </el-form>
       <el-table v-loading="dataListLoading" :data="dataList" border @selection-change="dataListSelectionChangeHandle" style="width: 100%;">
         <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
@@ -84,7 +135,11 @@ export default {
         deleteIsBatch: true
       },
       dataForm: {
-      }
+        name: "",
+        isFree: null,
+        status: null
+      },
+      isOpen: false,
     }
   },
   watch: {
@@ -93,6 +148,10 @@ export default {
     AddOrUpdate
   },
   methods: {
+    // 高级展开
+    open() {
+      this.isOpen = !this.isOpen
+    },
     // 修改状态
     updateStatus: debounce(function(id, status) {
       let dataForm = {

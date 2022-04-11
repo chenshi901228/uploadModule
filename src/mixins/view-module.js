@@ -98,6 +98,10 @@ export default {
       this.page = 1
       this.query()
     },
+    resetDataForm(formName = "dataForm") {
+      this.$refs[formName].resetFields()
+      this.getDataList()
+    },
     // 新增 / 修改
     addOrUpdateHandle (id) {
       this.addOrUpdateVisible = true

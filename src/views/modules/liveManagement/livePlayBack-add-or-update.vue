@@ -12,7 +12,7 @@
             ref="dataForm"
             label-width="110px"
             >
-                <el-form-item label="回放主题" prop="liveTheme" required>
+                <el-form-item label="回放主题" prop="liveTheme">
                     <el-input v-model="dataForm.liveTheme"></el-input>
                 </el-form-item>
                 <el-form-item label="封面图" required>
@@ -22,7 +22,7 @@
                         @uploadRemove="frontCoverUploadRemove"
                         :fileList="frontCoverList"></custom-upload>
                 </el-form-item>
-                <el-form-item label="主播" prop="anchor" required>
+                <el-form-item label="主播" prop="anchor">
                     <el-select
                         style="width:100%"
                         v-model="dataForm.anchor"
@@ -41,7 +41,7 @@
                             </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="视频显示" prop="showMode" required>
+                <el-form-item label="视频显示" prop="showMode">
                     <el-select
                         style="width:100%"
                         v-model="dataForm.showMode"
