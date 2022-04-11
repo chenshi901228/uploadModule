@@ -10323,6 +10323,11 @@ tildify@^1.0.0:
   dependencies:
     os-homedir "^1.0.0"
 
+tim-js-sdk@^2.18.0:
+  version "2.18.0"
+  resolved "https://registry.npmmirror.com/tim-js-sdk/-/tim-js-sdk-2.18.0.tgz#0360f036dd0183dd6e3e449b2c81c04c9afee5fb"
+  integrity sha512-JB+o8TSrA3zcyJPuS6RNcTItTavTeSrmL3Pq1qioayTt6mCduuqYpGVwX6CvSxUUZOKMZF+j731QytijG9scHg==
+
 time-stamp@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/time-stamp/-/time-stamp-1.1.0.tgz#764a5a11af50561921b133f3b44e618687e0f5c3"

@@ -18,6 +18,8 @@ import MainContent from './main-content'
 import MainThemeTools from './main-theme-tools'
 import debounce from 'lodash/debounce'
 import { isURL } from '@/utils/validate'
+import TIM from 'tim-js-sdk';
+
 export default {
   provide () {
     return {
@@ -117,7 +119,27 @@ export default {
         this.$store.state.user.name = res.data.username
         this.$store.state.user.realName = res.data.realName
         this.$store.state.user.superAdmin = res.data.superAdmin
+        this.$http.get('/sys/manage/tencentCloudIm/getTxCloudUserSig').then(res=>{ //获取腾讯IM签名
+            let userId = res.data.data.liveUserId&&res.data.data.liveUserId
+            let userSig = res.data.data.userSig&&res.data.data.userSig
+            this.loginIM(userId,userSig)
+        }).catch(() => {})
       }).catch(() => {})
+    },
+    loginIM(userID,userSig){ //登录腾讯IM
+      let options = {
+        SDKAppID: 1400341701 // 接入时需要将0替换为您的即时通信 IM 应用的 SDKAppID
+      };
+      // 创建 SDK 实例，TIM.create() 方法对于同一个 SDKAppID 只会返回同一份实例
+      let tim = TIM.create(options); // SDK 实例通常用 tim 表示
+      // 开始登录 
+      console.log('1111',userID,userSig)
+      tim.login({userID: userID, userSig: userSig});
+      tim.on(TIM.EVENT.SDK_READY, (event)=>{
+        // 收到离线消息和会话列表同步完毕通知，接入侧可以调用 sendMessage 等需要鉴权的接口
+        // event.name - TIM.EVENT.SDK_READY
+        console.log(event)
+      });
     },
     // 获取权限
     getPermissions () {
