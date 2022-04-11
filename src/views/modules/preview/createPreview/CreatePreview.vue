@@ -11,13 +11,14 @@
         class="demo-ruleForm"
       >
         <el-form-item label="直播主题" prop="liveTheme" required>
-          <el-input v-model="ruleForm.liveTheme"></el-input>
+          <el-input v-model="ruleForm.liveTheme" maxlength="60"></el-input>
         </el-form-item>
         <el-form-item label="预计开播时间" required prop="startDate">
           <el-date-picker
             v-model="ruleForm.startDate"
             type="datetime"
             placeholder="预计开播时间"
+            :picker-options="pickerOptions"
             :formatter="dateFormat"
             :editable="false"
           >
@@ -63,7 +64,7 @@
           </div>
           <el-upload
             class="upload-demo"
-            action="http://192.168.250.195:28080/oss/file/upload"
+            :action="uploadUrl"
             :on-success="handleSuccess"
             list-type="picture-card"
             :multiple="false"
@@ -89,12 +90,17 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="直播介绍" prop="liveIntroduce">
+        <el-form-item
+          class="quill-editor"
+          label="直播介绍"
+          prop="liveIntroduce"
+        >
           <quill-editor
             v-model="ruleForm.liveIntroduce"
             ref="myQuillEditor"
             style="height: 380px"
             :options="editorOption"
+            @change="onEditorChange($event)"
           >
             <!-- 自定义toolar -->
             <div id="toolbar" slot="toolbar">
@@ -148,6 +154,11 @@
               <!-- You can also add your own -->
             </div>
           </quill-editor>
+          <span
+            class="wordNumber"
+            style="position: absolute; right: 30px; bottom: 30px"
+            >{{ TiLength }}/300</span
+          >
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="submitForm('ruleForm')"
@@ -161,6 +172,7 @@
 </template>
 
 <script>
+import Cookies from "js-cookie";
 import { Quill, quillEditor } from "vue-quill-editor";
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
@@ -208,6 +220,7 @@ export default {
         "https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg",
       ],
       fileList: [],
+      uploadUrl: "",
       rules: {
         liveTheme: [
           { required: true, message: "请输入直播主题", trigger: "blur" },
@@ -233,6 +246,13 @@ export default {
           { required: true, message: "请填写活动形式", trigger: "blur" },
         ],
       },
+      pickerOptions: {
+        disabledDate(time) {
+          const date = new Date();
+          const oneday = date.getTime();
+          return time.getTime() < new Date().getTime() - 86400000;
+        },
+      },
       editorOption: {
         placeholder: "请输入",
         theme: "snow", // or 'bubble'
@@ -243,9 +263,26 @@ export default {
         },
       },
       options: [],
+      TiLength: 0,
     };
   },
+  watch: {
+    "ruleForm.liveTheme"(nv, ov) {
+      if (nv.length >= 60) {
+        this.$message.warning("直播主题字数不得超过60字！");
+      }
+    },
+    "ruleForm.liveIntroduce"(nv, ov) {
+      if (nv.length >= 300) {
+        this.$message.warning("直播介绍字数不得超过300字！");
+      }
+    },
+  },
+  computed: {},
   created() {
+    this.uploadUrl = `${
+      window.SITE_CONFIG["apiURL"]
+    }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
     this.getDynamicGroupList();
     this.ruleForm = {
       liveTheme: "",
@@ -258,6 +295,14 @@ export default {
     this.ruleForm.frontCoverUrl = this.defaultImg[0];
   },
   methods: {
+    onEditorChange(e) {
+      e.quill.deleteText(300, 4);
+      if (this.ruleForm.liveIntroduce == "") {
+        this.TiLength = 0;
+      } else {
+        this.TiLength = e.quill.getLength() - 1;
+      }
+    },
     //提交表单
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -308,6 +353,11 @@ export default {
           this.fileList.splice(i, 1);
         }
       });
+      if (this.fileList.length === 0) {
+        this.ruleForm.frontCoverUrl = this.defaultImg[0];
+      } else {
+        this.ruleForm.frontCoverUrl = this.fileList[0];
+      }
     },
     //选择照片
     choosePic(url) {
@@ -407,5 +457,8 @@ export default {
     height: 300px;
     overflow-y: scroll;
   }
+}
+/deep/.quill-editor {
+  position: relative;
 }
 </style>

@@ -20,6 +20,7 @@
             placeholder="预计开播时间"
             :formatter="dateFormat"
             :editable="false"
+            :picker-options="pickerOptions"
           >
           </el-date-picker>
         </el-form-item>
@@ -27,7 +28,7 @@
           <el-input v-model="ruleForm.estimateLiveTime"></el-input>
         </el-form-item>
         <el-form-item label="直播宣传图" prop="frontCoverUrl" class="img-item">
-          <div v-if="fileList.length === 0" class="img-box-content">
+          <div v-if="showDefaultImg" class="img-box-content">
             <div v-for="item in defaultImg" :key="item" class="img-box">
               <el-image
                 style="width: 100px; height: 100px"
@@ -64,9 +65,9 @@
             />
           </div>
           <el-upload
-            v-if="fileList.length === 0"
             class="upload-demo"
-            action="http://192.168.250.195:28080/oss/file/upload"
+            v-if="showDefaultImg"
+            :action="uploadUrl"
             :on-success="handleSuccess"
             list-type="picture-card"
             :multiple="false"
@@ -81,12 +82,17 @@
             <el-option label="二" value="1"></el-option>
           </el-select>
         </el-form-item> -->
-        <el-form-item label="直播介绍" prop="liveIntroduce">
+        <el-form-item
+          class="quill-editor"
+          label="直播介绍"
+          prop="liveIntroduce"
+        >
           <quill-editor
             v-model="ruleForm.liveIntroduce"
             ref="myQuillEditor"
             style="height: 380px"
             :options="editorOption"
+            @change="onEditorChange($event)"
           >
             <!-- 自定义toolar -->
             <div id="toolbar" slot="toolbar">
@@ -140,6 +146,11 @@
               <!-- You can also add your own -->
             </div>
           </quill-editor>
+          <span
+            class="wordNumber"
+            style="position: absolute; right: 30px; bottom: 30px"
+            >{{ TiLength }}/300</span
+          >
         </el-form-item>
         <el-form-item>
           <el-button @click="cancel()">取消</el-button>
@@ -154,6 +165,7 @@
 </template>
 
 <script>
+import Cookies from "js-cookie";
 import { Quill, quillEditor } from "vue-quill-editor";
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
@@ -197,11 +209,13 @@ export default {
       dialogVisible: false,
       disabled: false,
       chooseFlag: false,
+      showDefaultImg: false,
       defaultImg: [
         "https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg",
         "https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg",
       ],
       fileList: [],
+      uploadUrl: "",
       rules: {
         liveTheme: [
           { required: true, message: "请输入直播主题", trigger: "blur" },
@@ -236,37 +250,87 @@ export default {
           },
         },
       },
+      pickerOptions: {
+        disabledDate(time) {
+          const date = new Date();
+          const oneday = date.getTime();
+          return time.getTime() < new Date().getTime() - 86400000;
+        },
+      },
+      TiLength: 0,
     };
   },
+  watch: {
+    "ruleForm.liveTheme"(nv, ov) {
+      if (nv.length >= 60) {
+        this.$message.warning("直播主题字数不得超过60字！");
+      }
+    },
+    "ruleForm.liveIntroduce"(nv, ov) {
+      if (nv.length >= 300) {
+        this.$message.warning("直播介绍字数不得超过300字！");
+      }
+    },
+  },
   created() {
-    let dataForm = JSON.parse(window.sessionStorage.getItem("dataForm"));
-    if (dataForm) {
-      this.ruleForm.id = dataForm.id;
-      this.ruleForm.liveTheme = dataForm.liveTheme;
-      this.ruleForm.startDate = dataForm.startDate;
-      this.ruleForm.estimateLiveTime = dataForm.estimateLiveTime;
-      this.ruleForm.frontCoverUrl = dataForm.frontCoverUrl;
-      this.fileList.push(dataForm.frontCoverUrl);
-      this.ruleForm.liveIntroduce = dataForm.liveIntroduce;
-    } else {
-      this.$router.push({
-        path: "/preview-Preview",
-      });
-      this.$message({
-        message: "111",
-        type: "warning",
-        duration: 500,
-        onClose: () => {},
-      });
-    }
-    // this.ruleForm.frontCoverUrl = this.defaultImg[0];
+    this.uploadUrl = `${
+      window.SITE_CONFIG["apiURL"]
+    }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
+  },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.ruleForm.id = "";
+      vm.ruleForm.liveTheme = "";
+      vm.ruleForm.startDate = "";
+      vm.ruleForm.estimateLiveTime = "";
+      vm.ruleForm.frontCoverUrl = "";
+      vm.fileList = [];
+      vm.ruleForm.liveIntroduce = "";
+      let dataForm = JSON.parse(window.sessionStorage.getItem("dataForm"));
+      if (dataForm) {
+        vm.ruleForm.id = dataForm.id;
+        vm.ruleForm.liveTheme = dataForm.liveTheme;
+        vm.ruleForm.startDate = dataForm.startDate;
+        vm.ruleForm.estimateLiveTime = dataForm.estimateLiveTime;
+        vm.ruleForm.frontCoverUrl = dataForm.frontCoverUrl;
+        vm.fileList.push(dataForm.frontCoverUrl);
+        vm.ruleForm.liveIntroduce = dataForm.liveIntroduce;
+      } else {
+        vm.$router.push({
+          path: "/preview-Preview",
+        });
+        vm.$message({
+          message: "请选择编辑的预告！",
+          type: "warning",
+          duration: 1500,
+          onClose: () => {},
+        });
+      }
+    });
   },
   methods: {
+    onEditorChange(e) {
+      e.quill.deleteText(300, 4);
+      if (this.ruleForm.liveIntroduce == "") {
+        this.TiLength = 0;
+      } else {
+        this.TiLength = e.quill.getLength() - 1;
+      }
+    },
     //提交表单
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.ruleForm.startDate = this.dateFormat(this.ruleForm.startDate);
+          if (this.ruleForm.frontCoverUrl.length === 0) {
+            this.$message({
+              message: "请选择背景图！",
+              type: "warning",
+              duration: 500,
+              onClose: () => {},
+            });
+            returny;
+          }
           this.$http
             .put("/sys/livePreview/update", this.ruleForm)
             .then(({ data: res }) => {
@@ -310,6 +374,12 @@ export default {
           this.fileList.splice(i, 1);
         }
       });
+      this.showDefaultImg = true;
+      if (this.fileList.length === 0) {
+        this.ruleForm.frontCoverUrl = this.defaultImg[0];
+      } else {
+        this.ruleForm.frontCoverUrl = this.fileList[0];
+      }
     },
     //选择照片
     choosePic(url) {
@@ -363,7 +433,7 @@ export default {
     .el-form-item__content {
       display: flex;
     }
-    .img-box-content{
+    .img-box-content {
       display: flex;
     }
     .img-box {
@@ -398,5 +468,8 @@ export default {
     height: 300px;
     overflow-y: scroll;
   }
+}
+/deep/.quill-editor {
+  position: relative;
 }
 </style>
