@@ -52,7 +52,7 @@ export default {
             orderField: this.orderField,
             page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
             limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null,
-            ...this.dataForm
+            ...this.$httpParams(this.dataForm)
           }
         }
       ).then(({ data: res }) => {

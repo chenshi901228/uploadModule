@@ -2,7 +2,7 @@
   <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('add') : $t('update')" :close-on-click-modal="false" :close-on-press-escape="false">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" :label-width="$i18n.locale === 'en-US' ? '120px' : '80px'">
             <el-form-item label="礼物名称" prop="name">
-              <el-input v-model="dataForm.name" placeholder="礼物名称"></el-input>
+              <el-input v-model="dataForm.name" placeholder="礼物名称" required></el-input>
             </el-form-item>
             <el-form-item label="礼物图标" prop="icon">
               <!-- <el-input v-model="dataForm.icon" placeholder="图标地址"></el-input> -->
@@ -53,6 +53,12 @@
         },
         filePicList: [],
         fileList: [],
+        dataRule: {
+          name: [
+            { required: true, message: '请输入礼物名称', trigger: 'blur' },
+            { min: 1, max: 6, message: '长度在 1 到 6 个字符', trigger: 'blur' }
+          ],
+        }
       }
     },
     components: {
@@ -62,12 +68,6 @@
       visible(n, o) {
         this.fileList = [];
         this.filePicList = [];
-      }
-    },
-    computed: {
-      dataRule () {
-        return {
-      }
       }
     },
     methods: {
@@ -102,6 +102,9 @@
           if (!valid) {
             return false
           }
+
+          if(!this.fileList.length) return this.$message.error("请上传礼物图标")
+          if(!this.filePicList.length) return this.$message.error("请上传礼物动画")
 
           this.dataForm.icon = this.fileList[0].response.data.url
           this.dataForm.dynamicIcon = this.filePicList[0].response.data.url
