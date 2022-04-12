@@ -307,26 +307,29 @@
           <template slot-scope="scope">
             <el-button
               v-if="scope.row.appointmentState !== 0"
-              size="mini"
+              type="text"
+              size="small"
               @click="createRoom(scope.$index, scope.row)"
               >创建直播</el-button
             >
             <el-button
               v-if="scope.row.appointmentState !== 0"
-              size="mini"
+              type="text"
+              size="small"
               @click="showThis(scope.$index, scope.row)"
               >{{ scope.row.showState === 0 ? "显示" : "隐藏" }}</el-button
             >
             <el-button
               v-if="scope.row.appointmentState !== 0"
-              size="mini"
+              type="text"
+              size="small"
               @click="handle(scope.$index, scope.row)"
               >编辑</el-button
             >
             <el-button
               v-if="scope.row.appointmentState !== 0"
-              size="mini"
-              type="danger"
+              type="text"
+              size="small"
               @click="handleDelete(scope.$index, scope.row)"
               >删除</el-button
             >

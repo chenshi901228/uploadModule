@@ -89,21 +89,28 @@
         align="center"
       >
         <template slot-scope="scope">
-          <el-button @click="importXlx(scope.$index, scope.row)" size="mini"
+          <el-button
+            @click="importXlx(scope.$index, scope.row)"
+            type="text"
+            size="small"
             >导入</el-button
           >
-          <el-button @click="edite(scope.$index, scope.row)" size="mini"
+          <el-button
+            @click="edite(scope.$index, scope.row)"
+            type="text"
+            size="small"
             >编辑</el-button
           >
           <el-button
             @click="changeShowState(scope.$index, scope.row)"
-            size="mini"
+            type="text"
+            size="small"
             >{{ scope.row.showState === 1 ? "隐藏" : "显示" }}</el-button
           >
           <el-button
             @click="toDetail(scope.$index, scope.row)"
-            size="mini"
-            type="primary"
+            type="text"
+            size="small"
             >查看人员</el-button
           >
         </template>
@@ -245,7 +252,7 @@ export default {
     changeValueNum() {
       if (this.groupForm.name.length >= 20) {
         this.$message.warning("最大字数为20字！");
-      }else if (this.editeGroupForm.name.length >= 20) {
+      } else if (this.editeGroupForm.name.length >= 20) {
         this.$message.warning("最大字数为20字！");
       }
     },
