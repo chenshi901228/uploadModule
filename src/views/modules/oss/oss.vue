@@ -1,15 +1,15 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-oss__oss">
-      <el-form :inline="true" :model="dataForm">
+      <el-form class="headerTool" :inline="true" :model="dataForm">
         <el-form-item>
-          <el-button type="primary" @click="configHandle()">{{ $t('oss.config') }}</el-button>
+          <el-button size="small" type="primary" @click="configHandle()">{{ $t('oss.config') }}</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="uploadHandle()">{{ $t('oss.upload') }}</el-button>
+          <el-button size="small" type="primary" @click="uploadHandle()">{{ $t('oss.upload') }}</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
+          <el-button size="small" type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
         </el-form-item>
       </el-form>
       <el-table
@@ -18,7 +18,9 @@
         border
         @selection-change="dataListSelectionChangeHandle"
         @sort-change="dataListSortChangeHandle"
-        style="width: 100%;">
+        :height="siteContentViewHeight"
+        style="width: 100%;"
+        ref="table">
         <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
         <el-table-column prop="url" :label="$t('oss.url')" header-align="center" align="center"></el-table-column>
         <el-table-column prop="createDate" :label="$t('oss.createDate')" sortable="custom" header-align="center" align="center" width="180"></el-table-column>

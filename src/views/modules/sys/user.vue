@@ -1,28 +1,48 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-sys__user">
-      <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-        <el-form-item>
-          <el-input v-model="dataForm.username" :placeholder="$t('user.username')" clearable></el-input>
-        </el-form-item>
-        <el-form-item>
-          <ren-select v-model="dataForm.gender" dict-type="gender" :placeholder="$t('user.gender')"></ren-select>
-        </el-form-item>
-        <el-form-item>
-          <ren-dept-tree v-model="dataForm.deptId" :placeholder="$t('dept.title')" :query="true"></ren-dept-tree>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="getDataList()">{{ $t('query') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button v-if="$hasPermission('sys:user:save')" type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button v-if="$hasPermission('sys:user:delete')" type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button v-if="$hasPermission('sys:user:export')" type="info" @click="exportHandle()">{{ $t('export') }}</el-button>
-        </el-form-item>
+      <el-form 
+        class="headerTool"
+        :inline="true"
+        :model="dataForm"
+        ref="dataForm"
+        @keyup.enter.native="getDataList"
+      >
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="$t('user.username')" prop="username">
+              <el-input size="small" v-model="dataForm.username" :placeholder="$t('user.username')" clearable></el-input>
+            </el-form-item>
+            <el-form-item :label="$t('user.gender')" prop="gender">
+              <ren-select v-model="dataForm.gender" dict-type="gender" :placeholder="$t('user.gender')"></ren-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item style="float:right; padding-right:10px">          
+              <el-button size="small" v-if="$hasPermission('sys:user:export')" type="info" @click="exportHandle()">{{ $t('export') }}</el-button>
+              <el-button size="small" v-if="$hasPermission('sys:dict:save')" type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
+              <el-button size="small" v-if="$hasPermission('sys:dict:delete')" type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
+              <el-button size="small" type="primary" @click="getDataList">{{ $t("query") }}</el-button>
+              <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
+              <el-button 
+                  size="small" 
+                  type="primary"
+                  @click="open"
+              >
+                  {{ isOpen ? "收起" : "展开"}}<i style="margin-left:10px" :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              </el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <div v-if="isOpen">
+          <el-row>
+            <el-col :span="8">
+              <el-form-item :label="$t('dept.title')" prop="deptId">
+                <ren-dept-tree v-model="dataForm.deptId" :placeholder="$t('dept.title')" :query="true"></ren-dept-tree>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
       </el-form>
       <el-table
         v-loading="dataListLoading"
@@ -30,6 +50,8 @@
         border
         @selection-change="dataListSelectionChangeHandle"
         @sort-change="dataListSortChangeHandle"
+        :height="siteContentViewHeight" 
+        ref="table" 
         style="width: 100%;">
         <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
         <el-table-column prop="username" :label="$t('user.username')" sortable="custom" header-align="center" align="center"></el-table-column>

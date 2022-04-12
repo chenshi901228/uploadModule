@@ -100,8 +100,8 @@ export default {
         },
 
         // 重置搜索条件
-        resetDataForm() {
-            this.$refs.dataForm.resetFields()
+        resetDataForm(formName = "dataForm") {
+            this.$refs[formName].resetFields()
             this.getDataList()
         },
         // 分页, 每页条数

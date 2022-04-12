@@ -27,15 +27,15 @@
           </el-col>
           <el-col :span="12">
             <el-form-item style="float: right; padding-right: 10px">
+                 <el-button type="info" size="small" @click="exportHandle()">{{
+          $t("export")
+        }}</el-button>
               <el-button size="small" type="primary" @click="getDataList()">{{
                 $t("query")
               }}</el-button>
               <el-button size="small" @click="resetDataForm()">{{
                 $t("reset")
               }}</el-button>
-                 <el-button type="primary" size="small" @click="exportHandle()">{{
-          $t("export")
-        }}</el-button>
               <el-button size="small" type="primary" @click="open">
                 {{ isOpen ? "收起" : "展开"
                 }}<i

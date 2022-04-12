@@ -53,7 +53,7 @@
                         <el-form-item style="float:right; padding-right:10px">
                             <el-button size="small" type="primary" @click="upGoods()">上架</el-button>
                             <el-button size="small" type="primary" @click="getDataList">{{ $t("query") }}</el-button>
-                            <el-button size="small" @click="resetDataForm">{{ $t("reset") }}</el-button>
+                            <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
                             <el-button 
                                 size="small" 
                                 type="primary"

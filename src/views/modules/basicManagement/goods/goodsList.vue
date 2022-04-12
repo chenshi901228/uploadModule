@@ -55,7 +55,7 @@
                             <el-button size="small" type="primary" @click="upGoods">商品上架</el-button>
                             <el-button size="small" type="primary" @click="downGoods()">下架</el-button>
                             <el-button size="small" type="primary" @click="getDataList">{{ $t("query") }}</el-button>
-                            <el-button size="small" @click="resetDataForm">{{ $t("reset") }}</el-button>
+                            <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
                             <el-button 
                                 size="small" 
                                 type="primary"

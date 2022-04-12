@@ -3,48 +3,68 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <el-form
+      class="headerTool"
       :inline="true"
       :model="dataForm"
-      @keyup.enter.native="queryDynamicGroup()"
+      ref="dataForm"
+      @keyup.enter.native="getDataList"
     >
-      <el-form-item label="动态组">
-        <el-input
-          clearable
-          v-model="dataForm.name"
-          placeholder="请输入"
-        ></el-input>
-      </el-form-item>
-      <el-form-item label="显示状态">
-        <el-select
-          :clearable="true"
-          v-model="dataForm.showState"
-          placeholder="显示状态"
-        >
-          <el-option label="显示" value="1"></el-option>
-          <el-option label="隐藏" value="0"></el-option>
-        </el-select>
-      </el-form-item>
-
-      <el-form-item>
-        <el-button @click="queryDynamicGroup()">查询</el-button>
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          v-if="dataListSelections.length !== 0"
-          type="danger"
-          @click="deleteSelect()"
-          >批量删除</el-button
-        >
-      </el-form-item>
+      <el-row>
+        <el-col :span="12">
+          <el-form-item label="动态组" prop="name">
+            <el-input
+              size="small"
+              clearable
+              v-model="dataForm.name"
+              placeholder="请输入"
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="显示状态" prop="showState">
+            <el-select
+              size="small"
+              :clearable="true"
+              v-model="dataForm.showState"
+              placeholder="显示状态"
+            >
+              <el-option label="显示" value="1"></el-option>
+              <el-option label="隐藏" value="0"></el-option>
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+            <el-form-item style="float:right; padding-right:10px">
+              <el-button
+                size="small"
+                v-if="dataListSelections.length !== 0"
+                type="danger"
+                @click="deleteSelect()"
+                >批量删除</el-button
+              >
+              <el-button
+                size="small"
+                type="primary"
+                @click="dialogFormVisible = true"
+                >添加</el-button
+              >
+              <el-button size="small" type="primary" @click="queryDynamicGroup()">{{ $t("query") }}</el-button>
+              <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
+              <!-- <el-button 
+                  size="small" 
+                  type="primary"
+                  @click="open"
+              >
+                  {{ isOpen ? "收起" : "展开"}}<i style="margin-left:10px" :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              </el-button> -->
+            </el-form-item>
+        </el-col>
+      </el-row>
+      <div v-if="isOpen">
+        <!-- <el-row>
+          <el-col :span="6">
+          </el-col>
+        </el-row> -->
+      </div>
     </el-form>
-    <div>
-      <el-button
-        style="margin-bottom: 10px"
-        type="primary"
-        @click="dialogFormVisible = true"
-        >添加</el-button
-      >
-    </div>
     <el-table
       v-loading="loadingGroup"
       :data="groupMens"
@@ -53,6 +73,7 @@
       @selection-change="dataListSelectionChangeHandle"
       style="width: 100%"
       :height="siteContentViewHeight"
+      ref="table"
     >
       <el-table-column
         type="selection"
@@ -60,7 +81,6 @@
         align="center"
         width="50"
         fixed="left"
-        :height="siteContentViewHeight"
       ></el-table-column>
       <el-table-column label="用户昵称" prop="name" align="center">
         <template slot-scope="scope">
@@ -405,6 +425,11 @@ export default {
     // 多选
     dataListSelectionChangeHandle(val) {
       this.dataListSelections = val;
+    },
+    // 重置搜索条件
+    resetDataForm(formName = "dataForm") {
+      this.$refs[formName].resetFields()
+      this.queryDynamicGroup()
     },
     //添加动态组
     saveGroup() {

@@ -1,12 +1,12 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-sys__dept">
-      <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
+      <el-form class="headerTool" :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
         <el-form-item>
-          <el-button v-if="$hasPermission('sys:dept:save')" type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
+          <el-button size="small" v-if="$hasPermission('sys:dept:save')" type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
         </el-form-item>
       </el-form>
-      <el-table v-loading="dataListLoading" :data="dataList" row-key="id" border style="width: 100%;">
+      <el-table v-loading="dataListLoading" :data="dataList" row-key="id" border :height="siteContentViewHeight" style="width: 100%;" ref="table">
         <el-table-column prop="name" :label="$t('dept.name')" header-align="center" min-width="150"></el-table-column>
         <el-table-column prop="parentName" :label="$t('dept.parentName')" header-align="center" align="center"></el-table-column>
         <el-table-column prop="sort" :label="$t('dept.sort')" header-align="center" align="center" width="80"></el-table-column>

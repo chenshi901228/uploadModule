@@ -2,34 +2,60 @@
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-message__sms">
       <el-form
+        class="headerTool"
         :inline="true"
         :model="dataForm"
-        @keyup.enter.native="getDataList()"
+        ref="dataForm"
+        @keyup.enter.native="getDataList"
       >
-        <el-form-item label="粉丝团名称">
-          <el-input
-            v-model="dataForm.title"
-            placeholder="粉丝团名称" clearable
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="主播昵称">
-          <el-input
-            v-model="dataForm.username"
-            placeholder="主播昵称" clearable
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="手机号码">
-          <el-input v-model="dataForm.phone" placeholder="手机号码" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="dataForm.disabledFlg" clearable>
-            <el-option value="1" label="禁用"></el-option>
-            <el-option value="0" label="正常"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" size="small" @click="getDataList()">{{ $t("query") }}</el-button>
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="粉丝团名称" prop="title">
+              <el-input
+                size="small"
+                v-model="dataForm.title"
+                placeholder="粉丝团名称" clearable
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="主播昵称" prop="username">
+              <el-input
+                size="small"
+                v-model="dataForm.username"
+                placeholder="主播昵称" clearable
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item style="float:right; padding-right:10px">
+                <el-button size="small" type="primary" @click="getDataList">{{ $t("query") }}</el-button>
+                <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
+                <el-button 
+                    size="small" 
+                    type="primary"
+                    @click="open"
+                >
+                    {{ isOpen ? "收起" : "展开"}}<i style="margin-left:10px" :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+                </el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <div v-if="isOpen">
+          <el-row>
+            <el-col :span="6">
+              <el-form-item label="手机号码" prop="phone">
+                <el-input size="small" v-model="dataForm.phone" placeholder="手机号码" clearable></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="状态" prop="disabledFlg">
+                <el-select size="small" v-model="dataForm.disabledFlg" clearable>
+                  <el-option value="1" label="禁用"></el-option>
+                  <el-option value="0" label="正常"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
       </el-form>
       <el-table
         v-loading="dataListLoading"
@@ -123,32 +149,32 @@
             @keyup.enter.native="queryPost_fans()"
           >
             <el-form-item label="用户昵称">
-              <el-input
+              <el-input size="small"
                 v-model="dataForm_fans.userName"
                 placeholder="用户昵称"
               ></el-input>
             </el-form-item>
             <el-form-item label="手机号码">
-              <el-input
+              <el-input size="small"
                 v-model="dataForm_fans.phone"
                 placeholder="手机号码"
               ></el-input>
             </el-form-item>
             <el-form-item label="用户等级">
-              <el-input
+              <el-input size="small"
                 v-model="dataForm_fans.level"
                 placeholder="用户等级"
               ></el-input>
             </el-form-item>
             <el-form-item label="粉丝团身份">
-              <el-select v-model="dataForm_fans.userType" clearable>
+              <el-select size="small" v-model="dataForm_fans.userType" clearable>
                 <el-option :value="0" label="普通会员"></el-option>
                 <el-option :value="1" label="会长"></el-option>
                 <el-option :value="2" label="副会长"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" size="small" @click="queryPost_fans()">{{ $t("query") }}</el-button>
+              <el-button size="small" type="primary" @click="queryPost_fans()">{{ $t("query") }}</el-button>
             </el-form-item>
           </el-form>
         </div>

@@ -1,7 +1,7 @@
 <template>
   <div>
-  <el-input v-model="showDeptName" :placeholder="placeholder" @focus="deptDialog">
-    <el-button slot="append" icon="el-icon-search" @click="deptDialog"></el-button>
+  <el-input :size="size" v-model="showDeptName" :placeholder="placeholder" @focus="deptDialog">
+    <el-button :size="size" slot="append" icon="el-icon-search" @click="deptDialog"></el-button>
   </el-input>
   <el-input :value="value" style="display: none"></el-input>
   <el-dialog :visible.sync="visibleDept" width="30%" :modal="false" :title="placeholder" :close-on-click-modal="false" :close-on-press-escape="false">
@@ -52,7 +52,11 @@ export default {
     value: [Number, String],
     deptName: String,
     query: Boolean,
-    placeholder: String
+    placeholder: String,
+    size: {
+      type: String,
+      default: "small"
+    }
   },
   watch: {
     filterText (val) {
