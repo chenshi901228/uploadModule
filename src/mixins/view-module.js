@@ -26,7 +26,9 @@ export default {
       total: 0,                   // 总条数
       dataListLoading: false,     // 数据列表，loading状态
       dataListSelections: [],     // 数据列表，多选项
-      addOrUpdateVisible: false   // 新增／更新，弹窗visible状态
+      addOrUpdateVisible: false,   // 新增／更新，弹窗visible状态
+      otherViewHeight: 0, //除表格外的元素高度
+      isOpen: false, //是否展开搜索
     }
     /* eslint-enable */
   },
@@ -39,8 +41,44 @@ export default {
     if (this.mixinViewModuleOptions.activatedIsNeed) {
       this.query()
     }
+    this.setOtherViewHeight()
+    // 防止table刷新错位
+    if(this.$refs.table) {
+      this.$nextTick(()=>{
+        this.$refs.table.doLayout()
+      })
+    }
+  },
+  computed: {
+    documentClientHeight: {
+        get() {
+            return this.$store.state.documentClientHeight;
+        },
+    },
+    siteContentViewHeight() {
+        var height = this.documentClientHeight - this.otherViewHeight - ( 50 + 40 + 30 + 40 + 47 );
+        return height;
+    },
+  },
+  watch: {
+      isOpen() {
+          this.setOtherViewHeight()
+      }
   },
   methods: {
+     // 搜索栏高度设置
+    setOtherViewHeight() {
+      setTimeout(() => {
+          if(document.querySelector(".headerTool")) {
+              let h = document.querySelector(".headerTool").getBoundingClientRect().height
+              this.otherViewHeight = Math.ceil(h)
+          }
+      },150)
+    },
+    // 搜索栏收起/展开
+    open() {
+        this.isOpen = !this.isOpen
+    },
     // 获取数据列表
     query () {
       this.dataListLoading = true
@@ -98,6 +136,7 @@ export default {
       this.page = 1
       this.query()
     },
+    // 重置搜索条件
     resetDataForm(formName = "dataForm") {
       this.$refs[formName].resetFields()
       this.getDataList()

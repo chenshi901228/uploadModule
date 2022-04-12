@@ -37,9 +37,9 @@
           <el-col :span="12">
               <el-form-item style="float:right; padding-right:10px">
                 <el-button size="small" type="primary" icon="el-icon-plus" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
-                <el-button size="small" type="primary" @click="exportHandle()">{{ $t('export') }}</el-button>
+                <el-button size="small" type="info" @click="exportHandle()">{{ $t('export') }}</el-button>
                 <el-button size="small" type="primary" @click="getDataList">{{ $t("query") }}</el-button>
-                <el-button size="small" @click="resetDataForm('dataForm')">{{ $t("reset") }}</el-button>
+                <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
                 <el-button 
                     size="small" 
                     type="primary"
@@ -66,7 +66,15 @@
           </el-row>
         </div>
       </el-form>
-      <el-table v-loading="dataListLoading" :data="dataList" border @selection-change="dataListSelectionChangeHandle" style="width: 100%;">
+      <el-table 
+        v-loading="dataListLoading" 
+        :data="dataList" 
+        border 
+        @selection-change="dataListSelectionChangeHandle" 
+        :height="siteContentViewHeight"
+        style="width: 100%;"
+        ref="table"
+      >
         <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
         <el-table-column prop="icon" label="礼物图标" header-align="center" align="center">
           <template slot-scope="scope">
@@ -139,7 +147,6 @@ export default {
         isFree: null,
         status: null
       },
-      isOpen: false,
     }
   },
   watch: {
@@ -148,10 +155,6 @@ export default {
     AddOrUpdate
   },
   methods: {
-    // 高级展开
-    open() {
-      this.isOpen = !this.isOpen
-    },
     // 修改状态
     updateStatus: debounce(function(id, status) {
       let dataForm = {

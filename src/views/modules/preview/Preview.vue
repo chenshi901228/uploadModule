@@ -4,126 +4,165 @@
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-live__liveList">
       <el-form
+        class="headerTool"
         :inline="true"
         :model="dataForm"
+        ref="dataForm"
         @keyup.enter.native="getDataList()"
       >
-        <el-form-item label="直播主题">
-          <el-input
-            :clearable="true"
-            v-model="dataForm.liveTheme"
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="主播">
-          <el-input
-            :clearable="true"
-            v-model="dataForm.anchorUser"
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="预计开播时间">
-          <el-date-picker
-            :clearable="true"
-            v-model="dataForm.startDate"
-            type="datetime"
-            placeholder="选择日期时间"
-            :formatter="dateFormat"
-            :editable="false"
-          >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="结束时间">
-          <el-date-picker
-            :clearable="true"
-            v-model="dataForm.endDate"
-            type="datetime"
-            placeholder="选择日期时间"
-            :formatter="dateFormat"
-            :editable="false"
-          >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="投放人群">
-          <el-select
-            v-model="dataForm.dynamicGroupName"
-            filterable
-            placeholder="请选择"
-            :clearable="true"
-          >
-            <el-option
-              v-for="(item, index) in options"
-              :key="index"
-              :label="item.name"
-              :value="item.name"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="是否录制">
-          <el-select
-            :clearable="true"
-            v-model="dataForm.transcribeFlg"
-            placeholder="是否录制"
-          >
-            <el-option label="未录制" value="0"></el-option>
-            <el-option label="已录制" value="1"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="关联直播">
-          <el-input
-            :clearable="true"
-            v-model="dataForm.livingRoomId"
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="直播状态">
-          <el-select
-            :clearable="true"
-            v-model="dataForm.liveState"
-            placeholder="直播状态"
-          >
-            <el-option label="已下播" value="0"></el-option>
-            <el-option label="直播中" value="1"></el-option>
-            <el-option label="已禁播" value="2"></el-option>
-            <el-option label="未开播" value="3"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="显示状态">
-          <el-select
-            :clearable="true"
-            v-model="dataForm.showState"
-            placeholder="直播状态"
-          >
-            <el-option label="显示" value="0"></el-option>
-            <el-option label="隐藏" value="1"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="getDataList()">{{ $t("query") }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="addPreview()">添加预告</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="exportT()">导出</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button
-            v-if="dataListSelections.length !== 0"
-            type="danger"
-            @click="deleteSelect()"
-            >批量删除</el-button
-          >
-        </el-form-item>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="直播主题" prop="liveTheme">
+              <el-input
+                size="small"
+                :clearable="true"
+                v-model="dataForm.liveTheme"
+                placeholder="请输入"
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="主播" prop="anchorUser">
+              <el-input
+                size="small"
+                :clearable="true"
+                v-model="dataForm.anchorUser"
+                placeholder="请输入"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item style="float:right; padding-right:10px">
+              <el-button
+                size="small"
+                v-if="dataListSelections.length !== 0"
+                type="danger"
+                @click="deleteSelect()"
+                >批量删除</el-button
+              >
+              <el-button size="small" type="primary" @click="addPreview()">添加预告</el-button>
+              <el-button size="small" type="primary" @click="exportT()">导出</el-button>
+              <el-button size="small" type="primary" @click="getDataList()">{{ $t("query") }}</el-button>
+              <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
+              <el-button 
+                  size="small" 
+                  type="primary"
+                  @click="open"
+              >
+                  {{ isOpen ? "收起" : "展开"}}<i style="margin-left:10px" :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              </el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <div v-if="isOpen">
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="预计开播时间" prop="startDate">
+                <el-date-picker
+                  size="small"
+                  :clearable="true"
+                  v-model="dataForm.startDate"
+                  type="datetime"
+                  placeholder="选择日期时间"
+                  :formatter="dateFormat"
+                  :editable="false"
+                >
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="结束时间" prop="endDate">
+                <el-date-picker
+                  size="small"
+                  :clearable="true"
+                  v-model="dataForm.endDate"
+                  type="datetime"
+                  placeholder="选择日期时间"
+                  :formatter="dateFormat"
+                  :editable="false"
+                >
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="投放人群" prop="dynamicGroupName">
+                <el-select
+                  size="small"
+                  v-model="dataForm.dynamicGroupName"
+                  filterable
+                  placeholder="请选择"
+                  :clearable="true"
+                >
+                  <el-option
+                    v-for="(item, index) in options"
+                    :key="index"
+                    :label="item.name"
+                    :value="item.name"
+                  >
+                  </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="是否录制" prop="transcribeFlg">
+                <el-select
+                  size="small"
+                  :clearable="true"
+                  v-model="dataForm.transcribeFlg"
+                  placeholder="是否录制"
+                >
+                  <el-option label="未录制" value="0"></el-option>
+                  <el-option label="已录制" value="1"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="关联直播" prop="livingRoomId">
+                <el-input
+                  size="small"
+                  :clearable="true"
+                  v-model="dataForm.livingRoomId"
+                  placeholder="请输入"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="直播状态" prop="liveState">
+                <el-select
+                  size="small"
+                  :clearable="true"
+                  v-model="dataForm.liveState"
+                  placeholder="直播状态"
+                >
+                  <el-option label="已下播" value="0"></el-option>
+                  <el-option label="直播中" value="1"></el-option>
+                  <el-option label="已禁播" value="2"></el-option>
+                  <el-option label="未开播" value="3"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="显示状态" prop="showState">
+                <el-select
+                  size="small"
+                  :clearable="true"
+                  v-model="dataForm.showState"
+                  placeholder="直播状态"
+                >
+                  <el-option label="显示" value="0"></el-option>
+                  <el-option label="隐藏" value="1"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
       </el-form>
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
         border
         @selection-change="dataListSelectionChangeHandle"
-        style="width: 100%"
         :height="siteContentViewHeight"
+        style="width: 100%"
+        ref="table"
       >
         <el-table-column
           type="selection"
@@ -131,7 +170,6 @@
           align="center"
           width="50"
           fixed="left"
-          :height="siteContentViewHeight"
         ></el-table-column>
         <el-table-column
           width="150"
@@ -195,14 +233,14 @@
         >
         </el-table-column>
         <el-table-column
-          width="100%"
+          width="120"
           label="预计直播时长"
           prop="estimateLiveTime"
           align="center"
         >
         </el-table-column>
         <el-table-column
-          width="100%"
+          width="120"
           label="实际直播时长"
           prop="liveTime"
           align="center"

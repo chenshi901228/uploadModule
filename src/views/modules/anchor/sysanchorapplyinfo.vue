@@ -1,15 +1,111 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-weixin__sysanchorapplyinfo">
-      <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-        <el-form-item>
-          <el-button @click="getDataList()">{{ $t('query') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="info" @click="exportHandle()">{{ $t('export') }}</el-button>
-        </el-form-item>
+      <el-form
+        class="headerTool"
+        :inline="true"
+        :model="dataForm"
+        ref="dataForm"
+        @keyup.enter.native="getDataList()"
+      >
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="主播昵称" prop="username">
+              <el-input
+                size="small"
+                v-model="dataForm.username"
+                clearable
+              ></el-input>
+            </el-form-item>
+            <el-form-item label="真实姓名" prop="username">
+              <el-input
+                size="small"
+                v-model="dataForm.username"
+                clearable
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item style="float: right; padding-right: 10px">
+              <el-button type="info" size="small" @click="exportHandle()">{{
+                $t("export")
+              }}</el-button>
+              <el-button size="small" type="primary" @click="getDataList()">{{
+                $t("query")
+              }}</el-button>
+              <el-button size="small" @click="resetDataForm()">{{
+                $t("reset")
+              }}</el-button>
+              <el-button size="small" type="primary" @click="open">
+                {{ isOpen ? "收起" : "展开"
+                }}<i
+                  style="margin-left: 10px"
+                  :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
+                ></i>
+              </el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <div v-if="isOpen">
+          <el-row>
+            <el-col :span="6">
+              <el-form-item label="手机号码" prop="phone">
+                <el-input
+                  size="small"
+                  v-model="dataForm.phone"
+                  clearable
+                ></el-input>
+              </el-form-item>
+            </el-col>
+        
+            <el-col :span="6">
+              <el-form-item label="身份证号" prop="username">
+                 <el-input
+                  size="small"
+                  v-model="dataForm.username"
+                  clearable
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="性别" prop="gender">
+                <el-select
+                  size="small"
+                  v-model="dataForm.gender"
+                  clearable
+                >
+                  <el-option :value="0" label="男"></el-option>
+                  <el-option :value="1" label="女"></el-option>
+                  <el-option :value="2" label="保密"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="审批状态" prop="status">
+                <el-select
+                  size="small"
+                  v-model="dataForm.status"
+                  clearable
+                >
+                  <el-option :value="0" label="待处理"></el-option>
+                  <el-option :value="1" label="同意"></el-option>
+                  <el-option :value="-1" label="拒绝"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
       </el-form>
-      <el-table v-loading="dataListLoading" :data="dataList" border @selection-change="dataListSelectionChangeHandle" style="width: 100%;">
+      <el-table 
+        v-loading="dataListLoading" 
+        :data="dataList" 
+        border 
+        @selection-change="dataListSelectionChangeHandle" 
+        :height="siteContentViewHeight"
+        style="width: 100%"
+        ref="table"
+      >
         <!-- <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
         <el-table-column prop="weixinUserId" label="主播ID" header-align="center" align="center"></el-table-column>
         <el-table-column prop="phone" label="手机号" header-align="center" align="center"></el-table-column>
@@ -128,6 +224,10 @@ export default {
         deleteIsBatch: true
       },
       dataForm: {
+        username: "",
+        phone: "",
+        gender: "",
+        status: ""
       }
     }
   },
