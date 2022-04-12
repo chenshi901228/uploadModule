@@ -134,15 +134,15 @@
                         </span>
                         <!-- 是否免费 -->
                         <span v-else-if="item.prop == 'isFree'">
-                            {{row.isFree ? "是" : "否"}}
+                            <el-tag size="small" :type="row.isFree ? 'success' : 'danger'">{{row.isFree ? "是" : "否"}}</el-tag>
                         </span>
                         <!-- 分成比例 -->
                         <span v-else-if="item.prop == 'proportion'">
                             {{row.proportion}}%
                         </span>
-                        <!-- 分成比例 -->
+                        <!-- 状态 -->
                         <span v-else-if="item.prop == 'status'">
-                            下架
+                            <el-tag size="small" type="danger">下架</el-tag>
                         </span>
                         <span v-else>
                             {{ row[item.prop] || "-" }}
