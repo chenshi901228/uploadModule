@@ -68,8 +68,8 @@
       <el-table-column label="操作" header-align="center" align="center">
         <template slot-scope="scope">
           <el-button
-            size="mini"
-            type="danger"
+            type="text"
+            size="small"
             @click="handleDelete(scope.$index, scope.row)"
             >移除</el-button
           >
@@ -189,8 +189,8 @@
         >
           <template slot-scope="scope">
             <el-button
-              size="mini"
-              type="danger"
+              type="text"
+              size="small"
               @click="handleDeleteUser(scope.$index, scope.row)"
               >删除</el-button
             >
