@@ -10323,6 +10323,11 @@ tildify@^1.0.0:
   dependencies:
     os-homedir "^1.0.0"
 
+tim-js-sdk@^2.18.0:
+  version "2.18.0"
+  resolved "https://registry.npmmirror.com/tim-js-sdk/-/tim-js-sdk-2.18.0.tgz#0360f036dd0183dd6e3e449b2c81c04c9afee5fb"
+  integrity sha512-JB+o8TSrA3zcyJPuS6RNcTItTavTeSrmL3Pq1qioayTt6mCduuqYpGVwX6CvSxUUZOKMZF+j731QytijG9scHg==
+
 time-stamp@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/time-stamp/-/time-stamp-1.1.0.tgz#764a5a11af50561921b133f3b44e618687e0f5c3"
@@ -11315,3 +11320,22 @@ yorkie@^2.0.0:
     is-ci "^1.0.10"
     normalize-path "^1.0.0"
     strip-indent "^2.0.0"
+
+zego-express-engine-webrtc@^2.15.0:
+  version "2.15.0"
+  resolved "https://registry.npmmirror.com/zego-express-engine-webrtc/-/zego-express-engine-webrtc-2.15.0.tgz#6970391c44a272c3744db1692c443c2cdb26bc05"
+  integrity sha512-XDgKnIm5HQagUeYf4mZ0h6y5iwos7msHiJvrfEM2sVKDSOh+8xGWUZyrwXJXmGXcnUbCnjjzzKlAAhAGZ8Psug==
+  dependencies:
+    zego-express-engine-webrtm "1.14.0"
+
+zego-express-engine-webrtm@1.14.0:
+  version "1.14.0"
+  resolved "https://registry.npmmirror.com/zego-express-engine-webrtm/-/zego-express-engine-webrtm-1.14.0.tgz#ae0039a6aad44b41319b2d634f44cedb702ba9cc"
+  integrity sha512-QJLBYPLTcEV43dHI5Rvm4WoqpYQNztdLoyNSL8RYfBUm0ifaEkecc73ZTP2bZjNUlRcbsQBY1TtyVdm0ugywCA==
+  dependencies:
+    zego-express-logger "1.2.0"
+
+zego-express-logger@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.npmmirror.com/zego-express-logger/-/zego-express-logger-1.2.0.tgz#fe99314bec408d73f6d84b9882e121fa53cb87f2"
+  integrity sha512-wtKhEmkr7D+K9LJ8XJtCw0c/T0KjcczhQ5lc+XudFWENSHTo3Zs0bWuVAa64EbwQzTw6FuCrBcnG683sNQcS1Q==
