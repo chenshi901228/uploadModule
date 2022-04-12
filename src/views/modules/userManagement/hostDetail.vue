@@ -20,13 +20,11 @@
 
         <div class="diaBoxLeft_title">银行信息</div>
         <div class="diaBoxLeft_mes">
-          <div>开户银行：{{ diaForm.priceConsumption }}</div>
-          <div>支行名称：{{ diaForm.aaa5 }}</div>
-          <div>账号名称：{{ diaForm.aaa3 }}</div>
-          <div>银行账号：{{ diaForm.aaa4 }}</div>
-          <div>
-            开户行所在地：{{ diaForm.priceBalance ? diaForm.priceBalance : 0 }}
-          </div>
+          <div>开户银行：{{ diaForm.depositBank }}</div>
+          <div>支行名称：{{ diaForm.branchName }}</div>
+          <div>账号名称：{{ diaForm.accountName }}</div>
+          <div>银行账号：{{ diaForm.bankAccount }}</div>
+          <div>开户行所在地：{{ diaForm.address }}</div>
         </div>
         <div class="diaBoxLeft_title">账户信息</div>
         <div class="diaBoxLeft_mes">
@@ -600,18 +598,12 @@ export default {
   mounted() {
     this.userId = this.$route.params.data.id;
     this.$http
-      .get(`/sys/manage/userDetail/${this.userId}`)
+      .get(`/sys/anchor/info/${this.userId}`)
       .then(({ data: res }) => {
         if (res.code !== 0) {
           return this.$message.error(res.msg);
         }
-        this.diaForm = {
-          priceConsumption: res.data.priceConsumption,
-          priceBalance: res.data.priceBalance,
-          ...this.$route.params.data,
-          // priceConsumption:res.data.priceConsumption,
-          // priceConsumption:res.data.priceConsumption,
-        };
+          this.diaForm = res.data
       })
       .catch(() => {});
     this.changeTbas(1);
@@ -621,18 +613,12 @@ export default {
       console.log(val);
       this.userId = this.$route.params.data.id;
       this.$http
-        .get(`/sys/manage/userDetail/${this.$route.params.data.id}`)
+        .get(`/sys/anchor/info/${this.$route.params.data.id}`)
         .then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg);
           }
-          this.diaForm = {
-            priceConsumption: res.data.priceConsumption,
-            priceBalance: res.data.priceBalance,
-            ...this.$route.params.data,
-            // priceConsumption:res.data.priceConsumption,
-            // priceConsumption:res.data.priceConsumption,
-          };
+          this.diaForm = res.data
         })
         .catch(() => {});
       this.changeTbas(1);

@@ -6,7 +6,7 @@
         <div style="margin: 0 80px">手机号码：{{ diaForm.phone }}</div>
       </div>
       <div style="display: flex; margin: 20px 0">
-        <div class="tag" v-for="(i, k) in diaForm.details" :key="k">
+        <div class="tag" v-for="(i, k) in details" :key="k">
           {{ i }}
         </div>
       </div>
@@ -19,6 +19,7 @@
           v-model="diaForm.remark"
           type="textarea"
           :rows="6"
+          :readonly="!(diaForm.checkStatus === 2)"
           maxlength="200"
           show-word-limit
         ></el-input>
@@ -27,9 +28,11 @@
 
     <div class="detalilBox_bottom">
       <el-button size="small" type="" @click="updateCheckStatus(3)"
+      v-if='diaForm.checkStatus === 2'
         >驳回</el-button
       >
       <el-button size="small" type="primary" @click="updateCheckStatus(1)"
+       v-if='diaForm.checkStatus === 2'
         >通过</el-button
       >
     </div>
@@ -48,6 +51,7 @@ export default {
       diaForm: {
         content: "",
       },
+      details:[],
     };
   },
 
@@ -60,7 +64,7 @@ export default {
           return this.$message.error(res.msg);
         }
         this.diaForm = res.data;
-        this.diaForm.details = this.diaForm.details ? this.diaForm.details : [];
+        this.details = this.diaForm.details ? this.diaForm.details.split(',') : [];
       })
       .catch(() => {});
   },
@@ -77,8 +81,8 @@ export default {
               return this.$message.error(res.msg);
             }
             this.diaForm = res.data;
-            this.diaForm.details = this.diaForm.details
-              ? this.diaForm.details
+            this.details = this.diaForm.details
+              ? this.diaForm.details.split(',')
               : [];
           })
           .catch(() => {});
