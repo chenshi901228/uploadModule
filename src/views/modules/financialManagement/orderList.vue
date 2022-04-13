@@ -5,84 +5,81 @@
         class="headerTool"
         :inline="true"
         :model="dataForm"
-        ref="orderList"
+        ref="dataForm"
         @keyup.enter.native="getDataList()"
       >
         <el-row>
           <el-col :span="8">
-            <el-form-item label="用户昵称" prop="nickName">
+            <el-form-item label="用户昵称" prop="userName">
               <el-input
                 size="small"
-                v-model="dataForm.username"
+                v-model="dataForm.userName"
                 clearable
               ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="手机号码" prop="phone">
+            <el-form-item label="手机号码" prop="userPhone">
               <el-input
                 size="small"
-                v-model="dataForm.phone"
+                v-model="dataForm.userPhone"
                 clearable
               ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="商品名称" prop="phone">
+            <el-form-item label="商品名称" prop="productName">
               <el-input
                 size="small"
-                v-model="dataForm.phone"
+                v-model="dataForm.productName"
                 clearable
               ></el-input>
             </el-form-item>
           </el-col>
           <div v-if="isOpen">
             <el-row>
+              
+            <el-col :span="8">
+              <el-form-item label="商品类型" prop="productType">
+                <el-input
+                  size="small"
+                  v-model="dataForm.productType"
+                  clearable
+                />
+              </el-form-item>
+            </el-col>
               <el-col :span="8">
-                <el-form-item label="商品类型" prop="delFlg">
-                  <el-select
+                <el-form-item label="支付方式" prop="payType">
+                  <el-input
                     size="small"
-                    v-model="dataForm.handlingStatus"
+                    v-model="dataForm.payType"
                     clearable
-                  >
-                    <el-option :value="1" label="已处理"></el-option>
-                    <el-option :value="0" label="未处理"></el-option>
-                  </el-select>
+                  />
+                  
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="支付方式" prop="delFlg">
-                  <el-select
+                <el-form-item label="消费来源" prop="consumptionSource">
+                  <el-input
                     size="small"
-                    v-model="dataForm.handlingStatus"
+                    v-model="dataForm.consumptionSource"
                     clearable
-                  >
-                    <el-option :value="1" label="已处理"></el-option>
-                    <el-option :value="0" label="未处理"></el-option>
-                  </el-select>
+                  />
+               
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="消费来源" prop="delFlg">
+                <el-form-item label="订单状态" prop="status">
                   <el-select
                     size="small"
-                    v-model="dataForm.handlingStatus"
+                    v-model="dataForm.status"
                     clearable
                   >
-                    <el-option :value="1" label="已处理"></el-option>
-                    <el-option :value="0" label="未处理"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="订单状态" prop="delFlg">
-                  <el-select
-                    size="small"
-                    v-model="dataForm.handlingStatus"
-                    clearable
-                  >
-                    <el-option :value="1" label="已处理"></el-option>
-                    <el-option :value="0" label="未处理"></el-option>
+                    <el-option :value="-1" label="待支付"></el-option>
+                    <el-option :value="1" label="已支付"></el-option>
+                    <el-option :value="2" label="已完成"></el-option>
+                    <el-option :value="3" label="退款中"></el-option>
+                    <el-option :value="4" label="已退款"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -121,14 +118,14 @@
         ref="table"
       >
         <el-table-column
-          prop="username"
+          prop="id"
           label="订单编号"
           min-width="200px"
           header-align="center"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="username"
+          prop="userName"
           label="用户昵称"
           header-align="center"
           align="center"
@@ -136,7 +133,7 @@
         ></el-table-column>
 
         <el-table-column
-          prop="phone"
+          prop="userPhone"
           label="手机号码"
           min-width="120px"
           header-align="center"
@@ -144,14 +141,14 @@
         >
         </el-table-column>
         <el-table-column
-          prop="phone"
+          prop="productType"
           label="商品类型"
           header-align="center"
           align="center"
         >
         </el-table-column>
         <el-table-column
-          prop="username"
+          prop="productName"
           label="商品名称"
           min-width="150px"
           header-align="center"
@@ -159,7 +156,7 @@
         ></el-table-column>
 
         <el-table-column
-          prop="solution"
+          prop="price"
           label="销售价格"
           header-align="center"
           show-overflow-tooltip
@@ -167,7 +164,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="handler"
+          prop="price"
           label="支付金额"
           header-align="center"
           show-overflow-tooltip
@@ -175,7 +172,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="handler"
+          prop="payType"
           label="支付方式"
           header-align="center"
           show-overflow-tooltip
@@ -183,7 +180,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="handler"
+          prop="consumptionSource"
           label="消费来源"
           header-align="center"
           show-overflow-tooltip
@@ -192,7 +189,7 @@
         </el-table-column>
 
         <el-table-column
-          prop="createDate"
+          prop="payDate"
           label="支付完成时间"
           min-width="160px"
           header-align="center"
@@ -200,25 +197,15 @@
         >
         </el-table-column>
         <el-table-column
-          prop="handlingStatus"
+          prop="statusStr"
           label="订单状态"
           header-align="center"
           align="center"
         >
-          <template slot-scope="scope">
-            <div>
-              {{
-                scope.row.handlingStatus === 1
-                  ? "已通过"
-                  : scope.row.handlingStatus === 2
-                  ? "待审批"
-                  : "已拒绝"
-              }}
-            </div>
-          </template>
+       
         </el-table-column>
         <el-table-column
-          prop="handler"
+          prop="productId"
           label="关联产品编号"
           min-width="100px"
           header-align="center"
@@ -227,7 +214,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="handlingTime"
+          prop="createDate"
           label="下单时间"
           min-width="160px"
           header-align="center"
@@ -257,15 +244,19 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/manage/complaint/page",
+        getDataListURL: "/sys/finance/user/product/userOrderPage",
         getDataListIsPage: true,
         deleteIsBatch: true,
-        exportURL: "/sys/manage/complaint/export",
+        exportURL: "/sys/finance/user/product/userOrderExport",
       },
       dataForm: {
-        nickName: "",
-        phone: "",
-        delFlg: "",
+        userName: "",
+        userPhone: "",
+        productName: "",
+        productType: "",
+        payType: "",
+        consumptionSource: "",
+        status: "",
       },
       dataList: [{ createDate: 1 }],
       userId: "",
@@ -317,17 +308,7 @@ export default {
         }
       }, 150);
     },
-    // 搜索栏收起/展开
-    open() {
-      this.isOpen = !this.isOpen;
-       this.resetDataForm()
-    },
-
-    // 重置搜索条件
-    resetDataForm() {
-      this.$refs.orderList.resetFields();
-      this.getDataList();
-    },
+ 
   },
 };
 </script>

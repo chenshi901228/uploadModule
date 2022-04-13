@@ -10,46 +10,42 @@
       >
         <el-row>
           <el-col :span="8">
-            <el-form-item label="用户昵称" prop="nickName">
+            <el-form-item label="用户昵称" prop="userName">
               <el-input
                 size="small"
-                v-model="dataForm.username"
+                v-model="dataForm.userName"
                 clearable
               ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="手机号码" prop="phone">
+            <el-form-item label="手机号码" prop="userPhone">
               <el-input
                 size="small"
-                v-model="dataForm.phone"
+                v-model="dataForm.userPhone"
                 clearable
               ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="充值方式" prop="delFlg">
-              <el-select
-                size="small"
-                v-model="dataForm.handlingStatus"
-                clearable
-              >
-                <el-option :value="1" label="已处理"></el-option>
-                <el-option :value="0" label="未处理"></el-option>
+            <el-form-item label="充值方式" prop="payType">
+              <el-select size="small" v-model="dataForm.payType" clearable>
+                <el-option :value="1" label="微信"></el-option>
+                <el-option :value="2" label="支付宝"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <div v-if="isOpen">
             <el-row>
               <el-col :span="8">
-                <el-form-item label="充值来源" prop="delFlg">
+                <el-form-item label="充值来源" prop="paySource">
                   <el-select
                     size="small"
-                    v-model="dataForm.handlingStatus"
+                    v-model="dataForm.paySource"
                     clearable
                   >
-                    <el-option :value="1" label="已处理"></el-option>
-                    <el-option :value="0" label="未处理"></el-option>
+                    <el-option :value="1" label="小程序"></el-option>
+                    <el-option :value="2" label="大于众学"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -57,11 +53,11 @@
                 <el-form-item label="交易状态" prop="delFlg">
                   <el-select
                     size="small"
-                    v-model="dataForm.handlingStatus"
+                    v-model="dataForm.delFlg"
                     clearable
                   >
-                    <el-option :value="1" label="已处理"></el-option>
-                    <el-option :value="0" label="未处理"></el-option>
+                    <el-option :value="1" label="支付失败"></el-option>
+                    <el-option :value="0" label="支付成功"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -100,14 +96,14 @@
         ref="table"
       >
         <el-table-column
-          prop="username"
+          prop="id"
           label="订单编号"
           min-width="200px"
           header-align="center"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="username"
+          prop="userName"
           label="用户昵称"
           header-align="center"
           align="center"
@@ -115,7 +111,7 @@
         ></el-table-column>
 
         <el-table-column
-          prop="phone"
+          prop="userPhone"
           label="手机号码"
           min-width="120px"
           header-align="center"
@@ -123,7 +119,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="phone"
+          prop="price"
           label="充值大豆"
           header-align="center"
           align="center"
@@ -131,7 +127,7 @@
         </el-table-column>
 
         <el-table-column
-          prop="handler"
+          prop="amount"
           label="支付金额"
           header-align="center"
           show-overflow-tooltip
@@ -139,20 +135,30 @@
         >
         </el-table-column>
         <el-table-column
-          prop="handler"
+          prop="payType"
           label="支付方式"
           header-align="center"
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="scope">
+            <div>
+              {{ scope.row.payType === 1 ? "微信" : "支付宝" }}
+            </div>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="handler"
+          prop="paySource"
           label="充值来源"
           header-align="center"
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="scope">
+            <div>
+              {{ scope.row.paySource === 1 ? "小程序" : "大于众学" }}
+            </div>
+          </template>
         </el-table-column>
 
         <el-table-column
@@ -164,14 +170,14 @@
         >
         </el-table-column>
         <el-table-column
-          prop="handlingStatus"
+          prop="delFlg"
           label="充值状态"
           header-align="center"
           align="center"
         >
           <template slot-scope="scope">
             <div>
-              {{ scope.row.handlingStatus === 1 ? "交易成功" : "交易失败" }}
+              {{ scope.row.delFlg === 0 ? "支付成功" : "支付失败" }}
             </div>
           </template>
         </el-table-column>
@@ -199,17 +205,17 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/manage/complaint/page",
+        getDataListURL: "/sys/user/consumption/userAddPageWithFinance",
         getDataListIsPage: true,
         deleteIsBatch: true,
-        exportURL: "/sys/manage/complaint/export",
+        exportURL: "/sys/user/consumption/userAddPageWithFinanceExport",
       },
       dataForm: {
         nickName: "",
         phone: "",
         delFlg: "",
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
       userId: "",
 
       otherViewHeight: 0, //搜索栏高度
@@ -262,7 +268,7 @@ export default {
     // 搜索栏收起/展开
     open() {
       this.isOpen = !this.isOpen;
-       this.resetDataForm()
+      this.resetDataForm();
     },
 
     // 重置搜索条件

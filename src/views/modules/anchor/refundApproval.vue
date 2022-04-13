@@ -6,6 +6,7 @@
         :inline="true"
         :model="dataForm"
         ref="refundApproval"
+        label-width="100px"
         @keyup.enter.native="getDataList()"
       >
         <el-row>
