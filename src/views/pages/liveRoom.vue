@@ -154,7 +154,7 @@
                     </div>
                   </div>
                   <div class="push_btn">
-                    <div>推送</div>
+                    <div @click="pushMethod('goods',item)">推送</div>
                     <p>
                       <span>{{ item.buyers }}</span
                       >人已购买
@@ -164,8 +164,37 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="直播预告" name="fifth">直播预告</el-tab-pane>
-          <el-tab-pane label="推荐主播" name="sixth">推荐主播</el-tab-pane>
+          <el-tab-pane label="直播预告" name="fifth">
+              <div class="list_content">
+                  <div class="content" v-for="(item,index) in livePreviewList" :key="index">
+                      <div class="preview_content">
+                        <img :src="item.frontCoverUrl" alt="">
+                        <p>{{item.liveIntroduce}}</p>
+                      </div>
+                      <div class="preview_time">
+                        <div>
+                            <p>开播时间：{{item.startDate}}</p>
+                            <p>预计时常：{{item.estimateLiveTime}}分钟</p>
+                        </div>
+                        <p @click="pushMethod('preview',item)">推送</p>
+                      </div>
+                  </div>
+              </div>
+          </el-tab-pane>
+          <el-tab-pane label="推荐主播" name="sixth">
+              <div class="list_content">
+                  <div class="content" v-for="(item,index) in recommendList" :key="index">
+                      <div class="recommend_content">
+                        <span>{{item.sort}}</span>
+                        <img :src="item.avatarUrl" alt="">
+                        <div class="anchorInfo">
+                            <span>{{item.username}}</span>
+                            <p>粉丝：<span>{{item.fansNum}}</span>人</p>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+          </el-tab-pane>
         </el-tabs>
         <div class="barrage_input" v-show="activeName === 'first'">
           <input
@@ -244,10 +273,14 @@ export default {
       barrageData: [], // 弹幕内容
       liveRoomUserinfo: {}, //用户在线信息
       goodsList: [], //获取主播推荐商品
+      livePreviewList:[],//直播预告列表
+      recommendList:[],//主播推荐主播列表
       barrage: "",
       questionMessageInfo: [], //提问消息
       studentList: [{}],
       userInfo: {}, //用户信息
+      goodsPushTimer:null,//商品推送定时
+      livePredictionTimer:null,//直播预告推送定时
     };
   },
   created() {
@@ -521,6 +554,7 @@ export default {
       this.userID = userInfo.id;
       this.userName = userInfo.username;
       this.userInfo = userInfo;
+      this.userInfo.nickName = userInfo.username
       this.tim.login({ userID: userId, userSig: userSig }); //登录腾讯IM
     },
     $onMessageReceived(value) {
@@ -626,7 +660,7 @@ export default {
           return this.conversation.conversationID;
       }
     },
-    sendMessage(messageInfo) {
+    sendMessage(messageInfo,cb) {
       // 将自己发送的消息写进消息列表里面
       const text = this.barrage;
       let data = {
@@ -691,6 +725,7 @@ export default {
       this.tim.sendMessage(message);
       // 发送消息之后清空输入框内容
       this.barrage = "";
+      if(cb)cb()
     },
     // 获取主播推荐商品
     getAnchorProduct() {
@@ -700,7 +735,9 @@ export default {
           console.log("主播推荐商品", res.data.data);
           let data = res.data.data;
           data.forEach((item) => {
-            item.productTag = item.productTag.split("|");
+            if(item.productTag){
+                item.productTag = item.productTag.split("|");
+            }
           });
           this.goodsList = data;
         });
@@ -709,15 +746,45 @@ export default {
     getLivePreviewList() {
       this.$http.get(`/sys/livePreview/pageOwn`).then((res) => {
         console.log("获取直播预约列表", res);
+        this.livePreviewList = res.data.data.list;
       });
     },
     //获取主播推荐主播
     getRecommendList() {
       this.$http.get(`/sys/manage/anchor/recommend/list`).then((res) => {
         console.log("获取主播推荐主播", res);
+        this.recommendList = res.data.data;
       });
     },
+    //推送商品、直播预告 
+    pushMethod(type,data){
+        if(type === 'goods'){//推送商品
+            if(this.goodsPushTimer) return this.$message({message:"您已经推送过了，请稍后再试",type:'warning'});
+            this.sendMessage({type: 8,pushData: data},() => this.$message({message:"商品推送成功",type:'success'}))
+            this.goodsPushTimer = setTimeout(() => {
+                clearTimeout(this.goodsPushTimer)
+                this.goodsPushTimer = null
+            }, 60 * 1000)
+        }else{
+            if(this.livePredictionTimer) return this.$message({message:"您已经推送过了，请稍后再试",type:'warning'});
+            this.sendMessage({type: 7,pushData: data},() => this.$message({message:"预告推送成功",type:'success'}))
+            this.livePredictionTimer = setTimeout(() => {
+                clearTimeout(this.livePredictionTimer)
+                this.livePredictionTimer = null
+            }, 60 * 1000)
+        }
+    }
   },
+  destroyed(){
+    if (this.livePredictionTimer) {
+        clearTimeout(this.livePredictionTimer)
+        this.livePredictionTimer = null
+    }
+    if (this.goodsPushTimer) {
+        clearTimeout(this.goodsPushTimer)
+        this.goodsPushTimer = null
+    }
+  }
 };
 </script>
 
@@ -1087,6 +1154,73 @@ p {
                       }
                     }
                   }
+                }
+                .preview_content{
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    >img{
+                        width: 120px;
+                        height: 66px;
+                    }
+                    >p{
+                        margin-left: 10px;
+                    }
+                }
+                .preview_time{
+                    margin-top: 10px;
+                    color: #898989;
+                    font-size: 14px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    >p{
+                        width: 60px;
+                        height: 30px;
+                        color: #ffffff;
+                        background: linear-gradient(
+                            69deg,
+                            #fa3622 0%,
+                            #fa3622 1%,
+                            #ff055b 100%
+                        );
+                        border-radius: 5px;
+                        text-align: center;
+                        line-height: 30px;
+                        cursor: pointer;
+                    }
+                }
+                .recommend_content{
+                    display: flex;
+                    justify-content: flex-start;
+                    align-items: center;
+                    padding: 10px 0px;
+                    border-bottom: 1px solid #4A4A4A;
+                    >span{
+                        font-size: 16px;
+                        color: #898989;
+                    }
+                    >img{
+                        width: 40px;
+                        height: 40px;  
+                        margin-left: 10px;
+                    }
+                    .anchorInfo{
+                        display: flex;
+                        flex-direction: column;
+                        margin-left: 10px;
+                        >span{
+                            color: #EAEAEA;
+                            font-size: 16px;
+                        }
+                        >p{
+                            color: #898989;
+                            font-size: 14px;
+                            >span{
+                                color: #EAEAEA;
+                            }
+                        }
+                    }
                 }
               }
             }
