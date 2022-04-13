@@ -9,7 +9,7 @@
         @keyup.enter.native="getDataList()"
       >
         <el-row>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="主播昵称" prop="nickName">
               <el-input
                 size="small"
@@ -17,6 +17,8 @@
                 clearable
               ></el-input>
             </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="真实姓名" prop="phone">
               <el-input
                 size="small"
@@ -25,7 +27,42 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+
+          <el-col :span="8">
+            <el-form-item label="手机号码" prop="phone">
+              <el-input
+                size="small"
+                v-model="dataForm.phone"
+                clearable
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <div v-if="isOpen">
+            <el-row>
+              <el-col :span="8">
+                <el-form-item label="身份证号" prop="phone">
+                  <el-input
+                    size="small"
+                    v-model="dataForm.phone"
+                    clearable
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="提现状态" prop="delFlg">
+                  <el-select
+                    size="small"
+                    v-model="dataForm.handlingStatus"
+                    clearable
+                  >
+                    <el-option :value="1" label="已处理"></el-option>
+                    <el-option :value="0" label="未处理"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
+          <el-col :span="24">
             <el-form-item style="float: right; padding-right: 10px">
               <el-button type="info" size="small" @click="exportHandle()">{{
                 $t("export")
@@ -46,43 +83,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
-        <div v-if="isOpen">
-          <el-row type="flex" justify="start">
-        
-            <el-col :span="6">
-              <el-form-item label="手机号码" prop="phone">
-              <el-input
-                size="small"
-                v-model="dataForm.phone"
-                clearable
-              ></el-input>
-            </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="身份证号" prop="phone">
-              <el-input
-                size="small"
-                v-model="dataForm.phone"
-                clearable
-              ></el-input>
-            </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="提现状态" prop="delFlg">
-                <el-select
-                  size="small"
-                  v-model="dataForm.handlingStatus"
-                  clearable
-                >
-                  <el-option :value="1" label="已处理"></el-option>
-                  <el-option :value="0" label="未处理"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-        
-          </el-row>
-        </div>
       </el-form>
 
       <el-table
@@ -94,7 +94,6 @@
         style="width: 100%"
         ref="table"
       >
-     
         <el-table-column
           prop="username"
           label="主播昵称"
@@ -102,7 +101,7 @@
           align="center"
           min-width="120px"
         ></el-table-column>
-<el-table-column
+        <el-table-column
           prop="phone"
           label="真实姓名"
           header-align="center"
@@ -152,24 +151,22 @@
           prop="handler"
           label="支行名称"
           min-width="120px"
-
           header-align="center"
           show-overflow-tooltip
           align="center"
         >
         </el-table-column>
-         <el-table-column
+        <el-table-column
           prop="handler"
           label="开户行所在地"
           min-width="180px"
-
           header-align="center"
           show-overflow-tooltip
           align="center"
         >
         </el-table-column>
-      
-         <el-table-column
+
+        <el-table-column
           prop="handler"
           label="提现金额"
           header-align="center"
@@ -177,7 +174,7 @@
           align="center"
         >
         </el-table-column>
-         <el-table-column
+        <el-table-column
           prop="handler"
           label="到账金额"
           header-align="center"
@@ -185,7 +182,7 @@
           align="center"
         >
         </el-table-column>
-    
+
         <el-table-column
           prop="createDate"
           label="申请时间"
@@ -194,7 +191,7 @@
           align="center"
         >
         </el-table-column>
- <el-table-column
+        <el-table-column
           prop="handlingStatus"
           label="提现状态"
           header-align="center"
@@ -212,7 +209,7 @@
             </div>
           </template>
         </el-table-column>
-         <el-table-column
+        <el-table-column
           :label="$t('handle')"
           fixed="right"
           header-align="center"
@@ -220,12 +217,14 @@
           width="100"
         >
           <template slot-scope="scope">
-            <el-button type="text" size="small" v-if="scope.row.handlingStatus === 1"
+            <el-button
+              type="text"
+              size="small"
+              v-if="scope.row.handlingStatus === 1"
               >确认打款</el-button
             >
           </template>
         </el-table-column>
-
       </el-table>
       <el-pagination
         :current-page="page"

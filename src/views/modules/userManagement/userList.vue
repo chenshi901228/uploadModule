@@ -6,18 +6,46 @@
         :inline="true"
         :model="dataForm"
         ref="dataForm"
+        label-width="100px"
         @keyup.enter.native="getDataList()"
       >
         <el-row>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="用户昵称" prop="nickName">
               <el-input size="small" v-model="dataForm.nickName" clearable></el-input>
             </el-form-item>
+       
+          </el-col>
+          <el-col :span="8">
+        
             <el-form-item label="手机号码" prop="phone">
               <el-input size="small" v-model="dataForm.phone" clearable></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+                 <el-col :span="8">
+              <el-form-item label="邀请人" prop="userId">
+                <el-input size="small" v-model="dataForm.userId" clearable></el-input>
+              </el-form-item>
+            </el-col>
+             <div v-if="isOpen">
+          <el-row>
+     
+            <el-col :span="8">
+              <el-form-item label="邀请人号码" prop="userId">
+                <el-input size="small" v-model="dataForm.userId" clearable></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8">
+              <el-form-item label="状态" prop="status">
+                <el-select size="small" v-model="dataForm.status" clearable>
+                  <el-option :value="1" label="正常"></el-option>
+                  <el-option :value="0" label="禁用"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+          <el-col :span="24">
             <el-form-item style="float:right; padding-right:10px">
               <el-button size="small" type="danger" @click="forbidden()">禁用</el-button>
               <el-button size="small" type="primary" @click="getDataList()">{{ $t("query") }}</el-button>
@@ -44,28 +72,7 @@
             <el-option value="0" label="否"></el-option>
           </el-select>
         </el-form-item> -->
-        <div v-if="isOpen">
-          <el-row>
-            <el-col :span="6">
-              <el-form-item label="邀请人" prop="userId">
-                <el-input size="small" v-model="dataForm.userId" clearable></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="邀请人号码" prop="userId">
-                <el-input size="small" v-model="dataForm.userId" clearable></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="状态" prop="status">
-                <el-select size="small" v-model="dataForm.status" clearable>
-                  <el-option :value="1" label="正常"></el-option>
-                  <el-option :value="0" label="禁用"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
+     
       </el-form>
       <el-table
         v-loading="dataListLoading"

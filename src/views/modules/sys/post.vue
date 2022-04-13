@@ -9,39 +9,34 @@
         @keyup.enter.native="getDataList"
       >
         <el-row>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item :label="$t('post.postCode')" prop="postCode">
               <el-input size="small" v-model="dataForm.postCode" :placeholder="$t('post.postCode')" clearable></el-input>
             </el-form-item>
+  
+          </el-col>
+          <el-col :span="8">
+        
             <el-form-item :label="$t('post.postName')" prop="postName">
               <el-input size="small" v-model="dataForm.postName" :placeholder="$t('post.postName')" clearable></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+               <el-col :span="8">
+              <el-form-item :label="$t('post.status')" prop="status">
+                <ren-select v-model="dataForm.status" dict-type="post_status" :placeholder="$t('post.status')" ></ren-select>
+              </el-form-item>
+            </el-col>
+          <el-col :span="24">
             <el-form-item style="float:right; padding-right:10px">          
               <el-button size="small" v-if="$hasPermission('sys:dict:save')" type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
               <el-button size="small" v-if="$hasPermission('sys:dict:delete')" type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
               <el-button size="small" type="primary" @click="getDataList">{{ $t("query") }}</el-button>
               <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
-              <el-button 
-                  size="small" 
-                  type="primary"
-                  @click="open"
-              >
-                  {{ isOpen ? "收起" : "展开"}}<i style="margin-left:10px" :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
-              </el-button>
+          
             </el-form-item>
           </el-col>
         </el-row>
-        <div v-if="isOpen">
-          <el-row>
-            <el-col :span="6">
-              <el-form-item :label="$t('post.status')" prop="status">
-                <ren-select v-model="dataForm.status" dict-type="post_status" :placeholder="$t('post.status')" ></ren-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
+     
       </el-form>
       <el-table 
         v-loading="dataListLoading" 

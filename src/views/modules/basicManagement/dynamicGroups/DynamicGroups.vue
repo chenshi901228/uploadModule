@@ -10,7 +10,7 @@
       @keyup.enter.native="getDataList"
     >
       <el-row>
-        <el-col :span="12">
+        <el-col :span="8">
           <el-form-item label="动态组" prop="name">
             <el-input
               size="small"
@@ -19,6 +19,8 @@
               placeholder="请输入"
             ></el-input>
           </el-form-item>
+        </el-col>
+        <el-col :span="8">
           <el-form-item label="显示状态" prop="showState">
             <el-select
               size="small"
@@ -31,31 +33,38 @@
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="12">
-            <el-form-item style="float:right; padding-right:10px">
-              <el-button
-                size="small"
-                v-if="dataListSelections.length !== 0"
-                type="danger"
-                @click="deleteSelect()"
-                >批量删除</el-button
-              >
-              <el-button
-                size="small"
-                type="primary"
-                @click="dialogFormVisible = true"
-                >添加</el-button
-              >
-              <el-button size="small" type="primary" @click="queryDynamicGroup()">{{ $t("query") }}</el-button>
-              <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
-              <!-- <el-button 
+        <el-col :span="8">
+          <el-form-item style="float: right; padding-right: 10px">
+            <el-button
+              size="small"
+              v-if="dataListSelections.length !== 0"
+              type="danger"
+              @click="deleteSelect()"
+              >批量删除</el-button
+            >
+            <el-button
+              size="small"
+              type="primary"
+              @click="dialogFormVisible = true"
+              >添加</el-button
+            >
+            <el-button
+              size="small"
+              type="primary"
+              @click="queryDynamicGroup()"
+              >{{ $t("query") }}</el-button
+            >
+            <el-button size="small" @click="resetDataForm()">{{
+              $t("reset")
+            }}</el-button>
+            <!-- <el-button 
                   size="small" 
                   type="primary"
                   @click="open"
               >
                   {{ isOpen ? "收起" : "展开"}}<i style="margin-left:10px" :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
               </el-button> -->
-            </el-form-item>
+          </el-form-item>
         </el-col>
       </el-row>
       <div v-if="isOpen">
@@ -428,8 +437,8 @@ export default {
     },
     // 重置搜索条件
     resetDataForm(formName = "dataForm") {
-      this.$refs[formName].resetFields()
-      this.queryDynamicGroup()
+      this.$refs[formName].resetFields();
+      this.queryDynamicGroup();
     },
     //添加动态组
     saveGroup() {
