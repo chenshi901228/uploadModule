@@ -9,7 +9,7 @@
         @keyup.enter.native="getDataList()"
       >
         <el-row>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="用户昵称" prop="nickName">
               <el-input
                 size="small"
@@ -17,6 +17,8 @@
                 clearable
               ></el-input>
             </el-form-item>
+          </el-col>
+          <el-col :span="8">
             <el-form-item label="手机号码" prop="phone">
               <el-input
                 size="small"
@@ -25,11 +27,33 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="8">
+            <el-form-item label="待审核内容" prop="delFlg">
+              <el-input size="small" v-model="dataForm.content" clearable />
+            </el-form-item>
+          </el-col>
+          <div v-if="isOpen">
+            <el-row>
+              <el-col :span="8">
+                <el-form-item label="审核状态" prop="delFlg">
+                  <el-select
+                    size="small"
+                    v-model="dataForm.checkStatus"
+                    clearable
+                  >
+                    <el-option :value="1" label="通过"></el-option>
+                    <el-option :value="2" label="待审核"></el-option>
+                    <el-option :value="3" label="驳回"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
+          <el-col :span="24">
             <el-form-item style="float: right; padding-right: 10px">
-                 <el-button type="info" size="small" @click="exportHandle()">{{
-          $t("export")
-        }}</el-button>
+              <el-button type="info" size="small" @click="exportHandle()">{{
+                $t("export")
+              }}</el-button>
               <el-button size="small" type="primary" @click="getDataList()">{{
                 $t("query")
               }}</el-button>
@@ -48,31 +72,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-
-        <div v-if="isOpen">
-          <el-row>
-            <el-col :span="6">
-              <el-form-item label="待审核内容" prop="delFlg">
-                <el-input size="small" v-model="dataForm.content" clearable />
-              </el-form-item>
-            </el-col>
-            <el-col :span="6">
-              <el-form-item label="审核状态" prop="delFlg">
-                <el-select
-                  size="small"
-                  v-model="dataForm.checkStatus"
-                  clearable
-                >
-                  <el-option :value="1" label="通过"></el-option>
-                  <el-option :value="2" label="待审核"></el-option>
-                  <el-option :value="3" label="驳回"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
       </el-form>
-    
 
       <el-table
         v-loading="dataListLoading"
