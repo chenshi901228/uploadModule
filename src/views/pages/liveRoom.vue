@@ -20,7 +20,7 @@
           </div>
         </div>
         <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
-          <el-tab-pane label="互动" name="first">
+          <el-tab-pane label="互动" name="first" class="tab_first">
             <div id="barrage">
               <div
                 class="item"
@@ -695,9 +695,7 @@ export default {
     // 获取主播推荐商品
     getAnchorProduct() {
       this.$http
-        .get(
-          `/sys/wxapp/anchorProduct/listWithAnchorId/${this.userID}`
-        )
+        .get(`/sys/wxapp/anchorProduct/listWithAnchorId/${this.userID}`)
         .then((res) => {
           console.log("主播推荐商品", res.data.data);
           let data = res.data.data;
@@ -730,13 +728,15 @@ p {
 }
 .live-room {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background-image: url("../../assets/img/liveRoom_bg.png");
   background-repeat: no-repeat;
   background-size: 100%;
   padding: 0 20px 20px;
   box-sizing: border-box;
-  .el-container {
+  >.el-container {
+    width: 100%;
+    height: 100%;
     /deep/ .el-aside {
       display: flex;
       flex-direction: column;
@@ -827,6 +827,9 @@ p {
         display: flex;
         flex-direction: column;
         border-radius: 5px;
+        // .el-tabs__content:nth-of-type(1){
+        //   height: calc(100vh - 158px - 80px - 60px - 20px);
+        // }
         .el-tabs__header {
           background-color: #202122;
           height: 60px;
@@ -852,16 +855,20 @@ p {
             }
           }
         }
+
         .el-tabs__content {
           background-color: #37383c;
           padding: 20px;
-          flex: 1;
+          .tab_first {
+            height: calc(100vh - 158px - 80px - 40px - 60px - 20px) !important;
+          }
           .el-tab-pane {
             width: 100%;
             height: 100%;
+            height: calc(100vh - 158px - 60px - 40px - 20px);
             #barrage {
               width: 100%;
-              max-height: 400px;
+              height: 100%;
               overflow: auto;
               .item {
                 .sysMessage {
@@ -967,7 +974,7 @@ p {
             }
             .list_content {
               width: 100%;
-              max-height: 400px;
+              height: 100%;
               overflow: auto;
               .content {
                 width: 310px;
