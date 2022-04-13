@@ -6,10 +6,11 @@
         :inline="true"
         :model="dataForm"
         ref="salesRecord"
+        label-width="100px"
         @keyup.enter.native="getDataList()"
       >
         <el-row>
-          <el-col :span="12">
+          <el-col :span="8">
             <el-form-item label="用户昵称" prop="nickName">
               <el-input
                 size="small"
@@ -17,6 +18,10 @@
                 clearable
               ></el-input>
             </el-form-item>
+      
+          </el-col>
+          <el-col :span="8">
+           
             <el-form-item label="手机号码" prop="phone">
               <el-input
                 size="small"
@@ -25,31 +30,7 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item style="float: right; padding-right: 10px">
-              <el-button size="small" type="primary" @click="getDataList()">{{
-                $t("query")
-              }}</el-button>
-              <el-button size="small" @click="resetDataForm()">{{
-                $t("reset")
-              }}</el-button>
-              <el-button type="primary" size="small" @click="exportHandle()">{{
-                $t("export")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="open">
-                {{ isOpen ? "收起" : "展开"
-                }}<i
-                  style="margin-left: 10px"
-                  :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
-                ></i>
-              </el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
-
-        <div v-if="isOpen">
-          <el-row>
-            <el-col :span="6">
+            <el-col :span="8">
               <el-form-item label="商品名称" prop="phone">
                 <el-input
                   size="small"
@@ -58,8 +39,11 @@
                 ></el-input>
               </el-form-item>
             </el-col>
+              <div v-if="isOpen">
+          <el-row>
+          
 
-            <el-col :span="6">
+            <el-col :span="8">
               <el-form-item label="商品类型" prop="delFlg">
                 <el-select
                   size="small"
@@ -71,7 +55,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="8">
               <el-form-item label="退款方式" prop="delFlg">
                 <el-select
                   size="small"
@@ -83,7 +67,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="8">
               <el-form-item label="关联订单编号" prop="phone">
                 <el-input
                   size="small"
@@ -92,7 +76,7 @@
                 ></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="8">
               <el-form-item label="退款单号" prop="delFlg">
                 <el-select
                   size="small"
@@ -104,7 +88,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="6">
+            <el-col :span="8">
               <el-form-item label="退款状态" prop="delFlg">
                 <el-select
                   size="small"
@@ -118,6 +102,29 @@
             </el-col>
           </el-row>
         </div>
+          <el-col :span="24">
+            <el-form-item style="float: right; padding-right: 10px">
+              <el-button type="info" size="small" @click="exportHandle()">{{
+                $t("export")
+              }}</el-button>
+              <el-button size="small" type="primary" @click="getDataList()">{{
+                $t("query")
+              }}</el-button>
+              <el-button size="small" @click="resetDataForm()">{{
+                $t("reset")
+              }}</el-button>
+              <el-button size="small" type="primary" @click="open">
+                {{ isOpen ? "收起" : "展开"
+                }}<i
+                  style="margin-left: 10px"
+                  :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
+                ></i>
+              </el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+    
       </el-form>
 
       <el-table
@@ -337,6 +344,7 @@ export default {
     // 搜索栏收起/展开
     open() {
       this.isOpen = !this.isOpen;
+       this.resetDataForm()
     },
 
     // 重置搜索条件

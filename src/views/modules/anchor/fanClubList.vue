@@ -2,34 +2,79 @@
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-message__sms">
       <el-form
+        class="headerTool"
         :inline="true"
         :model="dataForm"
-        @keyup.enter.native="getDataList()"
+        ref="dataForm"
+        label-width="90px"
+        @keyup.enter.native="getDataList"
       >
-        <el-form-item label="粉丝团名称">
-          <el-input
-            v-model="dataForm.title"
-            placeholder="粉丝团名称" clearable
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="主播昵称">
-          <el-input
-            v-model="dataForm.username"
-            placeholder="主播昵称" clearable
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="手机号码">
-          <el-input v-model="dataForm.phone" placeholder="手机号码" clearable></el-input>
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="dataForm.disabledFlg" clearable>
-            <el-option value="1" label="禁用"></el-option>
-            <el-option value="0" label="正常"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" size="small" @click="getDataList()">{{ $t("query") }}</el-button>
-        </el-form-item>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="粉丝团名称" prop="title">
+              <el-input
+                size="small"
+                v-model="dataForm.title"
+                placeholder="粉丝团名称"
+                clearable
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="主播昵称" prop="username">
+              <el-input
+                size="small"
+                v-model="dataForm.username"
+                placeholder="主播昵称"
+                clearable
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="手机号码" prop="phone">
+              <el-input
+                size="small"
+                v-model="dataForm.phone"
+                placeholder="手机号码"
+                clearable
+              ></el-input>
+            </el-form-item>
+          </el-col>
+               <div v-if="isOpen">
+          <el-row>
+            <el-col :span="8">
+              <el-form-item label="状态" prop="disabledFlg">
+                <el-select
+                  size="small"
+                  v-model="dataForm.disabledFlg"
+                  clearable
+                >
+                  <el-option value="1" label="禁用"></el-option>
+                  <el-option value="0" label="正常"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </div>
+          <el-col :span="24">
+            <el-form-item style="float: right; padding-right: 10px">
+              <el-button size="small" type="primary" @click="getDataList">{{
+                $t("query")
+              }}</el-button>
+              <el-button size="small" @click="resetDataForm()">{{
+                $t("reset")
+              }}</el-button>
+              <el-button size="small" type="primary" @click="open">
+                {{ isOpen ? "收起" : "展开"
+                }}<i
+                  style="margin-left: 10px"
+                  :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
+                ></i>
+              </el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+   
       </el-form>
       <el-table
         v-loading="dataListLoading"
@@ -124,38 +169,50 @@
           >
             <el-form-item label="用户昵称">
               <el-input
+                size="small"
                 v-model="dataForm_fans.userName"
                 placeholder="用户昵称"
               ></el-input>
             </el-form-item>
             <el-form-item label="手机号码">
               <el-input
+                size="small"
                 v-model="dataForm_fans.phone"
                 placeholder="手机号码"
               ></el-input>
             </el-form-item>
             <el-form-item label="用户等级">
               <el-input
+                size="small"
                 v-model="dataForm_fans.level"
                 placeholder="用户等级"
               ></el-input>
             </el-form-item>
             <el-form-item label="粉丝团身份">
-              <el-select v-model="dataForm_fans.userType" clearable>
+              <el-select
+                size="small"
+                v-model="dataForm_fans.userType"
+                clearable
+              >
                 <el-option :value="0" label="普通会员"></el-option>
                 <el-option :value="1" label="会长"></el-option>
                 <el-option :value="2" label="副会长"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" size="small" @click="queryPost_fans()">{{ $t("query") }}</el-button>
+              <el-button
+                size="small"
+                type="primary"
+                @click="queryPost_fans()"
+                >{{ $t("query") }}</el-button
+              >
             </el-form-item>
           </el-form>
         </div>
-        <div style="display:flex;margin: 10px 0 20px">
-          <div>粉丝团名称：{{detailForm.title}}</div>
-          <div style="margin:0 60px">主播昵称：{{detailForm.username}}</div>
-          <div>成员总数：{{detailForm.fansNum}}人</div>
+        <div style="display: flex; margin: 10px 0 20px">
+          <div>粉丝团名称：{{ detailForm.title }}</div>
+          <div style="margin: 0 60px">主播昵称：{{ detailForm.username }}</div>
+          <div>成员总数：{{ detailForm.fansNum }}人</div>
         </div>
         <el-table :data="dataList_fans" style="width: 100%" height="400px">
           <el-table-column
@@ -197,7 +254,15 @@
             align="center"
           >
             <template slot-scope="scope">
-              <div>{{scope.row.userType===0?'普通会员':scope.row.userType===1?'会长':'副会长'}}</div>
+              <div>
+                {{
+                  scope.row.userType === 0
+                    ? "普通会员"
+                    : scope.row.userType === 1
+                    ? "会长"
+                    : "副会长"
+                }}
+              </div>
             </template>
           </el-table-column>
           <el-table-column
@@ -229,15 +294,17 @@ export default {
   mixins: [mixinViewModule],
   data() {
     return {
-      dataList:[{
-        aaa:1
-      }],
-      otherViewHeight:65,
+      dataList: [
+        {
+          aaa: 1,
+        },
+      ],
+      otherViewHeight: 65,
       mixinViewModuleOptions: {
         getDataListURL: "/sys/anchor/info/pageWithFans",
         getDataListIsPage: true,
       },
-      
+
       dataForm: {
         title: "",
         username: "",
@@ -249,7 +316,7 @@ export default {
       // 粉丝团成员列表弹窗
       dialogVisible_fans: false,
       fansId: "",
-      detailForm:{},
+      detailForm: {},
       dataForm_fans: {
         userName: "",
         phone: "",
@@ -263,24 +330,23 @@ export default {
     };
   },
   components: {},
-  activated(){
-    this.$nextTick(()=>{
-      this.$refs.table.doLayout()
-    })
+  activated() {
+    this.$nextTick(() => {
+      this.$refs.table.doLayout();
+    });
   },
   methods: {
     // 打开粉丝团成员列表弹窗
     openfansListDIa(row) {
       this.dialogVisible_fans = true;
       this.fansId = row.id;
-      this.detailForm=row
-      this.dataForm_fans = {
+      this.detailForm = row;
+      (this.dataForm_fans = {
         userName: "",
         phone: "",
         level: "",
         userType: "",
-      },
-      
+      }),
         this.queryPost_fans();
     },
     // 获取粉丝团成员列表数据
@@ -295,7 +361,9 @@ export default {
         level: this.dataForm_fans.level,
       };
       this.$http
-        .get(`/sys/manage/weixinUser/anchor/fans/achorFansWeixinUserInfoPage`, { params: data })
+        .get(`/sys/manage/weixinUser/anchor/fans/achorFansWeixinUserInfoPage`, {
+          params: data,
+        })
         .then(({ data: res }) => {
           if (res.code !== 0) {
             this.dataList_fans = [];
@@ -319,14 +387,17 @@ export default {
       this.queryPost_fans();
     },
   },
-   computed: {
+  computed: {
     documentClientHeight: {
       get() {
-          return this.$store.state.documentClientHeight;
+        return this.$store.state.documentClientHeight;
       },
     },
     siteContentViewHeight() {
-      var height = this.documentClientHeight - this.otherViewHeight - ( 50 + 40 + 30 + 40 + 47 );
+      var height =
+        this.documentClientHeight -
+        this.otherViewHeight -
+        (50 + 40 + 30 + 40 + 47);
       return height;
     },
   },

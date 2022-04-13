@@ -30,13 +30,11 @@
           >
         </div>
         <div class="diaBoxLeft_mes">
-          <div>开户银行：{{ diaForm.priceConsumption }}</div>
-          <div>支行名称：{{ diaForm.aaa5 }}</div>
-          <div>账号名称：{{ diaForm.aaa3 }}</div>
-          <div>银行账号：{{ diaForm.aaa4 }}</div>
-          <div>
-            开户行所在地：{{ diaForm.priceBalance ? diaForm.priceBalance : 0 }}
-          </div>
+          <div>开户银行：{{ diaForm.depositBank }}</div>
+          <div>支行名称：{{ diaForm.branchName }}</div>
+          <div>账号名称：{{ diaForm.accountName }}</div>
+          <div>银行账号：{{ diaForm.bankAccount }}</div>
+          <div>开户行所在地：{{ diaForm.address }}</div>
         </div>
         <div class="diaBoxLeft_title">
           <span>账户信息</span
@@ -557,10 +555,67 @@
         <el-button type="primary" @click="updateProduct">添加</el-button>
       </div>
     </el-dialog>
+
+    <!-- 修改银行信息 -->
+    <el-dialog
+      title="编辑银行卡信息"
+      :visible.sync="dialogVisible_editBank"
+      width="600px"
+    >
+      <el-form
+        :model="bankForm"
+        :rules="dataRule_bank"
+        ref="bankForm_host"
+        label-width="120px"
+      >
+        <el-form-item label="开户银行" prop="depositBank">
+          <el-input
+            v-model="bankForm.depositBank"
+            placeholder="开户银行"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="支行名称">
+          <el-input
+            v-model="bankForm.branchName"
+            placeholder="支行名称"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="开户行所在地" prop="address">
+          <el-cascader
+            :options="regionData"
+            filterable
+            style="width:100%"
+            v-model="bankForm.address"
+            :props="{ label: 'name', value: 'id', children: 'children' }"
+            :clearable="true"
+            :placeholder="'请选择省/市/区县'"
+          >
+          </el-cascader>
+        </el-form-item>
+
+        <el-form-item label="账户名称" prop="accountName">
+          <el-input
+            v-model="bankForm.accountName"
+            placeholder="账户名称"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="银行账户" prop="bankAccount">
+          <el-input
+            v-model="bankForm.bankAccount"
+            placeholder="银行账户"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible_editBank = false">取 消</el-button>
+        <el-button type="primary" @click="subimtEditBank">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import { treeDataTranslate } from "@/utils";
 export default {
   name: "LiveWebmanageUserdetail",
 
@@ -609,50 +664,53 @@ export default {
       dataUserListTotal: 0,
       dataListSelectionUsers: [],
       dialogUserFormVisible: false,
+
+      // 修改银行卡信息
+      dialogVisible_editBank: false,
+      dataRule_bank: {
+        address: [
+          { required: true, message: "请选择省/市/区县", trigger: "change" },
+        ],
+        depositBank: [
+          { required: true, message: "请填写开户银行", trigger: "blur" },
+        ],
+        accountName: [
+          { required: true, message: "请填写账户名称", trigger: "blur" },
+        ],
+        bankAccount: [
+          { required: true, message: "请填写银行账户", trigger: "blur" },
+        ],
+      },
+      regionDataAll: [],
+      regionData: [],
+      bankForm: {},
     };
   },
 
   mounted() {
     this.userId = this.$store.state.user.id;
     this.$http
-      .get(`/sys/manage/userDetail/${this.userId}`)
+      .get(`/sys/anchor/info/${this.userId}`)
       .then(({ data: res }) => {
         if (res.code !== 0) {
           return this.$message.error(res.msg);
         }
-        this.diaForm = {
-          priceConsumption: res.data.priceConsumption,
-          priceBalance: res.data.priceBalance,
-          ...this.$route.params.data,
-          // priceConsumption:res.data.priceConsumption,
-          // priceConsumption:res.data.priceConsumption,
-        };
+        this.diaForm = res.data;
+      })
+      .catch(() => {});
+    this.$http
+      .get("/sys/region/tree")
+      .then(({ data: res }) => {
+        if (res.code !== 0) {
+          return this.$message.error(res.msg);
+        }
+        this.regionData = treeDataTranslate(res.data);
+        this.regionDataAll =res.data;
       })
       .catch(() => {});
     this.changeTbas(1);
   },
-  watch: {
-    "$route.params.data"(val) {
-      console.log(val);
-      this.userId = this.$store.state.user.id;
-      this.$http
-        .get(`/sys/manage/userDetail/${this.$store.state.user.id}`)
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          }
-          this.diaForm = {
-            priceConsumption: res.data.priceConsumption,
-            priceBalance: res.data.priceBalance,
-            ...this.$route.params.data,
-            // priceConsumption:res.data.priceConsumption,
-            // priceConsumption:res.data.priceConsumption,
-          };
-        })
-        .catch(() => {});
-      this.changeTbas(1);
-    },
-  },
+
   methods: {
     // 多选
     dataListSelectionChangeHandle(val) {
@@ -1044,7 +1102,81 @@ export default {
       });
     },
     //编辑银行卡信息
-    editeUserBank() {},
+    editeUserBank() {
+      this.dialogVisible_editBank = true;
+      this.bankForm = {
+        depositBank: this.diaForm.depositBank ? this.diaForm.depositBank : "",
+        branchName: this.diaForm.branchName ? this.diaForm.branchName : "",
+        address: this.diaForm.province ? [this.diaForm.province,this.diaForm.city,this.diaForm.county] : [],
+        accountName: this.diaForm.accountName ? this.diaForm.accountName : "",
+        bankAccount: this.diaForm.bankAccount ? this.diaForm.bankAccount : "",
+      };
+    },
+    subimtEditBank() {
+      this.$refs.bankForm_host.validate((valid) => {
+        if (valid) {
+          let address='';
+          this.bankForm.address.forEach(i=>{
+            this.regionDataAll.forEach(v=>{
+              if(v.id===i){
+                address+=`${v.name}/`
+              }
+            })
+          })
+          this.$confirm("确认银行信息已填写无误", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+          })
+            .then(() => {
+              this.$http
+                .post(`sys/sysbankinfo/save`, {
+                  depositBank: this.bankForm.depositBank
+                    ? this.bankForm.depositBank
+                    : "",
+                  branchName: this.bankForm.branchName
+                    ? this.bankForm.branchName
+                    : "",
+                  province: this.bankForm.address.length>0 ? this.bankForm.address[0] : '',
+                  address:address,
+                  city: this.bankForm.address.length>0 ? this.bankForm.address[1] : '',
+                  county: this.bankForm.address.length>0 ? this.bankForm.address[2] : '',
+                  accountName: this.bankForm.accountName
+                    ? this.bankForm.accountName
+                    : "",
+                  bankAccount: this.bankForm.bankAccount
+                    ? this.bankForm.bankAccount
+                    : "",
+                    anchorInfoId: this.$store.state.user.id
+                })
+                .then(({ data: res }) => {
+                  if (res.code !== 0) {
+                    return this.$message.error(res.msg);
+                  }
+                  this.$http
+                    .get(`/sys/anchor/info/${ this.$store.state.user.id}`)
+                    .then(({ data: res }) => {
+                      if (res.code !== 0) {
+                        return this.$message.error(res.msg);
+                      }
+                      this.diaForm = res.data;
+                    });
+                    this.dialogVisible_editBank=false
+                  this.$message.success("修改成功!");
+                }).catch(error=>{
+                  this.$message.error(error.msg||error.error)
+                });
+            })
+            .catch((err) => {
+              console.log(err);
+              this.$message.info("已取消修改");
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
     //编辑账户信息
     editeUserMoney() {},
   },

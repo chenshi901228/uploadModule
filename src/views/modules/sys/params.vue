@@ -1,21 +1,47 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-sys__params">
-      <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-        <el-form-item>
-          <el-input v-model="dataForm.paramCode" :placeholder="$t('params.paramCode')" clearable></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="getDataList()">{{ $t('query') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button v-if="$hasPermission('sys:params:save')" type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button v-if="$hasPermission('sys:params:delete')" type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
-        </el-form-item>
+      <el-form 
+        class="headerTool"
+        :inline="true"
+        :model="dataForm"
+        ref="dataForm"
+        @keyup.enter.native="getDataList"
+      >
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="$t('params.paramCode')" prop="paramCode">
+              <el-input size="small" v-model="dataForm.paramCode" :placeholder="$t('params.paramCode')" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item style="float:right; padding-right:10px">          
+              <el-button size="small" v-if="$hasPermission('sys:dict:save')" type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
+              <el-button size="small" v-if="$hasPermission('sys:dict:delete')" type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
+              <el-button size="small" type="primary" @click="getDataList">{{ $t("query") }}</el-button>
+              <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
+              <!-- <el-button 
+                  size="small" 
+                  type="primary"
+                  @click="open"
+              >
+                  {{ isOpen ? "收起" : "展开"}}<i style="margin-left:10px" :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              </el-button> -->
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <div v-if="isOpen">
+        </div>
       </el-form>
-      <el-table v-loading="dataListLoading" :data="dataList" border @selection-change="dataListSelectionChangeHandle" style="width: 100%;">
+      <el-table 
+        v-loading="dataListLoading" 
+        :data="dataList" 
+        border 
+        @selection-change="dataListSelectionChangeHandle" 
+        :height="siteContentViewHeight"
+        style="width: 100%;"
+        ref="table"
+      >
         <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
         <el-table-column prop="paramCode" :label="$t('params.paramCode')" header-align="center" align="center"></el-table-column>
         <el-table-column prop="paramValue" :label="$t('params.paramValue')" header-align="center" align="center"></el-table-column>

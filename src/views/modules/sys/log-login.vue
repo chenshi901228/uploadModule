@@ -1,18 +1,45 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-sys__log-login">
-      <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-        <el-form-item>
-          <el-input v-model="dataForm.creatorName" :placeholder="$t('logLogin.creatorName')" clearable></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="getDataList()">{{ $t('query') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="info" @click="exportHandle()">{{ $t('export') }}</el-button>
-        </el-form-item>
+      <el-form 
+        class="headerTool"
+        :inline="true"
+        :model="dataForm"
+        ref="dataForm"
+        @keyup.enter.native="getDataList"
+      >
+        <el-row>
+          <el-col :span="12">
+            <el-form-item :label="$t('logLogin.creatorName')" prop="creatorName">
+              <el-input size="small" v-model="dataForm.creatorName" :placeholder="$t('logLogin.creatorName')" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item style="float:right; padding-right:10px">     
+              <el-button size="small" type="info" @click="exportHandle()">{{ $t('export') }}</el-button>     
+              <el-button size="small" type="primary" @click="getDataList">{{ $t("query") }}</el-button>
+              <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
+              <!-- <el-button 
+                  size="small" 
+                  type="primary"
+                  @click="open"
+              >
+                  {{ isOpen ? "收起" : "展开"}}<i style="margin-left:10px" :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              </el-button> -->
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <div v-if="isOpen">
+        </div>
       </el-form>
-      <el-table v-loading="dataListLoading" :data="dataList" border @sort-change="dataListSortChangeHandle" style="width: 100%;">
+      <el-table 
+        v-loading="dataListLoading" 
+        :data="dataList" 
+        border 
+        @sort-change="dataListSortChangeHandle" 
+        :height="siteContentViewHeight"
+        style="width: 100%;"
+        ref="table">
         <el-table-column prop="creatorName" :label="$t('logLogin.creatorName')" header-align="center" align="center"></el-table-column>
         <el-table-column prop="operation" :label="$t('logLogin.operation')" header-align="center" align="center">
           <template slot-scope="scope">

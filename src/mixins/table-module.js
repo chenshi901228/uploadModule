@@ -52,6 +52,7 @@ export default {
         // 搜索栏收起/展开
         open() {
             this.isOpen = !this.isOpen
+            this.resetDataForm()
         },
 
         query() {
@@ -100,8 +101,8 @@ export default {
         },
 
         // 重置搜索条件
-        resetDataForm() {
-            this.$refs.dataForm.resetFields()
+        resetDataForm(formName = "dataForm") {
+            this.$refs[formName].resetFields()
             this.getDataList()
         },
         // 分页, 每页条数

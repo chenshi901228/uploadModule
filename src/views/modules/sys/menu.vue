@@ -1,12 +1,20 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-sys__menu">
-      <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
+      <el-form class="headerTool" :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
         <el-form-item>
-          <el-button v-if="$hasPermission('sys:menu:save')" type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
+          <el-button size="small" v-if="$hasPermission('sys:menu:save')" type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
         </el-form-item>
       </el-form>
-      <el-table v-loading="dataListLoading" :data="dataList" row-key="id" border style="width: 100%;">
+      <el-table 
+        v-loading="dataListLoading" 
+        :data="dataList" 
+        row-key="id" 
+        border 
+        :height="siteContentViewHeight"
+        style="width: 100%;"
+        ref="table"
+      >
         <el-table-column prop="name" :label="$t('menu.name')" header-align="center" min-width="150"></el-table-column>
         <el-table-column prop="icon" :label="$t('menu.icon')" header-align="center" align="center">
           <template slot-scope="scope">
@@ -50,6 +58,12 @@ export default {
   },
   components: {
     AddOrUpdate
-  }
+  },
+  computed: {
+    siteContentViewHeight() {
+        var height = this.documentClientHeight - this.otherViewHeight - ( 50 + 40 + 30 + 47 );
+        return height;
+    },
+  },
 }
 </script>

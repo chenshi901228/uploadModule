@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div class="diaBoxLeft_title">主播详情</div>
     <div class="diaBox">
       <div class="diaBoxLeft">
         <div class="diaBoxLeft_title">主播信息</div>
@@ -20,13 +19,11 @@
 
         <div class="diaBoxLeft_title">银行信息</div>
         <div class="diaBoxLeft_mes">
-          <div>开户银行：{{ diaForm.priceConsumption }}</div>
-          <div>支行名称：{{ diaForm.aaa5 }}</div>
-          <div>账号名称：{{ diaForm.aaa3 }}</div>
-          <div>银行账号：{{ diaForm.aaa4 }}</div>
-          <div>
-            开户行所在地：{{ diaForm.priceBalance ? diaForm.priceBalance : 0 }}
-          </div>
+          <div>开户银行：{{ diaForm.depositBank }}</div>
+          <div>支行名称：{{ diaForm.branchName }}</div>
+          <div>账号名称：{{ diaForm.accountName }}</div>
+          <div>银行账号：{{ diaForm.bankAccount }}</div>
+          <div>开户行所在地：{{ diaForm.address }}</div>
         </div>
         <div class="diaBoxLeft_title">账户信息</div>
         <div class="diaBoxLeft_mes">
@@ -91,67 +88,67 @@
           @keyup.enter.native="queryPost_dia()"
         >
           <el-form-item label="支付方式" v-if="diaTbas === 1">
-            <el-select v-model="diaSearchForm.payType" clearable>
+            <el-select size="small" v-model="diaSearchForm.payType" clearable>
               <el-option :value="1" label="微信"></el-option>
               <el-option :value="2" label="支付宝"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="充值来源" v-if="diaTbas === 1">
-            <el-select v-model="diaSearchForm.paySource" clearable>
+            <el-select size="small" v-model="diaSearchForm.paySource" clearable>
               <el-option :value="1" label="小程序端"></el-option>
               <el-option :value="2" label="大于众学"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="礼物名称" v-if="diaTbas === 2">
-            <el-input v-model="diaSearchForm.name" clearable></el-input>
+            <el-input size="small" v-model="diaSearchForm.name" clearable></el-input>
           </el-form-item>
           <el-form-item label="消费来源" v-if="diaTbas === 2">
-            <el-select v-model="diaSearchForm.paySource" clearable>
+            <el-select size="small" v-model="diaSearchForm.paySource" clearable>
               <el-option :value="1" label="小程序端"></el-option>
               <el-option :value="2" label="大于众学"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="用户昵称" v-if="diaTbas === 3 || diaTbas === 4">
-            <el-input v-model="diaSearchForm.userName" clearable></el-input>
+            <el-input size="small" v-model="diaSearchForm.userName" clearable></el-input>
           </el-form-item>
           <el-form-item label="商品名称" v-if="diaTbas === 5">
-            <el-input v-model="diaSearchForm.productName" clearable></el-input>
+            <el-input size="small" v-model="diaSearchForm.productName" clearable></el-input>
           </el-form-item>
           <el-form-item
             label="手机号码"
             v-if="diaTbas === 3 || diaTbas === 4 || diaTbas === 6"
           >
-            <el-input v-model="diaSearchForm.phone" clearable></el-input>
+            <el-input size="small" v-model="diaSearchForm.phone" clearable></el-input>
           </el-form-item>
           <el-form-item label="粉丝团身份" v-if="diaTbas === 4">
-            <el-select v-model="diaSearchForm.userType" clearable>
+            <el-select size="small" v-model="diaSearchForm.userType" clearable>
               <el-option :value="0" label="普通会员"></el-option>
               <el-option :value="1" label="会长"></el-option>
               <el-option :value="2" label="副会长"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="状态" v-if="diaTbas === 4">
-            <el-select v-model="diaSearchForm.delFlg" clearable>
+            <el-select size="small" v-model="diaSearchForm.delFlg" clearable>
               <el-option :value="0" label="正常"></el-option>
               <el-option :value="1" label="取消关注"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="主播昵称" v-if="diaTbas === 6">
-            <el-input v-model="diaSearchForm.anchorName" clearable></el-input>
+            <el-input size="small" v-model="diaSearchForm.anchorName" clearable></el-input>
           </el-form-item>
           <el-form-item label="商品类型" v-if="diaTbas === 5">
-            <el-select v-model="diaSearchForm.productType" clearable>
+            <el-select size="small" v-model="diaSearchForm.productType" clearable>
               <el-option value="专业课" label="专业课"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="是否免费" v-if="diaTbas === 5">
-            <el-select v-model="diaSearchForm.isFree" clearable>
+            <el-select size="small" v-model="diaSearchForm.isFree" clearable>
               <el-option :value="0" label="否"></el-option>
               <el-option :value="1" label="是"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="状态" v-if="diaTbas === 6">
-            <el-select v-model="diaSearchForm.delFlg" clearable>
+            <el-select size="small" v-model="diaSearchForm.delFlg" clearable>
               <el-option :value="0" label="上架"></el-option>
               <el-option :value="1" label="下架"></el-option>
             </el-select>
@@ -169,14 +166,14 @@
               @click="deleteSelect()"
               >批量下架</el-button
             >
-            <el-button @click="queryPost_dia()">{{ $t("query") }}</el-button>
+            <el-button size="small" @click="queryPost_dia()">{{ $t("query") }}</el-button>
           </el-form-item>
         </el-form>
         <el-table
           :data="diaDataList"
           border
           style="width: 100%"
-          height="calc(calc(100vh - 380px) - 2px)"
+          height="calc(calc(100vh - 340px) - 2px)"
           @selection-change="dataListSelectionChangeHandle"
         >
           <el-table-column
@@ -600,18 +597,12 @@ export default {
   mounted() {
     this.userId = this.$route.params.data.id;
     this.$http
-      .get(`/sys/manage/userDetail/${this.userId}`)
+      .get(`/sys/anchor/info/${this.userId}`)
       .then(({ data: res }) => {
         if (res.code !== 0) {
           return this.$message.error(res.msg);
         }
-        this.diaForm = {
-          priceConsumption: res.data.priceConsumption,
-          priceBalance: res.data.priceBalance,
-          ...this.$route.params.data,
-          // priceConsumption:res.data.priceConsumption,
-          // priceConsumption:res.data.priceConsumption,
-        };
+          this.diaForm = res.data
       })
       .catch(() => {});
     this.changeTbas(1);
@@ -621,18 +612,12 @@ export default {
       console.log(val);
       this.userId = this.$route.params.data.id;
       this.$http
-        .get(`/sys/manage/userDetail/${this.$route.params.data.id}`)
+        .get(`/sys/anchor/info/${this.$route.params.data.id}`)
         .then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg);
           }
-          this.diaForm = {
-            priceConsumption: res.data.priceConsumption,
-            priceBalance: res.data.priceBalance,
-            ...this.$route.params.data,
-            // priceConsumption:res.data.priceConsumption,
-            // priceConsumption:res.data.priceConsumption,
-          };
+          this.diaForm = res.data
         })
         .catch(() => {});
       this.changeTbas(1);
@@ -1028,7 +1013,7 @@ export default {
 
 <style lang="scss" scoped>
 .diaBox {
-  height: calc(calc(100vh - 50px - 38px - 66px) - 2px);
+  height: calc(calc(100vh - 50px - 66px) - 2px);
   position: relative;
   background: #fff;
 }

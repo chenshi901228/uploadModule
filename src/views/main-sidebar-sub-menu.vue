@@ -72,7 +72,12 @@ export default {
     gotoRouteHandle (menuId) {
       var route = window.SITE_CONFIG['dynamicMenuRoutes'].filter(item => item.meta.menuId === menuId)[0]
       if (route) {
-        this.$router.push({ name: route.name })
+        if(route.name == "liveRoom") {
+          let t = this.$router.resolve({name: route.name})
+          window.open(t.href, "_blank")
+        }else {
+          this.$router.push({ name: route.name })
+        }
       }
     }
   }
