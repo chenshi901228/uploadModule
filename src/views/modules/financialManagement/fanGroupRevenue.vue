@@ -10,51 +10,36 @@
       >
         <el-row>
           <el-col :span="8">
-            <el-form-item label="用户昵称" prop="nickName">
+            <el-form-item label="用户昵称" prop="userName">
               <el-input
                 size="small"
-                v-model="dataForm.username"
+                v-model="dataForm.userName"
                 clearable
               ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="手机号码" prop="phone">
+            <el-form-item label="手机号码" prop="userPhone">
               <el-input
                 size="small"
-                v-model="dataForm.phone"
+                v-model="dataForm.userPhone"
                 clearable
               ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="礼物名称" prop="delFlg">
-              <el-select
-                size="small"
-                v-model="dataForm.handlingStatus"
-                clearable
-              >
-                <el-option :value="1" label="已处理"></el-option>
-                <el-option :value="0" label="未处理"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <div v-if="isOpen">
-            <el-row>
-              <el-col :span="8">
-                <el-form-item label="消费来源" prop="delFlg">
-                  <el-select
+           <el-form-item label="消费来源" prop="paySource">
+                   <el-select
                     size="small"
-                    v-model="dataForm.handlingStatus"
+                    v-model="dataForm.paySource"
                     clearable
                   >
-                    <el-option :value="1" label="已处理"></el-option>
-                    <el-option :value="0" label="未处理"></el-option>
+                    <el-option :value="1" label="小程序"></el-option>
+                    <el-option :value="2" label="大于众学"></el-option>
                   </el-select>
                 </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
+          </el-col>
+     
           <el-col :span="24">
             <el-form-item style="float: right; padding-right: 10px">
               <el-button type="info" size="small" @click="exportHandle()">{{
@@ -66,13 +51,7 @@
               <el-button size="small" @click="resetDataForm()">{{
                 $t("reset")
               }}</el-button>
-              <el-button size="small" type="primary" @click="open">
-                {{ isOpen ? "收起" : "展开"
-                }}<i
-                  style="margin-left: 10px"
-                  :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
-                ></i>
-              </el-button>
+        
             </el-form-item>
           </el-col>
         </el-row>
@@ -88,14 +67,14 @@
         ref="table"
       >
         <el-table-column
-          prop="username"
+          prop="id"
           label="收入记录编号"
           min-width="200px"
           header-align="center"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="username"
+          prop="userName"
           label="用户昵称"
           header-align="center"
           align="center"
@@ -103,7 +82,7 @@
         ></el-table-column>
 
         <el-table-column
-          prop="phone"
+          prop="userPhone"
           label="手机号码"
           min-width="120px"
           header-align="center"
@@ -111,14 +90,14 @@
         >
         </el-table-column>
         <el-table-column
-          prop="phone"
+          prop="type"
           label="消费类型"
           header-align="center"
           align="center"
         >
         </el-table-column>
         <el-table-column
-          prop="phone"
+          prop="title"
           label="粉丝团名称"
           header-align="center"
           align="center"
@@ -126,7 +105,7 @@
         </el-table-column>
 
         <el-table-column
-          prop="handler"
+          prop="anchorName"
           label="主播"
           header-align="center"
           show-overflow-tooltip
@@ -134,7 +113,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="phone"
+          prop="anchorPhone"
           label="手机号码"
           min-width="120px"
           header-align="center"
@@ -143,7 +122,7 @@
         </el-table-column>
 
         <el-table-column
-          prop="handler"
+          prop="price"
           label="支付金额"
           header-align="center"
           show-overflow-tooltip
@@ -151,12 +130,17 @@
         >
         </el-table-column>
         <el-table-column
-          prop="handler"
+          prop="payType"
           label="支付方式"
           header-align="center"
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="scope">
+            <div>
+              {{ scope.row.payType === 1 ? "微信" : "支付宝" }}
+            </div>
+          </template>
         </el-table-column>
 
         <el-table-column
@@ -191,10 +175,10 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/manage/complaint/page",
+        getDataListURL: "/sys/user/consumption/selectUserJoinFansPageWithFinance",
         getDataListIsPage: true,
         deleteIsBatch: true,
-        exportURL: "/sys/manage/complaint/export",
+        exportURL: "/sys/user/consumption/selectUserJoinFansPageWithFinanceExport",
       },
       dataForm: {
         nickName: "",

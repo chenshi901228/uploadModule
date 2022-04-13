@@ -1,6 +1,29 @@
 <template>
   <div class="detalilBox">
     <div class="detalilBox_top">
+      <div
+        style="margin: 0 0 20px"
+        
+      >
+        审核状态：
+        <span :style="{
+          color:
+            diaForm.checkStatus === 1
+              ? '#67c23a'
+              : diaForm.checkStatus === 2
+              ? '#000'
+              : '#f43030'
+        }">
+        {{
+          diaForm.checkStatus === 1
+            ? "通过"
+            : diaForm.checkStatus === 2
+            ? "待审核"
+            : "驳回"
+        }}
+        </span>
+        
+      </div>
       <div style="display: flex">
         <div>直播昵称：{{ diaForm.nickName }}</div>
         <div style="margin: 0 80px">手机号码：{{ diaForm.phone }}</div>
@@ -27,12 +50,18 @@
     </div>
 
     <div class="detalilBox_bottom">
-      <el-button size="small" type="" @click="updateCheckStatus(3)"
-      v-if='diaForm.checkStatus === 2'
+      <el-button
+        size="small"
+        type=""
+        @click="updateCheckStatus(3)"
+        v-if="diaForm.checkStatus === 2"
         >驳回</el-button
       >
-      <el-button size="small" type="primary" @click="updateCheckStatus(1)"
-       v-if='diaForm.checkStatus === 2'
+      <el-button
+        size="small"
+        type="primary"
+        @click="updateCheckStatus(1)"
+        v-if="diaForm.checkStatus === 2"
         >通过</el-button
       >
     </div>
@@ -51,7 +80,7 @@ export default {
       diaForm: {
         content: "",
       },
-      details:[],
+      details: [],
     };
   },
 
@@ -64,7 +93,9 @@ export default {
           return this.$message.error(res.msg);
         }
         this.diaForm = res.data;
-        this.details = this.diaForm.details ? this.diaForm.details.split(',') : [];
+        this.details = this.diaForm.details
+          ? this.diaForm.details.split(",")
+          : [];
       })
       .catch(() => {});
   },
@@ -82,7 +113,7 @@ export default {
             }
             this.diaForm = res.data;
             this.details = this.diaForm.details
-              ? this.diaForm.details.split(',')
+              ? this.diaForm.details.split(",")
               : [];
           })
           .catch(() => {});
