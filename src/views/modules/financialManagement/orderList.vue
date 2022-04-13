@@ -164,7 +164,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="price"
+          prop="payPrice"
           label="支付金额"
           header-align="center"
           show-overflow-tooltip
