@@ -73,7 +73,7 @@ export default {
         uuid: '',
         captcha: '',
         grant_type: 'password'
-      }
+      },
     }
   },
   computed: {
@@ -122,7 +122,7 @@ export default {
           this.$router.replace({ name: 'home' })
         }).catch(() => {})
       })
-    }, 1000, { 'leading': true, 'trailing': false })
+    }, 1000, { 'leading': true, 'trailing': false }),
   }
 }
 </script>

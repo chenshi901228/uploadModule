@@ -3,6 +3,7 @@ export default {
     id: 0,
     name: '',
     realName: '',
-    superAdmin: 0
+    superAdmin: 0,
+    headUrl:'',
   }
 }

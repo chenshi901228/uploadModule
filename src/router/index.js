@@ -22,6 +22,7 @@ export const pageRoutes = [
     }
   },
   { path: '/login', component: () => import('@/views/pages/login'), name: 'login', meta: { title: '登录' } },
+  { path: '/live-room', component: () => import('@/views/pages/liveRoom'), name: 'liveRoom', meta: { title: '直播间' } },
 ]
 
 // 模块路由(基于主入口布局页面)
