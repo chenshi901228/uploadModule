@@ -27,3 +27,8 @@ export default {
   }
 }
 </script>
+<style>
+.el-row {
+    position: unset !important;
+}
+</style>
