@@ -19,57 +19,95 @@
       </div>
       <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
         <el-tab-pane label="互动" name="first">
-          <div class="barrage">
+          <div id="barrage">
             <div class="item" v-for="(item, index) in barrageData" :key="index">
-									<!-- 进入直播间消息 type:10 -->
-									<div class="sysMessage"
-										v-if="item.type && item.type === 'TIMCustomElem'&& item.payload.data.message.type===10">
-										{{ item.payload.data.message.text }}
-									</div>
-									<!-- 普通弹幕消息 type:1 -->
-									<div class="htmlText"
-										v-if="item.type && item.type === 'TIMCustomElem'&& item.payload.data.message.type===1 || item.type && item.type === 'TIMCustomElem'&&item.payload.data.message.type===3">
-										<span class="fansCard"
-											v-if="item.payload.data.fansInfo&&item.payload.data.fansInfo.isFans">新粉&nbsp;{{item.payload.data.fansInfo.grade}}</span>
-										<span
-											class="nickName">{{item.payload.data.userInfo.nickName}}&nbsp;:</span>
-										<span
-											class="normalMsg">{{item.payload.data.message.text || item.payload.data.message.questionText}}</span>
-									</div>
-								</div>
+              <!-- 进入直播间消息 type:10 -->
+              <div class="sysMessage"
+                v-if="item.type && item.type === 'TIMCustomElem'&& item.payload.data.message.type===10">
+                {{ item.payload.data.message.text }}
+              </div>
+              <!-- 普通弹幕消息 type:1 -->
+              <div class="message_info" v-if="item.type && item.type === 'TIMCustomElem'&& item.payload.data.userInfo.userId!=userInfo.userId && (item.payload.data.message.type===1 || item.payload.data.message.type===3)">
+                <img :src="item.payload.data.userInfo.avatarUrl" alt="">
+                <div class="message_content">
+                  <div>
+                    <span
+                      class="nickName">{{item.payload.data.userInfo.nickName}}&nbsp;</span>
+                    <span class="fansCard"
+                      v-if="item.payload.data.fansInfo&&item.payload.data.fansInfo.isFans">新粉&nbsp;{{item.payload.data.fansInfo.grade}}</span>
+                  </div>
+                  <p
+                    class="normalMsg">{{item.payload.data.message.text || item.payload.data.message.questionText}}</p>
+                </div>
+              </div>
+              <!-- 主播自己的消息 -->
+              <div class="mine_message_info" v-if="item.type && item.type === 'TIMCustomElem'&& item.payload.data.userInfo.userId===userInfo.userId && (item.payload.data.message.type===1 || item.payload.data.message.type===3)">
+                <div class="message_content">
+                  <div>
+                    <span class="nickName">我</span>
+                  </div>
+                  <p
+                    class="normalMsg">{{item.payload.data.message.text || item.payload.data.message.questionText}}</p>
+                </div>
+                <img :src="item.payload.data.userInfo.avatarUrl" alt="">
+              </div>
+            </div>
           </div>
         </el-tab-pane>
         <el-tab-pane label="提问" name="second">
-          <div class="content" v-for="(item,index) in barrageData" :key='index'>
-					<div class="question_list" v-if="item.type && item.type === 'TIMCustomElem'&& item.payload.data.message.type===3">
-						<div class="user-info">
-							<div class="username">
-								<image :src="item.payload.data.userInfo.avatarUrl" mode=""></image>
-								<span>{{item.payload.data.userInfo.nickName}}</span>
-							</div>
-							<div class="clearDensity" v-if="item.payload.data.fansInfo.isFans">
-								<span class="text">亲密度：</span>
-								<span class="num">{{item.payload.data.fansInfo.intimacy}}</span>
-							</div>
-						</div>
-						<div class="question_content"
-							v-if="item.type && item.type === 'TIMCustomElem'&& item.payload.data.message.type===3">
-							<div class="tag">问</div>
-							<div class="text">
-								{{item.payload.data.message.questionText}}
-							</div>
-						</div>
-					</div>
-				</div>
+          <div class="lsit_content">
+            <div class="content" v-for="(item,index) in questionMessageInfo" :key='index'>
+              <div class="question_list">
+                <div class="user-info">
+                  <img :src="item.userInfo.avatarUrl" mode="" />
+                  <span>{{item.userInfo.nickName}}</span>
+                </div>
+                <div class="question_content_info" >
+                  <div class="tag">问</div>
+                  <div class="text">
+                    {{item.message.questionText}}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </el-tab-pane>
-        <el-tab-pane label="学生" name="third">学生</el-tab-pane>
-        <el-tab-pane label="商品" name="fourth">商品</el-tab-pane>
+        <el-tab-pane label="学生" name="third">
+          <div class="lsit_content">
+            <div class="content" v-for="(item,index) in studentList" :key="index">
+
+            </div>
+          </div>
+        </el-tab-pane>
+        <el-tab-pane label="商品" name="fourth">
+          <div class="lsit_content">
+            <div class="content" v-for="(item,index) in goodsList" :key="index">
+              <div class="content_list">
+                <div class="goods_info">
+                  <p class="good_name">{{item.productName}}</p>
+                  <div class="good_pro">
+                    <span>{{item.presenter}}</span>
+                    <span>共30讲</span>
+                    <span>￥{{item.price}}</span>
+                  </div>
+                  <div class="good_tag">
+                    <span v-for="(data,index1) in item.productTag" :key="index1">{{data}}</span>
+                  </div>
+                </div>
+                <div class="push_btn">
+                  <div>推送</div>
+                  <p><span>{{item.buyers}}</span>人已购买</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-tab-pane>
         <el-tab-pane label="直播预告" name="fifth">直播预告</el-tab-pane>
         <el-tab-pane label="推荐主播" name="sixth">推荐主播</el-tab-pane>
       </el-tabs>
-      <div class="barrage_input">
-        <input type="text" placeholder="我也来参与一下互动" v-model="barrage">
-        <div class="sendBarrage_btn">发送</div>
+      <div class="barrage_input" v-show="activeName==='first'">
+        <input type="text" placeholder="我也来参与一下互动" v-model="barrage" @keydown.enter="sendMessage({type:1})">
+        <div class="sendBarrage_btn" @click="sendMessage({type:1})">发送</div>
       </div>
     </el-aside>
     <el-container>
@@ -133,12 +171,27 @@ export default {
       liveRoomUserinfo:{},//用户在线信息
       goodsList:[],//获取主播推荐商品
       barrage:'',
+      questionMessageInfo:[],//提问消息
+      studentList:[
+        {
+
+        }
+      ],
     }
   },
   created(){
     
     this.getTimUserSig()
     this.startLive()
+  },
+  computed:{
+    userInfo(){
+      return{
+        userId:this.$store.state.user.id,
+        nickName:this.$store.state.user.realName,
+        avatarUrl:this.$store.state.user.headUrl,
+      }
+    }
   },
   mounted(){
     // 初始化实例  Step1
@@ -417,6 +470,7 @@ export default {
             let applyInfo = JSON.parse(item.payload.data)
             if (applyInfo.message.type === 3) {
               console.log("提问消息")
+              this.questionMessageInfo.push(applyInfo)
             }
             if(applyInfo.message.type === 4) { //礼物弹幕消息
               console.log("礼物弹幕消息")
@@ -453,12 +507,98 @@ export default {
       })
       list = list.filter(item=>item.type==='TIMCustomElem')
       this.barrageData = this.barrageData.concat(list);//弹幕消息
+      this.$nextTick(()=>{
+        let barragediv = document.getElementById('barrage')
+        barragediv.scrollTop = barragediv.scrollHeight;
+      })
       console.log('barrageData', this.barrageData)
     },
+    // 获取发送类型
+    getToAccount() {
+      if (!this.conversation || !this.conversation.conversationID) {
+        return '';
+      }
+      switch (this.conversation.type) {
+        case 'C2C':
+          return this.conversation.conversationID.replace('C2C', '');
+
+        case 'GROUP':
+          return this.conversation.conversationID.replace('GROUP', '');
+
+        default:
+          return this.conversation.conversationID;
+      }
+    },
+    sendMessage(messageInfo) {
+				// 将自己发送的消息写进消息列表里面
+				const text = this.barrage;
+				let data = {
+					userInfo: this.userInfo, //用户信息
+					// fansInfo,//用户是否为粉丝相关信息
+					message: {
+						/**
+						 * 消息类型:
+						 * 1:普通信息、
+						 * 2:关注信息、
+						 * 3:提问信息、
+						 * 4:礼物信息、
+						 * 5:语音连麦信息：{1、同意，2、拒绝}、
+						 * 6:视频连麦信息：{1、同意，2、拒绝}、)
+						 * 7:直播预告推送
+						 * 8:商品推送
+						 * **/
+						type: messageInfo.type,
+						text: text,
+						pushData: messageInfo.pushData, //推送信息（商品，直播预告）
+						connectType: messageInfo.connectType,
+						replyType: messageInfo.replyType ? messageInfo.replyType : null,
+						replyUserId: messageInfo.replyUserId
+					},
+				}
+				for (let k in data.message) { //将空信息移除
+					if (data.message[k] === null || data.message[k] === '') {
+						delete data.message[k]
+					}
+				}
+				// 发送自定义消息
+				const message = this.tim.createCustomMessage({
+					to: this.getToAccount(),
+					conversationType: this.conversation.type,
+					payload: {
+						data: JSON.stringify(data)
+					}
+				});
+        const messageTwo = JSON.parse(JSON.stringify(message))
+        messageTwo.payload.data = JSON.parse(messageTwo.payload.data)
+        console.log('message',message,messageTwo)
+				// 直播预告/商品推送消息
+				if (message.payload) {
+					let applyInfo = JSON.parse(message.payload.data)
+					let messageInfo = applyInfo.message;
+					if (messageInfo&&messageInfo.type && (messageInfo&&messageInfo.type === 7 || messageInfo&&messageInfo.type === 8)) {
+
+					} else {
+						this.barrageData = [...this.barrageData, messageTwo]
+            this.$nextTick(()=>{
+              let div = document.getElementById('barrage')
+              div.scrollTop = div.scrollHeight;
+            })
+					}
+				}
+        console.log('barrageData',this.barrageData)
+				this.tim.sendMessage(message)
+        // 发送消息之后清空输入框内容
+				this.barrage = ""
+			},
     // 获取主播推荐商品
     getAnchorProduct() {
       this.$http.get(`/sys/wxapp/anchorProduct/listWithAnchorId/${this.$store.state.user.id}`).then(res=>{
-        console.log('主播推荐商品',res)
+        console.log('主播推荐商品',res.data.data)
+        let data = res.data.data
+        data.forEach(item=>{
+          item.productTag = item.productTag.split('|')
+        })
+        this.goodsList = data
       })
     },
     // 获取直播预约列表
@@ -494,6 +634,7 @@ p{
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding-bottom: 20px;
     .anchor_header{
       width: 100%;
       height: 158px;
@@ -579,6 +720,7 @@ p{
       flex: 1;
       display: flex;
       flex-direction: column;
+      border-radius: 5px;
       .el-tabs__header{
         background-color: #202122;
         height: 60px;
@@ -608,6 +750,228 @@ p{
         background-color: #37383C;
         padding: 20px;
         flex: 1;
+        .el-tab-pane{
+          width: 100%;
+          height: 100%;
+          #barrage{
+            width: 100%;
+            max-height:300px;
+            overflow:auto; 
+            .item{
+              .sysMessage{
+                color: #999999;
+                font-size: 13px;
+                margin:24px 0px;
+              }
+              .message_info{
+                display: flex;
+                margin:24px 0px;
+                >img{
+                  width: 40px;
+                  height: 40px;
+                }
+                .message_content{
+                  margin-left: 13px;
+                  >div{
+                    .nickName{
+                      font-size: 13px;
+                      color: #999999;
+                    }
+                    .fansCard{
+                      display: inline-block;
+                      width: 50px;
+                      height: 16px;
+                      text-align: center;
+                      background-color: #51CADA;
+                      border-radius: 15px;
+                      font-size: 8px;
+                    }
+                  }
+                  .normalMsg{
+                    margin-top: 7px;
+                    max-width: 250px;
+                    background-color: #44454A;
+                    color: #EAEAEA;
+                    font-size: 16px;
+                    padding: 13px;
+                    border-radius: 4px;
+                    word-break: break-all;
+                    position: relative;
+                    display: inline-block;
+                  }
+                  .normalMsg::before{
+                    content: '';
+                    position: absolute;
+                    top: 6px;
+                    left: -6px;
+                    width: 0;
+                    height: 0;
+                    border-top: 6px solid transparent;
+                    border-bottom: 6px solid transparent;
+                    border-right: 6px solid #44454A;
+                  }
+                }
+              }
+              .mine_message_info{
+                display: flex;
+                margin:24px 0px;
+                justify-content: flex-end;
+                >img{
+                  width: 40px;
+                  height: 40px;
+                }
+                .message_content{
+                  margin-right: 13px;
+                  >div{
+                    text-align: right;
+                    .nickName{
+                      font-size: 13px;
+                      color: #999999;
+                    }
+                  }
+                  .normalMsg{
+                    margin-top: 7px;
+                    max-width: 250px;
+                    background-color: #44454A;
+                    color: #EAEAEA;
+                    font-size: 16px;
+                    padding: 13px;
+                    border-radius: 4px;
+                    word-break: break-all;
+                    position: relative;
+                    display: inline-block;
+                  }
+                  .normalMsg::before{
+                    content: '';
+                    position: absolute;
+                    top: 6px;
+                    right: -6px;
+                    width: 0;
+                    height: 0;
+                    border-top: 6px solid transparent;
+                    border-bottom: 6px solid transparent;
+                    border-left: 6px solid #44454A;
+                  }
+                }
+              }
+            }
+          }
+          #barrage::-webkit-scrollbar {
+            display: none;
+          }
+          .lsit_content{
+            width: 100%;
+            height: 350px;
+            overflow:auto;
+            .content{
+              width: 310px;
+              padding: 14px;
+              background-color: #44454A;
+              border-radius: 10px;
+              margin-bottom: 20px;
+              .question_list{
+                width: 100%;
+                display: flex;
+                flex-direction: column;
+                .user-info{
+                  >img{
+                    width: 30px;
+                    height: 30px;
+                  }
+                  >span{
+                    color: #999999;
+                    font-size: 14px;
+                    display: inline-block;
+                    margin-left: 10px;
+                  }
+                }
+              }
+              .question_content_info{
+                margin-top: 10px;
+                display: flex;
+                .tag{
+                  width: 18px;
+                  height: 18px;
+                  background: linear-gradient(114deg, #FA3622 0%, #FF055B 100%);
+                  border-radius: 3px;
+                  color: #FFFFFF;
+                  font-size: 12px;
+                  line-height: 18px;
+                  text-align: center;
+                }
+                .text{
+                  word-break: break-all;
+                  color: #EAEAEA;
+                  font-size: 16px;
+                  margin-left: 13px;
+                }
+              }
+              .content_list{
+                display: flex;
+                justify-content: space-between;
+                .goods_info{
+                  display: flex;
+                  flex-direction: column;
+                  width: 178px;
+                  .good_name{
+                    color: #EAEAEA;
+                    font-size: 16px;
+                  }
+                  .good_pro{
+                    margin-top: 10px;
+                    font-size: 14px;
+                    color: #898989;
+                    >span{
+                      margin-right: 10px;
+                    }
+                    >span:last-child{
+                      color: #F92C1B;
+                    }
+                  }
+                  .good_tag{
+                    display: flex;
+                    margin-top: 10px;
+                    >span{
+                      color: #ACADAF;
+                      font-size: 10px;
+                      background-color: #5A5B62;
+                      display: inline-block;
+                      padding: 1px 8px;
+                      border-radius: 15px;
+                      margin-right: 5px;
+                    }
+                  }
+                }
+                .push_btn{
+                  display: flex;
+                  flex-direction: column;
+                  align-items: flex-end;
+                  justify-content: center;
+                  >div{
+                    width: 60px;
+                    height: 30px;
+                    background: linear-gradient(69deg, #FA3622 0%, #FA3622 1%, #FF055B 100%);
+                    border-radius: 5px;
+                    text-align: center;
+                    line-height: 30px;
+                    cursor: pointer;
+                  }
+                  >p{
+                    margin-top: 8px;
+                    color: #898989;
+                    font-size: 12px;
+                    >span{
+                      color: #EAEAEA;
+                    }
+                  }
+                }
+              }
+            }
+          }
+          .lsit_content::-webkit-scrollbar {
+            display: none;
+          }
+        }
       }
     }
     .barrage_input{
@@ -619,7 +983,7 @@ p{
       justify-content: space-between;
       align-items: center;
       padding: 0 10px;
-      margin: 20px 0px;
+      margin: 20px 0px 0px;
       >input{
         background:none ;
         border: none;
@@ -635,6 +999,7 @@ p{
         color: #fff;
         font-size: 18px;
         font-weight: 400;
+        cursor: pointer;
       }
     }
   }
