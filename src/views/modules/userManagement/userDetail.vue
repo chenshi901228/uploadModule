@@ -286,6 +286,7 @@ export default {
       };
       this.diaDataList=[]
        this.total_dia = 0;
+        this.page_dia=1
       switch (n) {
         case 1:
           this.diaTableTitle = {

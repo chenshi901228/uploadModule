@@ -752,6 +752,7 @@ export default {
     },
     changeTbas(n) {
       this.diaTbas = n;
+       this.page_dia=1
       this.diaSearchForm = {
         payType: "",
         paySource: "",
@@ -841,8 +842,7 @@ export default {
     // 获取跟进记录列表数据
     queryPost_dia() {
       let data, url;
-      this.diaDataList = [];
-      this.total_dia = 0;
+  
       switch (this.diaTbas) {
         case 1:
           data = {
