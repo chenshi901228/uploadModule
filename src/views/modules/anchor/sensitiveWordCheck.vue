@@ -255,14 +255,14 @@ export default {
     // 搜索栏收起/展开
     open() {
       this.isOpen = !this.isOpen;
-       this.resetDataForm()
+      this.resetDataForm();
     },
     // 打开用户详情弹窗
     openDetail(data) {
       this.$router.push({
         name: "anchor-sensitiveWordDetail",
-        params: { data: data },
       });
+      window.localStorage.setItem("sensitiveWordDetailID", data.id);
     },
 
     forbiddenAll() {

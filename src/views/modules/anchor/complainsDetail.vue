@@ -58,43 +58,23 @@ export default {
     };
   },
 
-  mounted() {
-    this.userId = this.$route.params.data.id;
-    this.$http
-      .get(`/sys/manage/complaint/${this.$route.params.data.id}`)
-      .then(({ data: res }) => {
-        if (res.code !== 0) {
-          return this.$message.error(res.msg);
-        }
-        this.diaForm = res.data;
-        this.diaForm.tag = this.diaForm.tag ? this.diaForm.tag.split(",") : [];
-        this.diaForm.fileUrl = this.diaForm.fileUrl
-          ? this.diaForm.fileUrl.split(",")
-          : [];
-      })
-      .catch(() => {});
-  },
-  watch: {
-    "$route.params.data"(val) {
-      if (val) {
-        this.userId = val.id;
-        this.$http
-          .get(`/sys/manage/complaint/${val.id}`)
-          .then(({ data: res }) => {
-            if (res.code !== 0) {
-              return this.$message.error(res.msg);
-            }
-            this.diaForm = res.data;
-            this.diaForm.tag = this.diaForm.tag
-              ? this.diaForm.tag.split(",")
-              : [];
-            this.diaForm.fileUrl = this.diaForm.fileUrl
-              ? this.diaForm.fileUrl.split(",")
-              : [];
-          })
-          .catch(() => {});
-      }
-    },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.userId = window.localStorage.getItem("complainsDetailID");
+      vm.$http
+        .get(`/sys/manage/complaint/${vm.userId}`)
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return vm.$message.error(res.msg);
+          }
+          vm.diaForm = res.data;
+          vm.diaForm.tag = vm.diaForm.tag ? vm.diaForm.tag.split(",") : [];
+          vm.diaForm.fileUrl = vm.diaForm.fileUrl
+            ? vm.diaForm.fileUrl.split(",")
+            : [];
+        })
+        .catch(() => {});
+    });
   },
   methods: {
     // 审核

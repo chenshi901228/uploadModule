@@ -35,44 +35,44 @@
               </el-select>
             </el-form-item>
           </el-col>
-              <div v-if="isOpen">
-          <el-row>
-            <el-col :span="8">
-              <el-form-item label="投诉标签" prop="delFlg">
-                <el-select size="small" v-model="dataForm.tag" clearable>
-                  <el-option value="违法违禁" label="违法违禁"></el-option>
-                  <el-option value="淫秽色情" label="淫秽色情"></el-option>
-                  <el-option value="欺诈/售假" label="欺诈/售假"></el-option>
-                  <el-option
-                    value="未成年人相关"
-                    label="未成年人相关"
-                  ></el-option>
-                  <el-option value="危险行为" label="危险行为"></el-option>
-                  <el-option value="录像/盗播" label="录像/盗播"></el-option>
-                  <el-option
-                    value="引导线下转账"
-                    label="引导线下转账"
-                  ></el-option>
-                  <el-option value="诱导刷礼" label="诱导刷礼"></el-option>
-                  <el-option value="侮辱谩骂" label="侮辱谩骂"></el-option>
-                  <el-option value="其他" label="其他"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="处理状态" prop="delFlg">
-                <el-select
-                  size="small"
-                  v-model="dataForm.handlingStatus"
-                  clearable
-                >
-                  <el-option :value="1" label="已处理"></el-option>
-                  <el-option :value="0" label="未处理"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
+          <div v-if="isOpen">
+            <el-row>
+              <el-col :span="8">
+                <el-form-item label="投诉标签" prop="delFlg">
+                  <el-select size="small" v-model="dataForm.tag" clearable>
+                    <el-option value="违法违禁" label="违法违禁"></el-option>
+                    <el-option value="淫秽色情" label="淫秽色情"></el-option>
+                    <el-option value="欺诈/售假" label="欺诈/售假"></el-option>
+                    <el-option
+                      value="未成年人相关"
+                      label="未成年人相关"
+                    ></el-option>
+                    <el-option value="危险行为" label="危险行为"></el-option>
+                    <el-option value="录像/盗播" label="录像/盗播"></el-option>
+                    <el-option
+                      value="引导线下转账"
+                      label="引导线下转账"
+                    ></el-option>
+                    <el-option value="诱导刷礼" label="诱导刷礼"></el-option>
+                    <el-option value="侮辱谩骂" label="侮辱谩骂"></el-option>
+                    <el-option value="其他" label="其他"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="处理状态" prop="delFlg">
+                  <el-select
+                    size="small"
+                    v-model="dataForm.handlingStatus"
+                    clearable
+                  >
+                    <el-option :value="1" label="已处理"></el-option>
+                    <el-option :value="0" label="未处理"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
           <el-col :span="24">
             <el-form-item style="float: right; padding-right: 10px">
               <el-button type="info" size="small" @click="exportHandle()">{{
@@ -94,8 +94,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
-    
       </el-form>
 
       <el-table
@@ -309,14 +307,14 @@ export default {
     // 搜索栏收起/展开
     open() {
       this.isOpen = !this.isOpen;
-       this.resetDataForm()
+      this.resetDataForm();
     },
     // 打开用户详情弹窗
     openDetail(data) {
       this.$router.push({
         name: "anchor-complainsDetail",
-        params: { data: data },
       });
+      window.localStorage.setItem("complainsDetailID", data.id);
     },
 
     forbiddenAll() {

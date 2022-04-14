@@ -276,8 +276,9 @@ export default {
     openDetail(data) {
       this.$router.push({
         name: "userManagement-hostDetail",
-        params: { data: data },
+       
       });
+       window.localStorage.setItem("hostDetailID", data.id);
     },
 
     forbiddenAll() {

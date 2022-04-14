@@ -100,7 +100,11 @@
             </el-select>
           </el-form-item>
           <el-form-item label="礼物名称" v-if="diaTbas === 2">
-            <el-input size="small" v-model="diaSearchForm.name" clearable></el-input>
+            <el-input
+              size="small"
+              v-model="diaSearchForm.name"
+              clearable
+            ></el-input>
           </el-form-item>
           <el-form-item label="消费来源" v-if="diaTbas === 2">
             <el-select size="small" v-model="diaSearchForm.paySource" clearable>
@@ -109,16 +113,28 @@
             </el-select>
           </el-form-item>
           <el-form-item label="用户昵称" v-if="diaTbas === 3 || diaTbas === 4">
-            <el-input size="small" v-model="diaSearchForm.userName" clearable></el-input>
+            <el-input
+              size="small"
+              v-model="diaSearchForm.userName"
+              clearable
+            ></el-input>
           </el-form-item>
           <el-form-item label="商品名称" v-if="diaTbas === 5">
-            <el-input size="small" v-model="diaSearchForm.productName" clearable></el-input>
+            <el-input
+              size="small"
+              v-model="diaSearchForm.productName"
+              clearable
+            ></el-input>
           </el-form-item>
           <el-form-item
             label="手机号码"
             v-if="diaTbas === 3 || diaTbas === 4 || diaTbas === 6"
           >
-            <el-input size="small" v-model="diaSearchForm.phone" clearable></el-input>
+            <el-input
+              size="small"
+              v-model="diaSearchForm.phone"
+              clearable
+            ></el-input>
           </el-form-item>
           <el-form-item label="粉丝团身份" v-if="diaTbas === 4">
             <el-select size="small" v-model="diaSearchForm.userType" clearable>
@@ -134,10 +150,18 @@
             </el-select>
           </el-form-item>
           <el-form-item label="主播昵称" v-if="diaTbas === 6">
-            <el-input size="small" v-model="diaSearchForm.anchorName" clearable></el-input>
+            <el-input
+              size="small"
+              v-model="diaSearchForm.anchorName"
+              clearable
+            ></el-input>
           </el-form-item>
           <el-form-item label="商品类型" v-if="diaTbas === 5">
-            <el-select size="small" v-model="diaSearchForm.productType" clearable>
+            <el-select
+              size="small"
+              v-model="diaSearchForm.productType"
+              clearable
+            >
               <el-option value="专业课" label="专业课"></el-option>
             </el-select>
           </el-form-item>
@@ -166,7 +190,9 @@
               @click="deleteSelect()"
               >批量下架</el-button
             >
-            <el-button size="small" @click="queryPost_dia()">{{ $t("query") }}</el-button>
+            <el-button size="small" @click="queryPost_dia()">{{
+              $t("query")
+            }}</el-button>
           </el-form-item>
         </el-form>
         <el-table
@@ -594,34 +620,20 @@ export default {
     };
   },
 
-  mounted() {
-    this.userId = this.$route.params.data.id;
-    this.$http
-      .get(`/sys/anchor/info/getInfo/${this.userId}`)
-      .then(({ data: res }) => {
-        if (res.code !== 0) {
-          return this.$message.error(res.msg);
-        }
-          this.diaForm = res.data
-      })
-      .catch(() => {});
-    this.changeTbas(1);
-  },
-  watch: {
-    "$route.params.data"(val) {
-      console.log(val);
-      this.userId = this.$route.params.data.id;
-      this.$http
-        .get(`/sys/anchor/info/getInfo/${this.$route.params.data.id}`)
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.userId = window.localStorage.getItem("hostDetailID");
+      vm.$http
+        .get(`/sys/anchor/info/getInfo/${vm.userId}`)
         .then(({ data: res }) => {
           if (res.code !== 0) {
-            return this.$message.error(res.msg);
+            return vm.$message.error(res.msg);
           }
-          this.diaForm = res.data
+          vm.diaForm = res.data;
         })
         .catch(() => {});
-      this.changeTbas(1);
-    },
+      vm.changeTbas(1);
+    });
   },
   methods: {
     // 多选
@@ -678,9 +690,9 @@ export default {
         productType: "",
         isFree: "",
       };
-         this.diaDataList=[]
-       this.total_dia = 0;
-       this.page_dia=1
+      this.diaDataList = [];
+      this.total_dia = 0;
+      this.page_dia = 1;
       switch (n) {
         case 1:
           this.diaTableTitle = {
@@ -754,7 +766,7 @@ export default {
     // 获取跟进记录列表数据
     queryPost_dia() {
       let data, url;
-  
+
       switch (this.diaTbas) {
         case 1:
           data = {
