@@ -12,8 +12,8 @@
           <div>用户昵称：{{ diaForm.nickName }}</div>
           <!-- <div>是否认证：{{ diaForm.nickName }}</div>
               <div>是否指导师：{{ diaForm.nickName }}</div> -->
-          <div>邀请注册：{{ diaForm.aaa1 }}</div>
-          <div>TA邀请人：{{ diaForm.aaa2 }}</div>
+          <div>邀请注册：{{ diaForm.createBy }}</div>
+          <div>TA邀请人：{{ diaForm.inviteUserName }}</div>
           <div>注册时间：{{ diaForm.createDate }}</div>
         </div>
 
