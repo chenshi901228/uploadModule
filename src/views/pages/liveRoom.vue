@@ -220,7 +220,7 @@
             <div class="header_right">
               <div class="wacth_num">
                 <img src="../../assets/img/liveUser.png" alt="">
-                <p>当前观看人数：<span>512</span>人</p>
+                <p>当前观看人数：<span>{{liveRoomUserinfo.onlineNum || 0}}</span>人</p>
               </div>
               <div class="tool_nav" v-for="(item,index) in toolNav" :key="index" @click="toolClick(item.type)">
                 <img :src="item.status?item.activeImg:item.img" alt="">
@@ -240,31 +240,53 @@
         <el-main>
           <div class="live_content">
             <div class="live_menu">
+              <div class="live_menu_header">
+                <div class="live_theme">主题&nbsp;:&nbsp;小黑不简单正在直播</div>
+                <div class="online_info">
+                  <p>
+                    ·&nbsp;<span>{{liveRoomUserinfo.cumulativeNum || 0}}</span>人看过
+                  </p>
+                  <p>
+                    ·&nbsp;<span>{{liveRoomUserinfo.onlineNum || 0}}</span>人在线
+                  </p>
+                  <p>
+                    ·&nbsp;<span>55222000</span>热度
+                  </p>
+                </div>
+              </div>
               <video
                 autoplay
                 controls
                 muted
                 id="videoEle"
                 :src-object.prop="stream"
-                width="100%"
-                height="100%"
+                class="push_video"
               ></video>
             </div>
             <div class="connect_list">
-              连麦列表
               <div
-                class="conne_video"
-                v-for="(item, index) in connectStreamList"
+                class="connet_video"
+                v-for="(item, index) in connectMessageInfo"
                 :key="index"
               >
-                <video
-                  autoplay
-                  controls
-                  muted
-                  :src-object.prop="stream"
-                  width="100%"
-                  height="100%"
-                ></video>
+                <div class="video_div">
+                  <video
+                    autoplay
+                    muted
+                    :src-object.prop="item.stream"
+                    :style="{width:item.message.connectType==1?'0px':'230px',height:item.message.connectType==1?'0px':'112px'}"
+                  ></video>
+                  <img class="connect_headerUrl" :src="item.userInfo.avatarUrl" alt="" v-if="item.message.connectType===1">
+                </div>
+                <div class="cennect_userinfo">
+                  <div>
+                    <img src="../../assets/img/camera.png" alt="" v-if="item.message.connectType==2">
+                    <img src="../../assets/img/mike.png" alt="" v-if="item.message.connectType==1">
+                    <span>{{item.userInfo.nickName}}</span>
+                  </div>
+                  <div class="btn" @click="replyConnect(1,item.message.type,item.message.connectType,item.userInfo.userId)" v-if="!item.connectStatus">接通</div>
+                  <div class="btn gua_btn" @click="hangup(item)" v-if="item.connectStatus">挂断</div>
+                </div>
               </div>
             </div>
           </div>
@@ -401,45 +423,48 @@ export default {
     });
 
     //获取流地址
-    this.zg.on("roomStreamUpdate", async (roomID, updateType, streamList) => {
-      console.error("roomStreamUpdate roomID ", roomID, streamList);
+    this.zg.on("roomStreamUpdate",async (roomID, updateType, streamList) => {
       if (updateType == "ADD") {
         // 流新增，开始拉流
         console.log("流新增------------", streamList);
-        this.getPlayStream(streamList);
-        if (this.roomId != streamItem.streamID) {
-          let extraInfo = streamItem.extraInfo;
-          let extraInfoObj = null;
-          try {
-            extraInfoObj = JSON.parse(extraInfo);
-          } catch (e) {}
-          this.$http
-            .post("/sys/mixedflow/startEvenWheat", {
-              UserId: streamItem.user.userID, //用户ID；
-              RoomId: this.roomId, //房间ID；
-              joinRoomId: streamItem.streamID,
-              joinType:
-                extraInfoObj && extraInfoObj.connectType == 1
-                  ? "voice"
-                  : "watch",
-            })
-            .then((res) => {
-              console.log(res);
-            })
-            .catch((err) => {});
-        }
+        streamList.forEach(streamItem=>{
+          this.connectMessageInfo.forEach(async item=>{
+            if(item.userInfo.userId === streamItem.user.userID){
+              item.stream = await this.zg.startPlayingStream(streamItem.streamID)
+            }
+          })
+          console.log('111',this.connectMessageInfo)
+          this.$loading().close()
+          if (this.roomId != streamItem.streamID) {
+            let extraInfo = streamItem.extraInfo;
+            let extraInfoObj = null;
+            try {
+              extraInfoObj = JSON.parse(extraInfo);
+            } catch (e) {}
+            this.$http
+              .post("/sys/mixedflow/startEvenWheat", {
+                UserId: streamItem.user.userID, //用户ID；
+                RoomId: this.roomId, //房间ID；
+                joinRoomId: streamItem.streamID,
+                joinType:
+                  extraInfoObj && extraInfoObj.connectType == 1
+                    ? "voice"
+                    : "watch",
+              })
+              .then((res) => {
+                console.log(res);
+              })
+              .catch((err) => {});
+          }
+        })
       } else if (updateType == "DELETE") {
         // 流删除，停止拉流
         console.log("流减少------------", streamList);
         streamList.forEach((streamItem) => {
-          const ind = this.connectStreamList.findIndex(
-            (item) => item.streamID === streamItem.streamID
-          );
-          this.connectStreamList.splice(ind, 1);
           this.$http
             .post("/sys/mixedflow/finishEvenWheat", {
               UserId: streamItem.user.userID, //用户ID；
-              RoomId: this.roomID, //房间ID；
+              RoomId: this.roomId, //房间ID；
               joinRoomId: streamItem.streamID,
             })
             .then((res) => {
@@ -480,7 +505,7 @@ export default {
     },
     // 获取token开启直播预览
     async startLive() {
-      this.$loading({background:'rgba(255,255,255,.5)',text:'直播开启中...'})
+      this.$loading({background:'rgba(0,0,0,.5)',text:'直播开启中...'})
       this.token = await this.getTokenFun(this.appID, this.userID);
       this.loginRoom();
     },
@@ -518,7 +543,7 @@ export default {
           if (res.data.data && res.data.data.Data) {
             this.liveStatus = true
             this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
-              this.$loading.close()
+              this.$loading().close()
             });
             this.$message({message:'直播开启成功',type:'success'})
             this.joinGroup();
@@ -528,7 +553,7 @@ export default {
           }else{
             this.$message({message:'直播开启失败,请重新开启',type:'error'})
             this.$nextTick(() => { 
-              this.$loading.close()
+              this.$loading().close()
             });
           }
         });
@@ -570,15 +595,6 @@ export default {
     // 关闭美颜
     closeEffect() {
       this.zg.setEffectsBeauty(this.stream, false);
-    },
-    //新增连麦流
-    async getPlayStream(streamItem) {
-      console.log("新增流streamItem------------------", streamItem);
-      let playRes = await this.zg.startPlayingStream(streamItem.streamID);
-      playRes["extraInfo"] = streamItem["extraInfo"];
-      this.connectStreamList.push(playRes);
-      console.log("新增流playRes------------------", playRes);
-      console.log("this.connectStreamList", this.connectStreamList);
     },
     joinGroup() {
       //加入直播群聊
@@ -648,24 +664,23 @@ export default {
       let list = [];
       console.log("收到消息", event);
       event.data.forEach((item) => {
+        if (item.type === "TIMGroupSystemNoticeElem") {
+          // 被PC端禁播
+          if(item.payload.userDefinedField && item.payload.userDefinedField.match("你已被禁播")) {
+          	console.log('被禁播')
+          }
+          if (item.payload.userDefinedField) {
+            let tempObj = JSON.parse(item.payload.userDefinedField);
+            for (var key in tempObj) {
+              this.liveRoomUserinfo[key] = tempObj[key];
+            }
+          }
+        }
         if (
           this.conversation &&
           item.conversationID === this.conversation.conversationID
         ) {
           list.push(Object.assign(item));
-          if (item.type === "TIMGroupSystemNoticeElem") {
-            // 被PC端禁播
-            // if(item.payload.userDefinedField && item.payload.userDefinedField.match("你已被禁播")) {
-            // 	console.log('被禁播')
-            // }
-            if (item.payload.userDefinedField) {
-              let tempObj = JSON.parse(item.payload.userDefinedField);
-              for (var key in tempObj) {
-                this.liveRoomUserinfo[key] = tempObj[key];
-              }
-              console.log(this.liveRoomUserinfo);
-            }
-          }
           if (item.payload && item.payload.data) {
             let applyInfo = JSON.parse(item.payload.data);
             if (applyInfo.message.type === 3) {
@@ -687,6 +702,7 @@ export default {
                 applyInfo.message.replyType === 0
               ) {
                 applyInfo.connectStatus = false; //定义连麦状态
+                applyInfo.stream = {} //连麦流
                 let arr = [];
                 this.connectMessageInfo.forEach((item) =>
                   arr.push(item.userInfo.userId)
@@ -694,6 +710,7 @@ export default {
                 if (arr.indexOf(applyInfo.userInfo.userId) === -1) {
                   this.connectMessageInfo.push(applyInfo);
                 }
+                console.log('连麦列表',this.connectMessageInfo)
               }
               if (
                 applyInfo.message.replyType &&
@@ -704,16 +721,10 @@ export default {
                 this.connectMessageInfo = this.connectMessageInfo.filter(
                   (item) => item.userInfo.userId != applyInfo.userInfo.userId
                 );
-                uni.showToast({
-                  title:
-                    applyInfo.message.replyType === -1
-                      ? "用户已取消连麦申请"
-                      : "用户已断开连麦",
-                  icon: "none",
-                });
+                applyInfo.message.replyType === -1 ? this.$message("用户已取消连麦申请") : this.$message("用户已断开连麦")
                 return;
               }
-              console.log("connectMessageInfo", this.connectMessageInfo);
+              console.log("connectMessageInfo1111", this.connectMessageInfo);
             }
           }
         }
@@ -721,7 +732,6 @@ export default {
       list.forEach((item) => {
         item.payload.data = JSON.parse(item.payload.data);
       });
-      list = list.filter((item) => item.type === "TIMCustomElem");
       this.barrageData = this.barrageData.concat(list); //弹幕消息
       this.$nextTick(() => {
         let barragediv = document.getElementById("barrage");
@@ -787,7 +797,6 @@ export default {
       });
       const messageTwo = JSON.parse(JSON.stringify(message));
       messageTwo.payload.data = JSON.parse(messageTwo.payload.data);
-      console.log("message", message, messageTwo);
       // 直播预告/商品推送消息
       if (message.payload) {
         let applyInfo = JSON.parse(message.payload.data);
@@ -806,7 +815,6 @@ export default {
           });
         }
       }
-      console.log("barrageData", this.barrageData);
       this.tim.sendMessage(message);
       // 发送消息之后清空输入框内容
       this.barrage = "";
@@ -858,7 +866,44 @@ export default {
                 this.livePredictionTimer = null
             }, 60 * 1000)
         }
-    }
+    },
+    replyConnect(status, type, connectType, userId) { //同意申请连麦
+      let messageInfo = {
+        type,
+        connectType,
+        replyType: 1,
+        replyUserId: userId,
+      }
+      if (status === 1) { //同意
+        this.$loading({text:'连接中...'})
+        this.sendMessage(messageInfo)
+        this.connectMessageInfo.forEach(item => {
+          if (item.userInfo.userId === userId) {
+            item.connectStatus = true
+          }
+        })
+      } else { //拒绝
+        if (this.connectMessageInfo.length == 1) {
+          this.applyShow = false
+        }
+        messageInfo.replyType = -2
+        this.sendMessage(messageInfo)
+        const ind = this.connectMessageInfo.findIndex(item => item.userInfo.userId === userId)
+        this.connectMessageInfo.splice(ind, 1)
+      }
+    },
+    hangup(info) { //挂断
+      let messageInfo = {
+        type: info.message
+          .type, //消息类型(1:普通信息、2:关注信息、3:提问信息、4:礼物信息、5:语音连麦信息：{1、同意，2、拒绝}、6:视频连麦信息：{1、同意，2、拒绝}、)
+        connectType: info.message.connectType,
+        replyUserId: info.userInfo.userId,
+        replyType: -3, // 连麦后挂断
+      }
+      this.sendMessage(messageInfo)
+      const ind = this.connectMessageInfo.findIndex(item => item.userInfo.userId === info.userInfo.userId)
+      this.connectMessageInfo.splice(ind, 1) //移除挂断的一条连麦信息
+    },
   },
   destroyed(){
     if (this.livePredictionTimer) {
@@ -979,9 +1024,6 @@ p {
         display: flex;
         flex-direction: column;
         border-radius: 5px;
-        // .el-tabs__content:nth-of-type(1){
-        //   height: calc(100vh - 158px - 80px - 60px - 20px);
-        // }
         .el-tabs__header {
           background-color: #202122;
           height: 60px;
@@ -1445,27 +1487,116 @@ p {
           }
         }
       }
-    }
-    .live_content {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: space-between;
-      .live_menu {
-        flex: 1;
-      }
-      .connect_list {
-        width: 200px;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
-        .conne_video {
-          width: 200px;
-          height: 150px;
+      .el-main{
+        padding: 0 0 0 20px;
+        .live_content {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: space-between;
+          .live_menu {
+            width: calc(100% - 230px - 20px);
+            height: 100%;
+            position: relative;
+            .live_menu_header{
+              width: 100%;
+              height: 60px;
+              background-color: #37383C;
+              padding: 16px 20px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              .live_theme{
+                color: #fff;
+                font-size: 20px;
+              }
+              .online_info{
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+                color: #FFFFFF;
+                font-size: 16px;
+                >p{
+                  margin-right: 10px;
+                }
+              }
+            }
+            .push_video{
+              position: absolute;
+              bottom: 0;
+              right: 0;
+              width: 350px;
+              height: 196px;
+            }
+          }
+          .connect_list {
+            width: 230px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            background-color: #37383C;
+            padding: 10px;
+            .connet_video {
+              width: 100%;
+              height: 142px;
+              margin-bottom: 10px;
+              .video_div{
+                width: 100%;
+                height: 112px;
+                background-color: #32373A;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                >video{
+                  width: 100%;
+                  height: 100%;
+                }
+                .connect_headerUrl{
+                  width: 60px;
+                  height: 60px;
+                  border-radius: 50%;
+                }
+              }
+              .cennect_userinfo{
+                height: 30px;
+                width: 100%;
+                background: #000000;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                font-size: 12px;
+                font-weight: 400;
+                color: #fff;
+                padding: 0 10px;
+                >div{
+                  >img{
+                    width: 20px;
+                    height: 20px;
+                  }
+                  >span{
+                    margin-left: 10px;
+                  }
+                }
+                >.btn{
+                  background: #54C717;
+                  width: 35px;
+                  height: 20px;
+                  text-align: center;
+                  line-height: 20px;
+                  border-radius: 3px;
+                  cursor: pointer;
+                }
+                >.gua_btn{
+                  background: #F92C1B;
+                }
+              }
+            }
+          }
         }
       }
     }
+    
   }
 }
 @keyframes live-icon-one {
