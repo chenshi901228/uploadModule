@@ -597,7 +597,7 @@ export default {
   mounted() {
     this.userId = this.$route.params.data.id;
     this.$http
-      .get(`/sys/anchor/info/${this.userId}`)
+      .get(`/sys/anchor/info/getInfo/${this.userId}`)
       .then(({ data: res }) => {
         if (res.code !== 0) {
           return this.$message.error(res.msg);
@@ -612,7 +612,7 @@ export default {
       console.log(val);
       this.userId = this.$route.params.data.id;
       this.$http
-        .get(`/sys/anchor/info/${this.$route.params.data.id}`)
+        .get(`/sys/anchor/info/getInfo/${this.$route.params.data.id}`)
         .then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg);

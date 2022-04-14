@@ -690,7 +690,7 @@ export default {
   mounted() {
     this.userId = this.$store.state.user.id;
     this.$http
-      .get(`/sys/anchor/info/${this.userId}`)
+      .get(`/sys/anchor/info/getInfo/${this.userId}`)
       .then(({ data: res }) => {
         if (res.code !== 0) {
           return this.$message.error(res.msg);
