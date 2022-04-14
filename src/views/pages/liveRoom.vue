@@ -210,7 +210,32 @@
       </el-aside>
       <el-container>
         <el-header>
-          <div @click="closeLive">关闭直播</div>
+          <div class="live_room_header">
+            <div class="header_left">
+              <div class="header_nav" v-for="(item,index) in headerNav" :class="[headerNavActive==index?'headerNavActive':'']" :key="index" @click="headerNavClick(item.type,index)">
+                <img :src="item.img" alt="">
+                <p>{{item.text}}</p>
+              </div>
+            </div>
+            <div class="header_right">
+              <div class="wacth_num">
+                <img src="../../assets/img/liveUser.png" alt="">
+                <p>当前观看人数：<span>512</span>人</p>
+              </div>
+              <div class="tool_nav" v-for="(item,index) in toolNav" :key="index" @click="toolClick(item.type)">
+                <img :src="item.status?item.activeImg:item.img" alt="">
+                <p>{{item.text}}</p>
+              </div>
+              <div class="start_live" @click="startLive" v-if="!liveStatus">
+                <img src="../../assets/img/startLive.png" alt="">
+                <span>开始直播</span>
+              </div>
+              <div class="start_live" @click="closeLive" v-else>
+                <img src="../../assets/img/closeLive.png" alt="">
+                <span>结束直播</span>
+              </div>
+            </div>
+          </div>
         </el-header>
         <el-main>
           <div class="live_content">
@@ -281,12 +306,57 @@ export default {
       userInfo: {}, //用户信息
       goodsPushTimer:null,//商品推送定时
       livePredictionTimer:null,//直播预告推送定时
+      headerNav:[
+        {
+          img:require('@/assets/img/desktopShare.png'),
+          text:'桌面共享',
+          type:'desktopShare'
+        },
+        {
+          img:require('@/assets/img/superWhiteboard.png'),
+          text:'超级白板',
+          type:'superWhiteboard'
+        },
+        {
+          img:require('@/assets/img/documentShare.png'),
+          text:'文件共享',
+          type:'documentShare'
+        },
+        {
+          img:require('@/assets/img/beautify.png'),
+          text:'美化',
+          type:'beautify'
+        },
+      ],
+      toolNav:[
+        {
+          img:require('@/assets/img/norecord.png'),
+          activeImg:require('@/assets/img/record.png'),
+          text:'录制',
+          type:'record',
+          status:false,
+        },
+        {
+          img:require('@/assets/img/nomike.png'),
+          activeImg:require('@/assets/img/mike.png'),
+          text:'麦克风',
+          type:'mike',
+          status:true,
+        },
+        {
+          img:require('@/assets/img/nocamera.png'),
+          activeImg:require('@/assets/img/camera.png'),
+          text:'摄像头',
+          type:'camera',
+          status:true,
+        }
+      ],
+      headerNavActive:"0", //顶部导航选中,
+      liveStatus:false,//直播状态
     };
   },
   created() {
-    this.getTimUserSig().then((res) => {
-      this.startLive();
-    });
+    this.getTimUserSig()
   },
   computed: {},
   mounted() {
@@ -381,10 +451,12 @@ export default {
     });
   },
   methods: {
+    headerNavClick(type,index){
+      this.headerNavActive = index
+    },
     handleClick(tab, event) {
       console.log(tab, event);
     },
-
     // 获取token的方法
     getTokenFun(appID, userID) {
       return new Promise((resolve, reject) => {
@@ -408,6 +480,7 @@ export default {
     },
     // 获取token开启直播预览
     async startLive() {
+      this.$loading({background:'rgba(255,255,255,.5)',text:'直播开启中...'})
       this.token = await this.getTokenFun(this.appID, this.userID);
       this.loginRoom();
     },
@@ -443,10 +516,20 @@ export default {
         })
         .then((res) => {
           if (res.data.data && res.data.data.Data) {
+            this.liveStatus = true
+            this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
+              this.$loading.close()
+            });
+            this.$message({message:'直播开启成功',type:'success'})
             this.joinGroup();
             this.getAnchorProduct();
             this.getLivePreviewList();
             this.getRecommendList();
+          }else{
+            this.$message({message:'直播开启失败,请重新开启',type:'error'})
+            this.$nextTick(() => { 
+              this.$loading.close()
+            });
           }
         });
     },
@@ -469,6 +552,8 @@ export default {
           RoomId: this.roomId,
         })
         .then((res) => {
+          this.$message({message:'直播已关闭',type:'success'})
+          this.liveStatus = false
           console.log(res);
         });
       this.stopPublishingStream();
@@ -1256,6 +1341,108 @@ p {
           font-size: 18px;
           font-weight: 400;
           cursor: pointer;
+        }
+      }
+    }
+    .el-container{
+      .el-header{
+        height: 158px !important;
+        padding: 0 0 0 20px;
+        .live_room_header{
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          .header_left{
+            display: flex;
+            align-items: center;
+            color: #FFFFFF;
+            font-size: 14px;
+            font-weight: 400;
+            .header_nav{
+              width: 85px;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+              cursor: pointer;
+              position: relative;
+              >img{
+                width: 31px;
+                height: 28px;
+              }
+              >p{
+                margin-top: 5px;
+              }
+            }
+            .headerNavActive::after{
+              position: absolute;
+              content: '';
+              display: block;
+              width: 24px;
+              height: 4px;
+              background-color: #F92D1C;
+              border-radius: 30px;
+              bottom: -6px;
+            }
+          }
+          .header_right{
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            .wacth_num{
+              display: flex;
+              align-items: center;
+              color: #fff;
+              font-size: 16px;
+              >img{
+                width: 16px;
+                height: 16px;
+              }
+              >p{
+                margin-left: 4px;
+                >span{
+                  font-size: 18px;
+                }
+              }
+            }
+            .tool_nav{
+              display: flex;
+              align-items: center;
+              color: #fff;
+              font-size: 14px;
+              margin: 0 10px;
+              >img{
+                width: 40px;
+                height: 40px;
+                cursor: pointer;
+              }
+              >p{
+                margin-left: 15px;
+              }
+            }
+            .start_live{
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 18px;
+              color: #ffffff;
+              width: 230px;
+              height: 40px;
+              background: linear-gradient(89deg, #FA3622 0%, #FE055B 100%);
+              box-shadow: 0px 4px 10px 1px rgba(249, 46, 29, 0.4);
+              border-radius: 5px;
+              cursor: pointer;
+              >img{
+                width: 20px;
+                height: 20px;
+              }
+              >span{
+                margin-left: 10px;
+              }
+            }
+          }
         }
       }
     }
