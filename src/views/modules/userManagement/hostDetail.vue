@@ -678,6 +678,8 @@ export default {
         productType: "",
         isFree: "",
       };
+         this.diaDataList=[]
+       this.total_dia = 0;
       switch (n) {
         case 1:
           this.diaTableTitle = {
