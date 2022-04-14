@@ -124,6 +124,7 @@
           prop="phone"
           label="手机号码"
           header-align="center"
+          min-width="110px"
           align="center"
         >
         </el-table-column>
@@ -175,6 +176,17 @@
           width="100"
         ></el-table-column>
         <el-table-column
+          prop="dynamicGroupFlg"
+          label="动态组授权"
+          show-overflow-tooltip
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <div>{{ scope.row.dynamicGroupFlg ? "已授权" : "未授权" }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="liveState"
           label="正在直播"
           show-overflow-tooltip
@@ -208,6 +220,7 @@
           :label="$t('handle')"
           fixed="right"
           header-align="center"
+          min-width="160px"
           align="center"
         >
           <template slot-scope="scope">
@@ -227,6 +240,20 @@
               v-else
               @click="forbidden(scope.row.id)"
               >解除</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              v-if="!scope.row.dynamicGroupFlg"
+              @click="impower(scope.row.weixinUserId, 1)"
+              >授权</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              v-else
+              @click="impower(scope.row.weixinUserId, 0)"
+              >取消授权</el-button
             >
           </template>
         </el-table-column>
@@ -276,9 +303,8 @@ export default {
     openDetail(data) {
       this.$router.push({
         name: "userManagement-hostDetail",
-       
       });
-       window.localStorage.setItem("hostDetailID", data.id);
+      window.localStorage.setItem("hostDetailID", data.id);
     },
 
     forbiddenAll() {
@@ -286,6 +312,26 @@ export default {
     },
     // 禁用，解除用户
     forbidden(id) {},
+
+    // 动态组授权、取消授权
+    impower(id, type) {
+      this.$http
+          .put("sys/anchor/info/updateDynamicGroup", {
+            weixinUserId: id,
+            dynamicGroupFlg:type,
+          })
+          .then(({ data: res }) => {
+            if (res.code == 0) {
+              this.$message.success("操作成功");
+              this.query();
+            } else {
+              this.$message.error(res.msg);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+    },
   },
 };
 </script>
