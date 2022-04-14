@@ -696,9 +696,9 @@ export default {
             price: "银行账户",
             allPrice: "开户银行",
             payType: "支行名称",
-            paySource: "开户行所在地",
-            createDate: "提现时间",
-            createDate: "审批状态",
+            // paySource: "开户行所在地",
+            // createDate: "提现时间",
+            // createDate: "审批状态",
             createDate: "提现状态",
           };
           break;
@@ -753,8 +753,7 @@ export default {
     // 获取跟进记录列表数据
     queryPost_dia() {
       let data, url;
-      this.diaDataList = [];
-      this.total_dia = 0;
+  
       switch (this.diaTbas) {
         case 1:
           data = {

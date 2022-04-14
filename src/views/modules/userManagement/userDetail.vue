@@ -336,7 +336,7 @@ export default {
             title: "粉丝团名称",
             anchorName: "主播",
             phone: "手机号码",
-            aaa4: "消费类型",
+            type: "消费类型",
             price: "支付金额",
             payType: "支付方式",
             paySource: "消费来源",
@@ -363,8 +363,7 @@ export default {
     // 获取跟进记录列表数据
     queryPost_dia() {
       let data, url;
-      this.diaDataList = [];
-      this.total_dia = 0;
+     
       switch (this.diaTbas) {
         case 1:
           data = {
@@ -382,6 +381,7 @@ export default {
             page: this.page_dia,
             weixinUserId: this.userId,
             paySource: this.diaSearchForm.paySource,
+            name: this.diaSearchForm.name,
           };
           url = "/sys/user/consumption/selectUserGiftPage";
           break;
