@@ -12,8 +12,8 @@
           <div>用户昵称：{{ diaForm.nickName }}</div>
           <!-- <div>是否认证：{{ diaForm.nickName }}</div>
               <div>是否指导师：{{ diaForm.nickName }}</div> -->
-          <div>邀请注册：{{ diaForm.aaa1 }}</div>
-          <div>TA邀请人：{{ diaForm.aaa2 }}</div>
+          <div>邀请注册：{{ diaForm.createBy }}</div>
+          <div>TA邀请人：{{ diaForm.inviteUserName }}</div>
           <div>注册时间：{{ diaForm.createDate }}</div>
         </div>
 
@@ -284,6 +284,9 @@ export default {
         anchorName: "",
         phone: "",
       };
+      this.diaDataList=[]
+       this.total_dia = 0;
+        this.page_dia=1
       switch (n) {
         case 1:
           this.diaTableTitle = {
@@ -334,7 +337,7 @@ export default {
             title: "粉丝团名称",
             anchorName: "主播",
             phone: "手机号码",
-            aaa4: "消费类型",
+            type: "消费类型",
             price: "支付金额",
             payType: "支付方式",
             paySource: "消费来源",
@@ -361,8 +364,7 @@ export default {
     // 获取跟进记录列表数据
     queryPost_dia() {
       let data, url;
-      this.diaDataList = [];
-      this.total_dia = 0;
+     
       switch (this.diaTbas) {
         case 1:
           data = {
@@ -380,6 +382,7 @@ export default {
             page: this.page_dia,
             weixinUserId: this.userId,
             paySource: this.diaSearchForm.paySource,
+            name: this.diaSearchForm.name,
           };
           url = "/sys/user/consumption/selectUserGiftPage";
           break;

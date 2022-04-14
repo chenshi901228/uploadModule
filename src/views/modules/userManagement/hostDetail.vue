@@ -597,7 +597,7 @@ export default {
   mounted() {
     this.userId = this.$route.params.data.id;
     this.$http
-      .get(`/sys/anchor/info/${this.userId}`)
+      .get(`/sys/anchor/info/getInfo/${this.userId}`)
       .then(({ data: res }) => {
         if (res.code !== 0) {
           return this.$message.error(res.msg);
@@ -612,7 +612,7 @@ export default {
       console.log(val);
       this.userId = this.$route.params.data.id;
       this.$http
-        .get(`/sys/anchor/info/${this.$route.params.data.id}`)
+        .get(`/sys/anchor/info/getInfo/${this.$route.params.data.id}`)
         .then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg);
@@ -678,6 +678,9 @@ export default {
         productType: "",
         isFree: "",
       };
+         this.diaDataList=[]
+       this.total_dia = 0;
+       this.page_dia=1
       switch (n) {
         case 1:
           this.diaTableTitle = {
@@ -694,9 +697,9 @@ export default {
             price: "银行账户",
             allPrice: "开户银行",
             payType: "支行名称",
-            paySource: "开户行所在地",
-            createDate: "提现时间",
-            createDate: "审批状态",
+            // paySource: "开户行所在地",
+            // createDate: "提现时间",
+            // createDate: "审批状态",
             createDate: "提现状态",
           };
           break;
@@ -751,8 +754,7 @@ export default {
     // 获取跟进记录列表数据
     queryPost_dia() {
       let data, url;
-      this.diaDataList = [];
-      this.total_dia = 0;
+  
       switch (this.diaTbas) {
         case 1:
           data = {

@@ -690,7 +690,7 @@ export default {
   mounted() {
     this.userId = this.$store.state.user.id;
     this.$http
-      .get(`/sys/anchor/info/${this.userId}`)
+      .get(`/sys/anchor/info/getInfo/${this.userId}`)
       .then(({ data: res }) => {
         if (res.code !== 0) {
           return this.$message.error(res.msg);
@@ -752,6 +752,7 @@ export default {
     },
     changeTbas(n) {
       this.diaTbas = n;
+       this.page_dia=1
       this.diaSearchForm = {
         payType: "",
         paySource: "",
@@ -766,6 +767,8 @@ export default {
         productType: "",
         isFree: "",
       };
+         this.diaDataList=[]
+       this.total_dia = 0;
       switch (n) {
         case 1:
           this.diaTableTitle = {
@@ -839,8 +842,7 @@ export default {
     // 获取跟进记录列表数据
     queryPost_dia() {
       let data, url;
-      this.diaDataList = [];
-      this.total_dia = 0;
+  
       switch (this.diaTbas) {
         case 1:
           data = {
