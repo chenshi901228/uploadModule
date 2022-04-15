@@ -256,8 +256,6 @@
               </div>
               <video
                 autoplay
-                controls
-                muted
                 id="videoEle"
                 :src-object.prop="stream"
                 class="push_video"
@@ -272,7 +270,6 @@
                 <div class="video_div">
                   <video
                     autoplay
-                    muted
                     :src-object.prop="item.stream"
                     :style="{width:item.message.connectType==1?'0px':'230px',height:item.message.connectType==1?'0px':'112px'}"
                   ></video>
@@ -519,7 +516,15 @@ export default {
     },
     // 创建流和渲染
     async createStr() {
-      this.stream = await this.zg.createStream();
+      this.stream = await this.zg.createStream({
+        camera:{
+          videoQuality:4,
+          width:350,
+          height:196,
+          frameRate:15,
+          bitrate:300,
+        }
+      });
       console.error(this.stream);
       // Step4
       this.startPublishingStream();
