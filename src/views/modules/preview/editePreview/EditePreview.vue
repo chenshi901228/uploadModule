@@ -267,7 +267,7 @@ export default {
       }
     },
     "ruleForm.liveIntroduce"(nv, ov) {
-      if (nv.length >= 300) {
+      if (nv.length >= 307) {
         this.$message.warning("直播介绍字数不得超过300字！");
       }
     },
