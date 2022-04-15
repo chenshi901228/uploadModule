@@ -39,7 +39,7 @@
         <div class="diaBoxLeft_title">
           <span>账户信息</span
           ><el-button type="primary" size="mini" @click="editeUserMoney"
-            >编辑</el-button
+            >提现</el-button
           >
         </div>
         <div class="diaBoxLeft_mes">
@@ -187,6 +187,7 @@
         </el-form>
         <el-table
           :data="diaDataList"
+           v-loading="dataListLoading"
           border
           style="width: 100%"
           height="calc(calc(100vh - 380px) - 2px)"
@@ -657,6 +658,7 @@ export default {
       total_dia: 0,
       ids: [],
       dialogVisible: false,
+      dataListLoading:false,
       dataUserListLoading: false,
       userListPage: 1, // 当前页码
       userListLimit: 10, // 每页数
@@ -842,6 +844,7 @@ export default {
     // 获取跟进记录列表数据
     queryPost_dia() {
       let data, url;
+            this.dataListLoading = true;
   
       switch (this.diaTbas) {
         case 1:
@@ -891,11 +894,12 @@ export default {
           data = {
             limit: this.limit_dia,
             page: this.page_dia,
+            anchorId: this.userId,
             productName: this.diaSearchForm.productName,
             productType: this.diaSearchForm.productType,
             isFree: this.diaSearchForm.isFree,
           };
-          url = "/sys/course/page";
+          url = "/sys/wxapp/anchorProduct/listWithAnchorIdPage";
           break;
         case 6:
           data = {
@@ -917,6 +921,8 @@ export default {
           params: data,
         })
         .then(({ data: res }) => {
+            this.dataListLoading = false;
+
           if (res.code !== 0) {
             this.diaDataList = [];
             this.total_dia = 0;
@@ -925,7 +931,10 @@ export default {
           this.diaDataList = res.data.list;
           this.total_dia = res.data.total;
         })
-        .catch(() => {});
+        .catch(() => {
+            this.dataListLoading = false;
+
+        });
     },
     // 分页, 每页条数
     pageSizeChangeHandle_dia(val) {
@@ -1156,7 +1165,7 @@ export default {
                     return this.$message.error(res.msg);
                   }
                   this.$http
-                    .get(`/sys/anchor/info/${ this.$store.state.user.id}`)
+                    .get(`/sys/anchor/info/getInfo/${ this.$store.state.user.id}`)
                     .then(({ data: res }) => {
                       if (res.code !== 0) {
                         return this.$message.error(res.msg);
