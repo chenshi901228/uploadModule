@@ -1110,6 +1110,7 @@ export default {
     editeUserInfo() {
       this.$router.push({
         name: "preview-editeUserInfo-EditeUserInfo",
+        params: { info: this.diaForm }
       });
     },
     //编辑银行卡信息

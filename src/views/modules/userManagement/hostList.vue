@@ -58,12 +58,12 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <!-- <el-form-item label="状态">
-                <el-select v-model="dataForm.disabledFlg" clearable>
-                  <el-option value="1" label="禁用"></el-option>
-                  <el-option value="0" label="正常"></el-option>
+                <el-form-item label="状态" prop="disabledFlg">
+                <el-select size="small" v-model="dataForm.disabledFlg" clearable>
+                  <el-option :value="1" label="禁用"></el-option>
+                  <el-option :value="0" label="正常"></el-option>
                 </el-select>
-              </el-form-item> -->
+              </el-form-item>
               </el-col>
             </el-row>
           </div>
@@ -99,6 +99,7 @@
           label="主播头像"
           header-align="center"
           align="center"
+          width="100"
         >
           <template slot-scope="scope">
             <img
@@ -159,6 +160,7 @@
           show-overflow-tooltip
           header-align="center"
           align="center"
+          width="150"
         ></el-table-column>
         <el-table-column
           prop="attentionNum"
@@ -181,6 +183,7 @@
           show-overflow-tooltip
           header-align="center"
           align="center"
+          width="120"
         >
           <template slot-scope="scope">
             <div>{{ scope.row.dynamicGroupFlg ? "已授权" : "未授权" }}</div>
@@ -205,7 +208,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            <div>{{ scope.row.delFlg ? "禁用" : "正常" }}</div>
+            <div>{{ scope.row.delFlg ? "停用" : "正常" }}</div>
           </template>
         </el-table-column>
         <el-table-column
@@ -231,15 +234,8 @@
               type="text"
               size="small"
               v-if="!scope.row.delFlg"
-              @click="forbidden(scope.row.id)"
-              >禁用</el-button
-            >
-            <el-button
-              type="text"
-              size="small"
-              v-else
-              @click="forbidden(scope.row.id)"
-              >解除</el-button
+              @click="forbidden(scope.row)"
+              >{{!scope.row.delFlg ? "禁用" : "解除"}}</el-button
             >
             <el-button
               type="text"
@@ -289,7 +285,7 @@ export default {
       dataForm: {
         nickName: "",
         phone: "",
-        disabledFlg: "",
+        disabledFlg: null,
         realName: "",
         idCard: "",
         gender: "",
@@ -307,11 +303,40 @@ export default {
       window.localStorage.setItem("hostDetailID", data.id);
     },
 
-    forbiddenAll() {
-      console.log(this.dataListSelections);
+    forbiddenHandle(type, data) {
+      let url = type
+        ? "/sys/manage/weixinUser/startUsing"
+        : "/sys/manage/weixinUser/forbiddenUsere";
+      this.$http
+        .put(url, { userIds: data })
+        .then(({ data: res }) => {
+          if (res.code == 0) {
+            this.$message.success("操作成功");
+            this.query();
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     // 禁用，解除用户
-    forbidden(id) {},
+    forbidden(row) {
+      if(row) {
+        this.$confirm(`确认[${row.disabledFlg == 1 ? "解除" : "禁用"}]${row.username}?`, "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            // this.forbiddenHandle(row.disabledFlg == 1 ? 1 : 0, [row.id]);
+          })
+          .catch(() => {
+            this.$message.info("已取消操作");
+          });
+      }
+    },
 
     // 动态组授权、取消授权
     impower(id, type) {
