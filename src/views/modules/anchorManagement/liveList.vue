@@ -250,7 +250,7 @@
               v-if="row.liveState == 1"
               type="text"
               size="small"
-              @click="joinLiveHandle(row.id)"
+              @click="joinLiveHandle(row)"
               >进入直播间</el-button
             >
           </template>
@@ -358,10 +358,12 @@ export default {
         cancelButtonText: "取消",
         inputValidator: (value) => {
           if (!value) return "请输入直播主题";
+          if (value.length > 20) "直播主题最多不能超过20字符"
         },
       })
         .then(({ value }) => {
-          console.log(value);
+          let t = this.$router.resolve({name: "liveRoom", query: { liveTheme: value }})
+          window.open(t.href, "_blank")
         })
         .catch(() => {
           this.$message({
@@ -375,7 +377,10 @@ export default {
       if (!id) return;
     },
     // 进入直播间
-    joinLiveHandle(id) {},
+    joinLiveHandle(row) {
+      let t = this.$router.resolve({name: "liveRoom", query: { liveTheme: row.liveTheme }})
+      window.open(t.href, "_blank")
+    },
   },
 };
 </script>

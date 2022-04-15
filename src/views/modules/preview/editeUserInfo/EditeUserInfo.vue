@@ -9,33 +9,34 @@
       label-width="100px"
       class="demo-ruleForm"
     >
-      <el-form-item label="主播昵称" prop="name">
-        <el-input v-model="ruleForm.name"></el-input>
+      <el-form-item label="主播昵称" prop="username">
+        <el-input v-model="ruleForm.username" style="width:600px"></el-input>
       </el-form-item>
-      <el-form-item label="主播简介" prop="desc">
+      <el-form-item label="主播简介" prop="introduce">
         <el-input
           type="textarea"
           :rows="5"
-          v-model="ruleForm.desc"
+          v-model="ruleForm.introduce"
           maxlength="500"
           :show-word-limit="true"
         ></el-input>
       </el-form-item>
-      <el-form-item label="主播头像" prop="imgUrl" required>
-        <el-upload
-          action="http://192.168.250.195:28080/oss/file/upload"
+      <el-form-item label="主播头像" required>
+        <!-- <el-upload
+          :action="uploadUrl"
           list-type="picture-card"
           :on-preview="handlePictureCardPreview"
           :on-remove="handleRemove"
-          limit="1"
+          :limit="1"
         >
           <i class="el-icon-plus"></i>
-        </el-upload>
+        </el-upload> -->
+        <upload :fileList="fileList" :limit="1" :multiple="false" @getImg="getImg"></upload>
       </el-form-item>
       <el-form-item>
-        <el-button @click="resetForm('ruleForm')">取消</el-button>
+        <!-- <el-button @click="resetForm('ruleForm')">取消</el-button> -->
         <el-button type="primary" @click="submitForm('ruleForm')"
-          >确定</el-button
+          >修改</el-button
         >
       </el-form-item>
     </el-form>
@@ -46,35 +47,86 @@
 </template>
 
 <script>
+import Upload from "@/components/upload/index";
 import mixinTableModule from "@/mixins/table-module";
 export default {
   mixins: [mixinTableModule],
+  components: {
+    Upload
+  },
   data() {
     return {
       ruleForm: {
-        name: "",
-        desc: "",
-        imgUrl: "",
+        username: "",
+        introduce: "",
       },
+      id: null, //主播id
+      fileList: [],
       dialogImageUrl: "",
       dialogVisible: false,
       rules: {
-        name: [
-          { required: true, message: "请输入活动名称", trigger: "blur" },
-          { min: 3, max: 5, message: "长度在 3 到 5 个字符", trigger: "blur" },
+        username: [
+          { required: true, message: "请输入主播昵称", trigger: "blur" },
+          { min: 3, max: 8, message: "长度在 3 到 8 个字符", trigger: "blur" },
         ],
-        desc: [{ required: true, message: "请填写活动形式", trigger: "blur" }],
+        introduce: [{ required: true, message: "请输入主播简介", trigger: "blur" }],
       },
     };
   },
   watch: {},
   created() {},
   activated() {},
+  mounted() {
+    let info = this.$route.params.info
+    if(info) {
+      this.id = info.weixinUserId
+      this.ruleForm.username = info.username
+      this.ruleForm.introduce = info.introduce
+      this.fileList = [
+        {
+          name: new Date().getTime(),
+          url: info.avatarUrl || "https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/default_avatar.png"
+        }
+      ]
+    }
+  },
   methods: {
+    // 头像上传
+    getImg(imgList) {
+      this.fileList = imgList;
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert("submit!");
+
+          if(!this.fileList.length) return this.$message.error("请上传主播头像")
+
+          const loading = this.$loading({
+            lock: true,
+            text: '信息修改中',
+            spinner: 'el-icon-loading',
+            background: 'rgba(0, 0, 0, 0.7)'
+          });
+
+          let params = {
+            id: this.id,
+            ...this.ruleForm,
+            avatarUrl: this.fileList[0].response ? this.fileList[0].response.data.url : this.fileList[0].url
+          }
+          this.$http.post("sys/anchor/applyInfo/updateBaseInfo", params).then(({ data: res }) => {
+            if(res.code == 0) {
+              this.$message.success("修改主播信息成功")
+              this.resetForm(formName)
+              this.fileList = []
+              this.id = null
+            }else {
+              this.$message.error(res.msg)
+            }
+            loading.close();
+          }).catch(err => {
+            loading.close();
+            console.log(err)
+          })
         } else {
           console.log("error submit!!");
           return false;
@@ -83,13 +135,6 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
-    },
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
     },
   },
 };
