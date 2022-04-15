@@ -389,7 +389,7 @@ export default {
       let dataObj = {};
 
       for (const key in this.dataForm) {
-        if (this.dataForm[key].length !== 0) {
+        if (this.dataForm[key] && this.dataForm[key].length !== 0) {
           dataObj[key] = this.dataForm[key];
         }
       }
@@ -442,6 +442,10 @@ export default {
     },
     //添加动态组
     saveGroup() {
+      if (this.groupForm.name.length === 0) {
+        this.$message.warning("动态组名称不能为空!");
+        return;
+      }
       this.$http
         .post("/sys/dynamicGroup", {
           name: this.groupForm.name,
@@ -528,5 +532,31 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+/deep/.el-dialog {
+  display: flex;
+  display: -ms-flex; /* 兼容IE */
+  flex-direction: column;
+  -ms-flex-direction: column; /* 兼容IE */
+  margin: 0 !important;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: calc(100% - 30px);
+  max-width: calc(100% - 30px);
+}
+/deep/.el-dialog .el-dialog__body {
+  padding: 20px; /*这个不重要*/
+  max-height: 75vh;
+  flex: 1;
+  -ms-flex: 1 1 auto; /* 兼容IE */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/deep/.el-dialog__wrapper {
+  overflow: hidden; /*隐藏ie和edge中遮罩的滚动条*/
 }
 </style>

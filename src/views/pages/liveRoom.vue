@@ -266,7 +266,7 @@
           <div class="live_content">
             <div class="live_menu">
               <div class="live_menu_header">
-                <div class="live_theme">主题&nbsp;:&nbsp;小黑不简单正在直播</div>
+                <div class="live_theme">主题&nbsp;:&nbsp;{{liveTheme}}</div>
                 <div class="online_info">
                   <p>
                     ·&nbsp;<span>{{liveRoomUserinfo.cumulativeNum || 0}}</span>人看过
@@ -397,6 +397,7 @@ export default {
       ],
       headerNavActive:"0", //顶部导航选中,
       liveStatus:false,//直播状态
+      liveTheme: "" //直播主题
     };
   },
   created() {
@@ -404,6 +405,7 @@ export default {
   },
   computed: {},
   mounted() {
+    this.liveTheme = this.$route.query.liveTheme
     // 初始化实例  Step1
     this.zg = new ZegoExpressEngine(
       this.appID,
@@ -607,7 +609,7 @@ export default {
         .post("/sys/mixedflow/anchorBroadcast", {
           UserId: this.userID,
           RoomId: this.roomId,
-          liveTheme: "测试直播主题",
+          liveTheme: this.liveTheme,
         })
         .then((res) => {
           if (res.data.data && res.data.data.Data) {

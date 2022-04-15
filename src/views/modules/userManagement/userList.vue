@@ -52,7 +52,7 @@
                 <el-form-item label="状态" prop="status">
                   <el-select size="small" v-model="dataForm.status" clearable>
                     <el-option :value="1" label="正常"></el-option>
-                    <el-option :value="0" label="禁用"></el-option>
+                    <el-option :value="0" label="停用"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -171,7 +171,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            <div>{{ scope.row.delFlg ? "禁用" : "正常" }}</div>
+            <div>{{ scope.row.status == 0 ? "停用" : "正常" }}</div>
           </template>
         </el-table-column>
         <el-table-column
@@ -283,13 +283,13 @@ export default {
         }
       } else {
         //单个操作
-        this.$confirm(`确认${row.status != 0 ? "禁用" : "解除"}?`, "提示", {
+        this.$confirm(`确认[${row.status == 0 ? "解除" : "禁用"}]${row.nickName}?`, "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning",
         })
           .then(() => {
-            this.forbiddenHandle(row.status != 0 ? 0 : 1, [row.id]);
+            this.forbiddenHandle(row.status == 0 ? 1 : 0, [row.id]);
           })
           .catch(() => {
             this.$message.info("已取消操作");
