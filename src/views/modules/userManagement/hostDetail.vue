@@ -815,11 +815,13 @@ export default {
           data = {
             limit: this.limit_dia,
             page: this.page_dia,
+            anchorId: this.userId,
+
             productName: this.diaSearchForm.productName,
             productType: this.diaSearchForm.productType,
             isFree: this.diaSearchForm.isFree,
           };
-          url = "/sys/course/page";
+          url = "/sys/wxapp/anchorProduct/listWithAnchorIdPage";
           break;
         case 6:
           data = {
