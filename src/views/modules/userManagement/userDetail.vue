@@ -96,7 +96,11 @@
             </el-select>
           </el-form-item>
           <el-form-item label="礼物名称" v-if="diaTbas === 2">
-            <el-input size="small" v-model="diaSearchForm.name" clearable></el-input>
+            <el-input
+              size="small"
+              v-model="diaSearchForm.name"
+              clearable
+            ></el-input>
           </el-form-item>
           <el-form-item label="消费来源" v-if="diaTbas === 2">
             <el-select size="small" v-model="diaSearchForm.paySource" clearable>
@@ -108,16 +112,30 @@
             label="粉丝团名称"
             v-if="diaTbas === 4 || diaTbas === 5"
           >
-            <el-input size="small" v-model="diaSearchForm.title" clearable></el-input>
+            <el-input
+              size="small"
+              v-model="diaSearchForm.title"
+              clearable
+            ></el-input>
           </el-form-item>
           <el-form-item label="主播昵称" v-if="diaTbas === 4 || diaTbas === 5">
-            <el-input size="small" v-model="diaSearchForm.anchorName" clearable></el-input>
+            <el-input
+              size="small"
+              v-model="diaSearchForm.anchorName"
+              clearable
+            ></el-input>
           </el-form-item>
           <el-form-item label="手机号码" v-if="diaTbas === 4 || diaTbas === 5">
-            <el-input size="small" v-model="diaSearchForm.phone" clearable></el-input>
+            <el-input
+              size="small"
+              v-model="diaSearchForm.phone"
+              clearable
+            ></el-input>
           </el-form-item>
           <el-form-item v-if="diaTbas !== 6">
-            <el-button size="small" @click="queryPost_dia()">{{ $t("query") }}</el-button>
+            <el-button size="small" @click="queryPost_dia()">{{
+              $t("query")
+            }}</el-button>
           </el-form-item>
         </el-form>
         <el-table
@@ -231,47 +249,30 @@ export default {
     };
   },
 
-  mounted() {
-    this.userId = this.$route.params.data.id;
-    this.$http
-      .get(`/sys/manage/userDetail/${this.$route.params.data.id}`)
-      .then(({ data: res }) => {
-        if (res.code !== 0) {
-          return this.$message.error(res.msg);
-        }
-        this.diaForm = {
-          priceConsumption: res.data.priceConsumption,
-          priceBalance: res.data.priceBalance,
-          ...this.$route.params.data,
-          // priceConsumption:res.data.priceConsumption,
-          // priceConsumption:res.data.priceConsumption,
-        };
-      })
-      .catch(() => {});
-    this.changeTbas(1);
-  },
-  watch: {
-    "$route.params.data"(val) {
-      if (val) {
-        this.userId = val.id;
-        this.$http
-          .get(`/sys/manage/userDetail/${val.id}`)
-          .then(({ data: res }) => {
-            if (res.code !== 0) {
-              return this.$message.error(res.msg);
-            }
-            this.diaForm = {
-              priceConsumption: res.data.priceConsumption,
-              priceBalance: res.data.priceBalance,
-              ...val,
-              // priceConsumption:res.data.priceConsumption,
-              // priceConsumption:res.data.priceConsumption,
-            };
-          })
-          .catch(() => {});
-        this.changeTbas(1);
-      }
-    },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.userId = JSON.parse(window.localStorage.getItem("userDetailData")).id;
+      vm.$http
+        .get(
+          `/sys/manage/userDetail/${
+            JSON.parse(window.localStorage.getItem("userDetailData")).id
+          }`
+        )
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return vm.$message.error(res.msg);
+          }
+          vm.diaForm = {
+            priceConsumption: res.data.priceConsumption,
+            priceBalance: res.data.priceBalance,
+            ...JSON.parse(window.localStorage.getItem("userDetailData")),
+            // priceConsumption:res.data.priceConsumption,
+            // priceConsumption:res.data.priceConsumption,
+          };
+        })
+        .catch(() => {});
+      vm.changeTbas(1);
+    });
   },
   methods: {
     changeTbas(n) {
@@ -284,9 +285,9 @@ export default {
         anchorName: "",
         phone: "",
       };
-      this.diaDataList=[]
-       this.total_dia = 0;
-        this.page_dia=1
+      this.diaDataList = [];
+      this.total_dia = 0;
+      this.page_dia = 1;
       switch (n) {
         case 1:
           this.diaTableTitle = {
@@ -364,7 +365,7 @@ export default {
     // 获取跟进记录列表数据
     queryPost_dia() {
       let data, url;
-     
+
       switch (this.diaTbas) {
         case 1:
           data = {

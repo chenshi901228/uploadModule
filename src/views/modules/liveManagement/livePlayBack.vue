@@ -211,37 +211,33 @@
           fixed="right"
           header-align="center"
           align="center"
-          width="150"
+          width="260"
         >
           <template slot-scope="{ row }">
-            <el-dropdown trigger="click" @command="actionHandle" size="small">
-              <span style="cursor: pointer; color: #409eff">
-                更多<i class="el-icon-arrow-down el-icon--right"></i>
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item
-                  :command="{ action: '1', data: row }"
-                  v-if="row.liveState == 1"
-                  icon="el-icon-download"
-                  >下载视频</el-dropdown-item
-                >
-                <el-dropdown-item
-                  :command="{ action: '2', data: row }"
-                  icon="el-icon-document"
-                  >评论详情</el-dropdown-item
-                >
-                <el-dropdown-item
-                  :command="{ action: '3', data: row }"
-                  v-if="row.liveState != 0"
-                  icon="el-icon-delete"
-                  >删除</el-dropdown-item
-                >
-              </el-dropdown-menu>
-            </el-dropdown>
+            <el-button
+              type="text"
+              v-if="row.liveState == 1"
+              @click="actionHandle('1',row)"
+              >下载视频</el-button
+            >
             <el-button
               style="margin-left: 10px"
               type="text"
               v-if="row.liveState == 1"
+              @click="actionHandle('2',row)"
+              >评论详情</el-button
+            >
+            <el-button
+              style="margin-left: 10px"
+              type="text"
+              @click="actionHandle('3',row)"
+              >删除</el-button
+            >
+          
+            <el-button
+              style="margin-left: 10px"
+              type="text"
+              v-if="row.liveState != 0"
               @click="showOrHide(row)"
               >{{ row.showState ? "隐藏" : "显示" }}</el-button
             >

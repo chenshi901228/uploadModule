@@ -1,28 +1,26 @@
 <template>
   <div class="detalilBox">
     <div class="detalilBox_top">
-      <div
-        style="margin: 0 0 20px"
-        
-      >
+      <div style="margin: 0 0 20px">
         审核状态：
-        <span :style="{
-          color:
+        <span
+          :style="{
+            color:
+              diaForm.checkStatus === 1
+                ? '#67c23a'
+                : diaForm.checkStatus === 2
+                ? '#000'
+                : '#f43030',
+          }"
+        >
+          {{
             diaForm.checkStatus === 1
-              ? '#67c23a'
+              ? "通过"
               : diaForm.checkStatus === 2
-              ? '#000'
-              : '#f43030'
-        }">
-        {{
-          diaForm.checkStatus === 1
-            ? "通过"
-            : diaForm.checkStatus === 2
-            ? "待审核"
-            : "驳回"
-        }}
+              ? "待审核"
+              : "驳回"
+          }}
         </span>
-        
       </div>
       <div style="display: flex">
         <div>直播昵称：{{ diaForm.nickName }}</div>
@@ -84,41 +82,20 @@ export default {
     };
   },
 
-  mounted() {
-    this.userId = this.$route.params.data.id;
-    this.$http
-      .get(`sys/sensitiveWordCheck/getInfo?id=${this.$route.params.data.id}`)
-      .then(({ data: res }) => {
-        if (res.code !== 0) {
-          return this.$message.error(res.msg);
-        }
-        this.diaForm = res.data;
-        this.details = this.diaForm.details
-          ? this.diaForm.details.split(",")
-          : [];
-      })
-      .catch(() => {});
-  },
-  watch: {
-    "$route.params.data"(val) {
-      if (val) {
-        this.userId = val.id;
-        this.$http
-          .get(
-            `sys/sensitiveWordCheck/getInfo?id=${this.$route.params.data.id}`
-          )
-          .then(({ data: res }) => {
-            if (res.code !== 0) {
-              return this.$message.error(res.msg);
-            }
-            this.diaForm = res.data;
-            this.details = this.diaForm.details
-              ? this.diaForm.details.split(",")
-              : [];
-          })
-          .catch(() => {});
-      }
-    },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.userId = window.localStorage.getItem("sensitiveWordDetailID");
+      vm.$http
+        .get(`sys/sensitiveWordCheck/getInfo?id=${vm.userId}`)
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return vm.$message.error(res.msg);
+          }
+          vm.diaForm = res.data;
+          vm.details = vm.diaForm.details ? vm.diaForm.details.split(",") : [];
+        })
+        .catch(() => {});
+    });
   },
   methods: {
     // 审核

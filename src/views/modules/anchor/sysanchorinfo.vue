@@ -199,9 +199,9 @@
           align="center"
         >
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.status === 0" type="info">男</el-tag>
-            <el-tag v-if="scope.row.status === 1" type="info">女</el-tag>
-            <el-tag v-if="scope.row.status === 2" type="info">保密</el-tag>
+            <el-tag v-if="scope.row.gender === 0" type="info">男</el-tag>
+            <el-tag v-if="scope.row.gender === 1" type="info">女</el-tag>
+            <el-tag v-if="scope.row.gender === 2" type="info">保密</el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -273,20 +273,13 @@
           width="150"
         >
           <template slot-scope="scope">
-            <el-button
-              v-if="scope.row.status === 0"
+           <el-button
               type="text"
               size="small"
-              @click="updateApplyInfoStatus(scope.row.id, 1)"
-              >同意</el-button
+              @click="openDetail(scope.row)"
+              >详情</el-button
             >
-            <el-button
-              v-if="scope.row.status === 0"
-              type="text"
-              size="small"
-              @click="updateApplyInfoStatus(scope.row.id, -1)"
-              >拒绝</el-button
-            >
+          
           </template>
         </el-table-column>
       </el-table>
@@ -333,43 +326,19 @@ export default {
     AddOrUpdate,
   },
   methods: {
-    // 是否同意
-    updateApplyInfoStatus: debounce(
-      function (id, status) {
-        this.$confirm(
-          `是否执行 [${status == -1 ? "拒绝" : "同意"}[ 操作`,
-          this.$t("prompt.title"),
-          {
-            confirmButtonText: this.$t("confirm"),
-            cancelButtonText: this.$t("cancel"),
-            type: "warning",
-          }
-        )
-          .then(() => {
-            this.$http["put"]("/sys/anchor/applyInfo/", {
-              id,
-              status,
-            })
-              .then(({ data: res }) => {
-                if (res.code !== 0) {
-                  return this.$message.error(res.msg);
-                }
-                this.$message({
-                  message: this.$t("prompt.success"),
-                  type: "success",
-                  duration: 500,
-                  onClose: () => {
-                    this.query();
-                  },
-                });
-              })
-              .catch(() => {});
-          })
-          .catch(() => {});
-      },
-      1000,
-      { leading: true, trailing: false }
-    ),
+     // 打开信息审批详情
+    openDetail(data) {
+      this.$router.push({
+        name: "anchor-sysanchorinfoDetail",
+      });
+      window.localStorage.setItem("sysanchorinfoDetailData", JSON.stringify(data));
+    },
   },
+   mounted() {
+    this.$bus.$on("change", () => {
+      this.getDataList();
+    });
+  },
+ 
 };
 </script>
