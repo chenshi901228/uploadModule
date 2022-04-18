@@ -117,11 +117,12 @@
           label="用户昵称"
           header-align="center"
           align="center"
+          width="120"
         ></el-table-column>
         <el-table-column
           prop="phone"
           label="手机号码"
-          min-width="100px"
+          min-width="120px"
           header-align="center"
           align="center"
         >
@@ -131,6 +132,7 @@
           label="投诉分类"
           header-align="center"
           align="center"
+          width="120"
         >
           <template slot-scope="scope">
             <div>{{ scope.row.type == 1 ? "平台投诉" : "直播间投诉" }}</div>
@@ -141,6 +143,8 @@
           label="投诉标签"
           header-align="center"
           align="center"
+          width="150"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -149,12 +153,13 @@
           header-align="center"
           show-overflow-tooltip
           align="center"
+          width="150"
         >
         </el-table-column>
         <el-table-column
           prop="contactPhone"
           label="联系电话"
-          min-width="100px"
+          min-width="120px"
           header-align="center"
           align="center"
         >
@@ -162,7 +167,7 @@
         <el-table-column
           prop="createDate"
           label="投诉时间"
-          min-width="150px"
+          min-width="180px"
           header-align="center"
           align="center"
         >
@@ -205,6 +210,7 @@
           label="关联直播间"
           header-align="center"
           align="center"
+          width="180"
         >
         </el-table-column>
         <el-table-column

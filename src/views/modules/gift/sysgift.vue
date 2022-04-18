@@ -6,25 +6,36 @@
         :inline="true"
         :model="dataForm"
         ref="dataForm"
+        size="small"
         @keyup.enter.native="getDataList"
       >
         <el-row>
           <el-col :span="8">
             <el-form-item label="礼物名称" prop="name">
-              <el-input
-                size="small"
-                v-model.trim="dataForm.name"
-                placeholder="请输入"
+              <el-input v-model.trim="dataForm.name" clearable placeholder="礼物名称"></el-input>
+              <!-- <el-select
+                style="width:100%"
+                v-model="dataForm.name"
+                filterable
+                remote
+                reserve-keyword
                 clearable
-              >
-              </el-input>
+                placeholder="请输入选择"
+                :remote-method="getGiftInfo"
+                :loading="loading">
+                  <el-option
+                    v-for="item in giftOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+              </el-select> -->
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="是否免费" prop="isFree">
               <el-select
                 clearable
-                size="small"
                 v-model="dataForm.isFree"
                 placeholder="请选择"
               >
@@ -37,7 +48,6 @@
             <el-form-item label="上架状态" prop="status">
               <el-select
                 clearable
-                size="small"
                 v-model="dataForm.status"
                 placeholder="请选择"
               >
@@ -49,7 +59,6 @@
           <el-col :span="24">
             <el-form-item style="float: right; padding-right: 10px">
               <el-button
-                size="small"
                 type="primary"
                 icon="el-icon-plus"
                 @click="addOrUpdateHandle()"
@@ -256,6 +265,8 @@ export default {
         isFree: null,
         status: null,
       },
+      loading: false, //礼物输入下拉选择loading
+      giftOptions: [] //礼物下拉选择内容
     };
   },
   watch: {},
@@ -263,6 +274,38 @@ export default {
     AddOrUpdate,
   },
   methods: {
+    // 输入选择礼物
+    getGiftInfo(s) {
+      if(s != ""){
+        this.loading = true
+        this.$http.get("/sys/anchor/info/getSysAnchorInfos/" + s).then(({ data: res }) => {
+          this.loading = false
+          if(res.code == 0) {
+            let arr = []
+            res.data.map(item => {
+              arr.push({
+                value: JSON.stringify({
+                    anchorUser: item.username,
+                    anchorTel: item.phone,
+                    anchorUserId: item.weixinUserId
+                }),
+                label: `主播：${item.username}  手机号：${item.phone}`
+              })
+            })
+            this.giftOptions = arr
+          }else {
+            this.giftOptions = []
+            this.$message.error(res.msg)
+          }
+        }).catch(err => {
+          this.loading = false
+          this.giftOptions = []
+          throw err
+        })
+      }else {
+        this.giftOptions = []
+      }
+    },
     // 修改状态
     updateStatus: debounce(
       function (id, status) {

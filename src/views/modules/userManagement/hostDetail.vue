@@ -184,12 +184,12 @@
               type="primary"
               >上架商品</el-button
             > -->
-            <el-button
+            <!-- <el-button
               v-if="diaTbas === 5 && dataListSelections.length !== 0"
               type="danger"
               @click="deleteSelect()"
               >批量下架</el-button
-            >
+            > -->
             <el-button size="small" @click="queryPost_dia()">{{
               $t("query")
             }}</el-button>
@@ -202,14 +202,14 @@
           height="calc(calc(100vh - 340px) - 2px)"
           @selection-change="dataListSelectionChangeHandle"
         >
-          <el-table-column
+          <!-- <el-table-column
             type="selection"
             header-align="center"
             align="center"
             width="50"
             fixed="left"
             v-if="diaTbas === 5"
-          ></el-table-column>
+          ></el-table-column> -->
           <template v-for="(label, prop) in diaTableTitle">
             <el-table-column
               :prop="prop"
@@ -338,7 +338,7 @@
             >
             </el-table-column>
           </template>
-          <el-table-column
+          <!-- <el-table-column
             width="120"
             label="操作"
             fixed="right"
@@ -354,7 +354,7 @@
                 >下架</el-button
               >
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
         <el-pagination
           :current-page="page_dia"
@@ -409,14 +409,14 @@
         <el-form-item>
           <el-button @click="reset">重置</el-button>
         </el-form-item>
-        <el-form-item>
+        <!-- <el-form-item>
           <el-button
             v-if="dataListSelectionUsers.length !== 0"
             type="danger"
             @click="deleteUserSelect()"
             >批量上架</el-button
           >
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <el-table
         v-loading="dataUserListLoading"
@@ -1062,6 +1062,9 @@ export default {
 }
 .diaBoxLeft_mes {
   padding: 0 10px 20px 10px;
+  /deep/.el-avatar > img {
+    width: 100%;
+  }
 }
 
 .diaBoxRight_tabBtns {

@@ -52,7 +52,7 @@ export default {
         // 搜索栏收起/展开
         open() {
             this.isOpen = !this.isOpen
-            this.resetDataForm()
+            // this.resetDataForm()
         },
 
         query() {

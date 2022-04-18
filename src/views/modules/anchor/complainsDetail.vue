@@ -36,12 +36,12 @@
     </div>
 
     <div class="detalilBox_bottom">
-      <el-button size="small" type="" @click="closeCurrentTab()"
+      <el-button size="small" type="primary" @click="updateCheckStatus()"
+        >处理</el-button
+      >
+      <el-button size="small" @click="closeCurrentTab()"
         >取消</el-button
       >
-      <!-- <el-button size="small" type="primary" @click="updateCheckStatus()"
-        >处理</el-button
-      > -->
     </div>
   </div>
 </template>

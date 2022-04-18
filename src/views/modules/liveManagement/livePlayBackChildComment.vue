@@ -13,7 +13,7 @@
                     @keyup.enter.native="getDataList"
                 >
                     <el-row>
-                        <el-col :span="6">
+                        <el-col :span="8">
                             <el-form-item
                                 label="回复人"
                                 prop="commentUserName"
@@ -27,7 +27,7 @@
                                 </el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="6">
+                        <el-col :span="8">
                             <el-form-item
                                 label="回复内容"
                                 prop="commentValue"
@@ -41,36 +41,34 @@
                                 </el-input>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="12">
+                        <el-col :span="8">
+                            <el-form-item
+                                label="删除状态"
+                                prop="delFlg"
+                            >
+                                <el-select clearable size="small" v-model="dataForm.delFlg" placeholder="请选择">
+                                    <el-option label="已删除" :value="1"></el-option>
+                                    <el-option label="未删除" :value="0"></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-col>
+                        <!-- <div v-if="isOpen">
+                        </div> -->
+                        <el-col :span="24">
                             <el-form-item style="float:right; padding-right:10px">
                                 <!-- <el-button size="small" type="primary" @click="exportHandle">{{ $t("export") }}</el-button> -->
                                 <el-button size="small" type="primary" @click="getDataList">{{ $t("query") }}</el-button>
                                 <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
-                                <el-button 
+                                <!-- <el-button 
                                     size="small" 
                                     type="primary"
                                     @click="open"
                                 >
                                     {{ isOpen ? "收起" : "展开"}}<i style="margin-left:10px" :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
-                                </el-button>
+                                </el-button> -->
                             </el-form-item>
                         </el-col>
                     </el-row>
-                    <div v-if="isOpen">
-                        <el-row>
-                            <el-col :span="6">
-                                <el-form-item
-                                    label="删除状态"
-                                    prop="delFlg"
-                                >
-                                    <el-select clearable size="small" v-model="dataForm.delFlg" placeholder="请选择">
-                                        <el-option label="已删除" :value="1"></el-option>
-                                        <el-option label="未删除" :value="0"></el-option>
-                                    </el-select>
-                                </el-form-item>
-                            </el-col>
-                        </el-row>
-                    </div>
                 </el-form>
                 <el-table
                     v-loading="dataListLoading"

@@ -160,6 +160,7 @@
         title="粉丝团成员列表"
         :visible.sync="dialogVisible_fans"
         width="1300px"
+        top="20px"
       >
         <div style="margin: 10px 0">
           <el-form
@@ -172,6 +173,7 @@
                 size="small"
                 v-model="dataForm_fans.userName"
                 placeholder="用户昵称"
+                clearable
               ></el-input>
             </el-form-item>
             <el-form-item label="手机号码">
@@ -179,6 +181,7 @@
                 size="small"
                 v-model="dataForm_fans.phone"
                 placeholder="手机号码"
+                clearable
               ></el-input>
             </el-form-item>
             <el-form-item label="用户等级">
@@ -186,6 +189,7 @@
                 size="small"
                 v-model="dataForm_fans.level"
                 placeholder="用户等级"
+                clearable
               ></el-input>
             </el-form-item>
             <el-form-item label="粉丝团身份">
@@ -214,7 +218,7 @@
           <div style="margin: 0 60px">主播昵称：{{ detailForm.username }}</div>
           <div>成员总数：{{ detailForm.fansNum }}人</div>
         </div>
-        <el-table :data="dataList_fans" style="width: 100%" height="400px">
+        <el-table v-loading="loading_fans" :data="dataList_fans" style="width: 100%" height="400px">
           <el-table-column
             prop="avatarUrl"
             label="用户头像"
@@ -324,6 +328,7 @@ export default {
         level: "",
       },
       dataList_fans: [],
+      loading_fans: false,
       page_fans: 1, // 当前页码
       limit_fans: 10, // 每页数
       total_fans: 0,
@@ -351,14 +356,12 @@ export default {
     },
     // 获取粉丝团成员列表数据
     queryPost_fans() {
+      this.loading_fans = true
       let data = {
         page: this.page_fans,
         limit: this.limit_fans,
         anchorId: this.fansId,
-        nickName: this.dataForm_fans.nickName,
-        userType: this.dataForm_fans.userType,
-        phone: this.dataForm_fans.phone,
-        level: this.dataForm_fans.level,
+        ...this.dataForm_fans
       };
       this.$http
         .get(`/sys/manage/weixinUser/anchor/fans/achorFansWeixinUserInfoPage`, {
@@ -372,8 +375,11 @@ export default {
           }
           this.dataList_fans = res.data.list;
           this.total_fans = res.data.total;
+          this.loading_fans = false
         })
-        .catch(() => {});
+        .catch(() => {
+          this.loading_fans = false
+        });
     },
     // 分页, 每页条数
     pageSizeChangeHandle_fans(val) {
