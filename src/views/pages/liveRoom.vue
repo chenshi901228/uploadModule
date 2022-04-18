@@ -346,7 +346,7 @@ export default {
       recommendList:[],//主播推荐主播列表
       barrage: "",
       questionMessageInfo: [], //提问消息
-      studentList: [{}],
+      studentList: [],
       userInfo: {}, //用户信息
       goodsPushTimer:null,//商品推送定时
       livePredictionTimer:null,//直播预告推送定时
@@ -405,6 +405,7 @@ export default {
   },
   computed: {},
   mounted() {
+    console.log(this)
     this.liveTheme = this.$route.query.liveTheme
     // 初始化实例  Step1
     this.zg = new ZegoExpressEngine(
