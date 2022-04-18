@@ -360,7 +360,7 @@ export default {
   },
 };
 </script>
-<style  scoped>
+<style lang="scss"  scoped>
 .forbiddenAllBtn {
   width: 120px;
   height: 35px;
@@ -425,5 +425,32 @@ export default {
 .is-active {
   background-color: rgba(107, 107, 107, 1);
   color: #fff;
+}
+
+
+/deep/.el-dialog {
+  display: flex;
+  display: -ms-flex; /* 兼容IE */
+  flex-direction: column;
+  -ms-flex-direction: column; /* 兼容IE */
+  margin: 0 !important;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: calc(100% - 30px);
+  max-width: calc(100% - 30px);
+}
+/deep/.el-dialog .el-dialog__body {
+  padding: 20px; /*这个不重要*/
+  max-height: 75vh;
+  flex: 1;
+  -ms-flex: 1 1 auto; /* 兼容IE */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/deep/.el-dialog__wrapper {
+  overflow: hidden; /*隐藏ie和edge中遮罩的滚动条*/
 }
 </style>

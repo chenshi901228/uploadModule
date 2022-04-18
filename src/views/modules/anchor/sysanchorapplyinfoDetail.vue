@@ -55,7 +55,7 @@
       <el-button
         size="small"
         type="primary"
-        @click="updateCheckStatus(1)"
+        @click="updateApplyInfoStatus(1)"
         v-if="diaForm.status === 0"
         >通过</el-button
       >

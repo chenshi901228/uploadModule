@@ -72,6 +72,31 @@
                     </p>
                   </div>
                 </div>
+                <!--  -->
+                <div class="message_info"
+                  v-if="item.type && item.type === 'TIMCustomElem'&& item.payload.data.message.type===4">
+                  <img :src="item.payload.data.userInfo.avatarUrl" alt="" />
+                  <div class="message_content">
+                    <div>
+                      <span class="nickName"
+                        >{{ item.payload.data.userInfo.nickName }}&nbsp;</span
+                      >
+                      <span
+                        class="fansCard"
+                        v-if="
+                          item.payload.data.fansInfo &&
+                          item.payload.data.fansInfo.isFans
+                        "
+                        >新粉&nbsp;{{ item.payload.data.fansInfo.grade }}</span
+                      >
+                    </div>
+                    <p class="normalMsg">
+                      <span class="giftMsg">&nbsp;送出了<span class="gift_name">{{item.payload.data.message.giftInfo.name}}</span></span>
+                      <img class="giftMsgIcon" :src="item.payload.data.message.giftInfo.icon" mode="" />
+                      <span class="giftMsgCount">&nbsp;x&nbsp;<span>{{item.payload.data.message.giftInfo.giftNum}}</span></span>
+                    </p>
+                  </div>
+                </div>
                 <!-- 主播自己的消息 -->
                 <div
                   class="mine_message_info"
@@ -222,8 +247,8 @@
                 <img src="../../assets/img/liveUser.png" alt="">
                 <p>当前观看人数：<span>{{liveRoomUserinfo.onlineNum || 0}}</span>人</p>
               </div>
-              <div class="tool_nav" v-for="(item,index) in toolNav" :key="index" @click="toolClick(item.type)">
-                <img :src="item.status?item.activeImg:item.img" alt="">
+              <div class="tool_nav" v-for="(item,index) in toolNav" :key="index">
+                <img :src="item.status?item.activeImg:item.img" alt="" @click="toolClick(item)">
                 <p>{{item.text}}</p>
               </div>
               <div class="start_live" @click="startLive" v-if="!liveStatus">
@@ -360,7 +385,7 @@ export default {
           activeImg:require('@/assets/img/mike.png'),
           text:'麦克风',
           type:'mike',
-          status:true,
+          status:false,
         },
         {
           img:require('@/assets/img/nocamera.png'),
@@ -475,6 +500,44 @@ export default {
     });
   },
   methods: {
+    async toolClick(data){
+      if(this.liveStatus){
+        if(data.type === 'mike'){ //麦克风
+          let result = await this.zg.muteMicrophone(data.status)
+          if(result){
+            let isMicrophoneMuted = await this.zg.isMicrophoneMuted()
+            this.toolNav[1].status = !isMicrophoneMuted //麦克风状态
+          }
+        }else if(data.type === 'camera'){ //摄像头
+          let result = await this.zg.enableVideoCaptureDevice(this.stream,!data.status)
+          if(result){
+            this.toolNav[2].status = !data.status
+          }
+        }else if(data.type === 'record'){ //录制
+          if(!data.status){
+            this.$http.post('/sys/mixedflow/startRecord').then(res=>{
+              if(res.success&&res.msg=='success'){
+                this.$message({
+                  message:'录制已开启',
+                  type:'success'
+                })
+                this.toolNav[0].status = true
+              }
+            })
+          }else{
+            this.$message({
+              message:'录制已开启',
+              type:'warning'
+            })
+          }
+        }
+      }else{
+        this.$message({
+          message:'直播暂未开启',
+          type:'warning'
+        })
+      }
+    },
     headerNavClick(type,index){
       this.headerNavActive = index
     },
@@ -514,6 +577,8 @@ export default {
         userID: this.userID,
         userName: this.userName,
       });
+      let isMicrophoneMuted = await this.zg.isMicrophoneMuted()
+      this.toolNav[1].status = !isMicrophoneMuted //麦克风状态
       this.createStr();
     },
     // 创建流和渲染
@@ -693,10 +758,6 @@ export default {
             if (applyInfo.message.type === 3) {
               console.log("提问消息");
               this.questionMessageInfo.push(applyInfo);
-            }
-            if (applyInfo.message.type === 4) {
-              //礼物弹幕消息
-              console.log("礼物弹幕消息");
             }
             //连麦信息
             if (
@@ -882,7 +943,7 @@ export default {
         replyUserId: userId,
       }
       if (status === 1) { //同意
-        this.$loading({text:'连接中...'})
+        this.$loading({background:'rgba(0,0,0,.5)',text:'连接中...'})
         this.sendMessage(messageInfo)
         this.connectMessageInfo.forEach(item => {
           if (item.userInfo.userId === userId) {
@@ -1112,6 +1173,13 @@ p {
                       word-break: break-all;
                       position: relative;
                       display: inline-block;
+                      .giftMsgIcon{
+                        width: 40px;
+                        height: 40px;
+                      }
+                      .gift_name{
+                        color: darkorange;
+                      }
                     }
                     .normalMsg::before {
                       content: "";
