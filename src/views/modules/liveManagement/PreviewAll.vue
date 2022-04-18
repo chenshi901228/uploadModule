@@ -84,19 +84,6 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="是否录制" prop="transcribeFlg">
-                  <el-select
-                    size="small"
-                    :clearable="true"
-                    v-model="dataForm.transcribeFlg"
-                    placeholder="是否录制"
-                  >
-                    <el-option label="未录制" value="0"></el-option>
-                    <el-option label="已录制" value="1"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
                 <el-form-item label="关联直播" prop="livingRoomId">
                   <el-input
                     size="small"
@@ -425,7 +412,6 @@ export default {
         startDate: "",
         endDate: "",
         dynamicGroupName: "",
-        transcribeFlg: "",
         livingRoomId: "",
         liveState: "",
         showState: "",

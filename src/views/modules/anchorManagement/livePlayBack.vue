@@ -223,6 +223,7 @@
             <el-button
               style="margin-left: 10px"
               type="text"
+              v-if="row.liveState != 0"
               @click="actionHandle('3',row)"
               >删除</el-button
             >
@@ -310,7 +311,7 @@ export default {
     getLiveDuration(url) {
       return "-";
     },
-    actionHandle({ action, data }) {
+    actionHandle(action, data) {
       switch (action) {
         case "1": // 下载视频
           if (data.relationLiveUrl)

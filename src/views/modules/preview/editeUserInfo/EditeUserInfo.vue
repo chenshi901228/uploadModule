@@ -119,6 +119,7 @@ export default {
               this.resetForm(formName)
               this.fileList = []
               this.id = null
+              this.closeCurrentTab()
             }else {
               this.$message.error(res.msg)
             }
