@@ -36,7 +36,7 @@
                     item.payload.data.message.type === 10
                   "
                 >
-                  {{ item.payload.data.message.text }}
+                  {{ item.payload.data.message.text }}来了
                 </div>
                 <!-- 普通弹幕消息 type:1 -->
                 <div
@@ -152,7 +152,10 @@
                 class="content"
                 v-for="(item, index) in studentList"
                 :key="index"
-              ></div>
+              >
+                {{item.text}}
+                {{item.ownIntimacy}}
+              </div>
             </div>
           </el-tab-pane>
           <el-tab-pane label="商品" name="fourth">
@@ -251,7 +254,7 @@
                 <img :src="item.status?item.activeImg:item.img" alt="" @click="toolClick(item)">
                 <p>{{item.text}}</p>
               </div>
-              <div class="start_live" @click="startLive" v-if="!liveStatus">
+              <div class="start_live" @click="startPlayLive" v-if="!liveStatus">
                 <img src="../../assets/img/startLive.png" alt="">
                 <span>开始直播</span>
               </div>
@@ -335,7 +338,6 @@ export default {
       stream: {},
       roomId: "",
       streamID: "",
-      connectStreamList: [], //连麦者的流
       groupID: "", //群聊ID
       conversation: null, //直播插件
       connectMessageInfo: [], //申请连麦信息
@@ -401,11 +403,18 @@ export default {
     };
   },
   created() {
+    let liveStatus = JSON.parse(localStorage.getItem('liveStatus'))
+    if(liveStatus){
+      this.liveStatus = liveStatus
+    }
+    let connectMessageInfo = JSON.parse(localStorage.getItem('connectMessageInfo'))
+    if(connectMessageInfo){
+      this.connectMessageInfo = connectMessageInfo
+    }
     this.getTimUserSig()
   },
   computed: {},
   mounted() {
-    console.log(this)
     this.liveTheme = this.$route.query.liveTheme
     // 初始化实例  Step1
     this.zg = new ZegoExpressEngine(
@@ -438,6 +447,8 @@ export default {
     this.zg.on("publisherStateUpdate", (result) => {
       // 推流状态变更通知
       console.log("推流成功", result);
+      if(result){
+      }
     });
 
     this.zg.on("publishQualityUpdate", (streamID, stats) => {
@@ -459,6 +470,7 @@ export default {
             }
           })
           console.log('111',this.connectMessageInfo)
+          localStorage.setItem('connectMessageInfo',JSON.stringify(this.connectMessageInfo)) //将当前麦上列表存着
           this.$loading().close()
           if (this.roomId != streamItem.streamID) {
             let extraInfo = streamItem.extraInfo;
@@ -502,21 +514,21 @@ export default {
   },
   methods: {
     async toolClick(data){
-      if(this.liveStatus){
-        if(data.type === 'mike'){ //麦克风
-          let result = await this.zg.muteMicrophone(data.status)
-          if(result){
-            let isMicrophoneMuted = await this.zg.isMicrophoneMuted()
-            this.toolNav[1].status = !isMicrophoneMuted //麦克风状态
-          }
-        }else if(data.type === 'camera'){ //摄像头
-          let result = await this.zg.enableVideoCaptureDevice(this.stream,!data.status)
-          if(result){
-            this.toolNav[2].status = !data.status
-          }
-        }else if(data.type === 'record'){ //录制
+      if(data.type === 'mike'){ //麦克风
+        let result = await this.zg.muteMicrophone(data.status)
+        if(result){
+          let isMicrophoneMuted = await this.zg.isMicrophoneMuted()
+          this.toolNav[1].status = !isMicrophoneMuted //麦克风状态
+        }
+      }else if(data.type === 'camera'){ //摄像头
+        let result = await this.zg.enableVideoCaptureDevice(this.stream,!data.status)
+        if(result){
+          this.toolNav[2].status = !data.status
+        }
+      }else if(data.type === 'record'){ //录制
+        if(this.liveStatus){
           if(!data.status){
-            this.$http.post('/sys/mixedflow/startRecord').then(res=>{
+            this.$http.post('/sys/mixedflow/startRecord',{}).then(res=>{
               if(res.success&&res.msg=='success'){
                 this.$message({
                   message:'录制已开启',
@@ -531,12 +543,12 @@ export default {
               type:'warning'
             })
           }
+        }else{
+          this.$message({
+            message:'直播暂未开启',
+            type:'warning'
+          })
         }
-      }else{
-        this.$message({
-          message:'直播暂未开启',
-          type:'warning'
-        })
       }
     },
     headerNavClick(type,index){
@@ -568,7 +580,9 @@ export default {
     },
     // 获取token开启直播预览
     async startLive() {
-      this.$loading({background:'rgba(0,0,0,.5)',text:'直播开启中...'})
+      if(!this.liveStatus){
+        this.$loading({background:'rgba(0,0,0,.5)',text:'直播预览开启中...'})
+      }
       this.token = await this.getTokenFun(this.appID, this.userID);
       this.loginRoom();
     },
@@ -602,10 +616,16 @@ export default {
       let res = await this.zg.startPublishingStream(this.roomId, this.stream);
       console.log(res);
       if (res) {
-        this.startPlayLive();
+        this.$loading().close()
+        if(!this.liveStatus){
+          this.$message({message:'直播预开启成功，可以开启直播',type:'success'})
+        }else{
+          this.$message({message:'刷新成功',type:'success'})
+        }
       }
     },
     async startPlayLive() {
+      this.$loading({background:'rgba(0,0,0,.5)',text:'直播开启中...'})
       this.$http
         .post("/sys/mixedflow/anchorBroadcast", {
           UserId: this.userID,
@@ -615,14 +635,12 @@ export default {
         .then((res) => {
           if (res.data.data && res.data.data.Data) {
             this.liveStatus = true
+            localStorage.setItem('liveStatus',JSON.stringify(this.liveStatus)) //将直播状态存起来
+            this.joinGroup()
             this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
               this.$loading().close()
             });
             this.$message({message:'直播开启成功',type:'success'})
-            this.joinGroup();
-            this.getAnchorProduct();
-            this.getLivePreviewList();
-            this.getRecommendList();
           }else{
             this.$message({message:'直播开启失败,请重新开启',type:'error'})
             this.$nextTick(() => { 
@@ -652,7 +670,10 @@ export default {
         .then((res) => {
           this.$message({message:'直播已关闭',type:'success'})
           this.liveStatus = false
-          console.log(res);
+          localStorage.removeItem('liveStatus') //将直播状态移除
+          localStorage.removeItem('connectMessageInfo') //将直播连麦列表移除
+          this.tim.logout() //退出IM
+          this.tim.destroy();
         });
       this.stopPublishingStream();
     },
@@ -711,11 +732,6 @@ export default {
       this.tim.on(TIM.EVENT.MESSAGE_RECEIVED, this.$onMessageReceived, this);
     },
     async getTimUserSig() {
-      let options = {
-        SDKAppID: 1400341701, // 接入时需要将0替换为您的即时通信 IM 应用的 SDKAppID
-      };
-      // 创建 SDK 实例，TIM.create() 方法对于同一个 SDKAppID 只会返回同一份实例
-      this.tim = TIM.create(options); // SDK 实例通常用 tim 表示
       let res = await this.$http.get(
         "/sys/manage/tencentCloudIm/getTxCloudUserSig"
       );
@@ -729,7 +745,33 @@ export default {
       this.userName = userInfo.username;
       this.userInfo = userInfo;
       this.userInfo.nickName = userInfo.username
-      this.tim.login({ userID: userId, userSig: userSig }); //登录腾讯IM
+      let options = {
+        SDKAppID: 1400341701, // 接入时需要将0替换为您的即时通信 IM 应用的 SDKAppID
+      };
+      // 创建 SDK 实例，TIM.create() 方法对于同一个 SDKAppID 只会返回同一份实例
+      this.tim = TIM.create(options); // SDK 实例通常用 tim 表示
+      if(!this.liveStatus){
+        this.tim.login({ userID: userId, userSig: userSig })//登录腾讯IM
+      }else{
+        this.tim.login({ userID: userId, userSig: userSig }).then(imResponse=>{ //登录腾讯IM
+          if(imResponse.data){
+            this.waitSdkReady()
+          }
+        })
+      }
+      this.startLive()
+      this.getAnchorProduct();
+      this.getLivePreviewList();
+      this.getRecommendList();
+    },
+    onSdkReady(event){ //监听IM sdk状态
+      console.log('event-----------',event)
+      if(event.name === "sdkStateReady"){
+        this.joinGroup() //直播开启中，直接加入群聊
+      }
+    },
+    waitSdkReady(){
+      this.tim.on(TIM.EVENT.SDK_READY, this.onSdkReady,this);
     },
     $onMessageReceived(value) {
       //接收到消息
@@ -749,6 +791,16 @@ export default {
             }
           }
         }
+        if(item.type==='TIMGroupTipElem'){
+          console.log('item-------',item)
+          switch(item.payload.operationType){
+            case 2: //用户离开直播间
+            let userIdArr = item.payload.operatorID.split('LIVE_FLAG_')
+            const userId = userIdArr[1];
+            const ind = this.studentList.findIndex(item=>item.userId ==userId)
+            this.studentList.splice(ind,1)
+          }
+        }
         if (
           this.conversation &&
           item.conversationID === this.conversation.conversationID
@@ -759,6 +811,14 @@ export default {
             if (applyInfo.message.type === 3) {
               console.log("提问消息");
               this.questionMessageInfo.push(applyInfo);
+            }
+            if(applyInfo.message &&
+              applyInfo.message.type &&
+              applyInfo.message.type === 10){ //用户进入直播间消息
+              let obj = applyInfo.message
+              obj.userId = applyInfo.userInfo.userId
+              this.studentList.push(obj)
+              console.log('用户进入直播间消息',this.studentList)
             }
             //连麦信息
             if (
@@ -793,7 +853,7 @@ export default {
                 applyInfo.message.replyType === -1 ? this.$message("用户已取消连麦申请") : this.$message("用户已断开连麦")
                 return;
               }
-              console.log("connectMessageInfo1111", this.connectMessageInfo);
+              localStorage.setItem('connectMessageInfo',JSON.stringify(this.connectMessageInfo)) //将当前麦上列表存着
             }
           }
         }
@@ -825,6 +885,14 @@ export default {
       }
     },
     sendMessage(messageInfo,cb) {
+      if(!this.liveStatus){
+        this.$message({message:"直播暂未开启",type:'warning'})
+        return
+      }
+      if(messageInfo.type===1&&this.barrage.trim().length==0){
+        this.$message({message:"聊天内容不能为空",type:'warning'})
+        return
+      }
       // 将自己发送的消息写进消息列表里面
       const text = this.barrage;
       let data = {
@@ -920,21 +988,21 @@ export default {
     },
     //推送商品、直播预告 
     pushMethod(type,data){
-        if(type === 'goods'){//推送商品
-            if(this.goodsPushTimer) return this.$message({message:"您已经推送过了，请稍后再试",type:'warning'});
-            this.sendMessage({type: 8,pushData: data},() => this.$message({message:"商品推送成功",type:'success'}))
-            this.goodsPushTimer = setTimeout(() => {
-                clearTimeout(this.goodsPushTimer)
-                this.goodsPushTimer = null
-            }, 60 * 1000)
-        }else{
-            if(this.livePredictionTimer) return this.$message({message:"您已经推送过了，请稍后再试",type:'warning'});
-            this.sendMessage({type: 7,pushData: data},() => this.$message({message:"预告推送成功",type:'success'}))
-            this.livePredictionTimer = setTimeout(() => {
-                clearTimeout(this.livePredictionTimer)
-                this.livePredictionTimer = null
-            }, 60 * 1000)
-        }
+      if(type === 'goods'){//推送商品
+        if(this.goodsPushTimer) return this.$message({message:"您已经推送过了，请稍后再试",type:'warning'});
+        this.sendMessage({type: 8,pushData: data},() => this.$message({message:"商品推送成功",type:'success'}))
+        this.goodsPushTimer = setTimeout(() => {
+            clearTimeout(this.goodsPushTimer)
+            this.goodsPushTimer = null
+        }, 60 * 1000)
+      }else{
+          if(this.livePredictionTimer) return this.$message({message:"您已经推送过了，请稍后再试",type:'warning'});
+          this.sendMessage({type: 7,pushData: data},() => this.$message({message:"预告推送成功",type:'success'}))
+          this.livePredictionTimer = setTimeout(() => {
+              clearTimeout(this.livePredictionTimer)
+              this.livePredictionTimer = null
+          }, 60 * 1000)
+      }
     },
     replyConnect(status, type, connectType, userId) { //同意申请连麦
       let messageInfo = {
@@ -951,6 +1019,7 @@ export default {
             item.connectStatus = true
           }
         })
+        localStorage.setItem('connectMessageInfo',JSON.stringify(this.connectMessageInfo)) //将当前麦上列表存着
       } else { //拒绝
         if (this.connectMessageInfo.length == 1) {
           this.applyShow = false
@@ -959,6 +1028,7 @@ export default {
         this.sendMessage(messageInfo)
         const ind = this.connectMessageInfo.findIndex(item => item.userInfo.userId === userId)
         this.connectMessageInfo.splice(ind, 1)
+        localStorage.setItem('connectMessageInfo',JSON.stringify(this.connectMessageInfo)) //将当前麦上列表存着
       }
     },
     hangup(info) { //挂断
@@ -972,6 +1042,7 @@ export default {
       this.sendMessage(messageInfo)
       const ind = this.connectMessageInfo.findIndex(item => item.userInfo.userId === info.userInfo.userId)
       this.connectMessageInfo.splice(ind, 1) //移除挂断的一条连麦信息
+      localStorage.setItem('connectMessageInfo',JSON.stringify(this.connectMessageInfo)) //将当前麦上列表存着
     },
   },
   destroyed(){
