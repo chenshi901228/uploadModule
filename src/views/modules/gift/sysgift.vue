@@ -194,7 +194,7 @@
         >
           <template slot-scope="scope">
             <el-button
-              v-if="scope.row.delFlg === 0"
+              v-if="scope.row.delFlg === 0 && scope.row.status !== 1"
               type="text"
               size="small"
               @click="addOrUpdateHandle(scope.row.id)"
@@ -215,7 +215,7 @@
               >下架</el-button
             >
             <el-button
-              v-if="scope.row.delFlg === 0"
+              v-if="scope.row.delFlg === 0 && scope.row.status !== 1"
               type="text"
               size="small"
               @click="deleteHandle(scope.row.id)"
