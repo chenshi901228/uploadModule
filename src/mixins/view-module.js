@@ -78,7 +78,7 @@ export default {
     // 搜索栏收起/展开
     open() {
         this.isOpen = !this.isOpen
-        this.resetDataForm()
+        // this.resetDataForm()
     },
     // 获取数据列表
     query () {

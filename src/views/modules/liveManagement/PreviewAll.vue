@@ -84,19 +84,6 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="是否录制" prop="transcribeFlg">
-                  <el-select
-                    size="small"
-                    :clearable="true"
-                    v-model="dataForm.transcribeFlg"
-                    placeholder="是否录制"
-                  >
-                    <el-option label="未录制" value="0"></el-option>
-                    <el-option label="已录制" value="1"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
                 <el-form-item label="关联直播" prop="livingRoomId">
                   <el-input
                     size="small"
@@ -232,9 +219,12 @@
         <el-table-column
           width="150"
           label="实际开播时间"
-          prop="startDate"
+          prop="factStartDate"
           align="center"
         >
+         <template slot-scope="scope">
+            <span>{{ scope.row.factStartDate || "--" }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           width="150"
@@ -425,7 +415,6 @@ export default {
         startDate: "",
         endDate: "",
         dynamicGroupName: "",
-        transcribeFlg: "",
         livingRoomId: "",
         liveState: "",
         showState: "",
@@ -461,7 +450,7 @@ export default {
       let dataObj = {};
 
       for (const key in this.dataForm) {
-        if (this.dataForm[key].length !== 0) {
+        if (this.dataForm[key] &&this.dataForm[key].length !== 0) {
           dataObj[key] = this.dataForm[key];
         }
       }

@@ -160,7 +160,7 @@
               <img
                 class="frontCoverImg"
                 :src="
-                  row.frontCoverUrl || 'https://picsum.photos/400/300?random=1'
+                  row.frontCoverUrl || require('@/assets/img/default_cover.jpg')
                 "
                 alt=""
               />
@@ -230,6 +230,7 @@
             <el-button
               style="margin-left: 10px"
               type="text"
+              v-if="row.liveState != 0"
               @click="actionHandle('3',row)"
               >删除</el-button
             >
@@ -336,7 +337,7 @@ export default {
     getLiveDuration(url) {
       return "-";
     },
-    actionHandle({ action, data }) {
+    actionHandle(action, data) {
       switch (action) {
         case "1": // 下载视频
           if (data.relationLiveUrl)
@@ -431,6 +432,7 @@ export default {
   .frontCoverImg {
     width: 100%;
     height: 60px;
+    object-fit: cover;
   }
 }
 </style>

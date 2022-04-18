@@ -76,11 +76,11 @@
         </div>
           <el-col :span="24">
             <el-form-item style="float: right; padding-right: 10px">
+              <el-button :disabled="!dataListSelections.length" size="small" type="danger" @click="downGoods()"
+                >批量下架</el-button
+              >
               <el-button size="small" type="primary" @click="upGoods"
                 >商品上架</el-button
-              >
-              <el-button size="small" type="primary" @click="downGoods()"
-                >下架</el-button
               >
               <el-button size="small" type="primary" @click="getDataList">{{
                 $t("query")

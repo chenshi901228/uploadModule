@@ -12,7 +12,8 @@
         <div class="diaBoxLeft_mes">
           <el-avatar
             :size="75"
-            :src="diaForm.avatarUrl"
+            :src="diaForm.avatarUrl || require('@/assets/img/default_avatar.png')"
+            fit="cover"
             style="margin: 0px 85px 10px"
           ></el-avatar>
           <div>主播昵称：{{ diaForm.username }}</div>
@@ -102,6 +103,7 @@
           :style="{ margin: '20px', 'text-align': 'right' }"
           :model="diaSearchForm"
           @keyup.enter.native="queryPost_dia()"
+          size="small"
         >
           <el-form-item label="支付方式" v-if="diaTbas === 1">
             <el-select v-model="diaSearchForm.payType" clearable>
@@ -171,16 +173,28 @@
           </el-form-item>
           <el-form-item>
             <el-button
+              v-if="diaTbas === 5 && dataListSelections.length !== 0"
+              type="danger"
+              @click="deleteSelect()"
+              >批量下架</el-button
+            >
+            <el-button
               v-if="diaTbas === 5"
               @click="updateProduct"
               type="primary"
               >上架商品</el-button
             >
             <el-button
-              v-if="diaTbas === 5 && dataListSelections.length !== 0"
+              v-if="diaTbas === 6 && dataListSelections.length !== 0"
+              @click="deleteRecommend()"
               type="danger"
-              @click="deleteSelect()"
-              >批量下架</el-button
+              >批量取消</el-button
+            >
+            <el-button
+              v-if="diaTbas === 6"
+              @click="addRecommendShow"
+              type="primary"
+              >添加主播</el-button
             >
             <el-button @click="queryPost_dia()">{{ $t("query") }}</el-button>
           </el-form-item>
@@ -199,7 +213,7 @@
             align="center"
             width="50"
             fixed="left"
-            v-if="diaTbas === 5"
+            v-if="diaTbas === 5 || diaTbas === 6"
           ></el-table-column>
           <template v-for="(label, prop) in diaTableTitle">
             <el-table-column
@@ -222,16 +236,16 @@
               :key="prop"
               header-align="center"
               align="center"
+              width="120"
               v-if="prop === 'productImage'"
             >
               <template slot-scope="{ row }">
                 <div>
                   <img
-                    style="width: 100%; height: 60px"
+                    style="width: 100%; height: 60px; object-fit: cover;"
                     class="productImage"
                     :src="
-                      row.productImage ||
-                      'https://picsum.photos/400/300?random=1'
+                      row.productImage
                     "
                     alt=""
                   />
@@ -276,9 +290,9 @@
             >
               <template slot-scope="scope">
                 <img
-                  :src="scope.row.avatarUrl"
+                  :src="scope.row.avatarUrl || require('@/assets/img/default_avatar.png')"
                   alt=""
-                  style="width: 75px; height: 50px"
+                  style="width: 60px; height: 60px; object-fit: cover;"
                 />
               </template>
             </el-table-column>
@@ -335,14 +349,22 @@
             fixed="right"
             header-align="center"
             align="center"
-            v-if="diaTbas === 5"
+            v-if="diaTbas === 5 || diaTbas === 6"
           >
             <template slot-scope="scope">
               <el-button
-                type="danger"
-                size="mini"
+                v-if="diaTbas === 5"
+                type="text"
+                size="small"
                 @click="downProduct(scope.$index, scope.row)"
                 >下架</el-button
+              >
+              <el-button
+                v-if="diaTbas === 6"
+                type="text"
+                size="small"
+                @click="deleteRecommend(scope.row.id)"
+                >取消推荐</el-button
               >
             </template>
           </el-table-column>
@@ -366,48 +388,58 @@
         <el-button type="primary" @click="confirmDel">确 定</el-button>
       </span>
     </el-dialog>
-
-    <el-dialog title="商品上架" :visible.sync="dialogUserFormVisible">
+    <!-- 商品上架列表弹框 -->
+    <el-dialog title="商品上架" :visible.sync="dialogUserFormVisible" width="70%" top="20px">
       <el-form
+        size="small"
         :inline="true"
         :model="productForm"
-        @keyup.enter.native="getDataList()"
+        @keyup.enter.native="queryUserList()"
+        label-width="100px"
       >
-        <el-form-item label="商品名称">
-          <el-input
-            v-model="productForm.productName"
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="商品类型">
-          <el-select v-model="productForm.productType" clearable>
-            <el-option value="专业课" label="专业课"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="是否免费">
-          <el-select v-model="productForm.isFree" clearable>
-            <el-option :value="0" label="否"></el-option>
-            <el-option :value="1" label="是"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="关联产品编号">
-          <el-input v-model="productForm.id" placeholder="请输入"></el-input>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button type="primary" @click="queryUserList">查询</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="reset">重置</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button
-            v-if="dataListSelectionUsers.length !== 0"
-            type="danger"
-            @click="deleteUserSelect()"
-            >批量上架</el-button
-          >
-        </el-form-item>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="商品名称">
+              <el-input
+                v-model="productForm.productName"
+                placeholder="请输入"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="商品类型">
+              <el-select v-model="productForm.productType" clearable>
+                <el-option value="专业课" label="专业课"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="是否免费">
+              <el-select v-model="productForm.isFree" clearable>
+                <el-option :value="0" label="否"></el-option>
+                <el-option :value="1" label="是"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="关联产品编号">
+              <el-input v-model="productForm.id" placeholder="请输入"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item style="float: right;">
+              <el-button
+                size="small"
+                v-if="dataListSelectionUsers.length !== 0"
+                type="danger"
+                @click="deleteUserSelect()"
+                >批量上架</el-button
+              >
+              <el-button size="small" type="primary" @click="queryUserList">查询</el-button>
+              <el-button size="small" @click="reset">重置</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <el-table
         v-loading="dataUserListLoading"
@@ -499,6 +531,7 @@
           label="关联产品编号"
           prop="id"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.id || "--" }}</span>
@@ -541,22 +574,134 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
-        :current-page="userListPage"
-        :page-sizes="[10, 20, 50, 100]"
-        :page-size="userListLimit"
-        :total="dataUserListTotal"
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="pageSizeChangeUserHandle"
-        @current-change="pageCurrentChangeUserHandle"
-      >
-      </el-pagination>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogUserFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="updateProduct">添加</el-button>
-      </div>
     </el-dialog>
-
+    <!-- 推荐主播列表弹框 -->
+    <el-dialog title="推荐主播" :visible.sync="dialogRecommendVisible" width="70%" top="20px">
+      <el-form
+        size="small"
+        :inline="true"
+        :model="recommendForm"
+        @keyup.enter.native="getRecommendList()"
+        label-width="100px"
+      >
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="主播昵称" prop="anchorName">
+              <el-input v-model="recommendForm.anchorName" placeholder="请输入" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="手机号码" prop="anchorPhone">
+              <el-input v-model="recommendForm.anchorPhone" placeholder="请输入" clearable></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item style="float: right;">
+              <el-button
+                size="small"
+                v-if="recommendListSelections.length !== 0 && dialogRecommendVisible"
+                type="danger"
+                @click="addRecommend()"
+                >批量添加</el-button
+              >
+              <el-button size="small" type="primary" @click="getRecommendList">查询</el-button>
+              <el-button size="small" @click="reset">重置</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </el-form>
+      <el-table
+        v-loading="dataUserListLoading"
+        :data="recommendList"
+        border
+        fit
+        @selection-change="recommendSelectionChangeHandle"
+        style="width: 100%"
+        max-height="500"
+      >
+        <el-table-column
+          type="selection"
+          header-align="center"
+          align="center"
+          width="50"
+          fixed="left"
+        ></el-table-column>
+        <el-table-column
+          width="100"
+          label="主播头像"
+          prop="avatarUrl"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <div>
+              <img
+                style="width: 60px; height: 60px; object-fit: cover;"
+                class="productImage"
+                :src="
+                  row.avatarUrl || require('@/assets/img/default_avatar.png')
+                "
+                alt=""
+              />
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          width="150"
+          label="主播昵称"
+          prop="username"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.username || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          width="150"
+          label="手机号码"
+          prop="phone"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.phone || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          width="150"
+          label="更新时间"
+          prop="updateDate"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.updateDate || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          width="150"
+          label="上架状态"
+          prop="delFlg"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.delFlg === 0 ? "上架" : "下架" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          label="操作"
+          fixed="right"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="primary"
+              @click="addRecommend(scope.row.recommendAnchorId)"
+              >添加</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
     <!-- 修改银行信息 -->
     <el-dialog
       title="编辑银行卡信息"
@@ -645,6 +790,14 @@ export default {
         isFree: "",
         id: "",
       },
+      // 推荐主播搜索
+      recommendForm: {
+        anchorName: "",
+        anchorPhone: ""
+      },
+      dialogRecommendVisible: false, //推荐主播弹框
+      recommendList: [], //推荐主播列表
+      recommendListSelections: [], //推荐主播列表多选
       dataListSelections: [], // 数据列表，多选项
       diaDataList: [],
       diaTableTitle: {
@@ -720,9 +873,8 @@ export default {
     },
     //确认下架
     confirmDel() {
-      console.log(this.ids);
       this.$http
-        .post("/sys/course/down", this.ids)
+        .delete("/sys/wxapp/anchorProduct", {data: this.ids})
         .then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg);
@@ -771,6 +923,7 @@ export default {
       };
          this.diaDataList=[]
        this.total_dia = 0;
+       this.dataListSelections = []
       switch (n) {
         case 1:
           this.diaTableTitle = {
@@ -949,9 +1102,19 @@ export default {
     },
     //下架商品
     downProduct(i, row) {
-      this.ids = [];
-      this.ids.push(row.id);
-      this.dialogVisible = true;
+      this.$confirm("确认下架商品, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.ids = [];
+          this.ids.push({productId: row.id});
+          this.confirmDel();
+        })
+        .catch(() => {
+          this.$message.info("已取消下架");
+        });
     },
     //上架商品
     updateProduct() {
@@ -967,10 +1130,21 @@ export default {
     },
     //批量下架
     deleteSelect() {
-      this.dialogVisible = true;
-      this.dataListSelections.forEach((v) => {
-        this.ids.push(v.id);
-      });
+      this.$confirm("确认下架商品, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          this.dataListSelections.forEach((v) => {
+            this.ids.push({productId: v.id});
+          });
+          this.confirmDel();
+        })
+        .catch(() => {
+          this.$message.info("已取消下架");
+        });
+      
     },
     //批量选择
     userListSelectionChangeHandle(val) {
@@ -980,31 +1154,161 @@ export default {
     queryUserList() {
       this.dataUserListLoading = true;
       this.$http
-        .get("/sys/course/downPage", {
-          params: {
-            page: this.userListPage,
-            limit: this.userListLimit,
+        .get("/sys/wxapp/anchorProduct/listBySearch", {
+          params: this.$httpParams({
             productName: this.productForm.productName,
             productType: this.productForm.productType,
             isFree: this.productForm.isFree,
-            id: this.productForm.id,
-          },
+            anchorId: this.userId,
+          }),
         })
         .then(({ data: res }) => {
           this.dataUserListLoading = false;
           if (res.code !== 0) {
             this.dataUserList = [];
-            this.dataUserListTotal = 0;
             return this.$message.error(res.msg);
           }
-          this.dataUserList = res.data.list;
-          this.dataUserListTotal = res.data.total;
+          this.dataUserList = res.data;
         })
         .catch((err) => {
           this.dataUserListLoading = false;
           throw err;
         });
     },
+    // 推荐主播多选
+    recommendSelectionChangeHandle(val) {
+      this.recommendListSelections = val.map(item => {
+        return { recommendAnchorId: item.recommendAnchorId }
+      })
+    },
+    // 获取未推荐的主播
+    getRecommendList() {
+      this.dataUserListLoading = true;
+      this.$http
+        .get("/sys/manage/anchor/recommend/listBySearch", {
+          params: this.$httpParams({
+            anchorName: this.recommendForm.anchorName,
+            anchorPhone: this.recommendForm.anchorPhone,
+          }),
+        })
+        .then(({ data: res }) => {
+          this.dataUserListLoading = false;
+          if (res.code !== 0) {
+            this.recommendList = [];
+            return this.$message.error(res.msg);
+          }
+          this.recommendList = res.data;
+        })
+        .catch((err) => {
+          this.dataUserListLoading = false;
+          throw err;
+        });
+    },
+    // 添加主播列表弹框
+    addRecommendShow() {
+      this.recommendList = []
+      if(this.recommendListSelections.length) this.recommendListSelections = [] //清空多选
+      this.dialogRecommendVisible = true
+      this.getRecommendList()
+    },
+    // 添加推荐主播-handle
+    addRecommendHandle(data) {
+      this.$http
+        .post("/sys/manage/anchor/recommend", data)
+        .then(({ data: res }) => {
+          if (res.code == 0) {
+            this.$message.success("添加推荐主播成功");
+            this.dialogRecommendVisible = false
+            this.queryPost_dia();
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
+    // 取消推荐主播-handle
+    deleteRecommendHandle(data) {
+      this.$http
+        .delete("/sys/manage/anchor/recommend", { data })
+        .then(({ data: res }) => {
+          if (res.code == 0) {
+            this.$message.success("取消推荐主播成功");
+            this.queryPost_dia();
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
+    // 添加推荐主播-confirm
+    addRecommend(id) {
+      if (!id) {
+        //批量添加
+        this.$confirm("确认添加为推荐主播, 是否继续?", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+          })
+            .then(() => {
+              this.addRecommendHandle(this.recommendListSelections);
+            })
+            .catch(() => {
+              this.$message.info("已取消添加");
+            });
+      } else {
+        //单个操作
+        this.$confirm("确认添加为推荐主播, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            this.addRecommendHandle([{recommendAnchorId: id}]);
+          })
+          .catch(() => {
+            this.$message.info("已取消添加");
+          });
+      }
+    },
+    // 取消推荐主播
+    deleteRecommend(id) {
+      if (!id) {
+        //批量取消推荐
+        this.$confirm("确认取消推荐主播, 是否继续?", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+          })
+            .then(() => {
+              let arr = this.dataListSelections.map(item => {
+                return { recommendAnchorId: item.id }
+              })
+              this.deleteRecommendHandle(arr);
+            })
+            .catch(() => {
+              this.$message.info("已取消操作");
+            });
+      } else {
+        //单个操作
+        this.$confirm("确认取消推荐主播, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            this.deleteRecommendHandle([{recommendAnchorId: id}]);
+          })
+          .catch(() => {
+            this.$message.info("已取消操作");
+          });
+      }
+    },
+
+
     //重置
     reset() {
       this.productForm = {
@@ -1017,82 +1321,102 @@ export default {
     },
     //上架商品
     handleDeleteUser(index, row) {
-      let ids = [];
-      ids.push(row.id);
-      this.$http
-        .post("/sys/course/up", ids)
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          }
-          if (this.total_dia >= 9) {
-            this.$message.warning("最多可上架9个商品，请删除后再重新上架!");
-            return;
-          }
-          this.$message.success("上架成功!");
-          this.queryUserList();
-          this.dialogUserFormVisible = false;
-          this.diaSearchForm = {
-            payType: "",
-            paySource: "",
-            name: "",
-            title: "",
-            anchorName: "",
-            userName: "",
-            phone: "",
-            userType: "",
-            delFlg: "",
-            productName: "",
-            productType: "",
-            isFree: "",
-          };
-          this.page_dia = 1; // 当前页码
-          this.diaDataList = [];
-          this.queryPost_dia();
+      this.$confirm("确认上架商品, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          let ids = [];
+          ids.push({productId: row.id});
+          this.$http
+            .post("/sys/wxapp/anchorProduct", ids)
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                return this.$message.error(res.msg);
+              }
+              if (this.total_dia >= 9) {
+                this.$message.warning("最多可上架9个商品，请删除后再重新上架!");
+                return;
+              }
+              this.$message.success("上架成功!");
+              this.queryUserList();
+              this.dialogUserFormVisible = false;
+              this.diaSearchForm = {
+                payType: "",
+                paySource: "",
+                name: "",
+                title: "",
+                anchorName: "",
+                userName: "",
+                phone: "",
+                userType: "",
+                delFlg: "",
+                productName: "",
+                productType: "",
+                isFree: "",
+              };
+              this.page_dia = 1; // 当前页码
+              this.diaDataList = [];
+              this.queryPost_dia();
+            })
+            .catch((err) => {
+              throw err;
+            });
         })
-        .catch((err) => {
-          throw err;
+        .catch(() => {
+          this.$message.info("已取消上架");
         });
     },
     //批量上架
     deleteUserSelect() {
-      let ids = [];
-      this.dataListSelectionUsers.forEach((v) => {
-        ids.push(v.id);
-      });
-      this.$http
-        .post("/sys/course/up", ids)
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          }
-          if (this.total_dia >= 9) {
-            this.$message.warning("最多可上架9个商品，请删除后再重新上架!");
-            return;
-          }
-          this.$message.success("上架成功!");
-          this.queryUserList();
-          this.dialogUserFormVisible = false;
-          this.diaSearchForm = {
-            payType: "",
-            paySource: "",
-            name: "",
-            title: "",
-            anchorName: "",
-            userName: "",
-            phone: "",
-            userType: "",
-            delFlg: "",
-            productName: "",
-            productType: "",
-            isFree: "",
-          };
-          this.page_dia = 1; // 当前页码
-          this.diaDataList = [];
-          this.queryPost_dia();
+      this.$confirm("确认上架商品, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          let ids = [];
+          this.dataListSelectionUsers.forEach((v) => {
+            ids.push({productId: v.id});
+          });
+          this.$http
+            .post("/sys/wxapp/anchorProduct", ids)
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                return this.$message.error(res.msg);
+              }
+              if (this.total_dia >= 9) {
+                this.$message.warning("最多可上架9个商品，请删除后再重新上架!");
+                return;
+              }
+              this.$message.success("上架成功!");
+              this.queryUserList();
+              this.dialogUserFormVisible = false;
+              this.diaSearchForm = {
+                payType: "",
+                paySource: "",
+                name: "",
+                title: "",
+                anchorName: "",
+                userName: "",
+                phone: "",
+                userType: "",
+                delFlg: "",
+                productName: "",
+                productType: "",
+                isFree: "",
+              };
+              this.page_dia = 1; // 当前页码
+              this.diaDataList = [];
+              this.queryPost_dia();
+            })
+            .catch((err) => {
+              throw err;
+            });
         })
-        .catch((err) => {
-          throw err;
+        .catch(() => {
+          this.$message.info("已取消上架");
         });
     },
     // 分页, 每页条数
@@ -1190,7 +1514,7 @@ export default {
       });
     },
     //编辑账户信息
-    editeUserMoney() {},
+    editeUserMoney() {}
   },
 };
 </script>
@@ -1233,6 +1557,9 @@ export default {
 }
 .diaBoxLeft_mes {
   padding: 0 10px 20px 10px;
+  /deep/.el-avatar > img {
+    width: 100%;
+  }
 }
 
 .diaBoxRight_tabBtns {

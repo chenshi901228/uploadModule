@@ -91,7 +91,7 @@
         width="50"
         fixed="left"
       ></el-table-column>
-      <el-table-column label="用户昵称" prop="name" align="center">
+      <el-table-column label="动态组" prop="name" align="center">
         <template slot-scope="scope">
           <span>{{ scope.row.name || "--" }}</span>
         </template>
@@ -170,8 +170,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="saveGroup">确 定</el-button>
+        <el-button size="small" @click="dialogFormVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="saveGroup">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -193,8 +193,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogEditeFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editeGroup">确 定</el-button>
+        <el-button size="small" @click="dialogEditeFormVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="editeGroup">确 定</el-button>
       </div>
     </el-dialog>
 
