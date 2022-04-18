@@ -219,9 +219,12 @@
         <el-table-column
           width="150"
           label="实际开播时间"
-          prop="startDate"
+          prop="factStartDate"
           align="center"
         >
+         <template slot-scope="scope">
+            <span>{{ scope.row.factStartDate || "--" }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           width="150"
@@ -447,7 +450,7 @@ export default {
       let dataObj = {};
 
       for (const key in this.dataForm) {
-        if (this.dataForm[key].length !== 0) {
+        if (this.dataForm[key] &&this.dataForm[key].length !== 0) {
           dataObj[key] = this.dataForm[key];
         }
       }
