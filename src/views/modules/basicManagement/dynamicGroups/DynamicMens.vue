@@ -481,6 +481,7 @@ export default {
     // 多选
     dataListSelectionChangeHandle(val) {
       this.dataListSelections = val;
+      console.log(this.dataListSelections)
     },
     //删除
     handleDelete(index, row) {
@@ -529,6 +530,7 @@ export default {
     },
     //批量删除
     deleteSelect() {
+      console.log(this.dataListSelections)
       this.dataListSelections.forEach((v) => {
         this.ids.push(v.id);
       });
