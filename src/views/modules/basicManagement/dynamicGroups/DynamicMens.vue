@@ -13,20 +13,28 @@
       <el-row>
         <el-col :span="8">
           <el-form-item label="用户昵称" prop="name">
-            <el-input v-model="dataForm.name" placeholder="请输入" clearable></el-input>
+            <el-input
+              v-model="dataForm.name"
+              placeholder="请输入"
+              clearable
+            ></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="8">
           <el-form-item label="手机号" prop="tel">
-            <el-input v-model="dataForm.tel" placeholder="请输入" clearable></el-input>
+            <el-input
+              v-model="dataForm.tel"
+              placeholder="请输入"
+              clearable
+            ></el-input>
           </el-form-item>
         </el-col>
         <div v-if="isOpen">
-        <!-- <el-row>
+          <!-- <el-row>
           <el-col :span="6">
           </el-col>
         </el-row> -->
-      </div>
+        </div>
         <el-col :span="8">
           <el-form-item style="float: right; padding-right: 10px">
             <el-button
@@ -35,14 +43,14 @@
               @click="deleteSelect()"
               >批量移除</el-button
             >
-            <el-button style="margin-bottom: 10px" type="primary" @click="addUser"
+            <el-button
+              style="margin-bottom: 10px"
+              type="primary"
+              @click="addUser"
               >添加</el-button
             >
-            <el-button
-              size="small"
-              type="primary"
-              @click="queryPageWithGroupId(this.groupId)"
-              >{{ $t("query") }}</el-button
+            <el-button size="small" type="primary" @click="queryPageWithGroupId"
+              >查询</el-button
             >
             <!-- <el-button size="small" @click="resetDataForm()">{{
               $t("reset")
@@ -111,7 +119,12 @@
       @current-change="pageCurrentChangeHandle"
     >
     </el-pagination>
-    <el-dialog title="添加用户" :visible.sync="dialogUserFormVisible" top="20px" width="70%">
+    <el-dialog
+      title="添加用户"
+      :visible.sync="dialogUserFormVisible"
+      top="20px"
+      width="70%"
+    >
       <el-form
         :inline="true"
         :model="userForm"
@@ -157,7 +170,6 @@
           fixed="left"
         ></el-table-column>
         <el-table-column
-          width="150"
           label="用户昵称"
           prop="name"
           align="center"
@@ -167,7 +179,6 @@
           </template>
         </el-table-column>
         <el-table-column
-          width="150"
           label="手机号码"
           prop="phone"
           align="center"
@@ -177,27 +188,15 @@
           </template>
         </el-table-column>
         <el-table-column
-          width="120"
-          label="设备类型"
-          prop="phoneModel"
+          label="加入状态"
+          prop="joinFlag"
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.phoneModel || "--" }}</span>
+            <span>{{ scope.row.joinFlag === 0 ? "未加入" : "已加入" }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          width="150"
-          label="token值"
-          prop="token"
-          align="center"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.token || "--" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          width="180"
           label="创建时间"
           prop="createDate"
           align="center"
@@ -207,9 +206,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          width="120"
           label="操作"
-          fixed="right"
           header-align="center"
           align="center"
         >
@@ -217,8 +214,8 @@
             <el-button
               type="text"
               size="small"
-              @click="handleDeleteUser(scope.$index, scope.row)"
-              >删除</el-button
+              @click="saveSelectUser(scope.$index, scope.row)"
+              >添加</el-button
             >
           </template>
         </el-table-column>
@@ -234,9 +231,21 @@
       >
       </el-pagination>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogUserFormVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="saveUser">添加</el-button>
+        <el-button size="small" @click="dialogUserFormVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="saveUser"
+          >添加</el-button
+        >
       </div>
+    </el-dialog>
+
+    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
+      <span>确认要移除吗？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmShowState">确 定</el-button>
+      </span>
     </el-dialog>
   </el-card>
 </template>
@@ -270,6 +279,8 @@ export default {
       dataListSelectionUsers: [],
       dataUserListTotal: 0,
       groupId: "",
+      dialogVisible:false,
+      ids:[]
     };
   },
   watch: {},
@@ -297,6 +308,7 @@ export default {
             limit: this.userListLimit,
             name: this.userForm.name,
             phone: this.userForm.tel,
+            groupId: this.groupId,
           },
         })
         .then(({ data: res }) => {
@@ -314,18 +326,37 @@ export default {
           throw err;
         });
     },
-    //删除
-    handleDeleteUser(index, row) {
-      let ids = [];
-      ids.push(row.id);
+    //添加
+    saveSelectUser(index, row) {
+      // let ids = [];
+      // ids.push(row.id);
+      // this.$http
+      //   .delete("/sys/dynamicGroupUser", { data: ids })
+      //   .then(({ data: res }) => {
+      //     if (res.code !== 0) {
+      //       return this.$message.error(res.msg);
+      //     }
+      //     this.$message.success("删除成功!");
+      //     this.queryUserList();
+      //   })
+      //   .catch((err) => {
+      //     throw err;
+      //   });
+      this.dataListSelectionUsers.push(row);
       this.$http
-        .delete("/sys/dynamicGroupUser", { data: ids })
+        .post("/sys/dynamicGroupUser", {
+          weixinUserId: this.dataListSelectionUsers[0].id,
+          sysGroupId: this.groupId,
+        })
         .then(({ data: res }) => {
           if (res.code !== 0) {
+            this.dialogUserFormVisible = false;
             return this.$message.error(res.msg);
           }
-          this.$message.success("删除成功!");
-          this.queryUserList();
+          this.$message.success("添加成功!");
+          this.dialogUserFormVisible = false;
+          this.dataListSelectionUsers = []
+          this.queryPageWithGroupId();
         })
         .catch((err) => {
           throw err;
@@ -362,8 +393,8 @@ export default {
       this.queryUserList();
     },
     resetDataForm() {
-      this.$refs.dataForm.resetFields()
-      this.queryPageWithGroupId(this.groupId)
+      this.$refs.dataForm.resetFields();
+      this.queryPageWithGroupId();
     },
     //重置
     reset() {
@@ -396,7 +427,8 @@ export default {
             }
             this.$message.success("添加成功!");
             this.dialogUserFormVisible = false;
-            this.queryPageWithGroupId(this.groupId);
+            this.dataListSelectionUsers = []
+            this.queryPageWithGroupId();
           })
           .catch((err) => {
             throw err;
@@ -418,12 +450,29 @@ export default {
             }
             this.$message.success("添加成功!");
             this.dialogUserFormVisible = false;
-            this.queryPageWithGroupId(this.groupId);
+            this.dataListSelectionUsers = []
+            this.queryPageWithGroupId();
           })
           .catch((err) => {
             throw err;
           });
       }
+    },
+    confirmShowState(){
+      this.$http
+        .delete("/sys/dynamicGroupUser", { data: this.ids })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          this.$message.success("删除成功!");
+          this.ids = []
+          this.dialogVisible = false
+          this.queryPageWithGroupId();
+        })
+        .catch((err) => {
+          throw err;
+        });
     },
     //批量选择
     userListSelectionChangeHandle(val) {
@@ -435,23 +484,11 @@ export default {
     },
     //删除
     handleDelete(index, row) {
-      let ids = [];
-      ids.push(row.id);
-      this.$http
-        .delete("/sys/dynamicGroupUser", { data: ids })
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          }
-          this.$message.success("删除成功!");
-          this.queryPageWithGroupId(this.groupId);
-        })
-        .catch((err) => {
-          throw err;
-        });
+      this.ids.push(row.id);
+      this.dialogVisible = true
     },
     //动态组人员
-    queryPageWithGroupId(groupId) {
+    queryPageWithGroupId() {
       this.loadingGroup = true;
 
       this.$http
@@ -459,7 +496,9 @@ export default {
           params: {
             page: this.page,
             limit: this.limit,
-            groupId: groupId,
+            name: this.dataForm.name,
+            phone: this.dataForm.tel,
+            groupId: this.groupId,
           },
         })
         .then(({ data: res }) => {
@@ -481,31 +520,19 @@ export default {
     pageSizeChangeHandle(val) {
       this.page = 1;
       this.limit = val;
-      this.queryPageWithGroupId(this.groupId);
+      this.queryPageWithGroupId();
     },
     // 分页, 当前页
     pageCurrentChangeHandle(val) {
       this.page = val;
-      this.queryPageWithGroupId(this.groupId);
+      this.queryPageWithGroupId();
     },
     //批量删除
     deleteSelect() {
-      let ids = [];
       this.dataListSelections.forEach((v) => {
-        ids.push(v.id);
+        this.ids.push(v.id);
       });
-      this.$http
-        .delete("/sys/dynamicGroupUser", { data: ids })
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          }
-          this.$message.success("删除成功!");
-          this.queryPageWithGroupId(this.groupId);
-        })
-        .catch((err) => {
-          throw err;
-        });
+      this.dialogVisible = true
     },
   },
 };
