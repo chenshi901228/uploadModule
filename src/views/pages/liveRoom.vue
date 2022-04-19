@@ -147,15 +147,29 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="学生" name="third">
-            <div class="list_content">
+            <div class="list_content" style="height:calc(100% - 50px)">
               <div
-                class="content"
+                class="student_content"
                 v-for="(item, index) in studentList"
                 :key="index"
               >
-                {{item.text}}
-                {{item.ownIntimacy}}
+                <div class="left">
+                  <span>{{index+1}}</span>
+                  <img :src="item.avatarUrl" alt="">
+                  <div class="anchorInfo">
+                      <span>{{item.text}}</span>
+                      <p>{{item.ownIntimacy}}<span>亲密度</span></p>
+                  </div>
+                </div>
+                <div class="right" @click="muteMthod(item)">
+                  <img src="../../assets/img/isMike_icon.png" alt="" v-if="!item.isTalk">
+                  <img src="../../assets/img/noMike_icon.png" alt="" v-else>
+                </div>
               </div>
+            </div>
+            <div class="muteBtn">
+              <div @click="allMute(1)">全员禁言</div>
+              <div @click="allMute(2)">全员解禁</div>
             </div>
           </el-tab-pane>
           <el-tab-pane label="商品" name="fourth">
@@ -295,13 +309,16 @@
                 v-for="(item, index) in connectMessageInfo"
                 :key="index"
               >
-                <div class="video_div">
+                <div class="video_div" v-loading="!item.connectStatus"
+                  :element-loading-text="item.message.connectType==2?'申请视频连麦中':'申请语音连麦中'"
+                  element-loading-spinner="el-icon-loading"
+                  element-loading-background="rgba(0, 0, 0, 0.5)">
                   <video
                     autoplay
                     :src-object.prop="item.stream"
-                    :style="{width:item.message.connectType==1?'0px':'230px',height:item.message.connectType==1?'0px':'112px'}"
+                    :style="{width:item.message.connectType==1||!item.connectStatus?'0px':'230px',height:item.message.connectType==1||!item.connectStatus?'0px':'112px'}"
                   ></video>
-                  <img class="connect_headerUrl" :src="item.userInfo.avatarUrl" alt="" v-if="item.message.connectType===1">
+                  <img class="connect_headerUrl" :src="item.userInfo.avatarUrl" alt="" v-if="item.message.connectType===1||!item.connectStatus">
                 </div>
                 <div class="cennect_userinfo">
                   <div>
@@ -403,13 +420,21 @@ export default {
     };
   },
   created() {
-    let liveStatus = JSON.parse(localStorage.getItem('liveStatus'))
+    let liveStatus = JSON.parse(localStorage.getItem('liveStatus')) //直播状态
     if(liveStatus){
       this.liveStatus = liveStatus
     }
-    let connectMessageInfo = JSON.parse(localStorage.getItem('connectMessageInfo'))
+    let connectMessageInfo = JSON.parse(localStorage.getItem('connectMessageInfo')) //连麦列表状态
     if(connectMessageInfo){
       this.connectMessageInfo = connectMessageInfo
+    }
+    let isRecord = localStorage.getItem('isRecord') //录制状态
+    if(isRecord){
+      this.toolNav[0].status = isRecord
+    }
+    let studentList = JSON.parse(localStorage.getItem('studentList')) //学生列表
+    if(studentList){
+      this.studentList = studentList
     }
     this.getTimUserSig()
   },
@@ -529,12 +554,13 @@ export default {
         if(this.liveStatus){
           if(!data.status){
             this.$http.post('/sys/mixedflow/startRecord',{}).then(res=>{
-              if(res.success&&res.msg=='success'){
+              if(res.data.success&&res.data.msg=='success'){
                 this.$message({
                   message:'录制已开启',
                   type:'success'
                 })
                 this.toolNav[0].status = true
+                localStorage.setItem('isRecord',true)
               }
             })
           }else{
@@ -556,6 +582,46 @@ export default {
     },
     handleClick(tab, event) {
       console.log(tab, event);
+    },
+    muteMthod(data){ //禁言
+      this.studentList.forEach(item=>{
+        if(item.userId===data.userId){
+          if(!item.isTalk){
+            this.sendMessage({type:20,replyUserId:data.userId,isTalk:true})
+            this.getMuteStatus({isAll:0,userId:data.userId,isTalk:1}).then(res=>{
+              item.isTalk = true
+            })
+          }else{
+            this.sendMessage({type:20,replyUserId:data.userId,isTalk:false})
+            this.getMuteStatus({isAll:0,userId:data.userId,isTalk:0}).then(res=>{
+              item.isTalk = false
+            })
+          }
+        }
+      })
+      localStorage.setItem('studentList',JSON.stringify(this.studentList))
+    },
+    allMute(type){
+      switch(type){
+        case 1:
+          this.sendMessage({type:20,allMute:true}) //全员禁言
+          this.getMuteStatus({isAll:1,isTalk:1}).then(res=>{
+            this.studentList.forEach(item=>item.isTalk=true)
+          })
+          break;
+        case 2:
+          this.sendMessage({type:20,allMute:false}) //全员解禁
+          this.getMuteStatus({isAll:0,isTalk:0}).then(res=>{
+            this.studentList.forEach(item=>item.isTalk=false)
+          })
+          break;
+          default:
+          break;
+      }
+      localStorage.setItem('studentList',JSON.stringify(this.studentList))
+    },
+    async getMuteStatus(obj){
+      let res = await this.$http.post('/sys/mixedflow/userMute',obj)
     },
     // 获取token的方法
     getTokenFun(appID, userID) {
@@ -672,6 +738,8 @@ export default {
           this.liveStatus = false
           localStorage.removeItem('liveStatus') //将直播状态移除
           localStorage.removeItem('connectMessageInfo') //将直播连麦列表移除
+          localStorage.removeItem('isRecord') //将录制状态移除
+          localStorage.removeItem('studentList') //将学生列表移除
           this.tim.logout() //退出IM
           this.tim.destroy();
         });
@@ -799,6 +867,10 @@ export default {
             const userId = userIdArr[1];
             const ind = this.studentList.findIndex(item=>item.userId ==userId)
             this.studentList.splice(ind,1)
+            localStorage.setItem('studentList',JSON.stringify(this.studentList))
+            break;
+            default:
+            break;
           }
         }
         if (
@@ -817,7 +889,16 @@ export default {
               applyInfo.message.type === 10){ //用户进入直播间消息
               let obj = applyInfo.message
               obj.userId = applyInfo.userInfo.userId
-              this.studentList.push(obj)
+              obj.avatarUrl = applyInfo.userInfo.avatarUrl
+              obj.isTalk = false //默认可以发言
+              let arr = [];
+              this.studentList.forEach((item) =>
+                arr.push(item.userId)
+              );
+              if (arr.indexOf(applyInfo.userInfo.userId) === -1) {
+                this.studentList.push(obj);
+              }
+              localStorage.setItem('studentList',JSON.stringify(this.studentList))
               console.log('用户进入直播间消息',this.studentList)
             }
             //连麦信息
@@ -851,6 +932,7 @@ export default {
                   (item) => item.userInfo.userId != applyInfo.userInfo.userId
                 );
                 applyInfo.message.replyType === -1 ? this.$message("用户已取消连麦申请") : this.$message("用户已断开连麦")
+                this.$loading().close()
                 return;
               }
               localStorage.setItem('connectMessageInfo',JSON.stringify(this.connectMessageInfo)) //将当前麦上列表存着
@@ -916,6 +998,8 @@ export default {
           connectType: messageInfo.connectType,
           replyType: messageInfo.replyType ? messageInfo.replyType : null,
           replyUserId: messageInfo.replyUserId,
+          isTalk: messageInfo.isTalk, //禁言
+          allMute: messageInfo.allMute, //全员禁言
         },
       };
       for (let k in data.message) {
@@ -1497,6 +1581,75 @@ p {
                     }
                 }
               }
+              .student_content{
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 20px 0px;
+                border-bottom: 1px solid #4A4A4A;
+                >.left{
+                  display: flex;
+                  justify-content: flex-start;
+                  align-items: center;
+                  >span{
+                      font-size: 16px;
+                      color: #898989;
+                  }
+                  >img{
+                      width: 40px;
+                      height: 40px;  
+                      margin-left: 10px;
+                  }
+                  .anchorInfo{
+                      display: flex;
+                      flex-direction: column;
+                      margin-left: 10px;
+                      >span{
+                          color: #EAEAEA;
+                          font-size: 16px;
+                      }
+                      >p{
+                          color: #898989;
+                          font-size: 14px;
+                          >span{
+                            margin-left: 8px;
+                            color: #EAEAEA;
+                          }
+                      }
+                  }
+                }
+                .right{
+                  >img{
+                    width: 30px;
+                    height: 30px;
+                    cursor: pointer;
+                  }
+                }
+              }
+            }
+            .muteBtn{
+              width: 100%;
+              display: flex;
+              justify-content: space-around;
+              align-items: center;
+              margin-top: 5px;
+              >div{
+                width: 145px;
+                height: 40px;
+                text-align: center;
+                line-height: 40px;
+                border-radius: 5px;
+                font-size: 16px;
+                cursor: pointer;
+              }
+              >div:first-child{
+                background: linear-gradient(89deg, #FA3622 0%, #FE055A 100%);
+                box-shadow: 0px 4px 10px 1px rgba(249, 46, 29, 0.4);
+              }
+              >div:last-child{
+                border: 1px solid #B7B7B7;
+                color: #B7B7B7;
+              }
             }
             .list_content::-webkit-scrollbar {
               display: none;
@@ -1695,6 +1848,14 @@ p {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                /deep/ .el-icon-loading{
+                  color: #FFFFFF;
+                  font-size: 30px;
+                }
+                /deep/ .el-loading-text{
+                  color: #FFFFFF;
+                  font-size: 12px;
+                }
                 >video{
                   width: 100%;
                   height: 100%;
