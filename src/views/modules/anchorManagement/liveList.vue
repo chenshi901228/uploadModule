@@ -187,7 +187,7 @@
               <img
                 class="frontCoverImg"
                 :src="
-                  row.frontCoverUrl || 'https://picsum.photos/400/300?random=1'
+                  row.frontCoverUrl || require('@/assets/img/default_cover.jpg')
                 "
                 alt=""
               />
@@ -389,6 +389,7 @@ export default {
   .frontCoverImg {
     width: 100%;
     height: 60px;
+    object-fit: cover;
   }
 }
 </style>

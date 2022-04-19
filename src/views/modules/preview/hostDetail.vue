@@ -12,7 +12,7 @@
         <div class="diaBoxLeft_mes">
           <el-avatar
             :size="75"
-            :src="diaForm.avatarUrl"
+            :src="diaForm.avatarUrl || require('@/assets/img/default_avatar.png')"
             fit="cover"
             style="margin: 0px 85px 10px"
           ></el-avatar>
@@ -236,16 +236,16 @@
               :key="prop"
               header-align="center"
               align="center"
+              width="120"
               v-if="prop === 'productImage'"
             >
               <template slot-scope="{ row }">
                 <div>
                   <img
-                    style="width: 100%; height: 60px"
+                    style="width: 100%; height: 60px; object-fit: cover;"
                     class="productImage"
                     :src="
-                      row.productImage ||
-                      'https://picsum.photos/400/300?random=1'
+                      row.productImage
                     "
                     alt=""
                   />
@@ -290,9 +290,9 @@
             >
               <template slot-scope="scope">
                 <img
-                  :src="scope.row.avatarUrl"
+                  :src="scope.row.avatarUrl || require('@/assets/img/default_avatar.png')"
                   alt=""
-                  style="width: 75px; height: 50px"
+                  style="width: 60px; height: 60px; object-fit: cover;"
                 />
               </template>
             </el-table-column>
@@ -595,7 +595,7 @@
               <el-input v-model="recommendForm.anchorPhone" placeholder="请输入" clearable></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="8">
             <el-form-item style="float: right;">
               <el-button
                 size="small"
@@ -635,10 +635,10 @@
           <template slot-scope="{ row }">
             <div>
               <img
-                style="width: 100%; height: 80px"
+                style="width: 60px; height: 60px; object-fit: cover;"
                 class="productImage"
                 :src="
-                  row.avatarUrl || 'https://picsum.photos/400/300?random=1'
+                  row.avatarUrl || require('@/assets/img/default_avatar.png')
                 "
                 alt=""
               />
@@ -1206,6 +1206,7 @@ export default {
     },
     // 添加主播列表弹框
     addRecommendShow() {
+      this.recommendList = []
       if(this.recommendListSelections.length) this.recommendListSelections = [] //清空多选
       this.dialogRecommendVisible = true
       this.getRecommendList()
@@ -1230,7 +1231,7 @@ export default {
     // 取消推荐主播-handle
     deleteRecommendHandle(data) {
       this.$http
-        .delete("/sys/manage/anchor/recommend", data)
+        .delete("/sys/manage/anchor/recommend", { data })
         .then(({ data: res }) => {
           if (res.code == 0) {
             this.$message.success("取消推荐主播成功");
@@ -1286,7 +1287,7 @@ export default {
               let arr = this.dataListSelections.map(item => {
                 return { recommendAnchorId: item.id }
               })
-              // this.deleteRecommendHandle(arr);
+              this.deleteRecommendHandle(arr);
             })
             .catch(() => {
               this.$message.info("已取消操作");
