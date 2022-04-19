@@ -162,7 +162,7 @@
                   </div>
                 </div>
                 <div class="right" @click="muteMthod(item)">
-                  <img src="../../assets/img/isMike_icon.png" alt="" v-if="!item.isTalk">
+                  <img src="../../assets/img/isMike_icon.png" alt="" v-if="!item.isTalkFlag">
                   <img src="../../assets/img/noMike_icon.png" alt="" v-else>
                 </div>
               </div>
@@ -586,39 +586,42 @@ export default {
     muteMthod(data){ //禁言
       this.studentList.forEach(item=>{
         if(item.userId===data.userId){
-          if(!item.isTalk){
+          if(!item.isTalkFlag){
             this.sendMessage({type:20,replyUserId:data.userId,isTalk:true})
             this.getMuteStatus({isAll:0,userId:data.userId,isTalk:1}).then(res=>{
-              item.isTalk = true
+              item.isTalkFlag = 1
+              localStorage.setItem('studentList',JSON.stringify(this.studentList))
             })
           }else{
             this.sendMessage({type:20,replyUserId:data.userId,isTalk:false})
             this.getMuteStatus({isAll:0,userId:data.userId,isTalk:0}).then(res=>{
-              item.isTalk = false
+              item.isTalkFlag = 0
+              localStorage.setItem('studentList',JSON.stringify(this.studentList))
             })
           }
         }
       })
-      localStorage.setItem('studentList',JSON.stringify(this.studentList))
     },
     allMute(type){
       switch(type){
         case 1:
           this.sendMessage({type:20,allMute:true}) //全员禁言
           this.getMuteStatus({isAll:1,isTalk:1}).then(res=>{
-            this.studentList.forEach(item=>item.isTalk=true)
+            this.studentList.forEach(item=>item.isTalkFlag=1)
+            localStorage.setItem('studentList',JSON.stringify(this.studentList))
           })
+          
           break;
         case 2:
           this.sendMessage({type:20,allMute:false}) //全员解禁
-          this.getMuteStatus({isAll:0,isTalk:0}).then(res=>{
-            this.studentList.forEach(item=>item.isTalk=false)
+          this.getMuteStatus({isAll:1,isTalk:0}).then(res=>{
+            this.studentList.forEach(item=>item.isTalkFlag=0)
+            localStorage.setItem('studentList',JSON.stringify(this.studentList))
           })
           break;
           default:
           break;
       }
-      localStorage.setItem('studentList',JSON.stringify(this.studentList))
     },
     async getMuteStatus(obj){
       let res = await this.$http.post('/sys/mixedflow/userMute',obj)
@@ -890,7 +893,6 @@ export default {
               let obj = applyInfo.message
               obj.userId = applyInfo.userInfo.userId
               obj.avatarUrl = applyInfo.userInfo.avatarUrl
-              obj.isTalk = false //默认可以发言
               let arr = [];
               this.studentList.forEach((item) =>
                 arr.push(item.userId)
