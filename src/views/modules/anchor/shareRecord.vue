@@ -5,98 +5,55 @@
         class="headerTool"
         :inline="true"
         :model="dataForm"
-        ref="salesRecord"
-        label-width="100px"
+        ref="shareRecord"
+        label-width="80px"
         @keyup.enter.native="getDataList()"
       >
         <el-row>
           <el-col :span="8">
-            <el-form-item label="用户昵称" prop="nickName">
+            <el-form-item label="分享用户" prop="nickName">
               <el-input
                 size="small"
                 v-model="dataForm.username"
                 clearable
               ></el-input>
             </el-form-item>
-      
+        
           </el-col>
-          <el-col :span="8">
-           
-            <el-form-item label="手机号码" prop="phone">
+           <el-col :span="8">
+                <el-form-item label="手机号码" prop="phone">
               <el-input
                 size="small"
                 v-model="dataForm.phone"
                 clearable
               ></el-input>
             </el-form-item>
-          </el-col>
+            </el-col>
+              
             <el-col :span="8">
-              <el-form-item label="商品名称" prop="phone">
-                <el-input
+              <el-form-item label="分享类型" prop="delFlg">
+                <el-select
                   size="small"
-                  v-model="dataForm.phone"
+                  v-model="dataForm.delFlg"
                   clearable
-                ></el-input>
+                >
+                  <el-option :value="1" label="成功"></el-option>
+                  <el-option :value="0" label="失败"></el-option>
+                </el-select>
               </el-form-item>
             </el-col>
               <div v-if="isOpen">
-          <el-row>
-          
-
+          <el-row >
+         
             <el-col :span="8">
-              <el-form-item label="商品类型" prop="delFlg">
+              <el-form-item label="分享状态" prop="handlingStatus">
                 <el-select
                   size="small"
                   v-model="dataForm.handlingStatus"
                   clearable
                 >
-                  <el-option :value="1" label="已处理"></el-option>
-                  <el-option :value="0" label="未处理"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="退款方式" prop="delFlg">
-                <el-select
-                  size="small"
-                  v-model="dataForm.handlingStatus"
-                  clearable
-                >
-                  <el-option :value="1" label="已处理"></el-option>
-                  <el-option :value="0" label="未处理"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="关联订单编号" prop="phone">
-                <el-input
-                  size="small"
-                  v-model="dataForm.phone"
-                  clearable
-                ></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="退款单号" prop="delFlg">
-                <el-select
-                  size="small"
-                  v-model="dataForm.handlingStatus"
-                  clearable
-                >
-                  <el-option :value="1" label="已处理"></el-option>
-                  <el-option :value="0" label="未处理"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="退款状态" prop="delFlg">
-                <el-select
-                  size="small"
-                  v-model="dataForm.handlingStatus"
-                  clearable
-                >
-                  <el-option :value="1" label="已处理"></el-option>
-                  <el-option :value="0" label="未处理"></el-option>
+                  <el-option :value="1" label="成功"></el-option>
+                  <el-option :value="0" label="失败"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -104,9 +61,9 @@
         </div>
           <el-col :span="24">
             <el-form-item style="float: right; padding-right: 10px">
-              <el-button type="info" size="small" @click="exportHandle()">{{
-                $t("export")
-              }}</el-button>
+                 <el-button type="info" size="small" @click="exportHandle()">{{
+          $t("export")
+        }}</el-button>
               <el-button size="small" type="primary" @click="getDataList()">{{
                 $t("query")
               }}</el-button>
@@ -124,9 +81,9 @@
           </el-col>
         </el-row>
 
-    
+      
       </el-form>
-
+   
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
@@ -136,130 +93,82 @@
         style="width: 100%"
         ref="table"
       >
+     
+
         <el-table-column
-          prop="id"
-          label="退款单号"
-          min-width="200px"
-          header-align="center"
-          align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="userName"
-          label="用户昵称"
+          prop="username"
+          label="分享用户"
           header-align="center"
           align="center"
           min-width="120px"
         ></el-table-column>
-
         <el-table-column
-          prop="userPhone"
+          prop="phone"
           label="手机号码"
           min-width="120px"
           header-align="center"
           align="center"
         >
         </el-table-column>
-        <el-table-column
-          prop="productType"
-          label="商品类型"
+         <el-table-column
+          prop="phone"
+          label="分享类型"
+          min-width="150px"
           header-align="center"
           align="center"
         >
         </el-table-column>
         <el-table-column
-          prop="productName"
-          label="商品名称"
+          prop="url"
+          label="页面路由"
           min-width="150px"
           header-align="center"
           align="center"
         ></el-table-column>
+  
 
-        <el-table-column
-          prop="price"
-          label="销售价格"
-          header-align="center"
-          show-overflow-tooltip
-          align="center"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="payPrice"
-          label="支付金额"
-          header-align="center"
-          show-overflow-tooltip
-          align="center"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="payType"
-          label="退款方式"
-          header-align="center"
-          show-overflow-tooltip
-          align="center"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="refundPrice"
-          label="退款金额"
-          header-align="center"
-          show-overflow-tooltip
-          align="center"
-        >
-        </el-table-column>
-
-        <el-table-column
-          prop="refundStatus"
-          label="退款状态"
-          header-align="center"
-          align="center"
-        >
-          <template slot-scope="scope">
-            <div>
-              {{
-                scope.row.refundStatus === 1
-                  ? "退款成功"
-                  : scope.row.refundStatus === -1
-                  ? "退款失败"
-                  : scope.row.refundStatus === -2
-                  ? "未退款"
-                  :'退款中'
-              }}
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="weixinUserProductId"
-          label="关联产品编号"
-          min-width="100px"
-          header-align="center"
-          show-overflow-tooltip
-          align="center"
-        >
-        </el-table-column>
         <el-table-column
           prop="createDate"
           label="创建时间"
           min-width="160px"
           header-align="center"
           align="center"
-        ></el-table-column>
+        >
+        </el-table-column>
+        
         <el-table-column
-          :label="$t('handle')"
-          fixed="right"
+          prop="handlingStatus"
+          label="分享状态"
           header-align="center"
           align="center"
-          width="100"
         >
           <template slot-scope="scope">
-            <el-button
-              type="text"
-              size="small"
-              v-if="scope.row.refundStatus === -2"
-              @click="updateApproveStatus(scope.row.id)"
-              >确认退款</el-button
-            >
+            <div>{{ scope.row.handlingStatus===1 ? "已通过" : scope.row.handlingStatus===2 ? "待审批" : "已拒绝" }}</div>
           </template>
         </el-table-column>
+          <el-table-column
+          prop="url"
+          label="成功事件"
+
+          header-align="center"
+          align="center"
+        ></el-table-column>
+          <el-table-column
+          prop="url"
+          label="被分享人"
+          min-width="120px"
+
+          header-align="center"
+          align="center"
+        ></el-table-column>
+          <el-table-column
+          prop="url"
+          label="手机号码"
+          min-width="120px"
+          header-align="center"
+          align="center"
+        ></el-table-column>
+  
       </el-table>
       <el-pagination
         :current-page="page"
@@ -284,7 +193,7 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/userRefund/confirmRefundPage",
+        getDataListURL: "/sys/manage/complaint/page",
         getDataListIsPage: true,
         deleteIsBatch: true,
         exportURL: "/sys/manage/complaint/export",
@@ -350,37 +259,11 @@ export default {
        this.resetDataForm()
     },
 
+
     // 重置搜索条件
     resetDataForm() {
-      this.$refs.salesRecord.resetFields();
+      this.$refs.shareRecord.resetFields();
       this.getDataList();
-    },
-        // 确认退款
-    updateApproveStatus(id,status) {
-      this.$confirm(
-        `是否执行退款操作`,
-        this.$t("prompt.title"),
-        {
-          confirmButtonText: this.$t("confirm"),
-          cancelButtonText: this.$t("cancel"),
-          type: "warning",
-        }
-      )
-        .then(() => {
-          this.$http["put"]("/sys/userRefund/updateRefundStatus", {
-            id,
-          })
-            .then(({ data: res }) => {
-              if (res.code !== 0) {
-                return this.$message.error(res.msg);
-              }
-               this.getDataList();
-              this.$message.success(res.data);
-            })
-            .catch(() => {});
-        })
-        .catch(() => {});
-   
     },
   },
 };

@@ -952,6 +952,14 @@ export default {
               }
               localStorage.setItem('connectMessageInfo',JSON.stringify(this.connectMessageInfo)) //将当前麦上列表存着
             }
+            if(applyInfo.message && applyInfo.message.type && applyInfo.message.type === 30){ //用户端切换连麦
+              this.connectMessageInfo.forEach(item=>{
+                if(item.userInfo.userId==applyInfo.userInfo.userId){
+                  item.message.connectType = applyInfo.message.connectType
+                }
+              })
+              localStorage.setItem('connectMessageInfo',JSON.stringify(this.connectMessageInfo)) //将当前麦上列表存着
+            }
           }
         }
       });
