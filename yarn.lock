@@ -8288,7 +8288,7 @@ portfinder@1.0.21:
 
 portfinder@^1.0.26:
   version "1.0.28"
-  resolved "https://registry.npmjs.org/portfinder/-/portfinder-1.0.28.tgz#67c4622852bd5374dd1dd900f779f53462fac778"
+  resolved "https://registry.npmmirror.com/portfinder/-/portfinder-1.0.28.tgz#67c4622852bd5374dd1dd900f779f53462fac778"
   integrity sha512-Se+2isanIcEqf2XMHjyUKskczxbPH7dQnlMjXX6+dybayyHvAf/TCgyMRlzf/B6QDhAEFOGes0pzRo3by4AbMA==
   dependencies:
     async "^2.6.2"
@@ -11339,3 +11339,8 @@ zego-express-logger@1.2.0:
   version "1.2.0"
   resolved "https://registry.npmmirror.com/zego-express-logger/-/zego-express-logger-1.2.0.tgz#fe99314bec408d73f6d84b9882e121fa53cb87f2"
   integrity sha512-wtKhEmkr7D+K9LJ8XJtCw0c/T0KjcczhQ5lc+XudFWENSHTo3Zs0bWuVAa64EbwQzTw6FuCrBcnG683sNQcS1Q==
+
+zego-superboard-web@^2.2.2:
+  version "2.2.2"
+  resolved "https://registry.npmjs.org/zego-superboard-web/-/zego-superboard-web-2.2.2.tgz#e5837ba9e9a31e6141698fe7279905121b10b16d"
+  integrity sha512-bFxExmkS/J+nazoWIf8lz1qHA6mNlQPLD2lbUmbGILSq6Q4NqZg3WcEWwSqBCxb9a2WU15kF8Tp5eBP1t7QlAQ==
