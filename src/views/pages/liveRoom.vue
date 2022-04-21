@@ -254,7 +254,7 @@
         <el-header>
           <div class="live_room_header">
             <div class="header_left">
-              <div class="header_nav" v-for="(item,index) in headerNav" :class="[headerNavActive==index?'headerNavActive':'']" :key="index" @click="headerNavClick(item.type,index)">
+              <div class="header_nav" v-for="(item,index) in headerNav" :class="[headerNavActive==item.type?'headerNavActive':'']" :key="index" @click="headerNavClick(item.type)">
                 <img :src="item.img" alt="">
                 <p>{{item.text}}</p>
               </div>
@@ -295,6 +295,18 @@
                     ·&nbsp;<span>55222000</span>热度
                   </p>
                 </div>
+              </div>
+              <div class="screenShare">
+                <component 
+                  :is="headerNavActive" 
+                  :userInfo="headerNavActive == 'superboard' ? 
+                  {
+                    token: this.token,
+                    roomId: this.roomId,
+                    userId: this.userID,
+                    appID: this.appID
+                  } : 
+                  {} "></component>
               </div>
               <video
                 autoplay
@@ -341,8 +353,12 @@
 <script>
 import { ZegoExpressEngine } from "zego-express-engine-webrtc";
 import TIM from "tim-js-sdk";
+import Superboard from "./superboard/index.vue" //超级白板
 
 export default {
+  components: {
+    Superboard
+  },
   data() {
     return {
       activeName: "first",
@@ -378,7 +394,7 @@ export default {
         {
           img:require('@/assets/img/superWhiteboard.png'),
           text:'超级白板',
-          type:'superWhiteboard'
+          type:'superboard'
         },
         {
           img:require('@/assets/img/documentShare.png'),
@@ -414,7 +430,7 @@ export default {
           status:true,
         }
       ],
-      headerNavActive:"0", //顶部导航选中,
+      headerNavActive:"superboard", //顶部导航选中,
       liveStatus:false,//直播状态
       liveTheme: "" //直播主题
     };
@@ -478,7 +494,7 @@ export default {
 
     this.zg.on("publishQualityUpdate", (streamID, stats) => {
       // 推流质量
-      console.log("推流质量----", streamID, stats);
+      // console.log("推流质量----", streamID, stats);
       this.streamID = streamID;
       this.videoPacketsLostRate = stats.video.videoTransferFPS.toFixed(2);
     });
@@ -487,14 +503,14 @@ export default {
     this.zg.on("roomStreamUpdate",async (roomID, updateType, streamList) => {
       if (updateType == "ADD") {
         // 流新增，开始拉流
-        console.log("流新增------------", streamList);
+        // console.log("流新增------------", streamList);
         streamList.forEach(streamItem=>{
           this.connectMessageInfo.forEach(async item=>{
             if(item.userInfo.userId === streamItem.user.userID){
               item.stream = await this.zg.startPlayingStream(streamItem.streamID)
             }
           })
-          console.log('111',this.connectMessageInfo)
+          // console.log('111',this.connectMessageInfo)
           localStorage.setItem('connectMessageInfo',JSON.stringify(this.connectMessageInfo)) //将当前麦上列表存着
           this.$loading().close()
           if (this.roomId != streamItem.streamID) {
@@ -577,8 +593,11 @@ export default {
         }
       }
     },
-    headerNavClick(type,index){
-      this.headerNavActive = index
+    headerNavClick(type){
+      if(type == "superboard") {  //超级白板
+
+      }
+      this.headerNavActive = type
     },
     handleClick(tab, event) {
       console.log(tab, event);
@@ -676,7 +695,7 @@ export default {
           bitrate:300,
         }
       });
-      console.error(this.stream);
+      // console.error(this.stream);
       // Step4
       this.startPublishingStream();
     },
@@ -1831,6 +1850,17 @@ p {
                 }
               }
             }
+
+            // 屏幕共享区域
+            .screenShare {
+              position: absolute;
+              left: 0;
+              top: 60px;
+              width: 100%;
+              height: calc(100% - 60PX);
+              // background: pink;
+            }
+
             .push_video{
               position: absolute;
               bottom: 0;
