@@ -104,6 +104,9 @@
             </el-popover>
         </div>
         <div class="superboard-pagination">
+            <el-tooltip effect="dark" content="新建白板" placement="left">
+                <img @click="uploadDialogVisible = true" class="superboard-create" src="@/assets/icon/s_create.png" alt="">
+            </el-tooltip>
             <!-- 白板列表 -->
             <el-select 
                 v-model="whiteboardSelectValue" 
@@ -144,9 +147,6 @@
                 <i class="el-icon-plus" @click="setScaleFactor(true)"></i>
             </div>
         </div>
-        <el-tooltip effect="dark" content="新建超级白板" placement="left">
-            <img @click="uploadDialogVisible = true" class="superboard-create" src="@/assets/icon/s_create.png" alt="">
-        </el-tooltip>
         <el-dialog
             title="请选择画板"
             :visible.sync="uploadDialogVisible"
@@ -1299,8 +1299,15 @@ export default {
         .borderRight{
             border-right: 1px solid #676767;
         }
+        .superboard-create {
+            width: 15px;
+            height: 18px;
+            margin: 0 20px;
+            cursor: pointer;
+        }
         .el-select {
             width: 140px;
+            border-left: 1px solid #676767;
             border-right: 1px solid #676767;
             padding: 0 20px;
             .el-input__inner {
@@ -1333,13 +1340,7 @@ export default {
         }
     }
 
-    .superboard-create {
-        width: 24px;
-        position: absolute;
-        right: 20px;
-        top: 10px;
-        cursor: pointer;
-    }
+    
     .createWrap {
         width: 100%;
         display: flex;
