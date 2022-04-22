@@ -96,14 +96,14 @@
         ref="table"
       >
         <el-table-column
-          prop="username"
+          prop="id"
           label="退款单号"
           min-width="200px"
           header-align="center"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="username"
+          prop="userName"
           label="用户昵称"
           header-align="center"
           align="center"
@@ -111,7 +111,7 @@
         ></el-table-column>
 
         <el-table-column
-          prop="phone"
+          prop="userPhone"
           label="手机号码"
           min-width="120px"
           header-align="center"
@@ -119,7 +119,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="phone"
+          prop="productType"
           label="商品类型"
           min-width="120px"
           header-align="center"
@@ -127,7 +127,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="username"
+          prop="productName"
           label="商品名称"
           min-width="150px"
           header-align="center"
@@ -135,7 +135,7 @@
         ></el-table-column>
 
         <el-table-column
-          prop="solution"
+          prop="price"
           label="销售价格"
           header-align="center"
           show-overflow-tooltip
@@ -143,7 +143,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="handler"
+          prop="payPrice"
           label="支付金额"
           header-align="center"
           show-overflow-tooltip
@@ -151,7 +151,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="handler"
+          prop="payType"
           label="退款方式"
           header-align="center"
           show-overflow-tooltip
@@ -159,7 +159,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="handler"
+          prop="refundPrice"
           label="退款金额"
           header-align="center"
           show-overflow-tooltip
@@ -167,7 +167,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="handlingStatus"
+          prop="approveStatus"
           label="审批状态"
           header-align="center"
           align="center"
@@ -175,17 +175,17 @@
           <template slot-scope="scope">
             <div>
               {{
-                scope.row.handlingStatus === 1
-                  ? "已通过"
-                  : scope.row.handlingStatus === 2
-                  ? "待审批"
-                  : "已拒绝"
+                scope.row.approveStatus === 1
+                  ? "同意"
+                  : scope.row.approveStatus === -1
+                  ? "不同意"
+                  : "申请中"
               }}
             </div>
           </template>
         </el-table-column>
         <el-table-column
-          prop="createDate"
+          prop="weixinUserProductId"
           label="关联订单编号"
           min-width="200px"
           header-align="center"
@@ -202,7 +202,7 @@
         </el-table-column>
 
         <el-table-column
-          prop="handlingTime"
+          prop="approveDate"
           label="审批时间"
           min-width="160px"
           header-align="center"
@@ -220,13 +220,16 @@
             <el-button
               type="text"
               size="small"
-              v-if="scope.row.handlingStatus === 2"
+              v-if="scope.row.approveStatus === 0"
+              @click="updateApproveStatus(scope.row.id,1)"
               >通过</el-button
             >
             <el-button
               type="text"
               size="small"
-              v-if="scope.row.handlingStatus === 2"
+              v-if="scope.row.approveStatus === 0"
+              @click="updateApproveStatus(scope.row.id,-1)"
+
               >驳回</el-button
             >
           </template>
@@ -255,7 +258,7 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/manage/complaint/page",
+        getDataListURL: "/sys/userRefund/userRefundOrderPage",
         getDataListIsPage: true,
         deleteIsBatch: true,
         exportURL: "/sys/manage/complaint/export",
@@ -326,6 +329,36 @@ export default {
       this.$refs.refundApproval.resetFields();
       this.getDataList();
     },
+
+      // 审核
+    updateApproveStatus(id,status) {
+      this.$confirm(
+        `是否执行 [${status == -1 ? "拒绝" : "同意"}[ 操作`,
+        this.$t("prompt.title"),
+        {
+          confirmButtonText: this.$t("confirm"),
+          cancelButtonText: this.$t("cancel"),
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.$http["put"]("/sys/userRefund/updateApproveStatus", {
+            id,
+            approveStatus:status,
+          })
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                return this.$message.error(res.msg);
+              }
+               this.getDataList();
+              this.$message.success(res.data);
+            })
+            .catch(() => {});
+        })
+        .catch(() => {});
+   
+    },
+  
   },
 };
 </script>

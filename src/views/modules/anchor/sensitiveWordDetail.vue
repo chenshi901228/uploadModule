@@ -93,6 +93,13 @@ export default {
           }
           vm.diaForm = res.data;
           vm.details = vm.diaForm.details ? vm.diaForm.details.split(",") : [];
+          for (let index = 0; index < vm.details.length; index++) {
+            if(vm.details[index]==''){
+              vm.details.splice(1,index)
+            }
+            
+          }
+
         })
         .catch(() => {});
     });

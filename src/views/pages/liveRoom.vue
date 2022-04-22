@@ -397,11 +397,6 @@ export default {
           type:'superboard'
         },
         {
-          img:require('@/assets/img/documentShare.png'),
-          text:'文件共享',
-          type:'documentShare'
-        },
-        {
           img:require('@/assets/img/beautify.png'),
           text:'美化',
           type:'beautify'
@@ -595,9 +590,8 @@ export default {
     },
     headerNavClick(type){
       if(type == "superboard") {  //超级白板
-
       }
-      this.headerNavActive = type
+        this.headerNavActive = type
     },
     handleClick(tab, event) {
       console.log(tab, event);

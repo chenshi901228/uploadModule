@@ -1,6 +1,11 @@
 <!-- 超级白板功能 -->
 <template>
-    <div class="superboard">
+    <div 
+        class="superboard"
+        v-loading="loading"
+        :element-loading-text="loadingText"
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.8)">
         <div id="superboard-content"></div>
         <div class="superboard-tool">
             <el-popover
@@ -130,6 +135,27 @@
                 <i class="el-icon-plus" @click="setScaleFactor(true)"></i>
             </div>
         </div>
+        <el-tooltip effect="dark" content="新建超级白板" placement="left">
+            <img @click="uploadDialogVisible = true" class="superboard-create" src="@/assets/icon/s_create.png" alt="">
+        </el-tooltip>
+        <el-dialog
+            title="选择要共享的内容"
+            :visible.sync="uploadDialogVisible"
+            center
+            top="200px"
+            width="30%">
+                <div class="createWrap">
+                    <el-button @click="createWhiteboardView" style="margin-right: 20px">互动白板</el-button>
+                    <el-upload
+                        action="customize"
+                        :limit="1"
+                        :file-list="fileList"
+                        :http-request="uploadFile"
+                        :show-file-list="false">
+                        <el-button type="primary">共享文件</el-button>
+                    </el-upload>
+                </div>
+        </el-dialog>
     </div>
 </template>
 <script>
@@ -143,7 +169,8 @@ export default {
         if(this.token) this.loginRoom()
     },
     destroyed() {
-        // this.destroySuperBoardSubView(2)
+        // this.zegoSuperBoard.clear()
+        this.logoutRoom()
     },
     
     props: {
@@ -175,8 +202,25 @@ export default {
                 thumbnailMode: '1', // 缩略图清晰度 1: 普通 2: 标清 3: 高清
                 pptStepMode: '1' // PPT 切页模式 1: 正常 2: 不跳转
             },
+            fileList: [], //上传文件临时列表
+            uploadFileTipsMap: { // 上传状态
+                1: '上传中',
+                2: '已上传',
+                4: '排队中',
+                8: '转换中',
+                16: '转换成功',
+                32: '转换失败',
+                64: '取消上传'
+            }, 
+            loading: false,
+            loadingText: "",
             // 白板绘制工具
             toolList: [
+                {
+                    type: null, //拖拽
+                    name: "drag",
+                    des: "拖拽"
+                },
                 {
                     type: "destroy", //销毁当前白板
                     name: "destroy",
@@ -236,7 +280,7 @@ export default {
             currBrushColor: "#F64326", //当前选中颜色
             currPencilSize: 18, //当前字号
             currGraph: 4, //当前选中图形-默认直线
-            activeTool: "", //当前点击的工具
+            activeTool: "pen", //当前点击的工具-默认画笔
             whiteboardSelectValue: "", //当前白板
             whiteboardIndex: 1, //新建白板标识-名字
             whiteboardList: [], //白板列表
@@ -250,6 +294,7 @@ export default {
             pageCount: 1, //总页数
             currPage: 1,  //当前页
             currScale: 100, //缩放
+            uploadDialogVisible: false, //新建白板选择弹框
         };
     },
     methods: {
@@ -342,8 +387,10 @@ export default {
          * @description: 创建普通白板
          */
         async createWhiteboardView() {
+            this.uploadDialogVisible = false
             try {
-                this.$loading({background:'rgba(0,0,0,.5)',text:'创建普通白板中'})
+                this.loadingText = "创建普通白板中"
+                this.loading = true
 
                 await this.zegoSuperBoard.createWhiteboardView({
                     name: "普通白板-" + this.whiteboardIndex++,
@@ -356,13 +403,71 @@ export default {
                 // 查询、更新页面白板列表，创建成功后白板 SDK 内部会自动渲染
                 this.querySuperBoardSubViewListHandle();
 
-                this.$loading().close()
+                this.loading = false
                 // 隐藏打开缩略图弹框的按钮
                 this.thumbShow = false
                 this.$message.success("创建普通白板成功")
             } catch (errorData) {
+                this.loading = false
                 this.$message.error(errorData)
             }
+        },
+        /**
+         * @description: 创建文件白板
+         * @param {String} fileID 文件 ID
+         */
+        async createFileView(fileID) {
+            try {
+                this.loadingText = "创建文件白板中"
+                this.loading = true
+                await this.zegoSuperBoard.createFileView({
+                    fileID
+                });
+                this.$message.success("创建成功")
+                this.loading = false
+                // 查询、更新页面白板列表，创建成功后白板 SDK 内部会自动渲染
+                this.querySuperBoardSubViewListHandle();
+
+                // 显示、隐藏打开缩略图弹框的按钮
+                this.thumbShow = this.hasThumb()
+            } catch (errorData) {
+                this.loading = false
+                this.$message.error(errorData)
+            }
+        },
+        /**
+         * @description: 选择静态、动态文件进行上传
+         * @param {Number} renderType 渲染模式
+         * @param {File} file 文件对象
+         */
+        uploadFile({file}) {
+            this.uploadDialogVisible = false
+            console.log(file)
+            let type = file.name.split(".")
+            type = type[type.length-1].toLocaleLowerCase()
+            let renderType = ( type == "ppt"||type == "pptx" ) ? 6 : 3
+            if (!file) return;
+            //上传文件后转码后渲染模式类型，如果用户涉及到 iOS、Web、Windows、Mac、小程序各端的业务，推荐使用 VectorAndIMG 模式。
+            this.zegoSuperBoard
+                .uploadFile(file, renderType, (res) => {
+                    if(!this.loading) {
+                        this.loading = true
+                    }
+                    this.loadingText = this.uploadFileTipsMap[res.status] + (res.uploadPercent ? res.uploadPercent + '%' : '')
+                })
+                .then((fileID) =>{
+
+                    this.loading = false
+
+                    //上传成功清空上传列表 
+                    this.fileList =[]
+                    // 这里上传完成立即创建文件白板，开发者根据实际情况处理
+                    this.createFileView(fileID);
+                })
+                .catch(err => {
+                    this.loading = false
+                    console.log(err)
+                });
         },
 
         /**
@@ -373,7 +478,7 @@ export default {
             console.warn('SuperBoard Demo initToolType', result);
             // 设置失败，直接返回
             if (!result) {
-                // return roomUtils.toast('设置失败');
+                this.$message.error("初始化白板工具失败")
             } else {
                 // let el = document.querySelector(".tool-list .pencil-text-setting")
                 // el.getElementsByTagName("p")[0].classList.add("active")
@@ -474,6 +579,9 @@ export default {
             }
         },
 
+
+
+
         /**
          * @description: 查询、更新页面当前 Excel sheet 列表
          * @return {Number} 当前挂载的 sheet index
@@ -565,7 +673,7 @@ export default {
                     result.sheetIndex = this.getExcelSheetNameListHandle();
 
                     // 缓存当前 excel 白板 的 sheet
-                    // cacheSheetMap[result.uniqueID] = result.sheetIndex;
+                    this.sheetListSelectValue = result.sheetIndex;
                 } else {
                     // 非 excel 白板隐藏 sheet 下拉框
                     this.sheetShow = false
@@ -613,7 +721,7 @@ export default {
 
                         // 缓存当前 excel 白板 的 sheet
                         if (curViewModel.fileType === 4) {
-                        // cacheSheetMap[result.uniqueID] = result.sheetIndex;
+                            this.sheetListSelectValue = result.sheetIndex;
                         }
                         // 初始化白板工具
                         this.initToolType();
@@ -622,7 +730,7 @@ export default {
                     }
                 }
             }else { //创建新白板
-                this.createWhiteboardView()
+                // this.createWhiteboardView()
             }
         },
 
@@ -637,14 +745,18 @@ export default {
                 if (!zegoSuperBoardSubView) return;
 
                 try {
-                    // roomUtils.loading('销毁白板中');
+                    this.loadingText = "销毁白板中"
+                    this.loading = true
 
                     await this.zegoSuperBoard.destroySuperBoardSubView(zegoSuperBoardSubView.getModel().uniqueID);
                     console.warn('===demo destroySuperBoardSubView');
-                    this.$message.success('销毁成功')
+
+                    this.loading = false
+                    this.$message.success('销毁当前白板成功')
                     // 查询、更新页面白板列表，销毁成功后白板 SDK 内部会自动删除相关内容，并移除挂载的内容
                     this.querySuperBoardSubViewListHandle();
                 } catch (errorData) {
+                    this.loading = false
                     this.$message.success(errorData)
                 }
             } else {
@@ -652,15 +764,21 @@ export default {
                     var modelList = await this.zegoSuperBoard.querySuperBoardSubViewList();
                     for (let index = 0; index < modelList.length; index++) {
                         const model = modelList[index];
-                        // roomUtils.loading('销毁白板 ' + model.name + ' 中');
+
+                        this.loadingText = '销毁白板 ' + model.name + ' 中'
+                        if(!this.loading) this.loading = true
+
                         console.warn('SuperBoard Demo destroySuperBoardSubView', model.name);
                         await this.zegoSuperBoard.destroySuperBoardSubView(model.uniqueID);
                         console.warn('SuperBoard Demo destroySuperBoardSubView suc', model.name);
                         this.$message.success('销毁白板 ' + model.name + ' 成功') 
                     }
+
+                    this.loading = false
                     // 查询、更新页面白板列表，销毁成功后白板 SDK 内部会自动删除相关内容，并移除挂载的内容
                     this.querySuperBoardSubViewListHandle();
                 } catch (errorData) {
+                    this.loading = false
                     this.$message.error(errorData)
                 }
             }
@@ -785,8 +903,8 @@ export default {
 
         // 选择白板工具
         selectTool({ name, type }) {
-            if(name == "destroy") { //销毁白板
-                this.destroySuperBoardSubView(2)
+            if(name == "destroy") { //销毁当前白板
+                this.destroySuperBoardSubView(1)
             }else if(name == "clear") { //清空白板
                 this.clearAllPage()
             }else if(name == "undo") { //撤销
@@ -803,6 +921,21 @@ export default {
 
         // 白板分页相关----------
         /**
+         * @description: 根据 uniqueID 获取指定 SuperBoardSubViewModel
+         * @param {String} uniqueID 白板标识
+         * @return {SuperBoardSubViewModel} SuperBoardSubViewModel
+         */
+        async getSuperBoardSubViewModelByUniqueID(uniqueID) {
+            var modelList = await this.zegoSuperBoard.querySuperBoardSubViewList();
+            var model;
+            modelList.forEach((item) => {
+                if (uniqueID === item.uniqueID) {
+                    model = item;
+                }
+            });
+            return model;
+        },
+        /**
          * @description: 根据目标 uniqueID 切换指定白板
          * @param {String} uniqueID uniqueID
          */
@@ -814,8 +947,6 @@ export default {
 
                 // 除去 excel 白板，其他白板第二个参数可忽略
                 // excel 白板默认切换到第一个 sheet（SDK 内部没有记录上一次的下标）
-                // 先寻找 cacheSheetMap 中是否存在
-                // var sheetIndex = cacheSheetMap[uniqueID];
                 await this.zegoSuperBoard
                     .getSuperBoardView()
                     .switchSuperBoardSubView(uniqueID, fileType === 4 ? this.sheetListSelectValue || 0 : undefined);
@@ -842,6 +973,7 @@ export default {
 
                 this.$message.success('切换成功');
             } catch (errorData) {
+                console.log(errorData)
                 this.$message.error(errorData);
             }
         },
@@ -859,13 +991,16 @@ export default {
                 await this.zegoSuperBoard.getSuperBoardView().switchSuperBoardSubView(uniqueID, +sheetIndex);
 
                 // 缓存当前 excel 白板 的 sheet
-                // cacheSheetMap[uniqueID] = sheetIndex;
+                this.sheetListSelectValue = sheetIndex;
 
                 this.$message.success('切换成功')
             } catch (errorData) {
                 this.$message.error(errorData)
             }
         },
+
+
+
 
 
 
@@ -882,10 +1017,10 @@ export default {
             this.zegoSuperBoard.on(
                 "superBoardSubViewScrollChanged",
                 (uniqueID, page, step) => {
-                console.warn(
-                    "SuperBoard Demo superBoardSubViewScrollChanged",
-                    ...arguments
-                );
+                // console.warn(
+                //     "SuperBoard Demo superBoardSubViewScrollChanged",
+                //     ...arguments
+                // );
                 var zegoSuperBoardSubView = this.getCurrentSuperBoardSubView();
                 if (
                     zegoSuperBoardSubView &&
@@ -900,42 +1035,42 @@ export default {
             this.zegoSuperBoard.on(
                 "superBoardSubViewScaleChanged",
                 (uniqueID, scale) => {
-                console.warn(
-                    "SuperBoard Demo uperBoardSubViewScaleChanged",
-                    uniqueID,
-                    scale
-                );
+                // console.warn(
+                //     "SuperBoard Demo uperBoardSubViewScaleChanged",
+                //     uniqueID,
+                //     scale
+                // );
                 // roomUtils.updateCurrScaleDomHandle(scale);
                 }
             );
 
             // 监听远端新增白板
             this.zegoSuperBoard.on("remoteSuperBoardSubViewAdded", (uniqueID) => {
-                console.error("uniqueID", uniqueID);
-                console.warn(
-                "SuperBoard Demo remoteSuperBoardSubViewAdded",
-                ...arguments
-                );
+                // console.error("uniqueID", uniqueID);
+                // console.warn(
+                // "SuperBoard Demo remoteSuperBoardSubViewAdded",
+                // ...arguments
+                // );
                 // 查询、更新页面白板列表，新增的白板 SDK 内部不会自动挂载
                 this.querySuperBoardSubViewListHandle();
             });
 
             // 监听远端销毁白板
             this.zegoSuperBoard.on("remoteSuperBoardSubViewRemoved", (uniqueID) => {
-                console.warn(
-                "SuperBoard Demo remoteSuperBoardSubViewRemoved",
-                ...arguments
-                );
+                // console.warn(
+                // "SuperBoard Demo remoteSuperBoardSubViewRemoved",
+                // ...arguments
+                // );
                 // 查询、更新页面白板列表，销毁的白板 SDK 内部会自动销毁
                 this.querySuperBoardSubViewListHandle();
             });
 
             // 监听远端切换白板
             this.zegoSuperBoard.on("remoteSuperBoardSubViewSwitched", (uniqueID) => {
-                console.warn(
-                "SuperBoard Demo remoteSuperBoardSubViewSwitched",
-                ...arguments
-                );
+                // console.warn(
+                // "SuperBoard Demo remoteSuperBoardSubViewSwitched",
+                // ...arguments
+                // );
                 // 查询、更新页面白板列表，切换的白板 SDK 内部会自动切换
                 this.querySuperBoardSubViewListHandle();
             });
@@ -944,31 +1079,31 @@ export default {
             this.zegoSuperBoard.on(
                 "remoteSuperBoardSubViewExcelSwitched",
                 (uniqueID, sheetIndex) => {
-                console.warn(
-                    "SuperBoard Demo remoteSuperBoardSubViewExcelSwitched",
-                    ...arguments
-                );
+                // console.warn(
+                //     "SuperBoard Demo remoteSuperBoardSubViewExcelSwitched",
+                //     ...arguments
+                // );
                 // 查询、更新页面白板列表，切换的 Excel Sheet SDK 内部会自动切换
-                querySuperBoardSubViewListHandle();
+                this.querySuperBoardSubViewListHandle();
                 }
             );
 
             // 监听远端白板权限变更
             this.zegoSuperBoard.on("remoteSuperBoardAuthChanged", (data) => {
                 console.log(data.scale, data.scroll);
-                console.warn(
-                "SuperBoard Demo remoteSuperBoardAuthChanged",
-                ...arguments
-                );
+                // console.warn(
+                // "SuperBoard Demo remoteSuperBoardAuthChanged",
+                // ...arguments
+                // );
                 // 内部会自动更改为当前权限与对端同步
             });
 
             // 监听远端白板图元权限变更
             this.zegoSuperBoard.on("remoteSuperBoardGraphicAuthChanged", (data) => {
-                console.warn(
-                "SuperBoard Demo remoteSuperBoardGraphicAuthChanged",
-                ...arguments
-                );
+                // console.warn(
+                // "SuperBoard Demo remoteSuperBoardGraphicAuthChanged",
+                // ...arguments
+                // );
                 // 内部会自动更改为当前权限与对端同步
             });
         },
@@ -985,19 +1120,20 @@ export default {
         width: 100%;
         height: 100%;
     }
-  .superboard-tool{
-        // width: 40px;
-        //   height: 100px;
+    .superboard-tool{
+        max-height: 100%;
+        overflow-y: auto;
         padding: 12px 8px;
         background-color: #535353;
         border-radius: 4px;
         position: absolute;
         left: 24px;
-        top: 20px;
+        top: 50%;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        transform: translateY(-50%);
         &>span {
             position: relative;
             display: inline-block;
@@ -1043,14 +1179,14 @@ export default {
     }
 
 
-  .superboard-pagination{
+    .superboard-pagination{
         padding: 10px 0;
         background: #535353;
         border-radius: 5px;
         position: absolute;
-        top: 20px;
-        left: 10%;
-    //   transform: translateX(-50%);
+        top: 10px;
+        left: 120px;
+        // transform: translateX(-50%);
         display: flex;
         align-items: center;
         .borderRight{
@@ -1087,7 +1223,20 @@ export default {
                 margin: 0 20px;
             }
         }
-  }
+    }
+
+    .superboard-create {
+        width: 24px;
+        position: absolute;
+        right: 20px;
+        top: 10px;
+        cursor: pointer;
+    }
+    .createWrap {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
 }
 .el-popover {
     min-width: 80px;
