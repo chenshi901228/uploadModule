@@ -750,14 +750,18 @@ export default {
           RoomId: this.roomId,
         })
         .then((res) => {
-          this.$message({message:'直播已关闭',type:'success'})
-          this.liveStatus = false
-          localStorage.removeItem('liveStatus') //将直播状态移除
-          localStorage.removeItem('connectMessageInfo') //将直播连麦列表移除
-          localStorage.removeItem('isRecord') //将录制状态移除
-          localStorage.removeItem('studentList') //将学生列表移除
-          this.tim.logout() //退出IM
-          this.tim.destroy();
+          if(res.data.success&&res.data.msg=='success'){
+            this.$message({message:'直播已关闭',type:'success'})
+            this.liveStatus = false
+            localStorage.removeItem('liveStatus') //将直播状态移除
+            localStorage.removeItem('connectMessageInfo') //将直播连麦列表移除
+            localStorage.removeItem('isRecord') //将录制状态移除
+            localStorage.removeItem('studentList') //将学生列表移除
+            this.tim.logout() //退出IM
+            this.tim.destroy();
+          }else{
+            this.$message({message:'结束直播失败',type:'error'})
+          }
         });
       this.stopPublishingStream();
     },
