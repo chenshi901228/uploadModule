@@ -129,7 +129,7 @@
         :inline="true"
         :model="userForm"
         size="small"
-        @keyup.enter.native="getDataList()"
+        @keyup.enter.native="queryUserList()"
       >
         <el-form-item label="用户昵称">
           <el-input v-model="userForm.name" placeholder="请输入"></el-input>
@@ -144,14 +144,14 @@
         <el-form-item>
           <el-button @click="reset">重置</el-button>
         </el-form-item>
-        <el-form-item>
+        <!-- <el-form-item>
           <el-button
-            v-if="dataListSelections.length !== 0"
-            type="danger"
+            v-if="dataListSelectionUsers.length !== 0"
+            :type="showBtn ? 'primary' : 'info'"
             @click="deleteUserSelect()"
             >批量删除</el-button
           >
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <el-table
         v-loading="dataUserListLoading"
@@ -169,48 +169,28 @@
           width="50"
           fixed="left"
         ></el-table-column>
-        <el-table-column
-          label="用户昵称"
-          prop="name"
-          align="center"
-        >
+        <el-table-column label="用户昵称" prop="name" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.name || "--" }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="手机号码"
-          prop="phone"
-          align="center"
-        >
+        <el-table-column label="手机号码" prop="phone" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.phone || "--" }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="加入状态"
-          prop="joinFlag"
-          align="center"
-        >
+        <el-table-column label="加入状态" prop="joinFlag" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.joinFlag === 0 ? "未加入" : "已加入" }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="创建时间"
-          prop="createDate"
-          align="center"
-        >
+        <el-table-column label="创建时间" prop="createDate" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.createDate || "--" }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="操作"
-          header-align="center"
-          align="center"
-        >
-          <template slot-scope="scope">
+        <el-table-column label="操作" header-align="center" align="center">
+          <template slot-scope="scope" v-if="scope.row.joinFlag !== 1">
             <el-button
               type="text"
               size="small"
@@ -234,8 +214,13 @@
         <el-button size="small" @click="dialogUserFormVisible = false"
           >取 消</el-button
         >
-        <el-button size="small" type="primary" @click="saveUser"
-          >添加</el-button
+        <el-button
+          size="small"
+          :type="showBtn ? 'primary' : 'info'"
+          @click="saveUser"
+          >{{
+            dataListSelectionUsers.length > 1 ? "批量添加" : "添加"
+          }}</el-button
         >
       </div>
     </el-dialog>
@@ -279,8 +264,9 @@ export default {
       dataListSelectionUsers: [],
       dataUserListTotal: 0,
       groupId: "",
-      dialogVisible:false,
-      ids:[]
+      dialogVisible: false,
+      ids: [],
+      showBtn: true,
     };
   },
   watch: {},
@@ -355,31 +341,35 @@ export default {
           }
           this.$message.success("添加成功!");
           this.dialogUserFormVisible = false;
-          this.dataListSelectionUsers = []
+          this.dataListSelectionUsers = [];
           this.queryPageWithGroupId();
         })
         .catch((err) => {
           throw err;
         });
     },
-    //批量删除
+    //批量添加
     deleteUserSelect() {
-      let ids = [];
-      this.dataListSelectionUsers.forEach((v) => {
-        ids.push(v.id);
-      });
-      this.$http
-        .delete("/sys/dynamicGroupUser", { data: ids })
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          }
-          this.$message.success("删除成功!");
-          this.queryUserList();
-        })
-        .catch((err) => {
-          throw err;
+      if (!this.showBtn) {
+        this.$message.warning("不可添加已加入成员！");
+      } else {
+        let ids = [];
+        this.dataListSelectionUsers.forEach((v) => {
+          ids.push(v.id);
         });
+        this.$http
+          .delete("/sys/dynamicGroupUser/addBatch", { data: ids })
+          .then(({ data: res }) => {
+            if (res.code !== 0) {
+              return this.$message.error(res.msg);
+            }
+            this.$message.success("删除成功!");
+            this.queryUserList();
+          })
+          .catch((err) => {
+            throw err;
+          });
+      }
     },
     // 分页, 每页条数
     pageSizeChangeUserHandle(val) {
@@ -415,50 +405,58 @@ export default {
         this.dialogUserFormVisible = false;
         return;
       } else if (this.dataListSelectionUsers.length === 1) {
-        this.$http
-          .post("/sys/dynamicGroupUser", {
-            weixinUserId: this.dataListSelectionUsers[0].id,
-            sysGroupId: this.groupId,
-          })
-          .then(({ data: res }) => {
-            if (res.code !== 0) {
+        if (!this.showBtn) {
+          this.$message.warning("不可添加已加入成员！");
+        } else {
+          this.$http
+            .post("/sys/dynamicGroupUser", {
+              weixinUserId: this.dataListSelectionUsers[0].id,
+              sysGroupId: this.groupId,
+            })
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                this.dialogUserFormVisible = false;
+                return this.$message.error(res.msg);
+              }
+              this.$message.success("添加成功!");
               this.dialogUserFormVisible = false;
-              return this.$message.error(res.msg);
-            }
-            this.$message.success("添加成功!");
-            this.dialogUserFormVisible = false;
-            this.dataListSelectionUsers = []
-            this.queryPageWithGroupId();
-          })
-          .catch((err) => {
-            throw err;
-          });
+              this.dataListSelectionUsers = [];
+              this.queryPageWithGroupId();
+            })
+            .catch((err) => {
+              throw err;
+            });
+        }
       } else if (this.dataListSelectionUsers.length > 1) {
-        let list = [];
-        this.dataListSelectionUsers.forEach((v) => {
-          list.push({
-            weixinUserId: v.id,
-            sysGroupId: this.groupId,
+        if (!this.showBtn) {
+          this.$message.warning("不可添加已加入成员！");
+        } else {
+          let list = [];
+          this.dataListSelectionUsers.forEach((v) => {
+            list.push({
+              weixinUserId: v.id,
+              sysGroupId: this.groupId,
+            });
           });
-        });
-        this.$http
-          .post("/sys/dynamicGroupUser/addBatch", list)
-          .then(({ data: res }) => {
-            if (res.code !== 0) {
+          this.$http
+            .post("/sys/dynamicGroupUser/addBatch", list)
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                this.dialogUserFormVisible = false;
+                return this.$message.error(res.msg);
+              }
+              this.$message.success("添加成功!");
               this.dialogUserFormVisible = false;
-              return this.$message.error(res.msg);
-            }
-            this.$message.success("添加成功!");
-            this.dialogUserFormVisible = false;
-            this.dataListSelectionUsers = []
-            this.queryPageWithGroupId();
-          })
-          .catch((err) => {
-            throw err;
-          });
+              this.dataListSelectionUsers = [];
+              this.queryPageWithGroupId();
+            })
+            .catch((err) => {
+              throw err;
+            });
+        }
       }
     },
-    confirmShowState(){
+    confirmShowState() {
       this.$http
         .delete("/sys/dynamicGroupUser", { data: this.ids })
         .then(({ data: res }) => {
@@ -466,8 +464,8 @@ export default {
             return this.$message.error(res.msg);
           }
           this.$message.success("删除成功!");
-          this.ids = []
-          this.dialogVisible = false
+          this.ids = [];
+          this.dialogVisible = false;
           this.queryPageWithGroupId();
         })
         .catch((err) => {
@@ -477,16 +475,19 @@ export default {
     //批量选择
     userListSelectionChangeHandle(val) {
       this.dataListSelectionUsers = val;
+      this.showBtn = this.dataListSelectionUsers.every((v) => {
+        return v.joinFlag === 0;
+      });
     },
     // 多选
     dataListSelectionChangeHandle(val) {
       this.dataListSelections = val;
-      console.log(this.dataListSelections)
+      console.log(this.dataListSelections);
     },
     //删除
     handleDelete(index, row) {
       this.ids.push(row.id);
-      this.dialogVisible = true
+      this.dialogVisible = true;
     },
     //动态组人员
     queryPageWithGroupId() {
@@ -530,11 +531,11 @@ export default {
     },
     //批量删除
     deleteSelect() {
-      console.log(this.dataListSelections)
+      console.log(this.dataListSelections);
       this.dataListSelections.forEach((v) => {
         this.ids.push(v.id);
       });
-      this.dialogVisible = true
+      this.dialogVisible = true;
     },
   },
 };
