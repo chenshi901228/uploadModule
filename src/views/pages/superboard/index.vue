@@ -105,22 +105,31 @@
         </div>
         <div class="superboard-pagination">
             <!-- 白板列表 -->
-            <el-select v-model="whiteboardSelectValue" @change="switchWhitebopardHandle" placeholder="请选择">
-                <el-option
-                    v-for="item in whiteboardList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                </el-option>
+            <el-select 
+                v-model="whiteboardSelectValue" 
+                @change="switchWhitebopardHandle" 
+                popper-class="customSelectStyle"
+                placeholder="请选择">
+                    <el-option
+                        v-for="item in whiteboardList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                    </el-option>
             </el-select>
             <!-- sheet列表 -->
-            <el-select v-if="sheetShow" v-model="sheetListSelectValue" @change="switchSheetListHandle" placeholder="请选择">
-                <el-option
-                    v-for="item in sheetList"
-                    :key="item.value"
-                    :label="item.label"
-                    :value="item.value">
-                </el-option>
+            <el-select 
+                v-if="sheetShow" 
+                v-model="sheetListSelectValue" 
+                @change="switchSheetListHandle" 
+                popper-class="customSelectStyle"
+                placeholder="请选择">
+                    <el-option
+                        v-for="item in sheetList"
+                        :key="item.value"
+                        :label="item.label"
+                        :value="item.value">
+                    </el-option>
             </el-select>
             <!-- 分页 -->
             <div class="page-bar borderRight">
@@ -139,20 +148,27 @@
             <img @click="uploadDialogVisible = true" class="superboard-create" src="@/assets/icon/s_create.png" alt="">
         </el-tooltip>
         <el-dialog
-            title="选择要共享的内容"
+            title="请选择画板"
             :visible.sync="uploadDialogVisible"
-            center
             top="200px"
             width="30%">
                 <div class="createWrap">
-                    <el-button @click="createWhiteboardView" style="margin-right: 20px">互动白板</el-button>
+                    <div class="createWrap-btn" @click="createWhiteboardView" style="margin-right: 30px;">
+                        <img class="icon" src="@/assets/icon/s_normal.png" alt="">
+                        <span>普通白板</span>
+                        <img class="actived" src="@/assets/icon/s_selected.png" alt="">
+                    </div>
                     <el-upload
                         action="customize"
                         :limit="1"
                         :file-list="fileList"
                         :http-request="uploadFile"
                         :show-file-list="false">
-                        <el-button type="primary">共享文件</el-button>
+                        <div class="createWrap-btn">
+                            <img class="icon" src="@/assets/icon/s_file.png" alt="">
+                            <span>文件白板</span>
+                            <img class="actived" src="@/assets/icon/s_selected.png" alt="">
+                        </div>
                     </el-upload>
                 </div>
         </el-dialog>
@@ -163,12 +179,13 @@ import { ZegoSuperBoardManager } from "zego-superboard-web";
 import { ZegoExpressEngine } from "zego-express-engine-webrtc";
 export default {
     mounted() {
-        let el = document.querySelector("#superboard-content")
-        this.parentDomWidth = el.getBoundingClientRect().width.toFixed()
-        this.parentDomHeight = el.getBoundingClientRect().height.toFixed()
+        this.updateSizeDomHandle()
         if(this.token) this.loginRoom()
+        // 白板大小自适应：监听页面 resize 事件
+        window.addEventListener('resize', this.onResizeHandle);
     },
     destroyed() {
+        window.removeEventListener('resize', this.onResizeHandle)
         // this.zegoSuperBoard.clear()
         this.logoutRoom()
     },
@@ -194,6 +211,7 @@ export default {
             parentDomID: "superboard-content", //白板挂载容器
             parentDomWidth: 0, //白板容器设置宽度
             parentDomHeight: 0, //白板容器设置高度
+            resizeTicking: false, // 自适应执行开关，这里是延迟 1000 ms 执行
             server: "wss://webliveroom467572390-api.imzego.com/ws",
             zg: null,
             zegoSuperBoard: null, //ZegoSuperBoard 实例
@@ -349,6 +367,7 @@ export default {
         // 登陆房间
         async loginRoom() {
             if (!this.token) return;
+            console.log(this.token)
             try {
                 await this.init();
                 let result = await this.zg.loginRoom(
@@ -387,6 +406,7 @@ export default {
          * @description: 创建普通白板
          */
         async createWhiteboardView() {
+            if (!this.zegoSuperBoard) return this.$message.error("白板初始化失败，请刷新重试")
             this.uploadDialogVisible = false
             try {
                 this.loadingText = "创建普通白板中"
@@ -441,6 +461,7 @@ export default {
          * @param {File} file 文件对象
          */
         uploadFile({file}) {
+            if (!this.zegoSuperBoard) return this.$message.error("白板初始化失败，请刷新重试")
             this.uploadDialogVisible = false
             console.log(file)
             let type = file.name.split(".")
@@ -534,6 +555,7 @@ export default {
          * @description:上一页
          */
         previousPage(){
+            if (!this.zegoSuperBoard) return this.$message.error("白板初始化失败，请刷新重试")
             var zegoSuperBoardSubView = this.zegoSuperBoard.getSuperBoardView().getCurrentSuperBoardSubView();
             if (zegoSuperBoardSubView) {
                 zegoSuperBoardSubView.flipToPrePage();
@@ -544,6 +566,7 @@ export default {
          * @description:上一页
          */
         nextPage(){
+            if (!this.zegoSuperBoard) return this.$message.error("白板初始化失败，请刷新重试")
             var zegoSuperBoardSubView = this.zegoSuperBoard.getSuperBoardView().getCurrentSuperBoardSubView();
             if (zegoSuperBoardSubView) {
                 zegoSuperBoardSubView.flipToNextPage();
@@ -561,6 +584,7 @@ export default {
          * @param {Boolea} type true-放大，false-缩小
          */
         setScaleFactor(type){
+            if (!this.zegoSuperBoard) return this.$message.error("白板初始化失败，请刷新重试")
             let step = 0.25
             let targetScale = this.currScale / 100
             if(!type && this.currScale == 100) return //如果已经100%缩小不作操作
@@ -903,6 +927,7 @@ export default {
 
         // 选择白板工具
         selectTool({ name, type }) {
+            if(!this.zegoSuperBoard) return this.$message.error("白板初始化失败，请刷新重试")
             if(name == "destroy") { //销毁当前白板
                 this.destroySuperBoardSubView(1)
             }else if(name == "clear") { //清空白板
@@ -919,7 +944,7 @@ export default {
 
 
 
-        // 白板分页相关----------
+        // 白板切换相关----------
         /**
          * @description: 根据 uniqueID 获取指定 SuperBoardSubViewModel
          * @param {String} uniqueID 白板标识
@@ -1001,6 +1026,87 @@ export default {
 
 
 
+
+        // 白板尺寸设置相关
+        /**
+         * @description: resize 回调
+         */
+        onResizeHandle() {
+            console.log("resize")
+            if (!this.resizeTicking) {
+                this.resizeTicking = true;
+                setTimeout(() => {
+                    // 容器尺寸自动变更后，自动重新加载白板 View
+                    this.autoReloadViewHandle();
+                    this.resizeTicking = false;
+                }, 1000);
+            }
+        },
+        /**
+         * @description: 更新当前页面显示 width、height
+         */
+        updateSizeDomHandle() {
+            // 获取当前容器宽高
+            let el = document.querySelector("#superboard-content")
+            this.parentDomWidth = el.getBoundingClientRect().width.toFixed()
+            this.parentDomHeight = el.getBoundingClientRect().height.toFixed()
+        },
+        /**
+         * @description: 容器尺寸自动变更后，自动重新加载白板 View
+         */
+        autoReloadViewHandle() {
+            this.updateSizeDomHandle();
+            this.reloadViewHandle();
+        },
+        /**
+         * @description: 重新加载白板 View
+         */
+        reloadViewHandle() {
+            // 未实例化之前，触发 resize 直接返回
+            if (!this.zegoSuperBoard) return;
+
+            var zegoSuperBoardView = this.zegoSuperBoard.getSuperBoardView();
+            if (!zegoSuperBoardView) return;
+
+            var zegoSuperBoardSubView = zegoSuperBoardView.getCurrentSuperBoardSubView();
+            if (zegoSuperBoardSubView) {
+                // 当前有白板挂载
+                setTimeout(() => {
+                    zegoSuperBoardSubView.reloadView();
+                }, 120); // 动画 120 ms
+            }
+        },
+        /**
+         * @description: 判断当前是否支持 Element.requestFullscreen
+         * @description: Element.requestFullscreen 兼容性
+         * @param {*} dom 当前需要全屏的 Element
+         * @return {*} Promise 异步请求结果
+         */
+        supportRequestFullscreen(dom) {
+            if (dom.requestFullscreen) {
+                return dom.requestFullscreen();
+            } else if (dom.webkitRequestFullScreen) {
+                return dom.webkitRequestFullScreen();
+            } else if (dom.mozRequestFullScreen) {
+                return dom.mozRequestFullScreen();
+            } else {
+                return dom.msRequestFullscreen();
+            }
+        },
+        /**
+         * @description: 全屏功能，用 Element.requestFullscreen 实现，但是由于部分浏览器实现可能有问题，代码仅供参考
+         * @description: 详见文档：https://developer.mozilla.org/zh-CN/docs/Web/API/Element/requestFullScreen
+         * @return {*}
+         */
+        fullScreenHandle() {
+            this.supportRequestFullscreen(document.getElementById(this.parentDomID))
+                .then(function() {
+                    this.$message.success("已全屏")
+                })
+                .catch(function() {
+                    this.$message.warn('当前浏览器不支持全屏');
+                });
+        },
 
 
 
@@ -1120,6 +1226,7 @@ export default {
         width: 100%;
         height: 100%;
     }
+    // 左侧竖向工具栏
     .superboard-tool{
         max-height: 100%;
         overflow-y: auto;
@@ -1178,15 +1285,15 @@ export default {
         }
     }
 
-
+    // 分页工具栏
     .superboard-pagination{
         padding: 10px 0;
         background: #535353;
         border-radius: 5px;
         position: absolute;
         top: 10px;
-        left: 120px;
-        // transform: translateX(-50%);
+        left: 50%;
+        transform: translateX(-50%);
         display: flex;
         align-items: center;
         .borderRight{
@@ -1221,6 +1328,7 @@ export default {
             }
             .page-center{
                 margin: 0 20px;
+                width: max-content;
             }
         }
     }
@@ -1236,10 +1344,51 @@ export default {
         width: 100%;
         display: flex;
         justify-content: center;
+        .createWrap-btn {
+            width: 130px;
+            padding: 36px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            background: #F7F7F7;
+            font-size: 14px;
+            color: #151515;
+            cursor: pointer;
+            position: relative;
+            .actived{
+                position: absolute;
+                right: 10px;
+                top: 10px;
+                width: 16px;
+                height: 16px;
+                opacity: 0;
+            } 
+            &:hover{
+                .actived {
+                    opacity: 1;
+                }
+            }
+            .icon{
+                width: 56px;
+                height: 50px;
+                margin-bottom: 20px;
+            }      
+        }
     }
 }
 .el-popover {
     min-width: 80px;
+}
+.customSelectStyle{
+    background: #535353;
+    .popper__arrow{
+        border-bottom-color: #535353 !important;
+        &::after{
+            border-bottom-color: #535353 !important;
+        }
+    }
 }
 .superboard-tool-item-detail{
     width: 80px;
@@ -1289,6 +1438,7 @@ export default {
             }
         }
     }
+    // 颜色设置
     .tool-color-select {
         padding: 10px 0;
         li{
@@ -1302,6 +1452,7 @@ export default {
             }
         }
     }
+    // 笔触粗细
     .tool-size-pen {
         padding: 10px 0;
         ul{
@@ -1317,7 +1468,7 @@ export default {
             }
         }
     }
-
+    // 字号
     .tool-size-font {
         padding: 10px 0;
         .el-select {
