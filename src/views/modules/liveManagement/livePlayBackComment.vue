@@ -56,7 +56,7 @@
                         </div> -->
                         <el-col :span="24">
                             <el-form-item style="float:right; padding-right:10px">
-                                <!-- <el-button size="small" type="primary" @click="exportHandle">{{ $t("export") }}</el-button> -->
+                                <el-button size="small" type="primary" @click="exportHandle">{{ $t("export") }}</el-button>
                                 <el-button size="small" type="primary" @click="getDataList">{{ $t("query") }}</el-button>
                                 <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
                                 <!-- <el-button 
@@ -109,7 +109,7 @@
                     </el-table-column>
                     <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center">
                         <template slot-scope="{ row }">
-                            <el-button type="text" size="small" @click="checkComment(row.id)">查看回复</el-button>
+                            <el-button type="text" size="small" @click="checkComment(row)">查看回复</el-button>
                             <el-button v-if="!row.delFlg" type="text" size="small" @click="deleteComment(row.id)">删除</el-button>
                         </template>
                     </el-table-column>
@@ -145,7 +145,7 @@ export default {
         return {
             mixinTableModuleOptions: {
                 getDataListURL: "/sys/liveComment/getCommentByLivePlaybackId", // 数据列表接口，API地址
-                exportURL: "/sys/liveList/export", // 导出接口，API地址
+                exportURL: "/sys/liveComment/exportCommentList", // 导出接口，API地址
             },
             dataForm: {
                 commentUserName: "",
@@ -175,8 +175,11 @@ export default {
     },
     methods: {
         // 查看回复
-        checkComment(id) {
-            if(id) this.$router.push({ name: "liveManagement-livePlayBackChildComment", query: { id }})
+        checkComment(row) {
+            if(row) {
+                this.$router.push({ name: "liveManagement-livePlayBackChildComment", query: { id: row.id }})
+                localStorage.setItem("livePlayBackComment", JSON.stringify(row))
+            }
         },
         // 删除评论
         deleteComment(id) {

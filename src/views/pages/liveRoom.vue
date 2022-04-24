@@ -1339,6 +1339,7 @@ p {
                         background-color: #51cada;
                         border-radius: 15px;
                         font-size: 8px;
+                        line-height: 16px;
                       }
                     }
                     .normalMsg {
