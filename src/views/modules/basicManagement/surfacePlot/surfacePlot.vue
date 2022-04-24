@@ -341,12 +341,16 @@ export default {
     },
     upImgDialog(n, o) {
       if (!n) {
-        this.$refs["upload"].clearFiles();
+        this.imgForm = {
+          img: "",
+          name: "",
+        };
       }
     },
     editeImgDialog(n, o) {
       if (!n) {
-        this.$refs["upload2"].clearFiles();
+        this.editeImgForm.img = "";
+        this.editeImgForm.name = "";
       }
     },
   },
@@ -377,8 +381,9 @@ export default {
               return this.$message.error(res.msg);
             } else {
               this.editeImgDialog = false;
+              this.editeImgForm.img = "";
               this.editeImgForm.name = "";
-              this.$refs["upload2"].clearFiles();
+              this.editeUrl = "";
               this.query();
             }
           })
@@ -389,6 +394,7 @@ export default {
     },
     remove() {
       this.editeUrl = "";
+      this.editeImgForm.img = "";
       this.editeSrcList = [];
     },
     handleRemove2(file, fileList) {
@@ -529,6 +535,7 @@ export default {
             return this.$message.error(res.msg);
           }
           this.editeUrl = res.data.coverUrl;
+          this.editeImgForm.img = this.editeUrl;
           this.editeImgForm.name = res.data.coverName;
           this.editeSrcList.push(res.data.coverUrl);
         })
