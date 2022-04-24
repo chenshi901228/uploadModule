@@ -504,25 +504,14 @@ export default {
     },
     //创建直播
     createRoom(index, row) {
-      // this.$prompt("直播主题", "提示", {
-      //   confirmButtonText: "确定",
-      //   cancelButtonText: "取消",
-      //   inputValidator: (value) => {
-      //     if (!value) return "请输入直播主题";
-      //     if (value.length > 20) "直播主题最多不能超过20字符"
-      //   },
-      // })
-      //   .then(({ value }) => {
-      //     let t = this.$router.resolve({name: "liveRoom", query: { liveTheme: value }})
-      //     window.open(t.href, "_blank")
-      //   })
-      //   .catch(() => {
-      //     this.$message({
-      //       type: "info",
-      //       message: "取消输入",
-      //     });
-      //   });
-      console.log(index, row);
+      const routeData = this.$router.resolve({
+        name: "liveRoom",
+        query: {
+          liveTheme: row.liveTheme,
+          livePreviewId: row.id,
+        },
+      });
+      window.open(routeData.href, "_blank");
     },
     //显示与隐藏
     showThis(index, row) {

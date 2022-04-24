@@ -165,12 +165,6 @@
               <el-option :value="1" label="是"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="状态" v-if="diaTbas === 6">
-            <el-select v-model="diaSearchForm.delFlg" clearable>
-              <el-option :value="0" label="上架"></el-option>
-              <el-option :value="1" label="下架"></el-option>
-            </el-select>
-          </el-form-item>
           <el-form-item>
             <el-button
               v-if="diaTbas === 5 && dataListSelections.length !== 0"

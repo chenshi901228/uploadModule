@@ -235,6 +235,13 @@
               @click="showOrHide(row)"
               >{{ row.showState ? "隐藏" : "显示" }}</el-button
             >
+            <el-button
+              style="margin-left: 10px"
+              type="text"
+              v-if="row.liveState != 0"
+              @click="addProduct(row)"
+              >添加商品</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -378,6 +385,10 @@ export default {
           });
       });
     },
+    // 添加商品
+    addProduct({id, anchorUserId}) {
+      this.$router.push({ name: "anchorManagement-productAdd", query: { playbackId: id, anchorId: anchorUserId} })
+    }
   },
 };
 </script>

@@ -56,7 +56,7 @@
                         </div> -->
                         <el-col :span="24">
                             <el-form-item style="float:right; padding-right:10px">
-                                <!-- <el-button size="small" type="primary" @click="exportHandle">{{ $t("export") }}</el-button> -->
+                                <el-button size="small" type="primary" @click="exportHandle">{{ $t("export") }}</el-button>
                                 <el-button size="small" type="primary" @click="getDataList">{{ $t("query") }}</el-button>
                                 <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
                                 <!-- <el-button 
@@ -70,6 +70,13 @@
                         </el-col>
                     </el-row>
                 </el-form>
+                <div v-if="livePlayBackCommentInfo" class="livePlayBackCommentInfo">
+                    <div class="name">
+                        <p>评论人：{{ livePlayBackCommentInfo.commentUserName || "-"}}</p>
+                        <p>手机号码：{{ livePlayBackCommentInfo.phone || "-"}}</p>
+                    </div>
+                    <p class="info">{{ livePlayBackCommentInfo.commentValue }}</p>
+                </div>
                 <el-table
                     v-loading="dataListLoading"
                     :data="dataList"
@@ -163,7 +170,7 @@ export default {
         return {
             mixinTableModuleOptions: {
                 getDataListURL: "/sys/liveComment/getChildCommentById", // 数据列表接口，API地址
-                exportURL: "/sys/liveList/export", // 导出接口，API地址
+                exportURL: "/sys/liveComment/exportChildCommentList", // 导出接口，API地址
             },
             dataForm: {
                 commentUserName: "",
@@ -186,15 +193,30 @@ export default {
             ],
             // 回复详情弹框
             commentDetailsVisible: false,
-            commentDetailsInfo: null
+            commentDetailsInfo: null,
+            livePlayBackCommentInfo: null, //被回复的评论详情
         };
     },
     activated(){
         this.params.id = this.$route.query.id;
         this.dataList = []
+        this.livePlayBackCommentInfo = JSON.parse(localStorage.getItem("livePlayBackComment") || "") || null
         this.query()
     },
     methods: {
+        // 搜索栏高度设置
+        setOtherViewHeight() {
+            setTimeout(() => {
+                let h = 0
+                if(document.querySelector(".headerTool")) {
+                    h += document.querySelector(".headerTool").getBoundingClientRect().height
+                }
+                if(document.querySelector(".livePlayBackCommentInfo")) {
+                    h += document.querySelector(".livePlayBackCommentInfo").getBoundingClientRect().height
+                }
+                this.otherViewHeight = Math.ceil(h) + 10
+            },150)
+        },
         // 查看回复详情
         detail(data) {
             if(data.id)this.commentDetailsInfo = data
@@ -228,5 +250,20 @@ export default {
 <style lang="scss">
     .custom-dialog-top{
         transform: translateY(50%);
+    }
+    .livePlayBackCommentInfo {
+        border: 1px solid #999;
+        padding: 10px;
+        margin-bottom: 10px;
+        color: #606266;
+        .name{
+            display: flex;
+            p:not(:first-child){
+                margin-left: 20px;
+            }
+        }
+        .info {
+
+        }
     }
 </style>
