@@ -31,12 +31,13 @@
           :rows="6"
           maxlength="200"
           show-word-limit
+          :disabled="diaForm.handlingStatus"
         ></el-input>
       </div>
     </div>
 
     <div class="detalilBox_bottom">
-      <el-button size="small" type="primary" @click="updateCheckStatus()"
+      <el-button size="small" type="primary" v-if="!diaForm.handlingStatus" @click="updateCheckStatus()"
         >处理</el-button
       >
       <el-button size="small" @click="closeCurrentTab()">取消</el-button>

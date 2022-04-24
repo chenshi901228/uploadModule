@@ -202,7 +202,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            <div>{{ scope.row.handlingStatus ? "处理" : "未处理" }}</div>
+            <div>{{ scope.row.handlingStatus ? "已处理" : "未处理" }}</div>
           </template>
         </el-table-column>
         <el-table-column
