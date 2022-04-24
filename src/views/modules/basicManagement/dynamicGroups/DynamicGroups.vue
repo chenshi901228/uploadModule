@@ -170,8 +170,12 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogFormVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="saveGroup">确 定</el-button>
+        <el-button size="small" @click="dialogFormVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="saveGroup"
+          >确 定</el-button
+        >
       </div>
     </el-dialog>
 
@@ -193,8 +197,12 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogEditeFormVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="editeGroup">确 定</el-button>
+        <el-button size="small" @click="dialogEditeFormVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="editeGroup"
+          >确 定</el-button
+        >
       </div>
     </el-dialog>
 
@@ -208,7 +216,7 @@
       <el-upload
         class="upload-demo"
         accept=".xls, .xlsx"
-        :action="`http://192.168.250.195:28080/sys/dynamicGroupUser/import/${sysGroupId}?access_token=${access_token}`"
+        :action="uploadUrl"
         :on-error="handleError"
         :on-progress="handleProgress"
         :on-success="handleSuccess"
@@ -269,12 +277,12 @@ export default {
       showState: 0,
       id: "",
       dialogVisible: false,
+      uploadUrl: "",
     };
   },
   watch: {},
   created() {
     this.queryDynamicGroup();
-    this.access_token = Cookies.get("access_token");
   },
   activated() {},
   methods: {
@@ -330,6 +338,11 @@ export default {
     importXlx(i, row) {
       this.sysGroupId = row.id;
       this.dialogInputVisible = true;
+      this.uploadUrl = `${
+        window.SITE_CONFIG["apiURL"]
+      }/sys/dynamicGroupUser/import/${
+        this.sysGroupId
+      }?access_token=${Cookies.get("access_token")}`;
     },
     handleExceed(files, fileList) {
       this.$message.warning(
@@ -346,11 +359,14 @@ export default {
       console.log(event);
     },
     handleSuccess(response, file, fileList) {
+      console.log(response, file, fileList);
       if (response.code === 0) {
         this.$message({
-          message: "导入成功!",
+          message: `导入数据总数为${response.data.total}个,成功${
+            response.data.successNum
+          }个,失败${response.data.total - response.data.successNum}个`,
           type: "success",
-          duration: 1000,
+          duration: 2000,
         });
       }
       this.fileList = [];

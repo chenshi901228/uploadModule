@@ -215,10 +215,7 @@ export default {
       dialogVisible: false,
       disabled: false,
       chooseFlag: false,
-      defaultImg: [
-        "https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg",
-        "https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg",
-      ],
+      defaultImg: [],
       fileList: [],
       uploadUrl: "",
       rules: {
@@ -292,9 +289,31 @@ export default {
       dynamicGroupIds: [],
       liveIntroduce: "",
     };
+    this.getCoverPictureList();
     this.ruleForm.frontCoverUrl = this.defaultImg[0];
   },
   methods: {
+    //获取直播封面图
+    getCoverPictureList() {
+      this.$http
+        .get("/sys/livecoverpicture/getCoverPictureList")
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          let list = [];
+
+          if (res.data && res.data.length !== 0) {
+            res.data.forEach((v) => {
+              list.push(v.coverUrl);
+            });
+          }
+          this.defaultImg = list;
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
     onEditorChange(e) {
       e.quill.deleteText(300, 4);
       if (this.ruleForm.liveIntroduce == "") {
