@@ -233,9 +233,8 @@
             <el-button
               type="text"
               size="small"
-              v-if="!scope.row.delFlg"
               @click="forbidden(scope.row)"
-              >{{!scope.row.delFlg ? "禁用" : "解除"}}</el-button
+              >{{!scope.row.disabledFlg ? "禁用" : "解除"}}</el-button
             >
             <el-button
               type="text"
@@ -304,11 +303,9 @@ export default {
     },
 
     forbiddenHandle(type, data) {
-      let url = type
-        ? "/sys/manage/weixinUser/startUsing"
-        : "/sys/manage/weixinUser/forbiddenUsere";
+      let url = "/sys/anchor/info/updateAnchorStatus"
       this.$http
-        .put(url, { userIds: data })
+        .post(url, {disabledFlg:type, id: data })
         .then(({ data: res }) => {
           if (res.code == 0) {
             this.$message.success("操作成功");
@@ -330,7 +327,7 @@ export default {
           type: "warning",
         })
           .then(() => {
-            // this.forbiddenHandle(row.disabledFlg == 1 ? 1 : 0, [row.id]);
+            this.forbiddenHandle(row.disabledFlg == 1 ? 0 : 1, row.id);
           })
           .catch(() => {
             this.$message.info("已取消操作");
