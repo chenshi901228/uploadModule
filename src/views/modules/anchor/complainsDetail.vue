@@ -39,9 +39,7 @@
       <el-button size="small" type="primary" @click="updateCheckStatus()"
         >处理</el-button
       >
-      <el-button size="small" @click="closeCurrentTab()"
-        >取消</el-button
-      >
+      <el-button size="small" @click="closeCurrentTab()">取消</el-button>
     </div>
   </div>
 </template>
@@ -55,6 +53,9 @@ export default {
     return {
       userId: "",
       diaForm: {},
+      mixinViewModuleOptions: {
+        createdIsNeed: false, // 此页面是否在创建时，调用查询数据列表接口？
+      },
     };
   },
 
@@ -78,7 +79,7 @@ export default {
   },
   methods: {
     // 审核
-    updateCheckStatus(type) {
+    updateCheckStatus() {
       this.$confirm(`是否处理该条投诉`, {
         confirmButtonText: this.$t("confirm"),
         cancelButtonText: this.$t("cancel"),
@@ -86,18 +87,17 @@ export default {
       })
         .then(() => {
           this.$http
-            .get("sys/sensitiveWordCheck/updateCheckStatus", {
+            .get("/sys/manage/complaint/handling", {
               params: {
                 id: this.diaForm.id,
-                status: type,
-                remark: this.diaForm.remark,
+                solution: this.diaForm.solution,
               },
             })
             .then(({ data: res }) => {
               if (res.code !== 0) {
                 return this.$message.error(res.msg);
               }
-              this.$message.success(res.data);
+              this.$message.success("操作成功");
               this.closeCurrentTab();
               this.$bus.$emit("change");
             })

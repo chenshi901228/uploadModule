@@ -72,6 +72,9 @@ export default {
     return {
       userId: "",
       diaForm: {},
+      mixinViewModuleOptions: {
+        createdIsNeed: false, // 此页面是否在创建时，调用查询数据列表接口？
+      },
     };
   },
 
@@ -103,7 +106,7 @@ export default {
               if (res.code !== 0) {
                 return this.$message.error(res.msg);
               }
-              this.$message.success(res.data);
+              this.$message.success('操作成功');
               this.closeCurrentTab();
               this.$bus.$emit("change");
             })

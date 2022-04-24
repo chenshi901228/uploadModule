@@ -375,7 +375,7 @@ export default {
                 return this.$message.error(res.msg);
               }
                this.getDataList();
-              this.$message.success(res.data);
+              this.$message.success('操作成功');
             })
             .catch(() => {});
         })
