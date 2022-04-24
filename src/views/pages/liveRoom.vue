@@ -73,8 +73,14 @@
                   </div>
                 </div>
                 <!--  -->
-                <div class="message_info"
-                  v-if="item.type && item.type === 'TIMCustomElem'&& item.payload.data.message.type===4">
+                <div
+                  class="message_info"
+                  v-if="
+                    item.type &&
+                    item.type === 'TIMCustomElem' &&
+                    item.payload.data.message.type === 4
+                  "
+                >
                   <img :src="item.payload.data.userInfo.avatarUrl" alt="" />
                   <div class="message_content">
                     <div>
@@ -91,9 +97,21 @@
                       >
                     </div>
                     <p class="normalMsg">
-                      <span class="giftMsg">&nbsp;送出了<span class="gift_name">{{item.payload.data.message.giftInfo.name}}</span></span>
-                      <img class="giftMsgIcon" :src="item.payload.data.message.giftInfo.icon" mode="" />
-                      <span class="giftMsgCount">&nbsp;x&nbsp;<span>{{item.payload.data.message.giftInfo.giftNum}}</span></span>
+                      <span class="giftMsg"
+                        >&nbsp;送出了<span class="gift_name">{{
+                          item.payload.data.message.giftInfo.name
+                        }}</span></span
+                      >
+                      <img
+                        class="giftMsgIcon"
+                        :src="item.payload.data.message.giftInfo.icon"
+                        mode=""
+                      />
+                      <span class="giftMsgCount"
+                        >&nbsp;x&nbsp;<span>{{
+                          item.payload.data.message.giftInfo.giftNum
+                        }}</span></span
+                      >
                     </p>
                   </div>
                 </div>
@@ -147,23 +165,27 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="学生" name="third">
-            <div class="list_content" style="height:calc(100% - 50px)">
+            <div class="list_content" style="height: calc(100% - 50px)">
               <div
                 class="student_content"
                 v-for="(item, index) in studentList"
                 :key="index"
               >
                 <div class="left">
-                  <span>{{index+1}}</span>
-                  <img :src="item.avatarUrl" alt="">
+                  <span>{{ index + 1 }}</span>
+                  <img :src="item.avatarUrl" alt="" />
                   <div class="anchorInfo">
-                      <span>{{item.text}}</span>
-                      <p>{{item.ownIntimacy}}<span>亲密度</span></p>
+                    <span>{{ item.text }}</span>
+                    <p>{{ item.ownIntimacy }}<span>亲密度</span></p>
                   </div>
                 </div>
                 <div class="right" @click="muteMthod(item)">
-                  <img src="../../assets/img/isMike_icon.png" alt="" v-if="!item.isTalkFlag">
-                  <img src="../../assets/img/noMike_icon.png" alt="" v-else>
+                  <img
+                    src="../../assets/img/isMike_icon.png"
+                    alt=""
+                    v-if="!item.isTalkFlag"
+                  />
+                  <img src="../../assets/img/noMike_icon.png" alt="" v-else />
                 </div>
               </div>
             </div>
@@ -196,7 +218,7 @@
                     </div>
                   </div>
                   <div class="push_btn">
-                    <div @click="pushMethod('goods',item)">推送</div>
+                    <div @click="pushMethod('goods', item)">推送</div>
                     <p>
                       <span>{{ item.buyers }}</span
                       >人已购买
@@ -207,35 +229,46 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="直播预告" name="fifth">
-              <div class="list_content">
-                  <div class="content" v-for="(item,index) in livePreviewList" :key="index">
-                      <div class="preview_content">
-                        <img :src="item.frontCoverUrl" alt="">
-                        <p>{{item.liveIntroduce}}</p>
-                      </div>
-                      <div class="preview_time">
-                        <div>
-                            <p>开播时间：{{item.startDate}}</p>
-                            <p>预计时常：{{item.estimateLiveTime}}分钟</p>
-                        </div>
-                        <p @click="pushMethod('preview',item)">推送</p>
-                      </div>
+            <div class="list_content">
+              <div
+                class="content"
+                v-for="(item, index) in livePreviewList"
+                :key="index"
+              >
+                <div class="preview_content">
+                  <img :src="item.frontCoverUrl" alt="" />
+                  <p>{{ item.liveIntroduce }}</p>
+                </div>
+                <div class="preview_time">
+                  <div>
+                    <p>开播时间：{{ item.startDate }}</p>
+                    <p>预计时常：{{ item.estimateLiveTime }}分钟</p>
                   </div>
+                  <p @click="pushMethod('preview', item)">推送</p>
+                </div>
               </div>
+            </div>
           </el-tab-pane>
           <el-tab-pane label="推荐主播" name="sixth">
-              <div class="list_content">
-                  <div class="content" v-for="(item,index) in recommendList" :key="index">
-                      <div class="recommend_content">
-                        <span>{{item.sort}}</span>
-                        <img :src="item.avatarUrl" alt="">
-                        <div class="anchorInfo">
-                            <span>{{item.username}}</span>
-                            <p>粉丝：<span>{{item.fansNum}}</span>人</p>
-                        </div>
-                      </div>
+            <div class="list_content">
+              <div
+                class="content"
+                v-for="(item, index) in recommendList"
+                :key="index"
+              >
+                <div class="recommend_content">
+                  <span>{{ item.sort }}</span>
+                  <img :src="item.avatarUrl" alt="" />
+                  <div class="anchorInfo">
+                    <span>{{ item.username }}</span>
+                    <p>
+                      粉丝：<span>{{ item.fansNum }}</span
+                      >人
+                    </p>
                   </div>
+                </div>
               </div>
+            </div>
           </el-tab-pane>
         </el-tabs>
         <div class="barrage_input" v-show="activeName === 'first'">
@@ -254,26 +287,45 @@
         <el-header>
           <div class="live_room_header">
             <div class="header_left">
-              <div class="header_nav" v-for="(item,index) in headerNav" :class="[headerNavActive==item.type?'headerNavActive':'']" :key="index" @click="headerNavClick(item.type)">
-                <img :src="item.img" alt="">
-                <p>{{item.text}}</p>
+              <div
+                class="header_nav"
+                v-for="(item, index) in headerNav"
+                :class="[headerNavActive == item.type ? 'headerNavActive' : '']"
+                :key="index"
+                @click="headerNavClick(item.type)"
+              >
+                <img :src="item.img" alt="" />
+                <p>{{ item.text }}</p>
               </div>
             </div>
             <div class="header_right">
               <div class="wacth_num">
-                <img src="../../assets/img/liveUser.png" alt="">
-                <p>当前观看人数：<span>{{liveRoomUserinfo.onlineNum || 0}}</span>人</p>
+                <img src="../../assets/img/liveUser.png" alt="" />
+                <p>
+                  当前观看人数：<span>{{
+                    liveRoomUserinfo.onlineNum || 0
+                  }}</span
+                  >人
+                </p>
               </div>
-              <div class="tool_nav" v-for="(item,index) in toolNav" :key="index">
-                <img :src="item.status?item.activeImg:item.img" alt="" @click="toolClick(item)">
-                <p>{{item.text}}</p>
+              <div
+                class="tool_nav"
+                v-for="(item, index) in toolNav"
+                :key="index"
+              >
+                <img
+                  :src="item.status ? item.activeImg : item.img"
+                  alt=""
+                  @click="toolClick(item)"
+                />
+                <p>{{ item.text }}</p>
               </div>
               <div class="start_live" @click="startPlayLive" v-if="!liveStatus">
-                <img src="../../assets/img/startLive.png" alt="">
+                <img src="../../assets/img/startLive.png" alt="" />
                 <span>开始直播</span>
               </div>
               <div class="start_live" @click="closeLive" v-else>
-                <img src="../../assets/img/closeLive.png" alt="">
+                <img src="../../assets/img/closeLive.png" alt="" />
                 <span>结束直播</span>
               </div>
             </div>
@@ -283,30 +335,33 @@
           <div class="live_content">
             <div class="live_menu">
               <div class="live_menu_header">
-                <div class="live_theme">主题&nbsp;:&nbsp;{{liveTheme}}</div>
+                <div class="live_theme">主题&nbsp;:&nbsp;{{ liveTheme }}</div>
                 <div class="online_info">
                   <p>
-                    ·&nbsp;<span>{{liveRoomUserinfo.cumulativeNum || 0}}</span>人看过
+                    ·&nbsp;<span>{{ liveRoomUserinfo.cumulativeNum || 0 }}</span
+                    >人看过
                   </p>
                   <p>
-                    ·&nbsp;<span>{{liveRoomUserinfo.onlineNum || 0}}</span>人在线
+                    ·&nbsp;<span>{{ liveRoomUserinfo.onlineNum || 0 }}</span
+                    >人在线
                   </p>
-                  <p>
-                    ·&nbsp;<span>55222000</span>热度
-                  </p>
+                  <p>·&nbsp;<span>55222000</span>热度</p>
                 </div>
               </div>
               <div class="screenShare">
-                <component 
-                  :is="headerNavActive" 
-                  :userInfo="headerNavActive == 'superboard' ? 
-                  {
-                    token: this.token,
-                    roomId: this.roomId,
-                    userId: this.userID,
-                    appID: this.appID
-                  } : 
-                  {} "></component>
+                <component
+                  :is="headerNavActive"
+                  :userInfo="
+                    headerNavActive == 'superboard'
+                      ? {
+                          token: this.token,
+                          roomId: this.roomId,
+                          userId: this.userID,
+                          appID: this.appID,
+                        }
+                      : {}
+                  "
+                ></component>
               </div>
               <video
                 autoplay
@@ -321,25 +376,73 @@
                 v-for="(item, index) in connectMessageInfo"
                 :key="index"
               >
-                <div class="video_div" v-loading="!item.connectStatus"
-                  :element-loading-text="item.message.connectType==2?'申请视频连麦中':'申请语音连麦中'"
+                <div
+                  class="video_div"
+                  v-loading="!item.connectStatus"
+                  :element-loading-text="
+                    item.message.connectType == 2
+                      ? '申请视频连麦中'
+                      : '申请语音连麦中'
+                  "
                   element-loading-spinner="el-icon-loading"
-                  element-loading-background="rgba(0, 0, 0, 0.5)">
+                  element-loading-background="rgba(0, 0, 0, 0.5)"
+                >
                   <video
                     autoplay
                     :src-object.prop="item.stream"
-                    :style="{width:item.message.connectType==1||!item.connectStatus?'0px':'230px',height:item.message.connectType==1||!item.connectStatus?'0px':'112px'}"
+                    :style="{
+                      width:
+                        item.message.connectType == 1 || !item.connectStatus
+                          ? '0px'
+                          : '230px',
+                      height:
+                        item.message.connectType == 1 || !item.connectStatus
+                          ? '0px'
+                          : '112px',
+                    }"
                   ></video>
-                  <img class="connect_headerUrl" :src="item.userInfo.avatarUrl" alt="" v-if="item.message.connectType===1||!item.connectStatus">
+                  <img
+                    class="connect_headerUrl"
+                    :src="item.userInfo.avatarUrl"
+                    alt=""
+                    v-if="item.message.connectType === 1 || !item.connectStatus"
+                  />
                 </div>
                 <div class="cennect_userinfo">
                   <div>
-                    <img src="../../assets/img/camera.png" alt="" v-if="item.message.connectType==2">
-                    <img src="../../assets/img/mike.png" alt="" v-if="item.message.connectType==1">
-                    <span>{{item.userInfo.nickName}}</span>
+                    <img
+                      src="../../assets/img/camera.png"
+                      alt=""
+                      v-if="item.message.connectType == 2"
+                    />
+                    <img
+                      src="../../assets/img/mike.png"
+                      alt=""
+                      v-if="item.message.connectType == 1"
+                    />
+                    <span>{{ item.userInfo.nickName }}</span>
                   </div>
-                  <div class="btn" @click="replyConnect(1,item.message.type,item.message.connectType,item.userInfo.userId)" v-if="!item.connectStatus">接通</div>
-                  <div class="btn gua_btn" @click="hangup(item)" v-if="item.connectStatus">挂断</div>
+                  <div
+                    class="btn"
+                    @click="
+                      replyConnect(
+                        1,
+                        item.message.type,
+                        item.message.connectType,
+                        item.userInfo.userId
+                      )
+                    "
+                    v-if="!item.connectStatus"
+                  >
+                    接通
+                  </div>
+                  <div
+                    class="btn gua_btn"
+                    @click="hangup(item)"
+                    v-if="item.connectStatus"
+                  >
+                    挂断
+                  </div>
                 </div>
               </div>
             </div>
@@ -353,11 +456,11 @@
 <script>
 import { ZegoExpressEngine } from "zego-express-engine-webrtc";
 import TIM from "tim-js-sdk";
-import Superboard from "./superboard/index.vue" //超级白板
+import Superboard from "./superboard/index.vue"; //超级白板
 
 export default {
   components: {
-    Superboard
+    Superboard,
   },
   data() {
     return {
@@ -377,81 +480,83 @@ export default {
       barrageData: [], // 弹幕内容
       liveRoomUserinfo: {}, //用户在线信息
       goodsList: [], //获取主播推荐商品
-      livePreviewList:[],//直播预告列表
-      recommendList:[],//主播推荐主播列表
+      livePreviewList: [], //直播预告列表
+      recommendList: [], //主播推荐主播列表
       barrage: "",
       questionMessageInfo: [], //提问消息
       studentList: [],
       userInfo: {}, //用户信息
-      goodsPushTimer:null,//商品推送定时
-      livePredictionTimer:null,//直播预告推送定时
-      headerNav:[
+      goodsPushTimer: null, //商品推送定时
+      livePredictionTimer: null, //直播预告推送定时
+      headerNav: [
         {
-          img:require('@/assets/img/desktopShare.png'),
-          text:'桌面共享',
-          type:'desktopShare'
+          img: require("@/assets/img/desktopShare.png"),
+          text: "桌面共享",
+          type: "desktopShare",
         },
         {
-          img:require('@/assets/img/superWhiteboard.png'),
-          text:'超级白板',
-          type:'superboard'
+          img: require("@/assets/img/superWhiteboard.png"),
+          text: "超级白板",
+          type: "superboard",
         },
         {
-          img:require('@/assets/img/beautify.png'),
-          text:'美化',
-          type:'beautify'
+          img: require("@/assets/img/beautify.png"),
+          text: "美化",
+          type: "beautify",
         },
       ],
-      toolNav:[
+      toolNav: [
         {
-          img:require('@/assets/img/norecord.png'),
-          activeImg:require('@/assets/img/record.png'),
-          text:'录制',
-          type:'record',
-          status:false,
+          img: require("@/assets/img/norecord.png"),
+          activeImg: require("@/assets/img/record.png"),
+          text: "录制",
+          type: "record",
+          status: false,
         },
         {
-          img:require('@/assets/img/nomike.png'),
-          activeImg:require('@/assets/img/mike.png'),
-          text:'麦克风',
-          type:'mike',
-          status:false,
+          img: require("@/assets/img/nomike.png"),
+          activeImg: require("@/assets/img/mike.png"),
+          text: "麦克风",
+          type: "mike",
+          status: false,
         },
         {
-          img:require('@/assets/img/nocamera.png'),
-          activeImg:require('@/assets/img/camera.png'),
-          text:'摄像头',
-          type:'camera',
-          status:true,
-        }
+          img: require("@/assets/img/nocamera.png"),
+          activeImg: require("@/assets/img/camera.png"),
+          text: "摄像头",
+          type: "camera",
+          status: true,
+        },
       ],
-      headerNavActive:"superboard", //顶部导航选中,
-      liveStatus:false,//直播状态
-      liveTheme: "" //直播主题
+      headerNavActive: "superboard", //顶部导航选中,
+      liveStatus: false, //直播状态
+      liveTheme: "", //直播主题
     };
   },
   created() {
-    let liveStatus = JSON.parse(localStorage.getItem('liveStatus')) //直播状态
-    if(liveStatus){
-      this.liveStatus = liveStatus
+    let liveStatus = JSON.parse(localStorage.getItem("liveStatus")); //直播状态
+    if (liveStatus) {
+      this.liveStatus = liveStatus;
     }
-    let connectMessageInfo = JSON.parse(localStorage.getItem('connectMessageInfo')) //连麦列表状态
-    if(connectMessageInfo){
-      this.connectMessageInfo = connectMessageInfo
+    let connectMessageInfo = JSON.parse(
+      localStorage.getItem("connectMessageInfo")
+    ); //连麦列表状态
+    if (connectMessageInfo) {
+      this.connectMessageInfo = connectMessageInfo;
     }
-    let isRecord = localStorage.getItem('isRecord') //录制状态
-    if(isRecord){
-      this.toolNav[0].status = isRecord
+    let isRecord = localStorage.getItem("isRecord"); //录制状态
+    if (isRecord) {
+      this.toolNav[0].status = isRecord;
     }
-    let studentList = JSON.parse(localStorage.getItem('studentList')) //学生列表
-    if(studentList){
-      this.studentList = studentList
+    let studentList = JSON.parse(localStorage.getItem("studentList")); //学生列表
+    if (studentList) {
+      this.studentList = studentList;
     }
-    this.getTimUserSig()
+    this.getTimUserSig();
   },
   computed: {},
   mounted() {
-    this.liveTheme = this.$route.query.liveTheme
+    this.liveTheme = this.$route.query.liveTheme;
     // 初始化实例  Step1
     this.zg = new ZegoExpressEngine(
       this.appID,
@@ -483,7 +588,7 @@ export default {
     this.zg.on("publisherStateUpdate", (result) => {
       // 推流状态变更通知
       console.log("推流成功", result);
-      if(result){
+      if (result) {
       }
     });
 
@@ -495,19 +600,24 @@ export default {
     });
 
     //获取流地址
-    this.zg.on("roomStreamUpdate",async (roomID, updateType, streamList) => {
+    this.zg.on("roomStreamUpdate", async (roomID, updateType, streamList) => {
       if (updateType == "ADD") {
         // 流新增，开始拉流
         // console.log("流新增------------", streamList);
-        streamList.forEach(streamItem=>{
-          this.connectMessageInfo.forEach(async item=>{
-            if(item.userInfo.userId === streamItem.user.userID){
-              item.stream = await this.zg.startPlayingStream(streamItem.streamID)
+        streamList.forEach((streamItem) => {
+          this.connectMessageInfo.forEach(async (item) => {
+            if (item.userInfo.userId === streamItem.user.userID) {
+              item.stream = await this.zg.startPlayingStream(
+                streamItem.streamID
+              );
             }
-          })
+          });
           // console.log('111',this.connectMessageInfo)
-          localStorage.setItem('connectMessageInfo',JSON.stringify(this.connectMessageInfo)) //将当前麦上列表存着
-          this.$loading().close()
+          localStorage.setItem(
+            "connectMessageInfo",
+            JSON.stringify(this.connectMessageInfo)
+          ); //将当前麦上列表存着
+          this.$loading().close();
           if (this.roomId != streamItem.streamID) {
             let extraInfo = streamItem.extraInfo;
             let extraInfoObj = null;
@@ -529,7 +639,7 @@ export default {
               })
               .catch((err) => {});
           }
-        })
+        });
       } else if (updateType == "DELETE") {
         // 流删除，停止拉流
         console.log("流减少------------", streamList);
@@ -549,95 +659,131 @@ export default {
     });
   },
   methods: {
-    async toolClick(data){
-      if(data.type === 'mike'){ //麦克风
-        let result = await this.zg.muteMicrophone(data.status)
-        if(result){
-          let isMicrophoneMuted = await this.zg.isMicrophoneMuted()
-          this.toolNav[1].status = !isMicrophoneMuted //麦克风状态
+    async toolClick(data) {
+      if (data.type === "mike") {
+        //麦克风
+        let result = await this.zg.muteMicrophone(data.status);
+        if (result) {
+          let isMicrophoneMuted = await this.zg.isMicrophoneMuted();
+          this.toolNav[1].status = !isMicrophoneMuted; //麦克风状态
         }
-      }else if(data.type === 'camera'){ //摄像头
-        let result = await this.zg.enableVideoCaptureDevice(this.stream,!data.status)
-        if(result){
-          this.toolNav[2].status = !data.status
+      } else if (data.type === "camera") {
+        //摄像头
+        let result = await this.zg.enableVideoCaptureDevice(
+          this.stream,
+          !data.status
+        );
+        if (result) {
+          this.toolNav[2].status = !data.status;
         }
-      }else if(data.type === 'record'){ //录制
-        if(this.liveStatus){
-          if(!data.status){
-            this.$http.post('/sys/mixedflow/startRecord',{}).then(res=>{
-              if(res.data.success&&res.data.msg=='success'){
+      } else if (data.type === "record") {
+        //录制
+        if (this.liveStatus) {
+          if (!data.status) {
+            this.$http.post("/sys/mixedflow/startRecord", {}).then((res) => {
+              if (res.data.success && res.data.msg == "success") {
                 this.$message({
-                  message:'录制已开启',
-                  type:'success'
-                })
-                this.toolNav[0].status = true
-                localStorage.setItem('isRecord',true)
+                  message: "录制已开启",
+                  type: "success",
+                });
+                this.toolNav[0].status = true;
+                localStorage.setItem("isRecord", true);
               }
-            })
-          }else{
+            });
+          } else {
             this.$message({
-              message:'录制已开启',
-              type:'warning'
-            })
+              message: "录制已开启",
+              type: "warning",
+            });
           }
-        }else{
+        } else {
           this.$message({
-            message:'直播暂未开启',
-            type:'warning'
-          })
+            message: "直播暂未开启",
+            type: "warning",
+          });
         }
       }
     },
-    headerNavClick(type){
-      if(type == "superboard") {  //超级白板
+    headerNavClick(type) {
+      if (type == "superboard") {
+        //超级白板
       }
-        this.headerNavActive = type
+      this.headerNavActive = type;
     },
     handleClick(tab, event) {
       console.log(tab, event);
     },
-    muteMthod(data){ //禁言
-      this.studentList.forEach(item=>{
-        if(item.userId===data.userId){
-          if(!item.isTalkFlag){
-            this.sendMessage({type:20,replyUserId:data.userId,isTalk:true})
-            this.getMuteStatus({isAll:0,userId:data.userId,isTalk:1}).then(res=>{
-              item.isTalkFlag = 1
-              localStorage.setItem('studentList',JSON.stringify(this.studentList))
-            })
-          }else{
-            this.sendMessage({type:20,replyUserId:data.userId,isTalk:false})
-            this.getMuteStatus({isAll:0,userId:data.userId,isTalk:0}).then(res=>{
-              item.isTalkFlag = 0
-              localStorage.setItem('studentList',JSON.stringify(this.studentList))
-            })
+    muteMthod(data) {
+      //禁言
+      this.studentList.forEach((item) => {
+        if (item.userId === data.userId) {
+          if (!item.isTalkFlag) {
+            this.sendMessage({
+              type: 20,
+              replyUserId: data.userId,
+              isTalk: true,
+            });
+            this.getMuteStatus({
+              isAll: 0,
+              userId: data.userId,
+              isTalk: 1,
+            }).then((res) => {
+              item.isTalkFlag = 1;
+              localStorage.setItem(
+                "studentList",
+                JSON.stringify(this.studentList)
+              );
+            });
+          } else {
+            this.sendMessage({
+              type: 20,
+              replyUserId: data.userId,
+              isTalk: false,
+            });
+            this.getMuteStatus({
+              isAll: 0,
+              userId: data.userId,
+              isTalk: 0,
+            }).then((res) => {
+              item.isTalkFlag = 0;
+              localStorage.setItem(
+                "studentList",
+                JSON.stringify(this.studentList)
+              );
+            });
           }
         }
-      })
+      });
     },
-    allMute(type){
-      switch(type){
+    allMute(type) {
+      switch (type) {
         case 1:
-          this.sendMessage({type:20,allMute:true}) //全员禁言
-          this.getMuteStatus({isAll:1,isTalk:1}).then(res=>{
-            this.studentList.forEach(item=>item.isTalkFlag=1)
-            localStorage.setItem('studentList',JSON.stringify(this.studentList))
-          })
-          
+          this.sendMessage({ type: 20, allMute: true }); //全员禁言
+          this.getMuteStatus({ isAll: 1, isTalk: 1 }).then((res) => {
+            this.studentList.forEach((item) => (item.isTalkFlag = 1));
+            localStorage.setItem(
+              "studentList",
+              JSON.stringify(this.studentList)
+            );
+          });
+
           break;
         case 2:
-          this.sendMessage({type:20,allMute:false}) //全员解禁
-          this.getMuteStatus({isAll:1,isTalk:0}).then(res=>{
-            this.studentList.forEach(item=>item.isTalkFlag=0)
-            localStorage.setItem('studentList',JSON.stringify(this.studentList))
-          })
+          this.sendMessage({ type: 20, allMute: false }); //全员解禁
+          this.getMuteStatus({ isAll: 1, isTalk: 0 }).then((res) => {
+            this.studentList.forEach((item) => (item.isTalkFlag = 0));
+            localStorage.setItem(
+              "studentList",
+              JSON.stringify(this.studentList)
+            );
+          });
           break;
-          default:
+        default:
           break;
       }
     },
-    async getMuteStatus(obj){
-      let res = await this.$http.post('/sys/mixedflow/userMute',obj)
+    async getMuteStatus(obj) {
+      let res = await this.$http.post("/sys/mixedflow/userMute", obj);
     },
     // 获取token的方法
     getTokenFun(appID, userID) {
@@ -662,8 +808,11 @@ export default {
     },
     // 获取token开启直播预览
     async startLive() {
-      if(!this.liveStatus){
-        this.$loading({background:'rgba(0,0,0,.5)',text:'直播预览开启中...'})
+      if (!this.liveStatus) {
+        this.$loading({
+          background: "rgba(0,0,0,.5)",
+          text: "直播预览开启中...",
+        });
       }
       this.token = await this.getTokenFun(this.appID, this.userID);
       this.loginRoom();
@@ -674,20 +823,20 @@ export default {
         userID: this.userID,
         userName: this.userName,
       });
-      let isMicrophoneMuted = await this.zg.isMicrophoneMuted()
-      this.toolNav[1].status = !isMicrophoneMuted //麦克风状态
+      let isMicrophoneMuted = await this.zg.isMicrophoneMuted();
+      this.toolNav[1].status = !isMicrophoneMuted; //麦克风状态
       this.createStr();
     },
     // 创建流和渲染
     async createStr() {
       this.stream = await this.zg.createStream({
-        camera:{
-          videoQuality:4,
-          width:350,
-          height:196,
-          frameRate:15,
-          bitrate:300,
-        }
+        camera: {
+          videoQuality: 4,
+          width: 350,
+          height: 196,
+          frameRate: 15,
+          bitrate: 300,
+        },
       });
       // console.error(this.stream);
       // Step4
@@ -698,35 +847,58 @@ export default {
       let res = await this.zg.startPublishingStream(this.roomId, this.stream);
       console.log(res);
       if (res) {
-        this.$loading().close()
-        if(!this.liveStatus){
-          this.$message({message:'直播预开启成功，可以开启直播',type:'success'})
-        }else{
-          this.$message({message:'刷新成功',type:'success'})
+        this.$loading().close();
+        if (!this.liveStatus) {
+          this.$message({
+            message: "直播预开启成功，可以开启直播",
+            type: "success",
+          });
+        } else {
+          this.$message({ message: "刷新成功", type: "success" });
         }
       }
     },
     async startPlayLive() {
-      this.$loading({background:'rgba(0,0,0,.5)',text:'直播开启中...'})
-      this.$http
-        .post("/sys/mixedflow/anchorBroadcast", {
+      let obj = {};
+      if (
+        this.$route.query.liveTheme &&
+        this.$route.query.livePreviewId &&
+        this.$route.query.liveTheme.length !== 0 &&
+        this.$route.query.livePreviewId.length !== 0
+      ) {
+        obj = {
+          UserId: this.userID,
+          RoomId: this.roomId,
+          liveTheme: this.$route.query.liveTheme,
+          livePreviewId: this.$route.query.livePreviewId,
+        };
+      } else {
+        obj = {
           UserId: this.userID,
           RoomId: this.roomId,
           liveTheme: this.liveTheme,
-        })
+        };
+      }
+      this.$loading({ background: "rgba(0,0,0,.5)", text: "直播开启中..." });
+      this.$http
+        .post("/sys/mixedflow/anchorBroadcast", obj)
         .then((res) => {
           if (res.data.data && res.data.data.Data) {
-            this.liveStatus = true
-            localStorage.setItem('liveStatus',JSON.stringify(this.liveStatus)) //将直播状态存起来
-            this.joinGroup()
-            this.$nextTick(() => { // 以服务的方式调用的 Loading 需要异步关闭
-              this.$loading().close()
+            this.liveStatus = true;
+            localStorage.setItem("liveStatus", JSON.stringify(this.liveStatus)); //将直播状态存起来
+            this.joinGroup();
+            this.$nextTick(() => {
+              // 以服务的方式调用的 Loading 需要异步关闭
+              this.$loading().close();
             });
-            this.$message({message:'直播开启成功',type:'success'})
-          }else{
-            this.$message({message:'直播开启失败,请重新开启',type:'error'})
-            this.$nextTick(() => { 
-              this.$loading().close()
+            this.$message({ message: "直播开启成功", type: "success" });
+          } else {
+            this.$message({
+              message: "直播开启失败,请重新开启",
+              type: "error",
+            });
+            this.$nextTick(() => {
+              this.$loading().close();
             });
           }
         });
@@ -750,14 +922,18 @@ export default {
           RoomId: this.roomId,
         })
         .then((res) => {
-          this.$message({message:'直播已关闭',type:'success'})
-          this.liveStatus = false
-          localStorage.removeItem('liveStatus') //将直播状态移除
-          localStorage.removeItem('connectMessageInfo') //将直播连麦列表移除
-          localStorage.removeItem('isRecord') //将录制状态移除
-          localStorage.removeItem('studentList') //将学生列表移除
-          this.tim.logout() //退出IM
-          this.tim.destroy();
+          if (res.data.success && res.data.msg == "success") {
+            this.$message({ message: "直播已关闭", type: "success" });
+            this.liveStatus = false;
+            localStorage.removeItem("liveStatus"); //将直播状态移除
+            localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
+            localStorage.removeItem("isRecord"); //将录制状态移除
+            localStorage.removeItem("studentList"); //将学生列表移除
+            this.tim.logout(); //退出IM
+            this.tim.destroy();
+          } else {
+            this.$message({ message: "结束直播失败", type: "error" });
+          }
         });
       this.stopPublishingStream();
     },
@@ -828,34 +1004,38 @@ export default {
       this.userID = userInfo.id;
       this.userName = userInfo.username;
       this.userInfo = userInfo;
-      this.userInfo.nickName = userInfo.username
+      this.userInfo.nickName = userInfo.username;
       let options = {
         SDKAppID: 1400341701, // 接入时需要将0替换为您的即时通信 IM 应用的 SDKAppID
       };
       // 创建 SDK 实例，TIM.create() 方法对于同一个 SDKAppID 只会返回同一份实例
       this.tim = TIM.create(options); // SDK 实例通常用 tim 表示
-      if(!this.liveStatus){
-        this.tim.login({ userID: userId, userSig: userSig })//登录腾讯IM
-      }else{
-        this.tim.login({ userID: userId, userSig: userSig }).then(imResponse=>{ //登录腾讯IM
-          if(imResponse.data){
-            this.waitSdkReady()
-          }
-        })
+      if (!this.liveStatus) {
+        this.tim.login({ userID: userId, userSig: userSig }); //登录腾讯IM
+      } else {
+        this.tim
+          .login({ userID: userId, userSig: userSig })
+          .then((imResponse) => {
+            //登录腾讯IM
+            if (imResponse.data) {
+              this.waitSdkReady();
+            }
+          });
       }
-      this.startLive()
+      this.startLive();
       this.getAnchorProduct();
       this.getLivePreviewList();
       this.getRecommendList();
     },
-    onSdkReady(event){ //监听IM sdk状态
-      console.log('event-----------',event)
-      if(event.name === "sdkStateReady"){
-        this.joinGroup() //直播开启中，直接加入群聊
+    onSdkReady(event) {
+      //监听IM sdk状态
+      console.log("event-----------", event);
+      if (event.name === "sdkStateReady") {
+        this.joinGroup(); //直播开启中，直接加入群聊
       }
     },
-    waitSdkReady(){
-      this.tim.on(TIM.EVENT.SDK_READY, this.onSdkReady,this);
+    waitSdkReady() {
+      this.tim.on(TIM.EVENT.SDK_READY, this.onSdkReady, this);
     },
     $onMessageReceived(value) {
       //接收到消息
@@ -865,8 +1045,11 @@ export default {
       event.data.forEach((item) => {
         if (item.type === "TIMGroupSystemNoticeElem") {
           // 被PC端禁播
-          if(item.payload.userDefinedField && item.payload.userDefinedField.match("你已被禁播")) {
-          	console.log('被禁播')
+          if (
+            item.payload.userDefinedField &&
+            item.payload.userDefinedField.match("你已被禁播")
+          ) {
+            console.log("被禁播");
           }
           if (item.payload.userDefinedField) {
             let tempObj = JSON.parse(item.payload.userDefinedField);
@@ -875,18 +1058,23 @@ export default {
             }
           }
         }
-        if(item.type==='TIMGroupTipElem'){
-          console.log('item-------',item)
-          switch(item.payload.operationType){
+        if (item.type === "TIMGroupTipElem") {
+          console.log("item-------", item);
+          switch (item.payload.operationType) {
             case 2: //用户离开直播间
-            let userIdArr = item.payload.operatorID.split('LIVE_FLAG_')
-            const userId = userIdArr[1];
-            const ind = this.studentList.findIndex(item=>item.userId ==userId)
-            this.studentList.splice(ind,1)
-            localStorage.setItem('studentList',JSON.stringify(this.studentList))
-            break;
+              let userIdArr = item.payload.operatorID.split("LIVE_FLAG_");
+              const userId = userIdArr[1];
+              const ind = this.studentList.findIndex(
+                (item) => item.userId == userId
+              );
+              this.studentList.splice(ind, 1);
+              localStorage.setItem(
+                "studentList",
+                JSON.stringify(this.studentList)
+              );
+              break;
             default:
-            break;
+              break;
           }
         }
         if (
@@ -900,21 +1088,25 @@ export default {
               console.log("提问消息");
               this.questionMessageInfo.push(applyInfo);
             }
-            if(applyInfo.message &&
+            if (
+              applyInfo.message &&
               applyInfo.message.type &&
-              applyInfo.message.type === 10){ //用户进入直播间消息
-              let obj = applyInfo.message
-              obj.userId = applyInfo.userInfo.userId
-              obj.avatarUrl = applyInfo.userInfo.avatarUrl
+              applyInfo.message.type === 10
+            ) {
+              //用户进入直播间消息
+              let obj = applyInfo.message;
+              obj.userId = applyInfo.userInfo.userId;
+              obj.avatarUrl = applyInfo.userInfo.avatarUrl;
               let arr = [];
-              this.studentList.forEach((item) =>
-                arr.push(item.userId)
-              );
+              this.studentList.forEach((item) => arr.push(item.userId));
               if (arr.indexOf(applyInfo.userInfo.userId) === -1) {
                 this.studentList.push(obj);
               }
-              localStorage.setItem('studentList',JSON.stringify(this.studentList))
-              console.log('用户进入直播间消息',this.studentList)
+              localStorage.setItem(
+                "studentList",
+                JSON.stringify(this.studentList)
+              );
+              console.log("用户进入直播间消息", this.studentList);
             }
             //连麦信息
             if (
@@ -927,7 +1119,7 @@ export default {
                 applyInfo.message.replyType === 0
               ) {
                 applyInfo.connectStatus = false; //定义连麦状态
-                applyInfo.stream = {} //连麦流
+                applyInfo.stream = {}; //连麦流
                 let arr = [];
                 this.connectMessageInfo.forEach((item) =>
                   arr.push(item.userInfo.userId)
@@ -935,7 +1127,7 @@ export default {
                 if (arr.indexOf(applyInfo.userInfo.userId) === -1) {
                   this.connectMessageInfo.push(applyInfo);
                 }
-                console.log('连麦列表',this.connectMessageInfo)
+                console.log("连麦列表", this.connectMessageInfo);
               }
               if (
                 applyInfo.message.replyType &&
@@ -946,19 +1138,32 @@ export default {
                 this.connectMessageInfo = this.connectMessageInfo.filter(
                   (item) => item.userInfo.userId != applyInfo.userInfo.userId
                 );
-                applyInfo.message.replyType === -1 ? this.$message("用户已取消连麦申请") : this.$message("用户已断开连麦")
-                this.$loading().close()
+                applyInfo.message.replyType === -1
+                  ? this.$message("用户已取消连麦申请")
+                  : this.$message("用户已断开连麦");
+                this.$loading().close();
                 return;
               }
-              localStorage.setItem('connectMessageInfo',JSON.stringify(this.connectMessageInfo)) //将当前麦上列表存着
+              localStorage.setItem(
+                "connectMessageInfo",
+                JSON.stringify(this.connectMessageInfo)
+              ); //将当前麦上列表存着
             }
-            if(applyInfo.message && applyInfo.message.type && applyInfo.message.type === 30){ //用户端切换连麦
-              this.connectMessageInfo.forEach(item=>{
-                if(item.userInfo.userId==applyInfo.userInfo.userId){
-                  item.message.connectType = applyInfo.message.connectType
+            if (
+              applyInfo.message &&
+              applyInfo.message.type &&
+              applyInfo.message.type === 30
+            ) {
+              //用户端切换连麦
+              this.connectMessageInfo.forEach((item) => {
+                if (item.userInfo.userId == applyInfo.userInfo.userId) {
+                  item.message.connectType = applyInfo.message.connectType;
                 }
-              })
-              localStorage.setItem('connectMessageInfo',JSON.stringify(this.connectMessageInfo)) //将当前麦上列表存着
+              });
+              localStorage.setItem(
+                "connectMessageInfo",
+                JSON.stringify(this.connectMessageInfo)
+              ); //将当前麦上列表存着
             }
           }
         }
@@ -989,14 +1194,14 @@ export default {
           return this.conversation.conversationID;
       }
     },
-    sendMessage(messageInfo,cb) {
-      if(!this.liveStatus){
-        this.$message({message:"直播暂未开启",type:'warning'})
-        return
+    sendMessage(messageInfo, cb) {
+      if (!this.liveStatus) {
+        this.$message({ message: "直播暂未开启", type: "warning" });
+        return;
       }
-      if(messageInfo.type===1&&this.barrage.trim().length==0){
-        this.$message({message:"聊天内容不能为空",type:'warning'})
-        return
+      if (messageInfo.type === 1 && this.barrage.trim().length == 0) {
+        this.$message({ message: "聊天内容不能为空", type: "warning" });
+        return;
       }
       // 将自己发送的消息写进消息列表里面
       const text = this.barrage;
@@ -1062,7 +1267,7 @@ export default {
       this.tim.sendMessage(message);
       // 发送消息之后清空输入框内容
       this.barrage = "";
-      if(cb)cb()
+      if (cb) cb();
     },
     // 获取主播推荐商品
     getAnchorProduct() {
@@ -1072,8 +1277,8 @@ export default {
           console.log("主播推荐商品", res.data.data);
           let data = res.data.data;
           data.forEach((item) => {
-            if(item.productTag){
-                item.productTag = item.productTag.split("|");
+            if (item.productTag) {
+              item.productTag = item.productTag.split("|");
             }
           });
           this.goodsList = data;
@@ -1093,75 +1298,104 @@ export default {
         this.recommendList = res.data.data;
       });
     },
-    //推送商品、直播预告 
-    pushMethod(type,data){
-      if(type === 'goods'){//推送商品
-        if(this.goodsPushTimer) return this.$message({message:"您已经推送过了，请稍后再试",type:'warning'});
-        this.sendMessage({type: 8,pushData: data},() => this.$message({message:"商品推送成功",type:'success'}))
+    //推送商品、直播预告
+    pushMethod(type, data) {
+      if (type === "goods") {
+        //推送商品
+        if (this.goodsPushTimer)
+          return this.$message({
+            message: "您已经推送过了，请稍后再试",
+            type: "warning",
+          });
+        this.sendMessage({ type: 8, pushData: data }, () =>
+          this.$message({ message: "商品推送成功", type: "success" })
+        );
         this.goodsPushTimer = setTimeout(() => {
-            clearTimeout(this.goodsPushTimer)
-            this.goodsPushTimer = null
-        }, 60 * 1000)
-      }else{
-          if(this.livePredictionTimer) return this.$message({message:"您已经推送过了，请稍后再试",type:'warning'});
-          this.sendMessage({type: 7,pushData: data},() => this.$message({message:"预告推送成功",type:'success'}))
-          this.livePredictionTimer = setTimeout(() => {
-              clearTimeout(this.livePredictionTimer)
-              this.livePredictionTimer = null
-          }, 60 * 1000)
+          clearTimeout(this.goodsPushTimer);
+          this.goodsPushTimer = null;
+        }, 60 * 1000);
+      } else {
+        if (this.livePredictionTimer)
+          return this.$message({
+            message: "您已经推送过了，请稍后再试",
+            type: "warning",
+          });
+        this.sendMessage({ type: 7, pushData: data }, () =>
+          this.$message({ message: "预告推送成功", type: "success" })
+        );
+        this.livePredictionTimer = setTimeout(() => {
+          clearTimeout(this.livePredictionTimer);
+          this.livePredictionTimer = null;
+        }, 60 * 1000);
       }
     },
-    replyConnect(status, type, connectType, userId) { //同意申请连麦
+    replyConnect(status, type, connectType, userId) {
+      //同意申请连麦
       let messageInfo = {
         type,
         connectType,
         replyType: 1,
         replyUserId: userId,
-      }
-      if (status === 1) { //同意
-        this.$loading({background:'rgba(0,0,0,.5)',text:'连接中...'})
-        this.sendMessage(messageInfo)
-        this.connectMessageInfo.forEach(item => {
+      };
+      if (status === 1) {
+        //同意
+        this.$loading({ background: "rgba(0,0,0,.5)", text: "连接中..." });
+        this.sendMessage(messageInfo);
+        this.connectMessageInfo.forEach((item) => {
           if (item.userInfo.userId === userId) {
-            item.connectStatus = true
+            item.connectStatus = true;
           }
-        })
-        localStorage.setItem('connectMessageInfo',JSON.stringify(this.connectMessageInfo)) //将当前麦上列表存着
-      } else { //拒绝
+        });
+        localStorage.setItem(
+          "connectMessageInfo",
+          JSON.stringify(this.connectMessageInfo)
+        ); //将当前麦上列表存着
+      } else {
+        //拒绝
         if (this.connectMessageInfo.length == 1) {
-          this.applyShow = false
+          this.applyShow = false;
         }
-        messageInfo.replyType = -2
-        this.sendMessage(messageInfo)
-        const ind = this.connectMessageInfo.findIndex(item => item.userInfo.userId === userId)
-        this.connectMessageInfo.splice(ind, 1)
-        localStorage.setItem('connectMessageInfo',JSON.stringify(this.connectMessageInfo)) //将当前麦上列表存着
+        messageInfo.replyType = -2;
+        this.sendMessage(messageInfo);
+        const ind = this.connectMessageInfo.findIndex(
+          (item) => item.userInfo.userId === userId
+        );
+        this.connectMessageInfo.splice(ind, 1);
+        localStorage.setItem(
+          "connectMessageInfo",
+          JSON.stringify(this.connectMessageInfo)
+        ); //将当前麦上列表存着
       }
     },
-    hangup(info) { //挂断
+    hangup(info) {
+      //挂断
       let messageInfo = {
-        type: info.message
-          .type, //消息类型(1:普通信息、2:关注信息、3:提问信息、4:礼物信息、5:语音连麦信息：{1、同意，2、拒绝}、6:视频连麦信息：{1、同意，2、拒绝}、)
+        type: info.message.type, //消息类型(1:普通信息、2:关注信息、3:提问信息、4:礼物信息、5:语音连麦信息：{1、同意，2、拒绝}、6:视频连麦信息：{1、同意，2、拒绝}、)
         connectType: info.message.connectType,
         replyUserId: info.userInfo.userId,
         replyType: -3, // 连麦后挂断
-      }
-      this.sendMessage(messageInfo)
-      const ind = this.connectMessageInfo.findIndex(item => item.userInfo.userId === info.userInfo.userId)
-      this.connectMessageInfo.splice(ind, 1) //移除挂断的一条连麦信息
-      localStorage.setItem('connectMessageInfo',JSON.stringify(this.connectMessageInfo)) //将当前麦上列表存着
+      };
+      this.sendMessage(messageInfo);
+      const ind = this.connectMessageInfo.findIndex(
+        (item) => item.userInfo.userId === info.userInfo.userId
+      );
+      this.connectMessageInfo.splice(ind, 1); //移除挂断的一条连麦信息
+      localStorage.setItem(
+        "connectMessageInfo",
+        JSON.stringify(this.connectMessageInfo)
+      ); //将当前麦上列表存着
     },
   },
-  destroyed(){
+  destroyed() {
     if (this.livePredictionTimer) {
-        clearTimeout(this.livePredictionTimer)
-        this.livePredictionTimer = null
+      clearTimeout(this.livePredictionTimer);
+      this.livePredictionTimer = null;
     }
     if (this.goodsPushTimer) {
-        clearTimeout(this.goodsPushTimer)
-        this.goodsPushTimer = null
+      clearTimeout(this.goodsPushTimer);
+      this.goodsPushTimer = null;
     }
-  }
+  },
 };
 </script>
 
@@ -1178,7 +1412,7 @@ p {
   background-size: 100%;
   padding: 0 20px 20px;
   box-sizing: border-box;
-  >.el-container {
+  > .el-container {
     width: 100%;
     height: 100%;
     /deep/ .el-aside {
@@ -1353,11 +1587,11 @@ p {
                       word-break: break-all;
                       position: relative;
                       display: inline-block;
-                      .giftMsgIcon{
+                      .giftMsgIcon {
                         width: 40px;
                         height: 40px;
                       }
-                      .gift_name{
+                      .gift_name {
                         color: darkorange;
                       }
                     }
@@ -1537,113 +1771,113 @@ p {
                     }
                   }
                 }
-                .preview_content{
-                    display: flex;
-                    justify-content: flex-start;
-                    align-items: center;
-                    >img{
-                        width: 120px;
-                        height: 66px;
-                    }
-                    >p{
-                        margin-left: 10px;
-                    }
+                .preview_content {
+                  display: flex;
+                  justify-content: flex-start;
+                  align-items: center;
+                  > img {
+                    width: 120px;
+                    height: 66px;
+                  }
+                  > p {
+                    margin-left: 10px;
+                  }
                 }
-                .preview_time{
-                    margin-top: 10px;
+                .preview_time {
+                  margin-top: 10px;
+                  color: #898989;
+                  font-size: 14px;
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  > p {
+                    width: 60px;
+                    height: 30px;
+                    color: #ffffff;
+                    background: linear-gradient(
+                      69deg,
+                      #fa3622 0%,
+                      #fa3622 1%,
+                      #ff055b 100%
+                    );
+                    border-radius: 5px;
+                    text-align: center;
+                    line-height: 30px;
+                    cursor: pointer;
+                  }
+                }
+                .recommend_content {
+                  display: flex;
+                  justify-content: flex-start;
+                  align-items: center;
+                  padding: 10px 0px;
+                  border-bottom: 1px solid #4a4a4a;
+                  > span {
+                    font-size: 16px;
                     color: #898989;
-                    font-size: 14px;
+                  }
+                  > img {
+                    width: 40px;
+                    height: 40px;
+                    margin-left: 10px;
+                  }
+                  .anchorInfo {
                     display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                    >p{
-                        width: 60px;
-                        height: 30px;
-                        color: #ffffff;
-                        background: linear-gradient(
-                            69deg,
-                            #fa3622 0%,
-                            #fa3622 1%,
-                            #ff055b 100%
-                        );
-                        border-radius: 5px;
-                        text-align: center;
-                        line-height: 30px;
-                        cursor: pointer;
+                    flex-direction: column;
+                    margin-left: 10px;
+                    > span {
+                      color: #eaeaea;
+                      font-size: 16px;
                     }
-                }
-                .recommend_content{
-                    display: flex;
-                    justify-content: flex-start;
-                    align-items: center;
-                    padding: 10px 0px;
-                    border-bottom: 1px solid #4A4A4A;
-                    >span{
-                        font-size: 16px;
-                        color: #898989;
+                    > p {
+                      color: #898989;
+                      font-size: 14px;
+                      > span {
+                        color: #eaeaea;
+                      }
                     }
-                    >img{
-                        width: 40px;
-                        height: 40px;  
-                        margin-left: 10px;
-                    }
-                    .anchorInfo{
-                        display: flex;
-                        flex-direction: column;
-                        margin-left: 10px;
-                        >span{
-                            color: #EAEAEA;
-                            font-size: 16px;
-                        }
-                        >p{
-                            color: #898989;
-                            font-size: 14px;
-                            >span{
-                                color: #EAEAEA;
-                            }
-                        }
-                    }
+                  }
                 }
               }
-              .student_content{
+              .student_content {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
                 padding: 20px 0px;
-                border-bottom: 1px solid #4A4A4A;
-                >.left{
+                border-bottom: 1px solid #4a4a4a;
+                > .left {
                   display: flex;
                   justify-content: flex-start;
                   align-items: center;
-                  >span{
+                  > span {
+                    font-size: 16px;
+                    color: #898989;
+                  }
+                  > img {
+                    width: 40px;
+                    height: 40px;
+                    margin-left: 10px;
+                  }
+                  .anchorInfo {
+                    display: flex;
+                    flex-direction: column;
+                    margin-left: 10px;
+                    > span {
+                      color: #eaeaea;
                       font-size: 16px;
+                    }
+                    > p {
                       color: #898989;
-                  }
-                  >img{
-                      width: 40px;
-                      height: 40px;  
-                      margin-left: 10px;
-                  }
-                  .anchorInfo{
-                      display: flex;
-                      flex-direction: column;
-                      margin-left: 10px;
-                      >span{
-                          color: #EAEAEA;
-                          font-size: 16px;
+                      font-size: 14px;
+                      > span {
+                        margin-left: 8px;
+                        color: #eaeaea;
                       }
-                      >p{
-                          color: #898989;
-                          font-size: 14px;
-                          >span{
-                            margin-left: 8px;
-                            color: #EAEAEA;
-                          }
-                      }
+                    }
                   }
                 }
-                .right{
-                  >img{
+                .right {
+                  > img {
                     width: 30px;
                     height: 30px;
                     cursor: pointer;
@@ -1651,13 +1885,13 @@ p {
                 }
               }
             }
-            .muteBtn{
+            .muteBtn {
               width: 100%;
               display: flex;
               justify-content: space-around;
               align-items: center;
               margin-top: 5px;
-              >div{
+              > div {
                 width: 145px;
                 height: 40px;
                 text-align: center;
@@ -1666,13 +1900,13 @@ p {
                 font-size: 16px;
                 cursor: pointer;
               }
-              >div:first-child{
-                background: linear-gradient(89deg, #FA3622 0%, #FE055A 100%);
+              > div:first-child {
+                background: linear-gradient(89deg, #fa3622 0%, #fe055a 100%);
                 box-shadow: 0px 4px 10px 1px rgba(249, 46, 29, 0.4);
               }
-              >div:last-child{
-                border: 1px solid #B7B7B7;
-                color: #B7B7B7;
+              > div:last-child {
+                border: 1px solid #b7b7b7;
+                color: #b7b7b7;
               }
             }
             .list_content::-webkit-scrollbar {
@@ -1710,23 +1944,23 @@ p {
         }
       }
     }
-    .el-container{
-      .el-header{
+    .el-container {
+      .el-header {
         height: 158px !important;
         padding: 0 0 0 20px;
-        .live_room_header{
+        .live_room_header {
           width: 100%;
           height: 100%;
           display: flex;
           justify-content: space-between;
           align-items: center;
-          .header_left{
+          .header_left {
             display: flex;
             align-items: center;
-            color: #FFFFFF;
+            color: #ffffff;
             font-size: 14px;
             font-weight: 400;
-            .header_nav{
+            .header_nav {
               width: 85px;
               display: flex;
               flex-direction: column;
@@ -1734,61 +1968,61 @@ p {
               align-items: center;
               cursor: pointer;
               position: relative;
-              >img{
+              > img {
                 width: 31px;
                 height: 28px;
               }
-              >p{
+              > p {
                 margin-top: 5px;
               }
             }
-            .headerNavActive::after{
+            .headerNavActive::after {
               position: absolute;
-              content: '';
+              content: "";
               display: block;
               width: 24px;
               height: 4px;
-              background-color: #F92D1C;
+              background-color: #f92d1c;
               border-radius: 30px;
               bottom: -6px;
             }
           }
-          .header_right{
+          .header_right {
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            .wacth_num{
+            .wacth_num {
               display: flex;
               align-items: center;
               color: #fff;
               font-size: 16px;
-              >img{
+              > img {
                 width: 16px;
                 height: 16px;
               }
-              >p{
+              > p {
                 margin-left: 4px;
-                >span{
+                > span {
                   font-size: 18px;
                 }
               }
             }
-            .tool_nav{
+            .tool_nav {
               display: flex;
               align-items: center;
               color: #fff;
               font-size: 14px;
               margin: 0 10px;
-              >img{
+              > img {
                 width: 40px;
                 height: 40px;
                 cursor: pointer;
               }
-              >p{
+              > p {
                 margin-left: 15px;
               }
             }
-            .start_live{
+            .start_live {
               display: flex;
               align-items: center;
               justify-content: center;
@@ -1796,22 +2030,22 @@ p {
               color: #ffffff;
               width: 230px;
               height: 40px;
-              background: linear-gradient(89deg, #FA3622 0%, #FE055B 100%);
+              background: linear-gradient(89deg, #fa3622 0%, #fe055b 100%);
               box-shadow: 0px 4px 10px 1px rgba(249, 46, 29, 0.4);
               border-radius: 5px;
               cursor: pointer;
-              >img{
+              > img {
                 width: 20px;
                 height: 20px;
               }
-              >span{
+              > span {
                 margin-left: 10px;
               }
             }
           }
         }
       }
-      .el-main{
+      .el-main {
         padding: 0 0 0 20px;
         .live_content {
           width: 100%;
@@ -1822,25 +2056,25 @@ p {
             width: calc(100% - 230px - 20px);
             height: 100%;
             position: relative;
-            .live_menu_header{
+            .live_menu_header {
               width: 100%;
               height: 60px;
-              background-color: #37383C;
+              background-color: #37383c;
               padding: 16px 20px;
               display: flex;
               justify-content: space-between;
               align-items: center;
-              .live_theme{
+              .live_theme {
                 color: #fff;
                 font-size: 20px;
               }
-              .online_info{
+              .online_info {
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
-                color: #FFFFFF;
+                color: #ffffff;
                 font-size: 16px;
-                >p{
+                > p {
                   margin-right: 10px;
                 }
               }
@@ -1852,11 +2086,11 @@ p {
               left: 0;
               top: 60px;
               width: 100%;
-              height: calc(100% - 60PX);
+              height: calc(100% - 60px);
               // background: pink;
             }
 
-            .push_video{
+            .push_video {
               position: absolute;
               bottom: 0;
               right: 0;
@@ -1870,38 +2104,38 @@ p {
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            background-color: #37383C;
+            background-color: #37383c;
             padding: 10px;
             .connet_video {
               width: 100%;
               height: 142px;
               margin-bottom: 10px;
-              .video_div{
+              .video_div {
                 width: 100%;
                 height: 112px;
-                background-color: #32373A;
+                background-color: #32373a;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                /deep/ .el-icon-loading{
-                  color: #FFFFFF;
+                /deep/ .el-icon-loading {
+                  color: #ffffff;
                   font-size: 30px;
                 }
-                /deep/ .el-loading-text{
-                  color: #FFFFFF;
+                /deep/ .el-loading-text {
+                  color: #ffffff;
                   font-size: 12px;
                 }
-                >video{
+                > video {
                   width: 100%;
                   height: 100%;
                 }
-                .connect_headerUrl{
+                .connect_headerUrl {
                   width: 60px;
                   height: 60px;
                   border-radius: 50%;
                 }
               }
-              .cennect_userinfo{
+              .cennect_userinfo {
                 height: 30px;
                 width: 100%;
                 background: #000000;
@@ -1912,17 +2146,17 @@ p {
                 font-weight: 400;
                 color: #fff;
                 padding: 0 10px;
-                >div{
-                  >img{
+                > div {
+                  > img {
                     width: 20px;
                     height: 20px;
                   }
-                  >span{
+                  > span {
                     margin-left: 10px;
                   }
                 }
-                >.btn{
-                  background: #54C717;
+                > .btn {
+                  background: #54c717;
                   width: 35px;
                   height: 20px;
                   text-align: center;
@@ -1930,8 +2164,8 @@ p {
                   border-radius: 3px;
                   cursor: pointer;
                 }
-                >.gua_btn{
-                  background: #F92C1B;
+                > .gua_btn {
+                  background: #f92c1b;
                 }
               }
             }
@@ -1939,7 +2173,6 @@ p {
         }
       }
     }
-    
   }
 }
 @keyframes live-icon-one {

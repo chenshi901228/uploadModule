@@ -199,6 +199,7 @@
           label="主播介绍"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="legalizeFlg"

@@ -84,7 +84,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="关联直播" prop="livingRoomId">
+                <el-form-item label="直播间ID" prop="livingRoomId">
                   <el-input
                     size="small"
                     :clearable="true"
@@ -504,7 +504,14 @@ export default {
     },
     //创建直播
     createRoom(index, row) {
-      console.log(index, row);
+      const routeData = this.$router.resolve({
+        name: "liveRoom",
+        query: {
+          liveTheme: row.liveTheme,
+          livePreviewId: row.id,
+        },
+      });
+      window.open(routeData.href, "_blank");
     },
     //显示与隐藏
     showThis(index, row) {
