@@ -103,25 +103,30 @@
         >
           <template slot-scope="scope">
             <img
-              :src="scope.row.avatarUrl"
+              :src="scope.row.avatarUrl || require('@/assets/img/default_avatar.png')"
               alt=""
-              style="width: 75px; height: 50px"
+              style="width: 60px; height: 60px"
             />
           </template>
         </el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="username"
           label="主播昵称"
           header-align="center"
           align="center"
+          width="120"
         ></el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="realName"
           label="真实姓名"
           header-align="center"
           align="center"
+          width="120"
         ></el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="phone"
           label="手机号码"
           header-align="center"
@@ -130,6 +135,7 @@
         >
         </el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="idCard"
           label="身份证号"
           header-align="center"
@@ -137,6 +143,7 @@
         >
         </el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="gender"
           label="性别"
           header-align="center"

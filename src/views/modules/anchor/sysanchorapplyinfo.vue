@@ -150,39 +150,49 @@
           label="主播头像"
           header-align="center"
           align="center"
+          width="100"
         >
           <template slot-scope="scope">
             <img
-              :src="scope.row.avatarUrl"
-              style="width: 100px; height: 100px"
+              :src="scope.row.avatarUrl || require('@/assets/img/default_avatar.png')"
+              style="width: 60px; height: 60px"
             />
           </template>
         </el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="username"
           label="主播昵称"
           header-align="center"
           align="center"
+          width="120"
         ></el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="username"
           label="真实姓名"
           header-align="center"
           align="center"
+          width="120"
         ></el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="phone"
           label="手机号码"
           header-align="center"
           align="center"
+          width="120"
         ></el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="username"
           label="身份证号"
           header-align="center"
           align="center"
+          width="120"
         ></el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="gender"
           label="性别"
           header-align="center"
@@ -195,13 +205,15 @@
           </template>
         </el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="introduce"
           label="主播介绍"
           header-align="center"
           align="center"
-          show-overflow-tooltip
+          width="120"
         ></el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="legalizeFlg"
           label="是否认证"
           header-align="center"
@@ -212,32 +224,39 @@
           </template>
         </el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="tutorFlg"
           label="是否是指导师"
           header-align="center"
           align="center"
+          width="120"
         >
           <template slot-scope="scope">
             {{ scope.row.tutorFlg === 1 ? "认证" : "未认证" }}
           </template>
         </el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="createDate"
           label="申请时间"
           header-align="center"
           align="center"
+          width="180"
         ></el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="updateDate"
           label="审批时间"
           header-align="center"
           align="center"
+          width="180"
         >
           <template slot-scope="scope">
             {{ scope.row.status === 0 ? "" : scope.row.updateDate }}
           </template>
         </el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="status"
           label="状态"
           header-align="center"
@@ -254,7 +273,7 @@
           fixed="right"
           header-align="center"
           align="center"
-          width="150"
+          width="100"
         >
           <template slot-scope="scope">
             <el-button
