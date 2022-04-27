@@ -11,11 +11,11 @@
         label-width="100px"
         @keyup.enter.native="getDataList()"
       >
-        <el-form-item label="封面图名称" prop="liveTheme">
+        <el-form-item label="封面图名称" prop="coverName">
           <el-input
             size="small"
             :clearable="true"
-            v-model="dataForm.liveTheme"
+            v-model="dataForm.coverName"
             placeholder="请输入"
           ></el-input>
         </el-form-item>
@@ -82,7 +82,6 @@
         </el-table-column>
         <el-table-column
           label="操作"
-          fixed="right"
           header-align="center"
           align="center"
         >
@@ -168,6 +167,7 @@
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove"
             :on-success="handleSuccess"
+            :on-exceed="handleExceed1"
             :limit="1"
             ref="upload"
           >
@@ -254,6 +254,7 @@
               :on-preview="handlePictureCardPreview2"
               :on-remove="handleRemove2"
               :on-success="handleSuccess2"
+              :on-exceed="handleExceed2"
               :limit="1"
               ref="upload2"
             >
@@ -363,6 +364,16 @@ export default {
     this.query();
   },
   methods: {
+    handleExceed1(file, fileList){
+      if(fileList.length >= 1){
+        this.$message.warning("只能上传一张！")
+      }
+    },
+    handleExceed2(file, fileList){
+      if(fileList.length >= 1){
+        this.$message.warning("只能上传一张！")
+      }
+    },
     //编辑图片
     editeImgMethod() {
       if (this.editeImgForm.img === "") {
