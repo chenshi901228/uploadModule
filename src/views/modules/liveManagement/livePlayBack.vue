@@ -347,7 +347,7 @@ export default {
           if (data.id)
             this.$router.push({
               name: "liveManagement-livePlayBackComment",
-              query: { id: data.id },
+              query: { id: data.id, sys: 1 },
             });
           break;
         case "3": // 删除

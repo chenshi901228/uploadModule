@@ -156,9 +156,7 @@
           <template slot-scope="scope">
             <img
               :src="
-                scope.row.avatarUrl ||
-                'https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/default_avatar.png'
-              "
+                scope.row.avatarUrl || require('@/assets/img/default_avatar.png')"
               style="width: 60px; height: 60px"
             />
           </template>
@@ -169,6 +167,7 @@
           label="主播昵称"
           header-align="center"
           align="center"
+          width="120"
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -176,6 +175,7 @@
           label="真实姓名"
           header-align="center"
           align="center"
+          width="120"
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -183,6 +183,7 @@
           label="手机号码"
           header-align="center"
           align="center"
+          width="120"
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -190,6 +191,7 @@
           label="身份证号"
           header-align="center"
           align="center"
+          width="120"
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -210,6 +212,7 @@
           label="主播介绍"
           header-align="center"
           align="center"
+          width="120"
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -240,6 +243,7 @@
           label="申请时间"
           header-align="center"
           align="center"
+          width="180"
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -247,6 +251,7 @@
           label="审批时间"
           header-align="center"
           align="center"
+          width="180"
         >
           <template slot-scope="scope">
             {{ scope.row.status === 0 ? "" : scope.row.updateDate }}
@@ -270,7 +275,7 @@
           fixed="right"
           header-align="center"
           align="center"
-          width="150"
+          width="100"
         >
           <template slot-scope="scope">
            <el-button

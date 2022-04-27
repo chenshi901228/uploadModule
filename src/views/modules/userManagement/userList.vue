@@ -112,59 +112,77 @@
           label="用户头像"
           header-align="center"
           align="center"
+          width="100"
         >
           <template slot-scope="scope">
             <img
-              :src="scope.row.avatarUrl"
+              :src="scope.row.avatarUrl || require('@/assets/img/default_avatar.png')"
               alt=""
-              style="width: 75px; height: 50px"
+              style="width: 60px; height: 60px"
             />
           </template>
         </el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="nickName"
           label="用户昵称"
           header-align="center"
           align="center"
         ></el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="phone"
           label="手机号码"
           header-align="center"
           align="center"
         >
         </el-table-column>
-        <!-- <el-table-column
-          prop="payAt"
+        <el-table-column
+          show-overflow-tooltip
+          prop="legalizeFlg"
           label="是否认证"
           header-align="center"
           align="center"
-        ></el-table-column>
+        >
+          <template slot-scope="scope">
+            {{ scope.row.legalizeFlg === 1 ? "认证" : "未认证" }}
+          </template>
+        </el-table-column>
         <el-table-column
-          prop="createDate"
+          show-overflow-tooltip
+          prop="tutorFlg"
           label="是否是指导师"
           header-align="center"
           align="center"
-        ></el-table-column> -->
+        >
+          <template slot-scope="scope">
+            {{ scope.row.tutorFlg === 1 ? "认证" : "未认证" }}
+          </template>
+        </el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="aaa1"
           label="邀请人"
           header-align="center"
           align="center"
         ></el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="aaa2"
           label="邀请人号码"
           header-align="center"
           align="center"
         ></el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="createDate"
           label="注册时间"
           header-align="center"
           align="center"
+          width="180"
         ></el-table-column>
         <el-table-column
+          show-overflow-tooltip
           prop="createDate"
           label="状态"
           header-align="center"
@@ -179,7 +197,7 @@
           fixed="right"
           header-align="center"
           align="center"
-          width="150"
+          width="100"
         >
           <template slot-scope="scope">
             <el-button type="text" size="small" @click="openDetail(scope.row)"

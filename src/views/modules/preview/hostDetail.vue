@@ -233,6 +233,7 @@
           style="width: 100%"
           height="calc(calc(100vh - 380px) - 2px)"
           @selection-change="dataListSelectionChangeHandle"
+          ref="dataTable"
         >
           <el-table-column
             type="selection"
@@ -1254,6 +1255,7 @@ export default {
           }
           this.diaDataList = res.data.list;
           this.total_dia = res.data.total;
+          if(this.$refs.dataTable) this.$refs.dataTable.doLayout() //刷新table样式
         })
         .catch(() => {
             this.dataListLoading = false;

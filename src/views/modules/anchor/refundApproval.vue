@@ -11,15 +11,15 @@
       >
         <el-row>
           <el-col :span="8">
-            <el-form-item label="用户昵称" prop="nickName">
+            <el-form-item label="主播昵称" prop="nickName">
               <el-input
                 size="small"
-                v-model="dataForm.username"
+                v-model="dataForm.userName"
                 clearable
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <!-- <el-col :span="8">
             <el-form-item label="真实姓名" prop="phone">
               <el-input
                 size="small"
@@ -27,18 +27,28 @@
                 clearable
               ></el-input>
             </el-form-item>
-          </el-col>
+          </el-col> -->
 
           <el-col :span="8">
             <el-form-item label="手机号码" prop="phone">
               <el-input
                 size="small"
-                v-model="dataForm.phone"
+                v-model="dataForm.userPhone"
                 clearable
               ></el-input>
             </el-form-item>
           </el-col>
-          <div v-if="isOpen">
+          <el-col :span="8">
+            <el-form-item label="审批状态" prop="delFlg">
+              <el-select size="small" v-model="dataForm.refundStatus" clearable>
+                <el-option :value="2" label="待退款"></el-option>
+                <el-option :value="0" label="退款中"></el-option>
+                <el-option :value="1" label="退款成功"></el-option>
+                <el-option :value="-1" label="退款失败"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <!-- <div v-if="isOpen">
             <el-row >
               <el-col :span="8">
                 <el-form-item label="身份证" prop="phone">
@@ -53,16 +63,18 @@
                 <el-form-item label="审批状态" prop="delFlg">
                   <el-select
                     size="small"
-                    v-model="dataForm.handlingStatus"
+                    v-model="dataForm.refundStatus"
                     clearable
                   >
-                    <el-option :value="1" label="已处理"></el-option>
-                    <el-option :value="0" label="未处理"></el-option>
+                    <el-option :value="2" label="待退款"></el-option>
+                    <el-option :value="0" label="退款中"></el-option>
+                    <el-option :value="1" label="退款成功"></el-option>
+                    <el-option :value="-1" label="退款失败"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
-          </div>
+          </div> -->
           <el-col :span="24">
             <el-form-item style="float: right; padding-right: 10px">
               <el-button type="info" size="small" @click="exportHandle()">{{
@@ -74,13 +86,13 @@
               <el-button size="small" @click="resetDataForm()">{{
                 $t("reset")
               }}</el-button>
-              <el-button size="small" type="primary" @click="open">
+              <!-- <el-button size="small" type="primary" @click="open">
                 {{ isOpen ? "收起" : "展开"
                 }}<i
                   style="margin-left: 10px"
                   :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
                 ></i>
-              </el-button>
+              </el-button> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -217,20 +229,26 @@
           width="150"
         >
           <template slot-scope="scope">
-            <el-button
+            <!-- <el-button
               type="text"
               size="small"
               v-if="scope.row.approveStatus === 0"
-              @click="updateApproveStatus(scope.row.id,1)"
+              @click="updateApproveStatus(scope.row.id, 1)"
               >通过</el-button
             >
             <el-button
               type="text"
               size="small"
               v-if="scope.row.approveStatus === 0"
-              @click="updateApproveStatus(scope.row.id,-1)"
-
+              @click="updateApproveStatus(scope.row.id, -1)"
               >驳回</el-button
+            > -->
+            <el-button
+              type="text"
+              size="small"
+              v-if="scope.row.approveStatus === 0"
+              @click="showDialog(scope.row.id)"
+              >审批</el-button
             >
           </template>
         </el-table-column>
@@ -246,6 +264,22 @@
       >
       </el-pagination>
     </div>
+    <el-dialog title="审批" :visible.sync="dialogFormVisible">
+      <el-form
+        :model="ruleForm"
+        ref="ruleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+      >
+        <el-form-item label="备注" prop="desc">
+          <el-input placeholder="请输入,可不填" type="textarea" v-model="ruleForm.desc"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="updateApproveStatus(id,-1)">驳 回</el-button>
+        <el-button type="primary" @click="updateApproveStatus(id,1)">通 过</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -264,15 +298,19 @@ export default {
         exportURL: "/sys/manage/complaint/export",
       },
       dataForm: {
-        nickName: "",
-        phone: "",
-        delFlg: "",
+        userName: "",
+        userPhone: "",
+        refundStatus: "",
       },
       dataList: [{ createDate: 1 }],
       userId: "",
 
       otherViewHeight: 0, //搜索栏高度
       isOpen: false, //搜索栏展开/收起
+      dialogFormVisible: false,
+      ruleForm: {
+        desc: "",
+      },
     };
   },
   components: { Template },
@@ -307,6 +345,10 @@ export default {
     });
   },
   methods: {
+    showDialog(id) {
+      this.id = id;
+      this.dialogFormVisible = true;
+    },
     // 搜索栏高度设置
     setOtherViewHeight() {
       setTimeout(() => {
@@ -321,17 +363,22 @@ export default {
     // 搜索栏收起/展开
     open() {
       this.isOpen = !this.isOpen;
-       this.resetDataForm()
+      this.resetDataForm();
     },
 
     // 重置搜索条件
     resetDataForm() {
+      this.dataForm = {
+        userName: "",
+        userPhone: "",
+        refundStatus: "",
+      };
       this.$refs.refundApproval.resetFields();
       this.getDataList();
     },
 
-      // 审核
-    updateApproveStatus(id,status) {
+    // 审核
+    updateApproveStatus(id, status) {
       this.$confirm(
         `是否执行 [${status == -1 ? "拒绝" : "同意"}[ 操作`,
         this.$t("prompt.title"),
@@ -344,25 +391,24 @@ export default {
         .then(() => {
           this.$http["put"]("/sys/userRefund/updateApproveStatus", {
             id,
-            approveStatus:status,
+            approveStatus: status,
           })
             .then(({ data: res }) => {
               if (res.code !== 0) {
                 return this.$message.error(res.msg);
               }
-               this.getDataList();
-              this.$message.success('操作成功');
+              this.getDataList();
+              this.$message.success("操作成功");
+              this.dialogFormVisible = false
             })
             .catch(() => {});
         })
         .catch(() => {});
-   
     },
-  
   },
 };
 </script>
-<style  scoped>
+<style lang="scss"  scoped>
 .forbiddenAllBtn {
   width: 120px;
   height: 35px;
@@ -373,5 +419,31 @@ export default {
   text-align: center;
   cursor: pointer;
   margin: 10px 0;
+}
+
+/deep/.el-dialog {
+  display: flex;
+  display: -ms-flex; /* 兼容IE */
+  flex-direction: column;
+  -ms-flex-direction: column; /* 兼容IE */
+  margin: 0 !important;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: calc(100% - 30px);
+  max-width: calc(100% - 30px);
+}
+/deep/.el-dialog .el-dialog__body {
+  padding: 20px; /*这个不重要*/
+  max-height: 75vh;
+  flex: 1;
+  -ms-flex: 1 1 auto; /* 兼容IE */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/deep/.el-dialog__wrapper {
+  overflow: hidden; /*隐藏ie和edge中遮罩的滚动条*/
 }
 </style>

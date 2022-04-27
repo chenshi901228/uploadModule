@@ -76,12 +76,23 @@
             <i slot="default" class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
-        <!-- <el-form-item label="选择投放人群" prop="userGroup">
-          <el-select v-model="ruleForm.userGroup" placeholder="选择投放人群">
-            <el-option label="一" value="0"></el-option>
-            <el-option label="二" value="1"></el-option>
+        <el-form-item label="选择投放人群" prop="dynamicGroupIds">
+          <el-select
+            v-model="ruleForm.dynamicGroupIds"
+            filterable
+            multiple
+            placeholder="请选择"
+            :clearable="true"
+          >
+            <el-option
+              v-for="(item, index) in options"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
           </el-select>
-        </el-form-item> -->
+        </el-form-item>
         <el-form-item
           class="quill-editor"
           label="直播介绍"
@@ -202,7 +213,7 @@ export default {
         startDate: "",
         estimateLiveTime: "",
         frontCoverUrl: "",
-        // userGroup: "",
+        dynamicGroupIds: [],
         liveIntroduce: "",
       },
       dialogImageUrl: "",
@@ -255,6 +266,7 @@ export default {
         },
       },
       TiLength: 0,
+      options: [],
     };
   },
   watch: {
@@ -276,7 +288,8 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      vm.getCoverPictureList()
+      vm.getCoverPictureList();
+      vm.getDynamicGroupList();
       vm.ruleForm.id = "";
       vm.ruleForm.liveTheme = "";
       vm.ruleForm.startDate = "";
@@ -290,6 +303,10 @@ export default {
         vm.ruleForm.liveTheme = dataForm.liveTheme;
         vm.ruleForm.startDate = dataForm.startDate;
         vm.ruleForm.estimateLiveTime = dataForm.estimateLiveTime;
+        if (dataForm.dynamicGroupIdsString && dataForm.dynamicGroupName) {
+          vm.ruleForm.dynamicGroupIds =
+            dataForm.dynamicGroupIdsString.split(",");
+        }
         vm.ruleForm.frontCoverUrl = dataForm.frontCoverUrl;
         vm.fileList.push(dataForm.frontCoverUrl);
         vm.ruleForm.liveIntroduce = dataForm.liveIntroduce;
@@ -356,6 +373,7 @@ export default {
               if (res.code !== 0) {
                 return this.$message.error(res.msg);
               }
+              this.$message.success("修改成功！")
               window.sessionStorage.removeItem("dataForm");
               this.$router.push({
                 path: "/preview-Preview",
@@ -435,6 +453,20 @@ export default {
     //补零
     dateIfAddZero: function (time) {
       return time < 10 ? "0" + time : time;
+    },
+    //获取投放人群
+    getDynamicGroupList() {
+      this.$http
+        .get("/sys/dynamicGroup/getDynamicGroupList")
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          this.options = res.data;
+        })
+        .catch((err) => {
+          throw err;
+        });
     },
   },
 };

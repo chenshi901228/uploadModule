@@ -110,7 +110,7 @@
                     <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center">
                         <template slot-scope="{ row }">
                             <el-button type="text" size="small" @click="checkComment(row)">查看回复</el-button>
-                            <el-button v-if="!row.delFlg" type="text" size="small" @click="deleteComment(row.id)">删除</el-button>
+                            <el-button v-if="!row.delFlg && sys" type="text" size="small" @click="deleteComment(row.id)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -157,6 +157,7 @@ export default {
             params: {
                 commentLiveListId: null,
             },
+            sys: 0, //0-主播管理，1-直播管理---仅直播管理可删除
 
             tableItem: [
                 { prop: "commentUserName", label: "评论人" },
@@ -171,13 +172,14 @@ export default {
     },
     activated() {
         this.params.commentLiveListId = this.$route.query.id;
+        this.sys = this.$route.query.sys;
         this.query()
     },
     methods: {
         // 查看回复
         checkComment(row) {
             if(row) {
-                this.$router.push({ name: "liveManagement-livePlayBackChildComment", query: { id: row.id }})
+                this.$router.push({ name: "liveManagement-livePlayBackChildComment", query: { id: row.id, sys: this.sys }})
                 localStorage.setItem("livePlayBackComment", JSON.stringify(row))
             }
         },

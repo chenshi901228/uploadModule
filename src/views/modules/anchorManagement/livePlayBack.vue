@@ -223,14 +223,6 @@
             <el-button
               style="margin-left: 10px"
               type="text"
-              v-if="row.liveState != 0"
-              @click="actionHandle('3',row)"
-              >删除</el-button
-            >
-          
-            <el-button
-              style="margin-left: 10px"
-              type="text"
               v-if="row.liveState == 1"
               @click="showOrHide(row)"
               >{{ row.showState ? "隐藏" : "显示" }}</el-button
@@ -328,12 +320,8 @@ export default {
           if (data.id)
             this.$router.push({
               name: "liveManagement-livePlayBackComment",
-              query: { id: data.id },
+              query: { id: data.id, sys: 0 },
             });
-          break;
-        case "3": // 添加商品
-          if (!data.id) return;
-          this.$message.info("还没有呀！");
           break;
       }
     },

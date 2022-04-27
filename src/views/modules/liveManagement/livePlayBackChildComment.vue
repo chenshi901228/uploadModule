@@ -117,7 +117,7 @@
                     <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center">
                         <template slot-scope="{ row }">
                             <el-button type="text" size="small" @click="detail(row)">回复详情</el-button>
-                            <el-button v-if="!row.delFlg" type="text" size="small" @click="deleteComment(row.id)">删除</el-button>
+                            <el-button v-if="!row.delFlg && sys" type="text" size="small" @click="deleteComment(row.id)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -182,6 +182,7 @@ export default {
             params: {
                 id: null,
             },
+            sys: 0,
 
             tableItem: [
                 { prop: "commentUserName", label: "回复人" },
@@ -199,6 +200,7 @@ export default {
     },
     activated(){
         this.params.id = this.$route.query.id;
+        this.sys = this.$route.query.sys;
         this.dataList = []
         this.livePlayBackCommentInfo = JSON.parse(localStorage.getItem("livePlayBackComment") || "") || null
         this.query()

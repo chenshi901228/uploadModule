@@ -173,7 +173,17 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.successEvent || "--" }}</span>
+            <span>{{
+              scope.row.successEvent === 0
+                ? "新人注册"
+                : scope.row.successEvent === 1
+                ? "进入直播"
+                : scope.row.successEvent === 2
+                ? "预约直播"
+                : scope.row.successEvent === 3
+                ? "观看视频"
+                : "--"
+            }}</span>
           </template></el-table-column
         >
         <el-table-column

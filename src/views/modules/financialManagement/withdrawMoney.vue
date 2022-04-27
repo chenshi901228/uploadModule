@@ -10,19 +10,19 @@
       >
         <el-row>
           <el-col :span="8">
-            <el-form-item label="主播昵称" prop="nickName">
+            <el-form-item label="主播昵称" prop="anchorName">
               <el-input
                 size="small"
-                v-model="dataForm.nickName"
+                v-model="dataForm.anchorName"
                 clearable
               ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="真实姓名" prop="phone">
+            <el-form-item label="真实姓名" prop="realName">
               <el-input
                 size="small"
-                v-model="dataForm.phone"
+                v-model="dataForm.realName"
                 clearable
               ></el-input>
             </el-form-item>
@@ -40,23 +40,23 @@
           <div v-if="isOpen">
             <el-row>
               <el-col :span="8">
-                <el-form-item label="身份证号" prop="phone">
+                <el-form-item label="身份证" prop="idCard">
                   <el-input
                     size="small"
-                    v-model="dataForm.phone"
+                    v-model="dataForm.idCard"
                     clearable
                   ></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="提现状态" prop="delFlg">
+                <el-form-item label="提现状态" prop="confirmStatus">
                   <el-select
                     size="small"
-                    v-model="dataForm.handlingStatus"
+                    v-model="dataForm.confirmStatus"
                     clearable
                   >
-                    <el-option :value="1" label="已处理"></el-option>
-                    <el-option :value="0" label="未处理"></el-option>
+                    <el-option :value="1" label="已确认打款"></el-option>
+                    <el-option :value="0" label="未打款"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -95,19 +95,26 @@
         ref="table"
       >
         <el-table-column
-          prop="username"
+          prop="anchorName"
           label="主播昵称"
           header-align="center"
           align="center"
           min-width="120px"
-        ></el-table-column>
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.anchorName || "--" }}</span>
+          </template></el-table-column
+        >
         <el-table-column
-          prop="phone"
+          prop="realName"
           label="真实姓名"
           header-align="center"
           align="center"
         >
-        </el-table-column>
+          <template slot-scope="scope">
+            <span>{{ scope.row.realName || "--" }}</span>
+          </template></el-table-column
+        >
         <el-table-column
           prop="phone"
           label="手机号码"
@@ -115,72 +122,99 @@
           header-align="center"
           align="center"
         >
+          <template slot-scope="scope">
+            <span>{{ scope.row.phone || "--" }}</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="phone"
+          prop="idCard"
           label="身份证号"
-          min-width="200px"
+          min-width="150px"
           header-align="center"
           align="center"
         >
+          <template slot-scope="scope">
+            <span>{{ scope.row.idCard || "--" }}</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="phone"
+          prop="accountName"
           label="账户名称"
-          header-align="center"
-          align="center"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="username"
-          label="银行账号"
-          min-width="180px"
-          header-align="center"
-          align="center"
-        ></el-table-column>
-
-        <el-table-column
-          prop="solution"
-          label="开户银行"
-          header-align="center"
-          show-overflow-tooltip
-          align="center"
-        >
-        </el-table-column>
-        <el-table-column
-          prop="handler"
-          label="支行名称"
           min-width="120px"
           header-align="center"
-          show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="scope">
+            <span>{{ scope.row.accountName || "--" }}</span>
+          </template></el-table-column
+        >
+        <el-table-column
+          prop="bankAccount"
+          label="银行账号"
+          min-width="150px"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.bankAccount || "--" }}</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="handler"
-          label="开户行所在地"
-          min-width="180px"
+          prop="depositBank"
+          label="开户银行"
+          min-width="100px"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.depositBank || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="branchName"
+          label="支行名称"
+          min-width="140px"
           header-align="center"
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="scope">
+            <span>{{ scope.row.branchName || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="address"
+          label="开户行所在地"
+          min-width="120px"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.address || "--" }}</span>
+          </template>
         </el-table-column>
 
         <el-table-column
-          prop="handler"
+          prop="amount"
           label="提现金额"
           header-align="center"
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="scope">
+            <span>{{ scope.row.amount || "--" }}</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="handler"
+          prop="receivedAmount"
           label="到账金额"
           header-align="center"
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="scope">
+            <span>{{ scope.row.receivedAmount || "--" }}</span>
+          </template>
         </el-table-column>
 
         <el-table-column
@@ -190,9 +224,12 @@
           header-align="center"
           align="center"
         >
+          <template slot-scope="scope">
+            <span>{{ scope.row.createDate || "--" }}</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="handlingStatus"
+          prop="confirmStatus"
           label="提现状态"
           header-align="center"
           align="center"
@@ -200,11 +237,11 @@
           <template slot-scope="scope">
             <div>
               {{
-                scope.row.handlingStatus === 1
+                scope.row.confirmStatus === 0
                   ? "待打款"
-                  : scope.row.handlingStatus === 2
-                  ? "未到账"
-                  : "已到账"
+                  : scope.row.confirmStatus === 1
+                  ? "已到账"
+                  : "--"
               }}
             </div>
           </template>
@@ -220,7 +257,8 @@
             <el-button
               type="text"
               size="small"
-              v-if="scope.row.handlingStatus === 1"
+              v-if="scope.row.confirmStatus === 0"
+              @click="confirm(scope.row.id)"
               >确认打款</el-button
             >
           </template>
@@ -237,6 +275,13 @@
       >
       </el-pagination>
     </div>
+    <el-dialog title="确认打款" :visible.sync="dialogVisible" width="30%">
+      <span>确认向该主播打款吗？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmShowState">确 定</el-button>
+      </span>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -244,24 +289,29 @@
 import mixinViewModule from "@/mixins/view-module";
 import { addDynamicRoute } from "@/router";
 import Template from "../devtools/template.vue";
+import { getUUID } from "@/utils";
 export default {
   mixins: [mixinViewModule],
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/manage/complaint/page",
+        getDataListURL: "/sys/finance/anchorWithdraw/pageWithFinance",
         getDataListIsPage: true,
         deleteIsBatch: true,
-        exportURL: "/sys/manage/complaint/export",
+        exportURL: "/sys/finance/anchorWithdraw/exportWithFinance",
       },
       dataForm: {
-        nickName: "",
+        anchorName: "",
+        confirmStatus: "",
+        idCard: "",
         phone: "",
-        delFlg: "",
+        realName: "",
       },
       dataList: [{ createDate: 1 }],
       userId: "",
-
+      dialogVisible: "",
+      uuid: "",
+      id: "",
       otherViewHeight: 0, //搜索栏高度
       isOpen: false, //搜索栏展开/收起
     };
@@ -298,6 +348,26 @@ export default {
     });
   },
   methods: {
+    confirm(id) {
+      this.id = id;
+      this.uuid = getUUID();
+      this.dialogVisible = true;
+    },
+    confirmShowState() {
+      this.$http["put"]("/sys/finance/anchorWithdraw/updateConfirmStatus", {
+        id: this.id,
+        uuid: this.uuid,
+      })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          this.getDataList();
+          this.$message.success("操作成功");
+          this.dialogVisible = false;
+        })
+        .catch(() => {});
+    },
     // 搜索栏高度设置
     setOtherViewHeight() {
       setTimeout(() => {
@@ -312,11 +382,18 @@ export default {
     // 搜索栏收起/展开
     open() {
       this.isOpen = !this.isOpen;
-        this.resetDataForm()
+      this.resetDataForm();
     },
 
     // 重置搜索条件
     resetDataForm() {
+      this.dataForm = {
+        anchorName: "",
+        confirmStatus: "",
+        idCard: "",
+        phone: "",
+        realName: "",
+      };
       this.$refs.withdrawMoney.resetFields();
       this.getDataList();
     },

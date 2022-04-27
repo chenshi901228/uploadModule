@@ -89,7 +89,7 @@ export default {
     // 审核
     updateApplyInfoStatus(status) {
       this.$confirm(
-        `是否执行 [${status == -1 ? "拒绝" : "同意"}[ 操作`,
+        `是否执行 [${status == -1 ? "拒绝" : "同意"}] 操作`,
         this.$t("prompt.title"),
         {
           confirmButtonText: this.$t("confirm"),
@@ -103,7 +103,7 @@ export default {
             status,
           })
             .then(({ data: res }) => {
-              if (res.code !== 0) {
+              if (res.code != 0) {
                 return this.$message.error(res.msg);
               }
               this.$message.success('操作成功');

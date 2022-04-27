@@ -240,6 +240,12 @@
             align="center"
           ></el-table-column>
           <el-table-column
+            prop="phone"
+            label="手机号码"
+            header-align="center"
+            align="center"
+          ></el-table-column>
+          <el-table-column
             prop="intimacyNum"
             label="亲密度"
             header-align="center"
