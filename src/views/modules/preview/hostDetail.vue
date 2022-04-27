@@ -49,8 +49,8 @@
               diaForm.priceConsumption ? diaForm.priceConsumption : 0
             }}元
           </div>
-          <div>已提现金额：￥{{ diaForm.aaa5 }}元</div>
-          <div>可提现金额：￥{{ diaForm.aaa3 }}元</div>
+          <div>已提现金额：￥{{ diaForm.anchorWithdraw || 0 }}元</div>
+          <div>可提现金额：￥{{ diaForm.anchorBalance || 0 }}元</div>
         </div>
       </div>
       <div class="diaBoxRight">
@@ -100,30 +100,57 @@
         </div>
         <el-form
           :inline="true"
-          :style="{ margin: '20px', 'text-align': 'right' }"
+          :style="{ margin: '20px' }"
           :model="diaSearchForm"
           @keyup.enter.native="queryPost_dia()"
           size="small"
         >
-          <el-form-item label="支付方式" v-if="diaTbas === 1">
-            <el-select v-model="diaSearchForm.payType" clearable>
-              <el-option :value="1" label="微信"></el-option>
-              <el-option :value="2" label="支付宝"></el-option>
+          <el-form-item label="收益类型" v-if="diaTbas === 1">
+            <el-select size="small" v-model="diaSearchForm.type" clearable>
+              <el-option :value="1" label="直播间礼物"></el-option>
+              <el-option :value="2" label="粉丝团"></el-option>
+              <el-option :value="3" label="课程返利"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="充值来源" v-if="diaTbas === 1">
-            <el-select v-model="diaSearchForm.paySource" clearable>
-              <el-option :value="1" label="小程序端"></el-option>
-              <el-option :value="2" label="大于众学"></el-option>
+          <el-form-item label="结算时间" v-if="diaTbas === 1">
+            <el-date-picker
+              v-model="diaSearchForm.date"
+              type="datetimerange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              value-format="yyyy-MM-dd HH:mm:ss">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="银行账户" v-if="diaTbas === 2">
+            <el-input
+              size="small"
+              v-model="diaSearchForm.bankAccount"
+              clearable
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="提现时间" v-if="diaTbas === 2">
+            <el-date-picker
+              v-model="diaSearchForm.date"
+              type="datetimerange"
+              range-separator="至"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              value-format="yyyy-MM-dd HH:mm:ss">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="审批状态" v-if="diaTbas === 2">
+            <el-select size="small" v-model="diaSearchForm.approveStatus" clearable>
+              <el-option :value="0" label="审批中"></el-option>
+              <el-option :value="1" label="已通过"></el-option>
+              <el-option :value="-1" label="未通过"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="礼物名称" v-if="diaTbas === 2">
-            <el-input v-model="diaSearchForm.name" clearable></el-input>
-          </el-form-item>
-          <el-form-item label="消费来源" v-if="diaTbas === 2">
-            <el-select v-model="diaSearchForm.paySource" clearable>
-              <el-option :value="1" label="小程序端"></el-option>
-              <el-option :value="2" label="大于众学"></el-option>
+          <el-form-item label="支付状态" v-if="diaTbas === 2">
+            <el-select size="small" v-model="diaSearchForm.payStatus" clearable>
+              <el-option :value="0" label="未支付"></el-option>
+              <el-option :value="1" label="已支付"></el-option>
+              <el-option :value="-1" label="支付失败"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="用户昵称" v-if="diaTbas === 3 || diaTbas === 4">
@@ -177,6 +204,12 @@
               @click="updateProduct"
               type="primary"
               >上架商品</el-button
+            >
+            <el-button
+              v-if="diaTbas === 4"
+              @click="fansGroup"
+              type="primary"
+              >群组</el-button
             >
             <el-button
               v-if="diaTbas === 6 && dataListSelections.length !== 0"
@@ -243,6 +276,48 @@
                     "
                     alt=""
                   />
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :prop="prop"
+              :label="label"
+              :key="prop"
+              header-align="center"
+              align="center"
+              v-else-if="prop === 'type'"
+            >
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.type === 1 ? "直播间礼物":scope.row.type===2?"粉丝团":"课程返利" }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :prop="prop"
+              :label="label"
+              :key="prop"
+              header-align="center"
+              align="center"
+              v-else-if="prop === 'approveStatus'"
+            >
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.approveStatus === 0 ? "审批中":scope.row.approveStatus === 1 ?"已通过":"未通过" }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :prop="prop"
+              :label="label"
+              :key="prop"
+              header-align="center"
+              align="center"
+              v-else-if="prop === 'confirmStatus'"
+            >
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.confirmStatus === 0 ? "待打款":scope.row.confirmStatus ===1&&scope.row.payStatus===0?'到账中':scope.row.confirmStatus ===1&&scope.row.payStatus===1?'已到账':"到账失败" }}
                 </div>
               </template>
             </el-table-column>
@@ -751,11 +826,58 @@
         <el-button type="primary" @click="subimtEditBank">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 提现 -->
+    <el-dialog
+      title="申请提现"
+      :visible.sync="dialogVisible_withdraw"
+      width="600px"
+    >
+      <el-form
+        :model="bankForm"
+        :rules="dataRule_withdraw"
+        ref="withdrawForm_host"
+        label-width="120px"
+      >
+        <el-form-item label="可提现金额：">
+          <div>{{ diaForm.anchorBalance || 0 }}</div>
+        </el-form-item>
+        <el-form-item label="申请提现金额：" prop="amount">
+          <el-input
+            v-model="withdrawForm.amount"
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="上传发票：">
+          <el-upload
+            action="https://jsonplaceholder.typicode.com/posts/"
+            list-type="picture-card"
+            :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove">
+            <i class="el-icon-plus"></i>
+          </el-upload>
+          <el-dialog :visible.sync="dialogVisible_Image">
+            <img width="100%" :src="dialogImageUrl" alt="">
+          </el-dialog>
+        </el-form-item>
+        <div class="withdraw_bank_info">
+          <div class="header">提现至：</div>
+          <div>开户银行：{{ diaForm.depositBank }}</div>
+          <div>支行名称：{{ diaForm.branchName }}</div>
+          <div>账号名称：{{ diaForm.accountName }}</div>
+          <div>银行账户：{{ diaForm.bankAccount }}</div>
+          <div>开户行所在地：{{ diaForm.address }}</div>
+        </div>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible_withdraw = false">取 消</el-button>
+        <el-button type="primary" @click="subimtWithdraw">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { treeDataTranslate } from "@/utils";
+import { treeDataTranslate,getUUID } from "@/utils";
 export default {
   name: "LiveWebmanageUserdetail",
 
@@ -777,6 +899,11 @@ export default {
         productName: "",
         productType: "",
         isFree: "",
+        type:"",
+        bankAccount:"",
+        approveStatus:"",
+        payStatus:"",
+        date:"",
       },
       productForm: {
         productName: "",
@@ -795,9 +922,9 @@ export default {
       dataListSelections: [], // 数据列表，多选项
       diaDataList: [],
       diaTableTitle: {
-        price: "收益金额",
-        amount: "收益类型",
-        payType: "收益描述",
+        amount: "收益金额",
+        type: "收益类型",
+        detail: "收益描述",
         createDate: "结算时间",
       },
       page_dia: 1, // 当前页码
@@ -816,6 +943,12 @@ export default {
 
       // 修改银行卡信息
       dialogVisible_editBank: false,
+      dialogVisible_withdraw:false,//提现弹窗
+      dialogImageUrl: '',
+      dialogVisible_Image: false,
+      withdrawForm:{
+        amount:'',
+      },
       dataRule_bank: {
         address: [
           { required: true, message: "请选择省/市/区县", trigger: "change" },
@@ -828,6 +961,11 @@ export default {
         ],
         bankAccount: [
           { required: true, message: "请填写银行账户", trigger: "blur" },
+        ],
+      },
+      dataRule_withdraw:{
+        amount: [
+          { required: true, message: "请输入提现金额", trigger: "blur" },
         ],
       },
       regionDataAll: [],
@@ -857,10 +995,33 @@ export default {
         this.regionDataAll =res.data;
       })
       .catch(() => {});
+      this.$http
+        .get(
+          `/sys/manage/userDetail/${this.userId}`
+        )
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return vm.$message.error(res.msg);
+          }
+          this.diaForm = {
+            ...this.diaForm,
+            priceConsumption: res.data.priceConsumption,
+            anchorWithdraw:res.data.anchorWithdraw,
+            anchorBalance: res.data.anchorBalance,
+          };
+        })
+        .catch(() => {});
     this.changeTbas(1);
   },
 
   methods: {
+    handleRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
     // 多选
     dataListSelectionChangeHandle(val) {
       this.dataListSelections = val;
@@ -887,6 +1048,11 @@ export default {
               productName: "",
               productType: "",
               isFree: "",
+              type:"",
+              bankAccount:"",
+              approveStatus:"",
+              payStatus:"",
+              date:"",
             };
             this.page_dia = 1; // 当前页码
             this.diaDataList = [];
@@ -914,6 +1080,12 @@ export default {
         productName: "",
         productType: "",
         isFree: "",
+        type:"",
+        date:"",
+        bankAccount:"",
+        approveStatus:"",
+        payStatus:"",
+        date:"",
       };
          this.diaDataList=[]
        this.total_dia = 0;
@@ -921,23 +1093,23 @@ export default {
       switch (n) {
         case 1:
           this.diaTableTitle = {
-            price: "收益金额",
-            amount: "收益类型",
-            payType: "收益描述",
+            amount: "收益金额",
+            type: "收益类型",
+            detail: "收益描述",
             createDate: "结算时间",
           };
           break;
         case 2:
           this.diaTableTitle = {
-            name: "提现金额",
-            giftNum: "账户姓名",
-            price: "银行账户",
-            allPrice: "开户银行",
-            payType: "支行名称",
-            paySource: "开户行所在地",
+            amount: "提现金额",
+            accountName: "账户姓名",
+            bankAccount: "银行账户",
+            depositBank: "开户银行",
+            branchName: "支行名称",
+            address: "开户行所在地",
             createDate: "提现时间",
-            createDate: "审批状态",
-            createDate: "提现状态",
+            approveStatus: "审批状态",
+            confirmStatus: "提现状态",
           };
           break;
         case 3:
@@ -998,20 +1170,25 @@ export default {
           data = {
             limit: this.limit_dia,
             page: this.page_dia,
-            weixinUserId: this.userId,
-            paySource: this.diaSearchForm.paySource,
-            payType: this.diaSearchForm.payType,
+            anchorId: this.userId,
+            type: this.diaSearchForm.type,
+            startDate:this.diaSearchForm.date[0],
+            endDate:this.diaSearchForm.date[1]
           };
-          url = "/sys/user/consumption/selectUserAddPage";
+          url = "/sys/anchorGain/page";
           break;
         case 2:
           data = {
             limit: this.limit_dia,
             page: this.page_dia,
-            weixinUserId: this.userId,
-            paySource: this.diaSearchForm.paySource,
+            anchorId: this.userId,
+            bankAccount:this.diaSearchForm.bankAccount,
+            approveStatus:this.diaSearchForm.approveStatus,
+            payStatus:this.diaSearchForm.payStatus,
+            startDate:this.diaSearchForm.date[0],
+            endDate:this.diaSearchForm.date[1]
           };
-          url = "/sys/user/consumption/selectUserGiftPage";
+          url = "/sys/anchorWithdraw/page";
           break;
         case 3:
           data = {
@@ -1109,6 +1286,9 @@ export default {
         .catch(() => {
           this.$message.info("已取消下架");
         });
+    },
+    fansGroup(){
+      this.$router.push({name:'preview-fansGroup-index'})
     },
     //上架商品
     updateProduct() {
@@ -1507,8 +1687,32 @@ export default {
         }
       });
     },
-    //编辑账户信息
-    editeUserMoney() {}
+    //提现
+    editeUserMoney() {
+      console.log(11111)
+      this.dialogVisible_withdraw = true
+    },
+    subimtWithdraw(){
+      // this.$refs.withdrawForm_host.validate((valid) => {
+      //   if (valid) {
+      //     this.$http.post('/sys/anchorWithdraw',{
+      //       amount:this.withdrawForm.amount,
+      //       uuid:getUUID(),
+      //     }).then(res=>{
+      //       console.log(res)
+      //     }).catch(err=>{})
+      //   } else {
+      //     console.log("error submit!!");
+      //     return false;
+      //   }
+      // });
+      this.$http.post('/sys/anchorWithdraw',{
+        amount:this.withdrawForm.amount,
+        uuid:getUUID(),
+      }).then(res=>{
+        console.log(res)
+      }).catch(err=>{})
+    }
   },
 };
 </script>
