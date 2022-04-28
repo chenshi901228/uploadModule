@@ -25,11 +25,11 @@
           </el-col>
         </el-row>
       </el-form>
-      <el-row>
+      <!-- <el-row>
         <el-col>
           <el-button size="small" type="primary" @click="dialogVisibleGroup=true" style="marginBottom:10px;">创建群组</el-button>
         </el-col>
-      </el-row>
+      </el-row> -->
       <el-table
         v-loading="dataUserListLoading"
         :data="fansGroupList"
@@ -56,12 +56,12 @@
           align="center"
         >
           <template slot-scope="scope">
-            <el-button
+            <!-- <el-button
               size="mini"
               type="primary"
               @click="handleAddUser(scope.$index, scope.row)"
               >添加成员</el-button
-            >
+            > -->
             <el-button
               size="mini"
               type="primary"
@@ -319,7 +319,7 @@
             >
             </el-table-column>
           </template>
-          <el-table-column
+          <!-- <el-table-column
             width="200"
             label="操作"
             fixed="right"
@@ -334,7 +334,7 @@
                 >移除</el-button
               >
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
         <el-pagination
             :current-page="hasJoinFansUserForm.page"
