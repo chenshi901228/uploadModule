@@ -213,6 +213,13 @@
               @click="deleteSelect()"
               >批量下架</el-button
             > -->
+            <el-button
+              size="small"
+              v-if="diaTbas === 4"
+              @click="fansGroup"
+              type="primary"
+              >群组</el-button
+            >
             <el-button size="small" @click="queryPost_dia()">{{
               $t("query")
             }}</el-button>
@@ -724,6 +731,9 @@ export default {
     });
   },
   methods: {
+    fansGroup(){
+      this.$router.push({name:'userManagement-fansGroup-index',query:{anchorId:this.userId}})
+    },
     // 多选
     dataListSelectionChangeHandle(val) {
       this.dataListSelections = val;

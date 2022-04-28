@@ -174,6 +174,7 @@ export default {
                 this.$message.success("上传成功")
                 this.$emit("uploadSuccess", t)
             }else{
+                this.uploadList = this.uploadList.filter(item => item.uid != file.uid)
                 this.$message.error(response.msg)
             }
         },
