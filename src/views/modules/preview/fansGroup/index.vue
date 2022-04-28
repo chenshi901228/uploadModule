@@ -145,7 +145,7 @@
         </el-row>
         <el-row>
           <el-col>
-            <el-button size="small" type="primary" @click="dialogVisibleGroup=true" style="marginBottom:10px;">添加</el-button>
+            <el-button size="small" type="primary" @click="addUserJoinGroup" style="marginBottom:10px;">添加</el-button>
           </el-col>
         </el-row>
         <el-table
@@ -156,7 +156,14 @@
           @selection-change="noJoinUserSelectionChangeHandle"
           style="width: 100%"
           max-height="500"
-        >
+        > 
+          <el-table-column
+            type="selection"
+            header-align="center"
+            align="center"
+            width="50"
+            fixed="left"
+          ></el-table-column>
           <template v-for="(label, prop) in noJoinColumns">
             <el-table-column
               :prop="prop"
@@ -554,7 +561,9 @@ export default {
     //添加进入群组
     addUserJoinGroup(i,row){
       let userIds = []
-      userIds.push(row.weixinUserId)
+      this.dataListSelectionUsers.forEach(item=>{
+        userIds.push(item.weixinUserId)
+      })
       let data = {
         id:this.groupId,
         userIds,
