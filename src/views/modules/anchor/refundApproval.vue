@@ -39,7 +39,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="审批状态" prop="delFlg">
+            <el-form-item label="退款状态" prop="refundStatus">
               <el-select size="small" v-model="dataForm.refundStatus" clearable>
                 <el-option :value="2" label="待退款"></el-option>
                 <el-option :value="0" label="退款中"></el-option>
@@ -179,24 +179,6 @@
         >
         </el-table-column>
         <el-table-column
-          prop="approveStatus"
-          label="审批状态"
-          header-align="center"
-          align="center"
-        >
-          <template slot-scope="scope">
-            <div>
-              {{
-                scope.row.approveStatus === 1
-                  ? "同意"
-                  : scope.row.approveStatus === -1
-                  ? "不同意"
-                  : "申请中"
-              }}
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column
           prop="weixinUserProductId"
           label="关联订单编号"
           min-width="200px"
@@ -220,6 +202,32 @@
           header-align="center"
           align="center"
         ></el-table-column>
+        <el-table-column
+          prop="refundReason"
+          label="备注"
+          min-width="160px"
+          header-align="center"
+          align="center"
+        ></el-table-column>
+
+        <el-table-column
+          prop="approveStatus"
+          label="审批状态"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <div>
+              {{
+                scope.row.approveStatus === 1
+                  ? "已通过"
+                  : scope.row.approveStatus === -1
+                  ? "已拒绝"
+                  : "待审批"
+              }}
+            </div>
+          </template>
+        </el-table-column>
 
         <el-table-column
           :label="$t('handle')"
@@ -380,7 +388,7 @@ export default {
     // 审核
     updateApproveStatus(id, status) {
       this.$confirm(
-        `是否执行 [${status == -1 ? "拒绝" : "同意"}[ 操作`,
+        `是否执行 [${status == -1 ? "拒绝" : "同意"}] 操作`,
         this.$t("prompt.title"),
         {
           confirmButtonText: this.$t("confirm"),
