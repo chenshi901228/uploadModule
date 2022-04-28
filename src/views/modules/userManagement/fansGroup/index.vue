@@ -25,11 +25,11 @@
           </el-col>
         </el-row>
       </el-form>
-      <el-row>
+      <!-- <el-row>
         <el-col>
           <el-button size="small" type="primary" @click="dialogVisibleGroup=true" style="marginBottom:10px;">创建群组</el-button>
         </el-col>
-      </el-row>
+      </el-row> -->
       <el-table
         v-loading="dataUserListLoading"
         :data="fansGroupList"
@@ -56,12 +56,12 @@
           align="center"
         >
           <template slot-scope="scope">
-            <el-button
+            <!-- <el-button
               size="mini"
               type="primary"
               @click="handleAddUser(scope.$index, scope.row)"
               >添加成员</el-button
-            >
+            > -->
             <el-button
               size="mini"
               type="primary"
@@ -145,7 +145,7 @@
         </el-row>
         <el-row>
           <el-col>
-            <el-button size="small" type="primary" @click="addUserJoinGroup" style="marginBottom:10px;">添加</el-button>
+            <el-button size="small" type="primary" @click="dialogVisibleGroup=true" style="marginBottom:10px;">添加</el-button>
           </el-col>
         </el-row>
         <el-table
@@ -156,14 +156,7 @@
           @selection-change="noJoinUserSelectionChangeHandle"
           style="width: 100%"
           max-height="500"
-        > 
-          <el-table-column
-            type="selection"
-            header-align="center"
-            align="center"
-            width="50"
-            fixed="left"
-          ></el-table-column>
+        >
           <template v-for="(label, prop) in noJoinColumns">
             <el-table-column
               :prop="prop"
@@ -326,7 +319,7 @@
             >
             </el-table-column>
           </template>
-          <el-table-column
+          <!-- <el-table-column
             width="200"
             label="操作"
             fixed="right"
@@ -341,7 +334,7 @@
                 >移除</el-button
               >
             </template>
-          </el-table-column>
+          </el-table-column> -->
         </el-table>
         <el-pagination
             :current-page="hasJoinFansUserForm.page"
@@ -561,9 +554,7 @@ export default {
     //添加进入群组
     addUserJoinGroup(i,row){
       let userIds = []
-      this.dataListSelectionUsers.forEach(item=>{
-        userIds.push(item.weixinUserId)
-      })
+      userIds.push(row.weixinUserId)
       let data = {
         id:this.groupId,
         userIds,

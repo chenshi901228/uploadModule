@@ -394,6 +394,7 @@
                 id="videoEle"
                 :src-object.prop="stream"
                 class="push_video"
+                :style="{width:videoWith+'px',height:videoHeight+'px'}"
               ></video>
             </div>
             <div class="connect_list">
@@ -528,7 +529,7 @@ export default {
         },
         {
           img: require("@/assets/img/beautify.png"),
-          text: "美化",
+          text: "开启美颜",
           type: "beautify",
         },
       ],
@@ -563,7 +564,9 @@ export default {
         whitenIntensity:50,
         rosyIntensity:50,
         sharpenIntensity:50
-      }
+      },
+      videoWith:300,
+      videoHeight:300,
     };
   },
   created() {
@@ -731,10 +734,11 @@ export default {
       }
     },
     headerNavClick(type) {
+      this.headerNavActive = type;
       if (type == "superboard") {
         //超级白板
+        
       }
-      this.headerNavActive = type;
     },
     handleClick(tab, event) {
       console.log(tab, event);

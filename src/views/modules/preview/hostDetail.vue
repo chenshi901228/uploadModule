@@ -1399,7 +1399,7 @@ export default {
         });
     },
     fansGroup(){
-      this.$router.push({name:'preview-fansGroup-index'})
+      this.$router.push({name:'preview-fansGroup-index',query:{anchorId:this.userId}})
     },
     //上架商品
     updateProduct() {
