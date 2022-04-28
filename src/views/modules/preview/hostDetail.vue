@@ -419,15 +419,22 @@
             fixed="right"
             header-align="center"
             align="center"
-            v-if="diaTbas === 5 || diaTbas === 6"
+            v-if="diaTbas === 2 || diaTbas === 5 || diaTbas === 6"
           >
             <template slot-scope="scope">
               <el-button
-                v-if="diaTbas === 5"
+                v-if="diaTbas === 2"
                 type="text"
                 size="small"
-                @click="downProduct(scope.$index, scope.row)"
-                >下架</el-button
+                @click="previewInvoiceImg(scope.row)"
+                >查看发票</el-button
+              >
+              <el-button
+                v-if="diaTbas === 2 && scope.row.approveStatus == 0"
+                type="text"
+                size="small"
+                @click="updateInvoiceImg(scope.row)"
+                >重新上传</el-button
               >
               <el-button
                 v-if="diaTbas === 6"
@@ -831,30 +838,52 @@
     <el-dialog
       title="申请提现"
       :visible.sync="dialogVisible_withdraw"
-      width="600px"
+      width="800px"
+      top="20px"
+      @close="closeWithdrawHandle"
     >
       <el-form
-        :model="bankForm"
+        :model="withdrawForm"
         :rules="dataRule_withdraw"
         ref="withdrawForm_host"
         label-width="120px"
+        size="small"
       >
         <el-form-item label="可提现金额：">
           <div>{{ diaForm.anchorBalance || 0 }}</div>
         </el-form-item>
         <el-form-item label="申请提现金额：" prop="amount">
-          <el-input
-            v-model="withdrawForm.amount"
-            placeholder="请输入"
-          ></el-input>
+          <div style="display: inline-block;">
+            <el-input-number 
+              v-model="withdrawForm.amount" 
+              :controls="false"
+              :precision="2"
+              placeholder="请输入"
+              :min="0">
+            </el-input-number>
+          </div>
+          <span>（提现金额需大于100元）</span>
         </el-form-item>
         <el-form-item label="上传发票：">
           <el-upload
-            action="https://jsonplaceholder.typicode.com/posts/"
+            class="uploadStyle"
             list-type="picture-card"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove">
-            <i class="el-icon-plus"></i>
+            :action="uploadUrl"
+            :limit="invoiceLimit"
+            multiple
+            :file-list="withdrawForm.invoiceList"
+            :before-upload="beforeUpload" 
+            :on-remove="onRemove" 
+            :on-exceed="uploadExceed"
+            :on-error="uploadError"
+            :before-remove="beforeRemove"
+            :on-success="uploadSuccess"
+            :on-preview="handlePictureCardPreview">
+            <div class="uploadStyle-btn">
+              <i class="el-icon-plus"></i>
+              <span>{{ withdrawForm.invoiceList.length }} / {{ invoiceLimit }}</span>
+            </div>
+            <div class="el-upload__tip" slot="tip">注：点击图片可放大查看</div>
           </el-upload>
           <el-dialog :visible.sync="dialogVisible_Image">
             <img width="100%" :src="dialogImageUrl" alt="">
@@ -870,8 +899,66 @@
         </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible_withdraw = false">取 消</el-button>
-        <el-button type="primary" @click="subimtWithdraw">确 定</el-button>
+        <el-button size="small" @click="dialogVisible_withdraw = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="subimtWithdraw">确 定</el-button>
+      </span>
+    </el-dialog>
+    <!-- 发票预览 -->
+    <el-dialog
+      title="预览"
+      :visible.sync="dialogVisible_preview"
+      width="80%"
+      top="20px"
+    >
+      <div style="text-align: center;">
+        <img style="max-width: 100%;" :src="dialogImageUrl" alt="">
+      </div>
+    </el-dialog>
+    <!-- 查看所有发票 -->
+    <el-dialog
+      title="查看发票"
+      :visible.sync="dialogVisible_previewList"
+      width="400px"
+      top="20px"
+    >
+      <div class="previewInvoiceList">
+        <img @click="handlePictureCardPreview({url: item})" v-for="item in previewInvoiceList" :key="item" :src="item" alt="">
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" type="primary" @click="dialogVisible_previewList = false">关闭</el-button>
+      </span>
+    </el-dialog>
+    <!-- 重新上传 -->
+    <el-dialog
+      title="重新上传"
+      :visible.sync="dialogVisible_updateInvoiceImg"
+      @close="closeUpdateInvoiceImgHandle"
+      width="400px"
+      top="20px"
+    >
+      <el-upload
+        class="uploadStyle"
+        list-type="picture-card"
+        :action="uploadUrl"
+        :limit="invoiceLimit"
+        multiple
+        :file-list="withdrawForm.invoiceList"
+        :before-upload="beforeUpload" 
+        :on-remove="onRemove" 
+        :on-exceed="uploadExceed"
+        :on-error="uploadError"
+        :before-remove="beforeRemove"
+        :on-success="uploadSuccess"
+        :on-preview="handlePictureCardPreview">
+        <div class="uploadStyle-btn">
+          <i class="el-icon-plus"></i>
+          <span>{{ withdrawForm.invoiceList.length }} / {{ invoiceLimit }}</span>
+        </div>
+        <div class="el-upload__tip" slot="tip">注：点击图片可放大查看</div>
+      </el-upload>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="dialogVisible_updateInvoiceImg = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="updateInvoiceImgSubmit">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -879,10 +966,21 @@
 
 <script>
 import { treeDataTranslate,getUUID } from "@/utils";
+import Cookies from 'js-cookie'
 export default {
   name: "LiveWebmanageUserdetail",
 
   data() {
+    // 验证提现金额
+    let checkWithdraw = (rule, value, callback) => {
+      if (value <= 0 ) {
+        callback(new Error('请输入提现金额'))
+      } else if (value > this.diaForm.anchorBalance) {
+        callback(new Error('超过可提现金额'))
+      } else {
+        callback();
+      }
+    }
     return {
       userId: "",
       diaForm: {},
@@ -948,8 +1046,14 @@ export default {
       dialogImageUrl: '',
       dialogVisible_Image: false,
       withdrawForm:{
-        amount:'',
+        amount: 0,
+        invoiceList: [], //发票上传图片
       },
+      invoiceLimit: 9, //发票上传图片数量限制
+      previewInvoiceList: [], //查看所有发票list
+      dialogVisible_previewList: false,
+      dialogVisible_updateInvoiceImg: false,
+      updateInvoiceId: "", //重新上传发票的id
       dataRule_bank: {
         address: [
           { required: true, message: "请选择省/市/区县", trigger: "change" },
@@ -966,13 +1070,19 @@ export default {
       },
       dataRule_withdraw:{
         amount: [
-          { required: true, message: "请输入提现金额", trigger: "blur" },
+          { validator: checkWithdraw, trigger: "blur" },
         ],
       },
+      dialogVisible_preview: false,
       regionDataAll: [],
       regionData: [],
       bankForm: {},
     };
+  },
+  computed: {
+    uploadUrl() {
+      return `${window.SITE_CONFIG['apiURL']}/oss/file/upload?access_token=${Cookies.get('access_token')}`
+    }
   },
 
   mounted() {
@@ -996,6 +1106,15 @@ export default {
         this.regionDataAll =res.data;
       })
       .catch(() => {});
+
+    this.getAccountAmount()
+      
+    this.changeTbas(1);
+  },
+
+  methods: {
+    // 获取用户账户金额信息
+    getAccountAmount() {
       this.$http
         .get(
           `/sys/manage/userDetail/${this.userId}`
@@ -1012,16 +1131,6 @@ export default {
           };
         })
         .catch(() => {});
-    this.changeTbas(1);
-  },
-
-  methods: {
-    handleRemove(file, fileList) {
-      console.log(file, fileList);
-    },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
     },
     // 多选
     dataListSelectionChangeHandle(val) {
@@ -1691,29 +1800,142 @@ export default {
     },
     //提现
     editeUserMoney() {
-      console.log(11111)
       this.dialogVisible_withdraw = true
     },
+    // 关闭提现
+    closeWithdrawHandle() {
+      this.withdrawForm.amount = 0
+      this.withdrawForm.invoiceList = []
+      this.$refs.withdrawForm_host.clearValidate()
+    },
+    // 超出上传数量
+    uploadExceed() {
+      this.$message.error(`只能上传${this.invoiceLimit}张发票`)
+    },
+    // 图片上传成功的回调
+    uploadSuccess(res, file, fileList){   
+      if(res.code === 0){
+        this.withdrawForm.invoiceList = fileList
+      }else{
+        this.$message.error(res.msg);
+      }
+    },
+    // 图片上传出错的回调
+    uploadError(err, file){
+      this.$message.error('上传失败！');
+    },
+    // 图片上传之前的回调
+    beforeUpload(file){
+      const isLt2M = file.size / 1024 / 1024 < 20;
+      if (!isLt2M) {
+        this.$message.error("上传图片大小不能超过 20MB!");
+      }
+      const isJPG = (file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png' || file.type === 'image/gif');
+      if (!isJPG) {
+        this.$message.error("上传发票图片格式为 jpg,jpeg,png,gif");
+      }
+      return isJPG && isLt2M;
+    },
+    // 预览
+    handlePictureCardPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible_preview = true;
+    },
+    // 删除之前
+    beforeRemove() {
+      return new Promise((resolve, reject) => {
+        this.$confirm('是否删除图片?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          resolve(true)
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });    
+          reject() 
+        });
+      })
+      
+    },
+    // 移除文件
+    onRemove(file, fileList) {
+      this.withdrawForm.invoiceList = this.withdrawForm.invoiceList.filter((item) => {
+        if(item.uid && item.uid != file.uid) {
+          return item
+        }else if(item.url != file.url) {
+          return item
+        }
+      })
+    },
     subimtWithdraw(){
-      // this.$refs.withdrawForm_host.validate((valid) => {
-      //   if (valid) {
-      //     this.$http.post('/sys/anchorWithdraw',{
-      //       amount:this.withdrawForm.amount,
-      //       uuid:getUUID(),
-      //     }).then(res=>{
-      //       console.log(res)
-      //     }).catch(err=>{})
-      //   } else {
-      //     console.log("error submit!!");
-      //     return false;
-      //   }
-      // });
-      this.$http.post('/sys/anchorWithdraw',{
-        amount:this.withdrawForm.amount,
-        uuid:getUUID(),
-      }).then(res=>{
-        console.log(res)
-      }).catch(err=>{})
+      if(this.withdrawForm.invoiceList.length <= 0) return this.$message.error("请上传发票图片")
+      this.$refs.withdrawForm_host.validate((valid) => {
+        if (valid) {
+          let imgUrls = this.withdrawForm.invoiceList.map((item) => {
+            if(item.response) {
+              return item.response.data.url
+            }else {
+              return item.url
+            }
+          })
+          imgUrls = imgUrls.join(",")
+          this.$http.post('/sys/anchorWithdraw',{
+            amount: this.withdrawForm.amount,
+            fileName: imgUrls,
+            uuid: getUUID(),
+          }).then(({data:res})=>{
+            if(res.code == 0) {
+              this.$message.success("申请提现成功")
+              this.dialogVisible_withdraw = false
+              this.getAccountAmount()
+              this.queryPost_dia()
+            }else {
+              this.$message.error(res.msg)
+            }
+          }).catch(err=>{})
+        } 
+      });
+      
+    },
+
+    // 查看发票
+    previewInvoiceImg({ fileName }) {
+      this.previewInvoiceList = fileName ? fileName.split(",") : []
+      this.dialogVisible_previewList = true
+    },
+    closeUpdateInvoiceImgHandle() {
+      this.withdrawForm.invoiceList = []
+    },
+    // 重新上传发票
+    updateInvoiceImg(row) {
+      this.dialogVisible_updateInvoiceImg = true
+      this.updateInvoiceId = row.id
+    },
+    // 重新上传发票提交
+    updateInvoiceImgSubmit() {
+      let imgUrls = this.withdrawForm.invoiceList.map((item) => {
+            if(item.response) {
+              return item.response.data.url
+            }else {
+              return item.url
+            }
+          })
+          imgUrls = imgUrls.join(",")
+          this.$http.put('/sys/anchorWithdraw',{
+            id: this.updateInvoiceId,
+            fileName: imgUrls,
+          }).then(({data:res})=>{
+            if(res.code == 0) {
+              this.$message.success("重新上传成功")
+              this.dialogVisible_updateInvoiceImg = false
+              this.queryPost_dia()
+            }else {
+              this.$message.error(res.msg)
+            }
+          }).catch(err=>{})
     }
   },
 };
@@ -1784,5 +2006,67 @@ export default {
 /deep/.frontCoverImg {
   width: 100%;
   height: 80px;
+}
+.withdraw_bank_info {
+  .header{
+    width: 120px;
+    text-align: right;
+    padding-right: 12px;
+  }
+  &>div{
+    margin-top: 10px;
+  }
+  &>div:not(:first-child) {
+    text-indent: 120px;
+  }
+}
+/deep/.uploadStyle{
+  .el-upload--picture-card{
+    width: 90px;
+    height: 90px;
+  }
+  .el-upload-list--picture-card>li{
+    width: 90px;
+    height: 90px;
+  }
+  .el-progress {
+    width: 90px;
+    height: 90px;
+  }
+  .el-progress-circle{
+    width: 100% !important;
+    height: 100% !important;
+  }
+  .uploadStyle-btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    span{
+      line-height: normal;
+      display: inline-block;
+      margin-top: 10px;
+    }
+  }
+}
+.previewInvoiceList{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  img{
+    width: 30%;
+    height: 100px;
+    object-fit: contain;
+    margin-top: 10px;
+    cursor: pointer;
+    &:not(:nth-child(3n)) {
+      margin-right: 5%;
+    }
+    &:hover{
+      border: 1px solid #999;
+    }
+  }
 }
 </style>

@@ -47,6 +47,7 @@
 </template>
 <script>
 import VideoFlvComponent from "@/components/common/videoFlvComponent"
+import Cookies from 'js-cookie'
 export default {
     components: {
         VideoFlvComponent
@@ -63,7 +64,7 @@ export default {
     },
     computed: {
         uploadUrl() {
-            return window.SITE_CONFIG['apiURL'] + '/oss/file/upload'
+            return `${window.SITE_CONFIG['apiURL']}/oss/file/upload?access_token=${Cookies.get('access_token')}`
         }
     },
     props: {
