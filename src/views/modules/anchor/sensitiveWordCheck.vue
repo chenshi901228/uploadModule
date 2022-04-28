@@ -142,7 +142,8 @@
                   ? "通过"
                   : scope.row.checkStatus === 2
                   ? "待审核"
-                  : "驳回"
+                  : scope.row.checkStatus === 3
+                  ? "建议屏蔽":'驳回'
               }}
             </div>
           </template>

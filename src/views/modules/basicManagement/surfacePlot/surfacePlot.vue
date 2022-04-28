@@ -55,7 +55,7 @@
           fixed="left"
         ></el-table-column> -->
         <el-table-column
-          width="300"
+          width="150"
           label="直播封面图"
           prop="coverUrl"
           align="center"
@@ -63,7 +63,7 @@
           <template slot-scope="{ row }">
             <div>
               <img
-                style="width: '100%'; height: '100%'"
+                style="width: 80px; height: '80px'"
                 class="frontCoverImg"
                 :src="row.coverUrl || 'https://picsum.photos/400/300?random=1'"
                 alt=""
