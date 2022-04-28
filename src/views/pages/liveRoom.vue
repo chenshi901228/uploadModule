@@ -287,16 +287,42 @@
         <el-header>
           <div class="live_room_header">
             <div class="header_left">
+              <el-popover
+                ref="reference"
+                placement="bottom"
+                width="400"
+                popper-class="live_room_popover"
+                trigger="click">
+                <div class="block">
+                  <span class="demonstration">磨皮</span>
+                  <el-slider @input="changeSmoothIntensity" v-model="beautifyParams.smoothIntensity"></el-slider>
+                </div>
+                <div class="block">
+                  <span class="demonstration">美白</span>
+                  <el-slider @input="changeWhitenIntensity" v-model="beautifyParams.whitenIntensity"></el-slider>
+                </div>
+                <div class="block">
+                  <span class="demonstration">红润</span>
+                  <el-slider @input="changeRosyIntensity" v-model="beautifyParams.rosyIntensity"></el-slider>
+                </div>
+                <div class="block">
+                  <span class="demonstration">锐化</span>
+                  <el-slider @input="changeSharpenIntensity" v-model="beautifyParams.sharpenIntensity"></el-slider>
+                </div>
+              </el-popover>
               <div
                 class="header_nav"
                 v-for="(item, index) in headerNav"
                 :class="[headerNavActive == item.type ? 'headerNavActive' : '']"
                 :key="index"
                 @click="headerNavClick(item.type)"
+                v-popover:reference
               >
                 <img :src="item.img" alt="" />
                 <p>{{ item.text }}</p>
               </div>
+              <div @click="openEffect">开启美颜</div>
+              <div @click="closeEffect">关闭美颜</div>
             </div>
             <div class="header_right">
               <div class="wacth_num">
@@ -333,7 +359,7 @@
         </el-header>
         <el-main>
           <div class="live_content">
-            <div class="live_menu">
+            <div class="live_menu" id="screenWidth">
               <div class="live_menu_header">
                 <div class="live_theme">主题&nbsp;:&nbsp;{{ liveTheme }}</div>
                 <div class="online_info">
@@ -471,7 +497,8 @@ export default {
       zg: {},
       tim: null, //IM实例
       token: "",
-      stream: {},
+      stream: {},//摄像头流
+      screenStream:{},//屏幕共享流
       roomId: "",
       streamID: "",
       groupID: "", //群聊ID
@@ -531,6 +558,12 @@ export default {
       headerNavActive: "superboard", //顶部导航选中,
       liveStatus: false, //直播状态
       liveTheme: "", //直播主题
+      beautifyParams:{ //美颜参数
+        smoothIntensity:50,
+        whitenIntensity:50,
+        rosyIntensity:50,
+        sharpenIntensity:50
+      }
     };
   },
   created() {
@@ -612,7 +645,6 @@ export default {
               );
             }
           });
-          // console.log('111',this.connectMessageInfo)
           localStorage.setItem(
             "connectMessageInfo",
             JSON.stringify(this.connectMessageInfo)
@@ -624,8 +656,7 @@ export default {
             try {
               extraInfoObj = JSON.parse(extraInfo);
             } catch (e) {}
-            this.$http
-              .post("/sys/mixedflow/startEvenWheat", {
+            this.$http.post("/sys/mixedflow/startEvenWheat", {
                 UserId: streamItem.user.userID, //用户ID；
                 RoomId: this.roomId, //房间ID；
                 joinRoomId: streamItem.streamID,
@@ -633,27 +664,22 @@ export default {
                   extraInfoObj && extraInfoObj.connectType == 1
                     ? "voice"
                     : "watch",
-              })
-              .then((res) => {
+              }).then((res) => {
                 console.log(res);
-              })
-              .catch((err) => {});
+              }).catch((err) => {});
           }
         });
       } else if (updateType == "DELETE") {
         // 流删除，停止拉流
         console.log("流减少------------", streamList);
         streamList.forEach((streamItem) => {
-          this.$http
-            .post("/sys/mixedflow/finishEvenWheat", {
+          this.$http.post("/sys/mixedflow/finishEvenWheat", {
               UserId: streamItem.user.userID, //用户ID；
               RoomId: this.roomId, //房间ID；
               joinRoomId: streamItem.streamID,
-            })
-            .then((res) => {
+            }).then((res) => {
               console.log(res);
-            })
-            .catch((err) => {});
+            }).catch((err) => {});
         });
       }
     });
@@ -829,22 +855,30 @@ export default {
     },
     // 创建流和渲染
     async createStr() {
-      this.stream = await this.zg.createStream({
+      console.log('sssssssssss',document.getElementById('videoEle').getBoundingClientRect().height * 1)
+      this.stream = await this.zg.createStream({ //摄像头
         camera: {
           videoQuality: 4,
-          width: 350,
-          height: 196,
+          width: parseInt(document.getElementById('videoEle').getBoundingClientRect().width * 1),
+          height: parseInt(document.getElementById('videoEle').getBoundingClientRect().height * 1),
           frameRate: 15,
-          bitrate: 300,
+          bitrate: 2000,
         },
       });
       // console.error(this.stream);
       // Step4
+     
+      // this.screenStream = await this.zg.createStream({ //屏幕共享流
+      //   screen: {
+      //     videoQuality: 2,
+      //   },
+      // });
       this.startPublishingStream();
     },
     // 开始推流、开始直播
     async startPublishingStream() {
       let res = await this.zg.startPublishingStream(this.roomId, this.stream);
+      // let res = await this.zg.startPublishingStream(this.roomId, this.screenStream, { videoCodec: 'VP8' });
       console.log(res);
       if (res) {
         this.$loading().close();
@@ -916,6 +950,7 @@ export default {
 
     //关闭直播
     async closeLive() {
+      this.$loading({background: "rgba(0,0,0,.5)"})
       this.$http
         .post("/sys/mixedflow/stopMixedFlow", {
           UserId: this.userID,
@@ -923,6 +958,10 @@ export default {
         })
         .then((res) => {
           if (res.data.success && res.data.msg == "success") {
+            this.$nextTick(() => {
+              // 以服务的方式调用的 Loading 需要异步关闭
+              this.$loading().close();
+            });
             this.$message({ message: "直播已关闭", type: "success" });
             this.liveStatus = false;
             localStorage.removeItem("liveStatus"); //将直播状态移除
@@ -932,29 +971,42 @@ export default {
             this.tim.logout(); //退出IM
             this.tim.destroy();
           } else {
+            this.$nextTick(() => {
+              // 以服务的方式调用的 Loading 需要异步关闭
+              this.$loading().close();
+            });
             this.$message({ message: "结束直播失败", type: "error" });
           }
         });
       this.stopPublishingStream();
     },
     // 开启美颜
-    openEffect() {
-      this.zg.setEffectsBeauty(this.stream, true, {
-        sharpenIntensity: 100,
-        whitenIntensity: 100,
-        rosyIntensity: 100,
-        smoothIntensity: 100,
-      });
+    async openEffect() {
+      let res = await this.zg.setEffectsBeauty(this.stream, true, this.beautifyParams);
+      if(res){
+        console.log('sdasdasdasdsadasd')
+      }
     },
     // 关闭美颜
     closeEffect() {
       this.zg.setEffectsBeauty(this.stream, false);
     },
+    changeSmoothIntensity(value){//磨皮
+      this.openEffect()
+    },
+    changeWhitenIntensity(value){//美白
+      this.openEffect()
+    },
+    changeRosyIntensity(value){//红润
+      this.openEffect()
+    },
+    changeSharpenIntensity(value){//锐化
+      this.openEffect()
+    },
     joinGroup() {
       //加入直播群聊
       let promise = this.tim.joinGroup({ groupID: this.groupID });
-      promise
-        .then((imResponse) => {
+      promise.then((imResponse) => {
           switch (imResponse.data.status) {
             case TIM.TYPES.JOIN_STATUS_WAIT_APPROVAL: // 等待管理员同意
               break;
@@ -964,11 +1016,9 @@ export default {
               console.log("已经在群中加群成功", imResponse); // 加入的群组资料
               const conversationID = `GROUP${this.groupID}`;
               try {
-                this.tim
-                  .setMessageRead({
+                this.tim.setMessageRead({
                     conversationID,
-                  })
-                  .then(() => {});
+                  }).then(() => {});
               } catch (e) {
                 //TODO handle the exception
               }
@@ -983,8 +1033,7 @@ export default {
             default:
               break;
           }
-        })
-        .catch(function (imError) {
+        }).catch(function (imError) {
           console.warn("joinGroup error:", imError); // 申请加群失败的相关信息
         });
     },
@@ -1013,9 +1062,7 @@ export default {
       if (!this.liveStatus) {
         this.tim.login({ userID: userId, userSig: userSig }); //登录腾讯IM
       } else {
-        this.tim
-          .login({ userID: userId, userSig: userSig })
-          .then((imResponse) => {
+        this.tim.login({ userID: userId, userSig: userSig }).then((imResponse) => {
             //登录腾讯IM
             if (imResponse.data) {
               this.waitSdkReady();
@@ -1049,7 +1096,13 @@ export default {
             item.payload.userDefinedField &&
             item.payload.userDefinedField.match("你已被禁播")
           ) {
-            console.log("被禁播");
+            // console.log("被禁播");
+            this.$alert(item.payload.userDefinedField, '系统提示', {
+              confirmButtonText: '确定',
+              callback: action => {
+                this.closeLive()
+              }
+            });
           }
           if (item.payload.userDefinedField) {
             let tempObj = JSON.parse(item.payload.userDefinedField);
@@ -1142,7 +1195,6 @@ export default {
                   ? this.$message("用户已取消连麦申请")
                   : this.$message("用户已断开连麦");
                 this.$loading().close();
-                return;
               }
               localStorage.setItem(
                 "connectMessageInfo",
@@ -1395,6 +1447,7 @@ export default {
       clearTimeout(this.goodsPushTimer);
       this.goodsPushTimer = null;
     }
+    this.stopPublishingStream
   },
 };
 </script>
@@ -2094,8 +2147,8 @@ p {
               position: absolute;
               bottom: 0;
               right: 0;
-              width: 350px;
-              height: 196px;
+              width: 100%;
+              height: calc(100% - 60px);
             }
           }
           .connect_list {

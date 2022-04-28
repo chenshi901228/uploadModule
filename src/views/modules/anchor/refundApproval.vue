@@ -284,8 +284,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="updateApproveStatus(id,1)">驳 回</el-button>
-        <el-button type="primary" @click="updateApproveStatus(id,-1)">通 过</el-button>
+        <el-button @click="updateApproveStatus(id,-1)">驳 回</el-button>
+        <el-button type="primary" @click="updateApproveStatus(id,1)">通 过</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -407,6 +407,7 @@ export default {
               }
               this.getDataList();
               this.$message.success("操作成功");
+              this.dialogFormVisible = false
             })
             .catch(() => {});
         })

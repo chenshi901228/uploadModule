@@ -27,8 +27,23 @@ export default {
   }
 }
 </script>
-<style>
+<style lang="scss">
 .el-row {
     position: unset !important;
 }
+.live_room_popover{
+  .el-slider__bar{
+    background-color: #fa3622 !important;
+  }
+  .el-slider__button{
+    border:2px solid #fe055b !important;
+  }
+  .el-button{
+    background: linear-gradient(91deg, #fa3622 0%, #fe055b 100%) !important;
+    border-color: #fe055b!important;
+  }
+}
+
+
+
 </style>

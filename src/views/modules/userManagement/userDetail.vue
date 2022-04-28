@@ -24,12 +24,17 @@
               diaForm.priceConsumption ? diaForm.priceConsumption : 0
             }}元
           </div>
-          <div>刷礼物消费：￥{{ diaForm.aaa5 }}元</div>
-          <div>粉丝团加入消费：￥{{ diaForm.aaa3 }}元</div>
-          <div>购买商品消费：￥{{ diaForm.aaa4 }}元</div>
           <div>
-            可用大豆余额：{{ diaForm.priceBalance ? diaForm.priceBalance : 0 }}
+            累计充值：￥{{
+              diaForm.priceConsumption ? diaForm.priceConsumption : 0
+            }}元
           </div>
+          <div>购买商品消费：￥{{ diaForm.shoppingConsumption || 0 }}元</div>
+          <div>
+            可用大豆：{{ diaForm.priceBalance ? diaForm.priceBalance : 0 }}大豆
+          </div>
+          <div>刷礼物消费：{{ diaForm.giftConsumption || 0 }}大豆</div>
+          <div>粉丝团加入消费：{{ diaForm.fansConsumption || 0 }}大豆</div>
         </div>
       </div>
       <div class="diaBoxRight">
@@ -79,7 +84,7 @@
         </div>
         <el-form
           :inline="true"
-          :style="{ margin: '20px', 'text-align': 'right' }"
+          :style="{ margin: '20px' }"
           :model="diaSearchForm"
           @keyup.enter.native="queryPost_dia()"
         >
@@ -132,6 +137,39 @@
               clearable
             ></el-input>
           </el-form-item>
+          <el-form-item label="商品名称" v-if="diaTbas === 3">
+            <el-input
+              size="small"
+              v-model="diaSearchForm.productName"
+              clearable
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="商品类型" v-if="diaTbas === 3">
+            <el-input
+              size="small"
+              v-model="diaSearchForm.productType"
+              clearable
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="是否免费" v-if="diaTbas === 3">
+            <el-select size="small" v-model="diaSearchForm.isFree" clearable>
+              <el-option :value="0" label="否"></el-option>
+              <el-option :value="1" label="是"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="关联商品编号" v-if="diaTbas === 3">
+            <el-input
+              size="small"
+              v-model="diaSearchForm.productId"
+              clearable
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="使用状态" v-if="diaTbas === 3">
+            <el-select size="small" v-model="diaSearchForm.useStatus" clearable>
+              <el-option :value="0" label="未使用"></el-option>
+              <el-option :value="1" label="已使用"></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item v-if="diaTbas !== 6">
             <el-button size="small" @click="queryPost_dia()">{{
               $t("query")
@@ -151,6 +189,7 @@
               :key="prop"
               header-align="center"
               align="center"
+              show-overflow-tooltip
               v-if="prop === 'paySource'"
             >
               <template slot-scope="scope">
@@ -165,6 +204,7 @@
               :key="prop"
               header-align="center"
               align="center"
+              show-overflow-tooltip
               v-else-if="prop === 'payType'"
             >
               <template slot-scope="scope">
@@ -179,6 +219,7 @@
               :key="prop"
               header-align="center"
               align="center"
+              show-overflow-tooltip
               v-else-if="prop === 'userTyoe'"
             >
               <template slot-scope="scope">
@@ -199,6 +240,122 @@
               :key="prop"
               header-align="center"
               align="center"
+              show-overflow-tooltip
+              v-else-if="prop === 'shareType'"
+            >
+              <template slot-scope="scope">
+                <div>
+                  {{
+                    scope.row.shareType === 0
+                      ? "预告分享"
+                      : scope.row.shareType === 1
+                      ? "直播邀请"
+                      : scope.row.shareType === 2
+                      ? "视频分享"
+                      :'其他分享'
+                  }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :prop="prop"
+              :label="label"
+              :key="prop"
+              header-align="center"
+              align="center"
+              show-overflow-tooltip
+              v-else-if="prop === 'isFree'"
+            >
+              <template slot-scope="scope">
+                <div>
+                  {{
+                    scope.row.isFree === 0
+                      ? "否"
+                      : "是"
+                  }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :prop="prop"
+              :label="label"
+              :key="prop"
+              header-align="center"
+              align="center"
+              show-overflow-tooltip
+              v-else-if="prop === 'useStatus'"
+            >
+              <template slot-scope="scope">
+                <div>
+                  {{
+                    scope.row.useStatus === 0
+                      ? "未使用"
+                      : "已使用"
+                  }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :prop="prop"
+              :label="label"
+              :key="prop"
+              header-align="center"
+              align="center"
+              v-else-if="prop === 'productImage'"
+            >
+              <template slot-scope="scope">
+                <img :src="scope.row.productImage" style="width: 75px; height: 50px;" alt="">
+              </template>
+            </el-table-column>
+            <el-table-column
+              :prop="prop"
+              :label="label"
+              :key="prop"
+              header-align="center"
+              align="center"
+              v-else-if="prop === 'shareState'"
+              show-overflow-tooltip
+            >
+              <template slot-scope="scope">
+                <div>
+                  {{
+                    scope.row.shareState === 0
+                      ? "失败"
+                      : '成功'
+                  }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :prop="prop"
+              :label="label"
+              :key="prop"
+              header-align="center"
+              align="center"
+              v-else-if="prop === 'successEvent'"
+              show-overflow-tooltip
+            >
+              <template slot-scope="scope">
+                <div>
+                  {{
+                    scope.row.successEvent === 0
+                      ? "新人注册"
+                      : scope.row.successEvent === 1
+                      ? "进入直播"
+                      : scope.row.successEvent === 2
+                      ? "预约直播"
+                      : '观看视频'
+                  }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :prop="prop"
+              :label="label"
+              :key="prop"
+              header-align="center"
+              align="center"
+              show-overflow-tooltip
               v-else
             >
             </el-table-column>
@@ -284,6 +441,11 @@ export default {
         title: "",
         anchorName: "",
         phone: "",
+        useStatus:"",
+        productName:"",
+        productId:"",
+        productType:"",
+        isFree:"",
       };
       this.diaDataList = [];
       this.total_dia = 0;
@@ -311,17 +473,17 @@ export default {
           break;
         case 3:
           this.diaTableTitle = {
-            aaa1: "商品图片",
-            aaa2: "商品名称",
-            aaa3: "商品类型",
-            aaa4: "是否免费",
-            aaa5: "销售价格",
-            aaa6: "支付金额",
-            aaa7: "支付方式",
-            aaa8: "消费来源",
-            aaa9: "关联产品编号",
-            aaa10: "购买时间",
-            aaa11: "使用状态",
+            productImage: "商品图片",
+            productName: "商品名称",
+            productType: "商品类型",
+            isFree: "是否免费",
+            price: "销售价格",
+            payPrice: "支付金额",
+            payType: "支付方式",
+            consumptionSource: "消费来源",
+            productId: "关联产品编号",
+            payDate: "购买时间",
+            useStatus: "使用状态",
           };
           break;
         case 4:
@@ -347,13 +509,13 @@ export default {
           break;
         case 6:
           this.diaTableTitle = {
-            aaa1: "分享类型",
-            aaa2: "页面路由",
-            aaa3: "创建时间",
-            aaa4: "分享状态",
-            aaa5: "成功事件",
-            aaa6: "被分享人",
-            aaa7: "手机号码",
+            shareType: "分享类型",
+            shareUrl: "页面路由",
+            createDate: "创建时间",
+            shareState: "分享状态",
+            successEvent: "成功事件",
+            passiveShareUserName: "被分享人",
+            passiveShareUserTel: "手机号码",
           };
           break;
 
@@ -389,14 +551,16 @@ export default {
           break;
         case 3:
           data = {
-            // limit: this.limit_dia,
-            // page: this.page_dia,
-            // weixinUserId: this.userId,
-            // phone: this.diaSearchForm.phone,
-            // anchorName: this.diaSearchForm.anchorName,
-            // title: this.diaSearchForm.title,
+            limit: this.limit_dia,
+            page: this.page_dia,
+            weixinUserId: this.userId,
+            useStatus:this.diaSearchForm.useStatus,
+            productName:this.diaSearchForm.productName,
+            productId:this.diaSearchForm.productId,
+            productType:this.diaSearchForm.productType,
+            isFree:this.diaSearchForm.isFree,
           };
-          url = "";
+          url = "/sys/management/user/product/userOrderWithDetailPage";
           break;
         case 4:
           data = {
@@ -422,14 +586,11 @@ export default {
           break;
         case 6:
           data = {
-            // limit: this.limit_dia,
-            // page: this.page_dia,
-            // weixinUserId: this.userId,
-            // phone: this.diaSearchForm.phone,
-            // anchorName: this.diaSearchForm.anchorName,
-            // title: this.diaSearchForm.title,
+            limit: this.limit_dia,
+            page: this.page_dia,
+            shareUserId: this.userId,
           };
-          url = "";
+          url = "/sys/liveShare/page";
           break;
 
         default:

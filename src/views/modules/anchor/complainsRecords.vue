@@ -191,7 +191,7 @@
         <el-table-column
           prop="handlingTime"
           label="处理时间"
-          min-width="150px"
+          min-width="180px"
           header-align="center"
           align="center"
         ></el-table-column>
