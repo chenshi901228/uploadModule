@@ -12,7 +12,9 @@
         <div class="diaBoxLeft_mes">
           <el-avatar
             :size="75"
-            :src="diaForm.avatarUrl || require('@/assets/img/default_avatar.png')"
+            :src="
+              diaForm.avatarUrl || require('@/assets/img/default_avatar.png')
+            "
             fit="cover"
             style="margin: 0px 85px 10px"
           ></el-avatar>
@@ -119,7 +121,8 @@
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
-              value-format="yyyy-MM-dd HH:mm:ss">
+              value-format="yyyy-MM-dd HH:mm:ss"
+            >
             </el-date-picker>
           </el-form-item>
           <el-form-item label="银行账户" v-if="diaTbas === 2">
@@ -136,11 +139,16 @@
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
-              value-format="yyyy-MM-dd HH:mm:ss">
+              value-format="yyyy-MM-dd HH:mm:ss"
+            >
             </el-date-picker>
           </el-form-item>
           <el-form-item label="审批状态" v-if="diaTbas === 2">
-            <el-select size="small" v-model="diaSearchForm.approveStatus" clearable>
+            <el-select
+              size="small"
+              v-model="diaSearchForm.approveStatus"
+              clearable
+            >
               <el-option :value="0" label="审批中"></el-option>
               <el-option :value="1" label="已通过"></el-option>
               <el-option :value="-1" label="未通过"></el-option>
@@ -205,10 +213,7 @@
               type="primary"
               >上架商品</el-button
             >
-            <el-button
-              v-if="diaTbas === 4"
-              @click="fansGroup"
-              type="primary"
+            <el-button v-if="diaTbas === 4" @click="fansGroup" type="primary"
               >群组</el-button
             >
             <el-button
@@ -228,7 +233,7 @@
         </el-form>
         <el-table
           :data="diaDataList"
-           v-loading="dataListLoading"
+          v-loading="dataListLoading"
           border
           style="width: 100%"
           height="calc(calc(100vh - 380px) - 2px)"
@@ -270,11 +275,9 @@
               <template slot-scope="{ row }">
                 <div>
                   <img
-                    style="width: 100%; height: 60px; object-fit: cover;"
+                    style="width: 100%; height: 60px; object-fit: cover"
                     class="productImage"
-                    :src="
-                      row.productImage
-                    "
+                    :src="row.productImage"
                     alt=""
                   />
                 </div>
@@ -290,7 +293,13 @@
             >
               <template slot-scope="scope">
                 <div>
-                  {{ scope.row.type === 1 ? "直播间礼物":scope.row.type===2?"粉丝团":"课程返利" }}
+                  {{
+                    scope.row.type === 1
+                      ? "直播间礼物"
+                      : scope.row.type === 2
+                      ? "粉丝团"
+                      : "课程返利"
+                  }}
                 </div>
               </template>
             </el-table-column>
@@ -304,7 +313,13 @@
             >
               <template slot-scope="scope">
                 <div>
-                  {{ scope.row.approveStatus === 0 ? "审批中":scope.row.approveStatus === 1 ?"已通过":"未通过" }}
+                  {{
+                    scope.row.approveStatus === 0
+                      ? "审批中"
+                      : scope.row.approveStatus === 1
+                      ? "已通过"
+                      : "未通过"
+                  }}
                 </div>
               </template>
             </el-table-column>
@@ -318,7 +333,17 @@
             >
               <template slot-scope="scope">
                 <div>
-                  {{ scope.row.confirmStatus === 0 ? "待打款":scope.row.confirmStatus ===1&&scope.row.payStatus===0?'到账中':scope.row.confirmStatus ===1&&scope.row.payStatus===1?'已到账':"到账失败" }}
+                  {{
+                    scope.row.confirmStatus === 0
+                      ? "待打款"
+                      : scope.row.confirmStatus === 1 &&
+                        scope.row.payStatus === 0
+                      ? "到账中"
+                      : scope.row.confirmStatus === 1 &&
+                        scope.row.payStatus === 1
+                      ? "已到账"
+                      : "到账失败"
+                  }}
                 </div>
               </template>
             </el-table-column>
@@ -360,9 +385,12 @@
             >
               <template slot-scope="scope">
                 <img
-                  :src="scope.row.avatarUrl || require('@/assets/img/default_avatar.png')"
+                  :src="
+                    scope.row.avatarUrl ||
+                    require('@/assets/img/default_avatar.png')
+                  "
                   alt=""
-                  style="width: 60px; height: 60px; object-fit: cover;"
+                  style="width: 60px; height: 60px; object-fit: cover"
                 />
               </template>
             </el-table-column>
@@ -466,7 +494,12 @@
       </span>
     </el-dialog>
     <!-- 商品上架列表弹框 -->
-    <el-dialog title="商品上架" :visible.sync="dialogUserFormVisible" width="70%" top="20px">
+    <el-dialog
+      title="商品上架"
+      :visible.sync="dialogUserFormVisible"
+      width="70%"
+      top="20px"
+    >
       <el-form
         size="small"
         :inline="true"
@@ -500,11 +533,14 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="关联产品编号">
-              <el-input v-model="productForm.id" placeholder="请输入"></el-input>
+              <el-input
+                v-model="productForm.id"
+                placeholder="请输入"
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="24">
-            <el-form-item style="float: right;">
+            <el-form-item style="float: right">
               <el-button
                 size="small"
                 v-if="dataListSelectionUsers.length !== 0"
@@ -512,7 +548,9 @@
                 @click="deleteUserSelect()"
                 >批量上架</el-button
               >
-              <el-button size="small" type="primary" @click="queryUserList">查询</el-button>
+              <el-button size="small" type="primary" @click="queryUserList"
+                >查询</el-button
+              >
               <el-button size="small" @click="reset">重置</el-button>
             </el-form-item>
           </el-col>
@@ -653,7 +691,12 @@
       </el-table>
     </el-dialog>
     <!-- 推荐主播列表弹框 -->
-    <el-dialog title="推荐主播" :visible.sync="dialogRecommendVisible" width="70%" top="20px">
+    <el-dialog
+      title="推荐主播"
+      :visible.sync="dialogRecommendVisible"
+      width="70%"
+      top="20px"
+    >
       <el-form
         size="small"
         :inline="true"
@@ -664,24 +707,36 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="主播昵称" prop="anchorName">
-              <el-input v-model="recommendForm.anchorName" placeholder="请输入" clearable></el-input>
+              <el-input
+                v-model="recommendForm.anchorName"
+                placeholder="请输入"
+                clearable
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="手机号码" prop="anchorPhone">
-              <el-input v-model="recommendForm.anchorPhone" placeholder="请输入" clearable></el-input>
+              <el-input
+                v-model="recommendForm.anchorPhone"
+                placeholder="请输入"
+                clearable
+              ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item style="float: right;">
+            <el-form-item style="float: right">
               <el-button
                 size="small"
-                v-if="recommendListSelections.length !== 0 && dialogRecommendVisible"
+                v-if="
+                  recommendListSelections.length !== 0 && dialogRecommendVisible
+                "
                 type="danger"
                 @click="addRecommend()"
                 >批量添加</el-button
               >
-              <el-button size="small" type="primary" @click="getRecommendList">查询</el-button>
+              <el-button size="small" type="primary" @click="getRecommendList"
+                >查询</el-button
+              >
               <el-button size="small" @click="reset">重置</el-button>
             </el-form-item>
           </el-col>
@@ -712,7 +767,7 @@
           <template slot-scope="{ row }">
             <div>
               <img
-                style="width: 60px; height: 60px; object-fit: cover;"
+                style="width: 60px; height: 60px; object-fit: cover"
                 class="productImage"
                 :src="
                   row.avatarUrl || require('@/assets/img/default_avatar.png')
@@ -797,6 +852,17 @@
             placeholder="开户银行"
           ></el-input>
         </el-form-item>
+        <el-form-item label="字典标签" prop="bankDictLabel">
+          <el-input
+            v-model="bankForm.bankDictLabel"
+            placeholder="字典标签"
+            :clearable="true"
+            @input="resetInput"
+          ></el-input>
+          <el-button size="small" type="primary" @click="showBankDictList"
+            >选择字典标签</el-button
+          >
+        </el-form-item>
         <el-form-item label="支行名称">
           <el-input
             v-model="bankForm.branchName"
@@ -807,7 +873,7 @@
           <el-cascader
             :options="regionData"
             filterable
-            style="width:100%"
+            style="width: 100%"
             v-model="bankForm.address"
             :props="{ label: 'name', value: 'id', children: 'children' }"
             :clearable="true"
@@ -853,13 +919,14 @@
           <div>{{ diaForm.anchorBalance || 0 }}</div>
         </el-form-item>
         <el-form-item label="申请提现金额：" prop="amount">
-          <div style="display: inline-block;">
-            <el-input-number 
-              v-model="withdrawForm.amount" 
+          <div style="display: inline-block">
+            <el-input-number
+              v-model="withdrawForm.amount"
               :controls="false"
               :precision="2"
               placeholder="请输入"
-              :min="0">
+              :min="0"
+            >
             </el-input-number>
           </div>
           <span>（提现金额需大于100元）</span>
@@ -872,21 +939,25 @@
             :limit="invoiceLimit"
             multiple
             :file-list="withdrawForm.invoiceList"
-            :before-upload="beforeUpload" 
-            :on-remove="onRemove" 
+            :before-upload="beforeUpload"
+            :on-remove="onRemove"
             :on-exceed="uploadExceed"
             :on-error="uploadError"
             :before-remove="beforeRemove"
             :on-success="uploadSuccess"
-            :on-preview="handlePictureCardPreview">
+            :on-preview="handlePictureCardPreview"
+          >
             <div class="uploadStyle-btn">
               <i class="el-icon-plus"></i>
-              <span>{{ withdrawForm.invoiceList.length }} / {{ invoiceLimit }}</span>
+              <span
+                >{{ withdrawForm.invoiceList.length }} /
+                {{ invoiceLimit }}</span
+              >
             </div>
             <div class="el-upload__tip" slot="tip">注：点击图片可放大查看</div>
           </el-upload>
           <el-dialog :visible.sync="dialogVisible_Image">
-            <img width="100%" :src="dialogImageUrl" alt="">
+            <img width="100%" :src="dialogImageUrl" alt="" />
           </el-dialog>
         </el-form-item>
         <div class="withdraw_bank_info">
@@ -899,8 +970,12 @@
         </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogVisible_withdraw = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="subimtWithdraw">确 定</el-button>
+        <el-button size="small" @click="dialogVisible_withdraw = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="subimtWithdraw"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
     <!-- 发票预览 -->
@@ -910,8 +985,8 @@
       width="80%"
       top="20px"
     >
-      <div style="text-align: center;">
-        <img style="max-width: 100%;" :src="dialogImageUrl" alt="">
+      <div style="text-align: center">
+        <img style="max-width: 100%" :src="dialogImageUrl" alt="" />
       </div>
     </el-dialog>
     <!-- 查看所有发票 -->
@@ -922,10 +997,21 @@
       top="20px"
     >
       <div class="previewInvoiceList">
-        <img @click="handlePictureCardPreview({url: item})" v-for="item in previewInvoiceList" :key="item" :src="item" alt="">
+        <img
+          @click="handlePictureCardPreview({ url: item })"
+          v-for="item in previewInvoiceList"
+          :key="item"
+          :src="item"
+          alt=""
+        />
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" type="primary" @click="dialogVisible_previewList = false">关闭</el-button>
+        <el-button
+          size="small"
+          type="primary"
+          @click="dialogVisible_previewList = false"
+          >关闭</el-button
+        >
       </span>
     </el-dialog>
     <!-- 重新上传 -->
@@ -943,44 +1029,129 @@
         :limit="invoiceLimit"
         multiple
         :file-list="withdrawForm.invoiceList"
-        :before-upload="beforeUpload" 
-        :on-remove="onRemove" 
+        :before-upload="beforeUpload"
+        :on-remove="onRemove"
         :on-exceed="uploadExceed"
         :on-error="uploadError"
         :before-remove="beforeRemove"
         :on-success="uploadSuccess"
-        :on-preview="handlePictureCardPreview">
+        :on-preview="handlePictureCardPreview"
+      >
         <div class="uploadStyle-btn">
           <i class="el-icon-plus"></i>
-          <span>{{ withdrawForm.invoiceList.length }} / {{ invoiceLimit }}</span>
+          <span
+            >{{ withdrawForm.invoiceList.length }} / {{ invoiceLimit }}</span
+          >
         </div>
         <div class="el-upload__tip" slot="tip">注：点击图片可放大查看</div>
       </el-upload>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogVisible_updateInvoiceImg = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="updateInvoiceImgSubmit">确 定</el-button>
+        <el-button size="small" @click="dialogVisible_updateInvoiceImg = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="updateInvoiceImgSubmit"
+          >确 定</el-button
+        >
       </span>
+    </el-dialog>
+
+    <el-dialog
+      title="添加银行"
+      :visible.sync="showBankDictListDialog"
+      top="20px"
+      width="70%"
+    >
+      <el-form
+        :inline="true"
+        :model="bankList"
+        size="small"
+        @keyup.enter.native="queryBankList()"
+      >
+        <el-form-item label="字典值">
+          <el-input
+            v-model="bankList.dictValue"
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="字典标签">
+          <el-input
+            v-model="bankList.dictLabel"
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+
+        <el-form-item>
+          <el-button @click="queryBankList">查询</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="resetBankList">重置</el-button>
+        </el-form-item>
+      </el-form>
+      <el-table
+        v-loading="dataBankListLoading"
+        :data="dataBankList"
+        border
+        fit
+        style="width: 100%"
+        max-height="500"
+      >
+        <el-table-column label="字典值" prop="dictValue" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.dictValue || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="字典标签" prop="dictLabel" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.dictLabel || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" header-align="center" align="center">
+          <template slot-scope="scope">
+            <el-button
+              type="text"
+              size="small"
+              @click="saveSelectBank(scope.$index, scope.row)"
+              >添加</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        :current-page="bankListPage"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="bankListlimit"
+        :total="dataBankListTotal"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="pageSizeChangeBankHandle"
+        @current-change="pageCurrentChangeBankHandle"
+      >
+      </el-pagination>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" @click="showBankDictListDialog = false"
+          >取 消</el-button
+        >
+      </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { treeDataTranslate,getUUID } from "@/utils";
-import Cookies from 'js-cookie'
+import { treeDataTranslate, getUUID } from "@/utils";
+import Cookies from "js-cookie";
 export default {
   name: "LiveWebmanageUserdetail",
 
   data() {
     // 验证提现金额
     let checkWithdraw = (rule, value, callback) => {
-      if (value <= 0 ) {
-        callback(new Error('请输入提现金额'))
+      if (value <= 0) {
+        callback(new Error("请输入提现金额"));
       } else if (value > this.diaForm.anchorBalance) {
-        callback(new Error('超过可提现金额'))
+        callback(new Error("超过可提现金额"));
       } else {
         callback();
       }
-    }
+    };
     return {
       userId: "",
       diaForm: {},
@@ -998,11 +1169,11 @@ export default {
         productName: "",
         productType: "",
         isFree: "",
-        type:"",
-        bankAccount:"",
-        approveStatus:"",
-        payStatus:"",
-        date:"",
+        type: "",
+        bankAccount: "",
+        approveStatus: "",
+        payStatus: "",
+        date: "",
       },
       productForm: {
         productName: "",
@@ -1013,7 +1184,7 @@ export default {
       // 推荐主播搜索
       recommendForm: {
         anchorName: "",
-        anchorPhone: ""
+        anchorPhone: "",
       },
       dialogRecommendVisible: false, //推荐主播弹框
       recommendList: [], //推荐主播列表
@@ -1031,7 +1202,7 @@ export default {
       total_dia: 0,
       ids: [],
       dialogVisible: false,
-      dataListLoading:false,
+      dataListLoading: false,
       dataUserListLoading: false,
       userListPage: 1, // 当前页码
       userListLimit: 10, // 每页数
@@ -1042,10 +1213,10 @@ export default {
 
       // 修改银行卡信息
       dialogVisible_editBank: false,
-      dialogVisible_withdraw:false,//提现弹窗
-      dialogImageUrl: '',
+      dialogVisible_withdraw: false, //提现弹窗
+      dialogImageUrl: "",
       dialogVisible_Image: false,
-      withdrawForm:{
+      withdrawForm: {
         amount: 0,
         invoiceList: [], //发票上传图片
       },
@@ -1064,25 +1235,40 @@ export default {
         accountName: [
           { required: true, message: "请填写账户名称", trigger: "blur" },
         ],
+        bankDictLabel: [
+          { required: true, message: "请选择字典名", trigger: "submit" },
+        ],
         bankAccount: [
           { required: true, message: "请填写银行账户", trigger: "blur" },
         ],
       },
-      dataRule_withdraw:{
-        amount: [
-          { validator: checkWithdraw, trigger: "blur" },
-        ],
+      dataRule_withdraw: {
+        amount: [{ validator: checkWithdraw, trigger: "blur" }],
       },
       dialogVisible_preview: false,
       regionDataAll: [],
       regionData: [],
       bankForm: {},
+      showBankDictListDialog: false,
+      bankList: {
+        dictValue: "",
+        dictLabel: "",
+      },
+      dataBankListLoading: false,
+      bankListSelectionUsers: [],
+      dataBankList: [],
+      bankListPage: 1,
+      bankListlimit: 10,
+      dataBankListTotal: 0,
+      dictTypeId: "",
     };
   },
   computed: {
     uploadUrl() {
-      return `${window.SITE_CONFIG['apiURL']}/oss/file/upload?access_token=${Cookies.get('access_token')}`
-    }
+      return `${
+        window.SITE_CONFIG["apiURL"]
+      }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
+    },
   },
 
   mounted() {
@@ -1103,22 +1289,80 @@ export default {
           return this.$message.error(res.msg);
         }
         this.regionData = treeDataTranslate(res.data);
-        this.regionDataAll =res.data;
+        this.regionDataAll = res.data;
       })
       .catch(() => {});
 
-    this.getAccountAmount()
-      
+    this.getAccountAmount();
+
     this.changeTbas(1);
   },
 
   methods: {
+    resetInput() {
+      this.$message.warning("请点击下方按钮选择字典名！");
+      this.bankForm.bankDictLabel = "";
+      return;
+    },
+    // 分页, 每页条数
+    pageSizeChangeBankHandle(val) {
+      this.bankListPage = 1;
+      this.bankListlimit = val;
+      this.queryBankList();
+    },
+    pageCurrentChangeBankHandle(val) {
+      this.bankListPage = val;
+      this.queryBankList();
+    },
+    //添加
+    saveSelectBank(index, row) {
+      this.bankForm.bankDictValue = row.dictValue;
+      this.bankForm.bankDictLabel = row.dictLabel;
+      this.showBankDictListDialog = false;
+    },
+    resetBankList() {
+      this.bankList = {
+        dictValue: "",
+        dictLabel: "",
+      };
+      this.queryBankList();
+    },
+    //获取银行列表
+    queryBankList() {
+      this.dataBankListLoading = true;
+      this.$http
+        .get("/sys/dict/data/page", {
+          params: {
+            page: this.bankListPage,
+            limit: this.bankListlimit,
+            dictValue: this.bankList.dictValue,
+            dictLabel: this.bankList.dictLabel,
+            dictTypeId: "1518837406719619074",
+          },
+        })
+        .then(({ data: res }) => {
+          this.dataBankListLoading = false;
+          if (res.code !== 0) {
+            this.dataBankList = [];
+            this.dataBankListTotal = 0;
+            return this.$message.error(res.msg);
+          }
+          this.dataBankList = res.data.list;
+          this.dataBankListTotal = res.data.total;
+        })
+        .catch((err) => {
+          this.dataBankListLoading = false;
+          throw err;
+        });
+    },
+    showBankDictList() {
+      this.showBankDictListDialog = true;
+      this.queryBankList();
+    },
     // 获取用户账户金额信息
     getAccountAmount() {
       this.$http
-        .get(
-          `/sys/manage/userDetail/${this.userId}`
-        )
+        .get(`/sys/manage/userDetail/${this.userId}`)
         .then(({ data: res }) => {
           if (res.code !== 0) {
             return vm.$message.error(res.msg);
@@ -1126,7 +1370,7 @@ export default {
           this.diaForm = {
             ...this.diaForm,
             priceConsumption: res.data.priceConsumption,
-            anchorWithdraw:res.data.anchorWithdraw,
+            anchorWithdraw: res.data.anchorWithdraw,
             anchorBalance: res.data.anchorBalance,
           };
         })
@@ -1139,7 +1383,7 @@ export default {
     //确认下架
     confirmDel() {
       this.$http
-        .delete("/sys/wxapp/anchorProduct", {data: this.ids})
+        .delete("/sys/wxapp/anchorProduct", { data: this.ids })
         .then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg);
@@ -1158,11 +1402,11 @@ export default {
               productName: "",
               productType: "",
               isFree: "",
-              type:"",
-              bankAccount:"",
-              approveStatus:"",
-              payStatus:"",
-              date:"",
+              type: "",
+              bankAccount: "",
+              approveStatus: "",
+              payStatus: "",
+              date: "",
             };
             this.page_dia = 1; // 当前页码
             this.diaDataList = [];
@@ -1176,7 +1420,7 @@ export default {
     },
     changeTbas(n) {
       this.diaTbas = n;
-       this.page_dia=1
+      this.page_dia = 1;
       this.diaSearchForm = {
         payType: "",
         paySource: "",
@@ -1190,16 +1434,16 @@ export default {
         productName: "",
         productType: "",
         isFree: "",
-        type:"",
-        date:"",
-        bankAccount:"",
-        approveStatus:"",
-        payStatus:"",
-        date:"",
+        type: "",
+        date: "",
+        bankAccount: "",
+        approveStatus: "",
+        payStatus: "",
+        date: "",
       };
-         this.diaDataList=[]
-       this.total_dia = 0;
-       this.dataListSelections = []
+      this.diaDataList = [];
+      this.total_dia = 0;
+      this.dataListSelections = [];
       switch (n) {
         case 1:
           this.diaTableTitle = {
@@ -1273,8 +1517,8 @@ export default {
     // 获取跟进记录列表数据
     queryPost_dia() {
       let data, url;
-            this.dataListLoading = true;
-  
+      this.dataListLoading = true;
+
       switch (this.diaTbas) {
         case 1:
           data = {
@@ -1282,8 +1526,8 @@ export default {
             page: this.page_dia,
             anchorId: this.userId,
             type: this.diaSearchForm.type,
-            startDate:this.diaSearchForm.date[0],
-            endDate:this.diaSearchForm.date[1]
+            startDate: this.diaSearchForm.date[0],
+            endDate: this.diaSearchForm.date[1],
           };
           url = "/sys/anchorGain/page";
           break;
@@ -1292,11 +1536,11 @@ export default {
             limit: this.limit_dia,
             page: this.page_dia,
             anchorId: this.userId,
-            bankAccount:this.diaSearchForm.bankAccount,
-            approveStatus:this.diaSearchForm.approveStatus,
-            payStatus:this.diaSearchForm.payStatus,
-            startDate:this.diaSearchForm.date[0],
-            endDate:this.diaSearchForm.date[1]
+            bankAccount: this.diaSearchForm.bankAccount,
+            approveStatus: this.diaSearchForm.approveStatus,
+            payStatus: this.diaSearchForm.payStatus,
+            startDate: this.diaSearchForm.date[0],
+            endDate: this.diaSearchForm.date[1],
           };
           url = "/sys/anchorWithdraw/page";
           break;
@@ -1355,7 +1599,7 @@ export default {
           params: data,
         })
         .then(({ data: res }) => {
-            this.dataListLoading = false;
+          this.dataListLoading = false;
 
           if (res.code !== 0) {
             this.diaDataList = [];
@@ -1364,11 +1608,10 @@ export default {
           }
           this.diaDataList = res.data.list;
           this.total_dia = res.data.total;
-          if(this.$refs.dataTable) this.$refs.dataTable.doLayout() //刷新table样式
+          if (this.$refs.dataTable) this.$refs.dataTable.doLayout(); //刷新table样式
         })
         .catch(() => {
-            this.dataListLoading = false;
-
+          this.dataListLoading = false;
         });
     },
     // 分页, 每页条数
@@ -1391,15 +1634,18 @@ export default {
       })
         .then(() => {
           this.ids = [];
-          this.ids.push({productId: row.id});
+          this.ids.push({ productId: row.id });
           this.confirmDel();
         })
         .catch(() => {
           this.$message.info("已取消下架");
         });
     },
-    fansGroup(){
-      this.$router.push({name:'preview-fansGroup-index',query:{anchorId:this.userId}})
+    fansGroup() {
+      this.$router.push({
+        name: "preview-fansGroup-index",
+        query: { anchorId: this.userId },
+      });
     },
     //上架商品
     updateProduct() {
@@ -1422,14 +1668,13 @@ export default {
       })
         .then(() => {
           this.dataListSelections.forEach((v) => {
-            this.ids.push({productId: v.id});
+            this.ids.push({ productId: v.id });
           });
           this.confirmDel();
         })
         .catch(() => {
           this.$message.info("已取消下架");
         });
-      
     },
     //批量选择
     userListSelectionChangeHandle(val) {
@@ -1462,9 +1707,9 @@ export default {
     },
     // 推荐主播多选
     recommendSelectionChangeHandle(val) {
-      this.recommendListSelections = val.map(item => {
-        return { recommendAnchorId: item.recommendAnchorId }
-      })
+      this.recommendListSelections = val.map((item) => {
+        return { recommendAnchorId: item.recommendAnchorId };
+      });
     },
     // 获取未推荐的主播
     getRecommendList() {
@@ -1491,10 +1736,11 @@ export default {
     },
     // 添加主播列表弹框
     addRecommendShow() {
-      this.recommendList = []
-      if(this.recommendListSelections.length) this.recommendListSelections = [] //清空多选
-      this.dialogRecommendVisible = true
-      this.getRecommendList()
+      this.recommendList = [];
+      if (this.recommendListSelections.length)
+        this.recommendListSelections = []; //清空多选
+      this.dialogRecommendVisible = true;
+      this.getRecommendList();
     },
     // 添加推荐主播-handle
     addRecommendHandle(data) {
@@ -1503,7 +1749,7 @@ export default {
         .then(({ data: res }) => {
           if (res.code == 0) {
             this.$message.success("添加推荐主播成功");
-            this.dialogRecommendVisible = false
+            this.dialogRecommendVisible = false;
             this.queryPost_dia();
           } else {
             this.$message.error(res.msg);
@@ -1534,16 +1780,16 @@ export default {
       if (!id) {
         //批量添加
         this.$confirm("确认添加为推荐主播, 是否继续?", "提示", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning",
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            this.addRecommendHandle(this.recommendListSelections);
           })
-            .then(() => {
-              this.addRecommendHandle(this.recommendListSelections);
-            })
-            .catch(() => {
-              this.$message.info("已取消添加");
-            });
+          .catch(() => {
+            this.$message.info("已取消添加");
+          });
       } else {
         //单个操作
         this.$confirm("确认添加为推荐主播, 是否继续?", "提示", {
@@ -1552,7 +1798,7 @@ export default {
           type: "warning",
         })
           .then(() => {
-            this.addRecommendHandle([{recommendAnchorId: id}]);
+            this.addRecommendHandle([{ recommendAnchorId: id }]);
           })
           .catch(() => {
             this.$message.info("已取消添加");
@@ -1564,19 +1810,19 @@ export default {
       if (!id) {
         //批量取消推荐
         this.$confirm("确认取消推荐主播, 是否继续?", "提示", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning",
-          })
-            .then(() => {
-              let arr = this.dataListSelections.map(item => {
-                return { recommendAnchorId: item.id }
-              })
-              this.deleteRecommendHandle(arr);
-            })
-            .catch(() => {
-              this.$message.info("已取消操作");
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            let arr = this.dataListSelections.map((item) => {
+              return { recommendAnchorId: item.id };
             });
+            this.deleteRecommendHandle(arr);
+          })
+          .catch(() => {
+            this.$message.info("已取消操作");
+          });
       } else {
         //单个操作
         this.$confirm("确认取消推荐主播, 是否继续?", "提示", {
@@ -1585,14 +1831,13 @@ export default {
           type: "warning",
         })
           .then(() => {
-            this.deleteRecommendHandle([{recommendAnchorId: id}]);
+            this.deleteRecommendHandle([{ recommendAnchorId: id }]);
           })
           .catch(() => {
             this.$message.info("已取消操作");
           });
       }
     },
-
 
     //重置
     reset() {
@@ -1613,7 +1858,7 @@ export default {
       })
         .then(() => {
           let ids = [];
-          ids.push({productId: row.id});
+          ids.push({ productId: row.id });
           this.$http
             .post("/sys/wxapp/anchorProduct", ids)
             .then(({ data: res }) => {
@@ -1663,7 +1908,7 @@ export default {
         .then(() => {
           let ids = [];
           this.dataListSelectionUsers.forEach((v) => {
-            ids.push({productId: v.id});
+            ids.push({ productId: v.id });
           });
           this.$http
             .post("/sys/wxapp/anchorProduct", ids)
@@ -1719,7 +1964,7 @@ export default {
     editeUserInfo() {
       this.$router.push({
         name: "preview-editeUserInfo-EditeUserInfo",
-        params: { info: this.diaForm }
+        params: { info: this.diaForm },
       });
     },
     //编辑银行卡信息
@@ -1728,7 +1973,9 @@ export default {
       this.bankForm = {
         depositBank: this.diaForm.depositBank ? this.diaForm.depositBank : "",
         branchName: this.diaForm.branchName ? this.diaForm.branchName : "",
-        address: this.diaForm.province ? [this.diaForm.province,this.diaForm.city,this.diaForm.county] : [],
+        address: this.diaForm.province
+          ? [this.diaForm.province, this.diaForm.city, this.diaForm.county]
+          : [],
         accountName: this.diaForm.accountName ? this.diaForm.accountName : "",
         bankAccount: this.diaForm.bankAccount ? this.diaForm.bankAccount : "",
       };
@@ -1736,14 +1983,14 @@ export default {
     subimtEditBank() {
       this.$refs.bankForm_host.validate((valid) => {
         if (valid) {
-          let address='';
-          this.bankForm.address.forEach(i=>{
-            this.regionDataAll.forEach(v=>{
-              if(v.id===i){
-                address+=`${v.name}/`
+          let address = "";
+          this.bankForm.address.forEach((i) => {
+            this.regionDataAll.forEach((v) => {
+              if (v.id === i) {
+                address += `${v.name}/`;
               }
-            })
-          })
+            });
+          });
           this.$confirm("确认银行信息已填写无误", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
@@ -1758,34 +2005,52 @@ export default {
                   branchName: this.bankForm.branchName
                     ? this.bankForm.branchName
                     : "",
-                  province: this.bankForm.address.length>0 ? this.bankForm.address[0] : '',
-                  address:address,
-                  city: this.bankForm.address.length>0 ? this.bankForm.address[1] : '',
-                  county: this.bankForm.address.length>0 ? this.bankForm.address[2] : '',
+                  province:
+                    this.bankForm.address.length > 0
+                      ? this.bankForm.address[0]
+                      : "",
+                  address: address,
+                  city:
+                    this.bankForm.address.length > 0
+                      ? this.bankForm.address[1]
+                      : "",
+                  county:
+                    this.bankForm.address.length > 0
+                      ? this.bankForm.address[2]
+                      : "",
                   accountName: this.bankForm.accountName
                     ? this.bankForm.accountName
                     : "",
                   bankAccount: this.bankForm.bankAccount
                     ? this.bankForm.bankAccount
                     : "",
-                    anchorInfoId: this.$store.state.user.id
+                  bankDictValue: this.bankForm.bankDictValue
+                    ? this.bankForm.bankDictValue
+                    : "",
+                  bankDictLabel: this.bankForm.bankDictLabel
+                    ? this.bankForm.bankDictLabel
+                    : "",
+                  anchorInfoId: this.$store.state.user.id,
                 })
                 .then(({ data: res }) => {
                   if (res.code !== 0) {
                     return this.$message.error(res.msg);
                   }
                   this.$http
-                    .get(`/sys/anchor/info/getInfo/${ this.$store.state.user.id}`)
+                    .get(
+                      `/sys/anchor/info/getInfo/${this.$store.state.user.id}`
+                    )
                     .then(({ data: res }) => {
                       if (res.code !== 0) {
                         return this.$message.error(res.msg);
                       }
                       this.diaForm = res.data;
                     });
-                    this.dialogVisible_editBank=false
+                  this.dialogVisible_editBank = false;
                   this.$message.success("修改成功!");
-                }).catch(error=>{
-                  this.$message.error(error.msg||error.error)
+                })
+                .catch((error) => {
+                  this.$message.error(error.msg || error.error);
                 });
             })
             .catch((err) => {
@@ -1800,37 +2065,41 @@ export default {
     },
     //提现
     editeUserMoney() {
-      this.dialogVisible_withdraw = true
+      this.dialogVisible_withdraw = true;
     },
     // 关闭提现
     closeWithdrawHandle() {
-      this.withdrawForm.amount = 0
-      this.withdrawForm.invoiceList = []
-      this.$refs.withdrawForm_host.clearValidate()
+      this.withdrawForm.amount = 0;
+      this.withdrawForm.invoiceList = [];
+      this.$refs.withdrawForm_host.clearValidate();
     },
     // 超出上传数量
     uploadExceed() {
-      this.$message.error(`只能上传${this.invoiceLimit}张发票`)
+      this.$message.error(`只能上传${this.invoiceLimit}张发票`);
     },
     // 图片上传成功的回调
-    uploadSuccess(res, file, fileList){   
-      if(res.code === 0){
-        this.withdrawForm.invoiceList = fileList
-      }else{
+    uploadSuccess(res, file, fileList) {
+      if (res.code === 0) {
+        this.withdrawForm.invoiceList = fileList;
+      } else {
         this.$message.error(res.msg);
       }
     },
     // 图片上传出错的回调
-    uploadError(err, file){
-      this.$message.error('上传失败！');
+    uploadError(err, file) {
+      this.$message.error("上传失败！");
     },
     // 图片上传之前的回调
-    beforeUpload(file){
+    beforeUpload(file) {
       const isLt2M = file.size / 1024 / 1024 < 20;
       if (!isLt2M) {
         this.$message.error("上传图片大小不能超过 20MB!");
       }
-      const isJPG = (file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png' || file.type === 'image/gif');
+      const isJPG =
+        file.type === "image/jpeg" ||
+        file.type === "image/jpg" ||
+        file.type === "image/png" ||
+        file.type === "image/gif";
       if (!isJPG) {
         this.$message.error("上传发票图片格式为 jpg,jpeg,png,gif");
       }
@@ -1844,99 +2113,108 @@ export default {
     // 删除之前
     beforeRemove() {
       return new Promise((resolve, reject) => {
-        this.$confirm('是否删除图片?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          resolve(true)
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });    
-          reject() 
-        });
-      })
-      
+        this.$confirm("是否删除图片?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            resolve(true);
+          })
+          .catch(() => {
+            this.$message({
+              type: "info",
+              message: "已取消删除",
+            });
+            reject();
+          });
+      });
     },
     // 移除文件
     onRemove(file, fileList) {
-      this.withdrawForm.invoiceList = this.withdrawForm.invoiceList.filter((item) => {
-        if(item.uid && item.uid != file.uid) {
-          return item
-        }else if(item.url != file.url) {
-          return item
+      this.withdrawForm.invoiceList = this.withdrawForm.invoiceList.filter(
+        (item) => {
+          if (item.uid && item.uid != file.uid) {
+            return item;
+          } else if (item.url != file.url) {
+            return item;
+          }
         }
-      })
+      );
     },
-    subimtWithdraw(){
-      if(this.withdrawForm.invoiceList.length <= 0) return this.$message.error("请上传发票图片")
+    subimtWithdraw() {
+      if (this.withdrawForm.invoiceList.length <= 0)
+        return this.$message.error("请上传发票图片");
       this.$refs.withdrawForm_host.validate((valid) => {
         if (valid) {
           let imgUrls = this.withdrawForm.invoiceList.map((item) => {
-            if(item.response) {
-              return item.response.data.url
-            }else {
-              return item.url
+            if (item.response) {
+              return item.response.data.url;
+            } else {
+              return item.url;
             }
-          })
-          imgUrls = imgUrls.join(",")
-          this.$http.post('/sys/anchorWithdraw',{
-            amount: this.withdrawForm.amount,
-            fileName: imgUrls,
-            uuid: getUUID(),
-          }).then(({data:res})=>{
-            if(res.code == 0) {
-              this.$message.success("申请提现成功")
-              this.dialogVisible_withdraw = false
-              this.getAccountAmount()
-              this.queryPost_dia()
-            }else {
-              this.$message.error(res.msg)
-            }
-          }).catch(err=>{})
-        } 
+          });
+          imgUrls = imgUrls.join(",");
+          this.$http
+            .post("/sys/anchorWithdraw", {
+              amount: this.withdrawForm.amount,
+              fileName: imgUrls,
+              uuid: getUUID(),
+            })
+            .then(({ data: res }) => {
+              if (res.code == 0) {
+                this.$message.success("申请提现成功");
+                this.dialogVisible_withdraw = false;
+                this.getAccountAmount();
+                this.queryPost_dia();
+              } else {
+                this.$message.error(res.msg);
+              }
+            })
+            .catch((err) => {});
+        }
       });
-      
     },
 
     // 查看发票
     previewInvoiceImg({ fileName }) {
-      this.previewInvoiceList = fileName ? fileName.split(",") : []
-      this.dialogVisible_previewList = true
+      this.previewInvoiceList = fileName ? fileName.split(",") : [];
+      this.dialogVisible_previewList = true;
     },
     closeUpdateInvoiceImgHandle() {
-      this.withdrawForm.invoiceList = []
+      this.withdrawForm.invoiceList = [];
     },
     // 重新上传发票
     updateInvoiceImg(row) {
-      this.dialogVisible_updateInvoiceImg = true
-      this.updateInvoiceId = row.id
+      this.dialogVisible_updateInvoiceImg = true;
+      this.updateInvoiceId = row.id;
     },
     // 重新上传发票提交
     updateInvoiceImgSubmit() {
       let imgUrls = this.withdrawForm.invoiceList.map((item) => {
-            if(item.response) {
-              return item.response.data.url
-            }else {
-              return item.url
-            }
-          })
-          imgUrls = imgUrls.join(",")
-          this.$http.put('/sys/anchorWithdraw',{
-            id: this.updateInvoiceId,
-            fileName: imgUrls,
-          }).then(({data:res})=>{
-            if(res.code == 0) {
-              this.$message.success("重新上传成功")
-              this.dialogVisible_updateInvoiceImg = false
-              this.queryPost_dia()
-            }else {
-              this.$message.error(res.msg)
-            }
-          }).catch(err=>{})
-    }
+        if (item.response) {
+          return item.response.data.url;
+        } else {
+          return item.url;
+        }
+      });
+      imgUrls = imgUrls.join(",");
+      this.$http
+        .put("/sys/anchorWithdraw", {
+          id: this.updateInvoiceId,
+          fileName: imgUrls,
+        })
+        .then(({ data: res }) => {
+          if (res.code == 0) {
+            this.$message.success("重新上传成功");
+            this.dialogVisible_updateInvoiceImg = false;
+            this.queryPost_dia();
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {});
+    },
   },
 };
 </script>
@@ -2008,24 +2286,24 @@ export default {
   height: 80px;
 }
 .withdraw_bank_info {
-  .header{
+  .header {
     width: 120px;
     text-align: right;
     padding-right: 12px;
   }
-  &>div{
+  & > div {
     margin-top: 10px;
   }
-  &>div:not(:first-child) {
+  & > div:not(:first-child) {
     text-indent: 120px;
   }
 }
-/deep/.uploadStyle{
-  .el-upload--picture-card{
+/deep/.uploadStyle {
+  .el-upload--picture-card {
     width: 90px;
     height: 90px;
   }
-  .el-upload-list--picture-card>li{
+  .el-upload-list--picture-card > li {
     width: 90px;
     height: 90px;
   }
@@ -2033,29 +2311,29 @@ export default {
     width: 90px;
     height: 90px;
   }
-  .el-progress-circle{
+  .el-progress-circle {
     width: 100% !important;
     height: 100% !important;
   }
-  .uploadStyle-btn{
+  .uploadStyle-btn {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     width: 100%;
     height: 100%;
-    span{
+    span {
       line-height: normal;
       display: inline-block;
       margin-top: 10px;
     }
   }
 }
-.previewInvoiceList{
+.previewInvoiceList {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  img{
+  img {
     width: 30%;
     height: 100px;
     object-fit: contain;
@@ -2064,7 +2342,7 @@ export default {
     &:not(:nth-child(3n)) {
       margin-right: 5%;
     }
-    &:hover{
+    &:hover {
       border: 1px solid #999;
     }
   }

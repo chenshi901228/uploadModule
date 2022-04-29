@@ -50,11 +50,11 @@
           <div v-if="isOpen">
             <el-row>
               <el-col :span="8">
-                <el-form-item label="结束时间" prop="endDate">
+                <el-form-item label="结束时间" prop="factEndDate">
                   <el-date-picker
                     size="small"
                     :clearable="true"
-                    v-model="dataForm.endDate"
+                    v-model="dataForm.factEndDate"
                     type="datetime"
                     style="width: 194px"
                     placeholder="选择日期时间"
@@ -229,7 +229,7 @@
         <el-table-column
           width="150"
           label="结束时间"
-          prop="endDate"
+          prop="factEndDate"
           align="center"
         >
         </el-table-column>
@@ -413,7 +413,7 @@ export default {
         liveTheme: "",
         anchorUser: "",
         startDate: "",
-        endDate: "",
+        factEndDate: "",
         dynamicGroupName: "",
         livingRoomId: "",
         liveState: "",
@@ -457,8 +457,8 @@ export default {
 
       if (this.dataForm.startDate) {
         dataObj.startDate = this.dateFormat(this.dataForm.startDate);
-      } else if (this.dataForm.endDate) {
-        dataObj.endDate = this.dateFormat(this.dataForm.endDate);
+      } else if (this.dataForm.factEndDate) {
+        dataObj.factEndDate = this.dateFormat(this.dataForm.factEndDate);
       } else if (this.dataForm.liveState) {
         dataObj.liveState = Number(this.dataForm.liveState);
       } else if (this.dataForm.showState) {
@@ -604,8 +604,8 @@ export default {
 
       if (this.dataForm.startDate) {
         dataObj.startDate = this.dateFormat(this.dataForm.startDate);
-      } else if (this.dataForm.endDate) {
-        dataObj.endDate = this.dateFormat(this.dataForm.endDate);
+      } else if (this.dataForm.factEndDate) {
+        dataObj.factEndDate = this.dateFormat(this.dataForm.factEndDate);
       } else if (this.dataForm.liveState) {
         dataObj.liveState = Number(this.dataForm.liveState);
       } else if (this.dataForm.showState) {

@@ -220,17 +220,27 @@
         :on-error="handleError"
         :on-progress="handleProgress"
         :on-success="handleSuccess"
+        :on-change="onChange"
         :before-upload="beforeUploadFile"
         multiple
         :show-file-list="false"
         :limit="1"
         :on-exceed="handleExceed"
         :file-list="fileList"
+        v-if="percent === 0"
       >
         <el-button size="small" type="primary">+上传文件</el-button>
       </el-upload>
+      <div v-else-if="percent === 1">文件{{ uploadXlx }}正在上传</div>
+      <div v-else-if="percent === 2">
+        文件{{ uploadXlx }}已经上传完毕，正在处理数据
+      </div>
+      <div v-else-if="percent === 3">
+        <p>文件{{ uploadXlx }}已上传完毕，导入数据完成</p>
+        <p style="text-align: center">{{ uploadSuccessMsg }}</p>
+      </div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">完成</el-button>
+        <!-- <el-button @click="closeUploadDialog">关闭</el-button> -->
       </div>
     </el-dialog>
 
@@ -278,6 +288,9 @@ export default {
       id: "",
       dialogVisible: false,
       uploadUrl: "",
+      percent: 0,
+      uploadXlx: "",
+      uploadSuccessMsg: "",
     };
   },
   watch: {},
@@ -345,6 +358,7 @@ export default {
       }?access_token=${Cookies.get("access_token")}`;
     },
     handleExceed(files, fileList) {
+      // console.log(files,fileList)
       this.$message.warning(
         `当前限制选择 1 个文件，本次选择了 ${files.length} 个文件，共选择了 ${
           files.length + fileList.length
@@ -356,22 +370,26 @@ export default {
       this.fileList = [];
     },
     handleProgress(event, file, fileList) {
-      console.log(event);
+      // console.log(file, fileList);
+      this.uploadXlx = file.name;
+      if (event.percent >= 0 && event.percent < 100) {
+        this.percent = 1;
+      } else if (event.percent === 100) {
+        this.percent = 2;
+      }
     },
     handleSuccess(response, file, fileList) {
-      console.log(response, file, fileList);
       if (response.code === 0) {
-        this.$message({
-          message: `导入数据总数为${response.data.total}个,成功${
-            response.data.successNum
-          }个,失败${response.data.total - response.data.successNum}个`,
-          type: "success",
-          duration: 2000,
-        });
+        this.percent = 3;
+        // this.$message({
+        //   message: `导入数据总数为${response.data.total}个,成功${
+        //     response.data.successNum
+        //   }个,失败${response.data.total - response.data.successNum}个`,
+        //   type: "success",
+        //   duration: 2000,
+        // });
+        this.uploadSuccessMsg = `上传${response.data.total}条数据,导入${response.data.successNum}个`;
       }
-      this.fileList = [];
-      this.queryDynamicGroup();
-      this.dialogInputVisible = false;
     },
     beforeUploadFile(file) {
       // const extension = file.name.substring(file.name.lastIndexOf(".") + 1);
@@ -398,6 +416,15 @@ export default {
         });
       }
     },
+    onChange(file, fileList) {
+      // console.log(file, fileList)
+    },
+    // closeUploadDialog() {
+    //   this.percent = 0;
+    //   this.fileList = [];
+    //   this.queryDynamicGroup();
+    //   this.dialogInputVisible = false;
+    // },
     //动态组人员
     queryDynamicGroup() {
       this.loadingGroup = true;

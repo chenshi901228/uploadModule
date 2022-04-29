@@ -304,7 +304,7 @@ export default {
     // 打开用户详情弹窗
     openDetail(data) {
       this.$router.push({
-        name: "userManagement-hostDetail",
+        path:"userManagement-hostDetail"
       });
       window.localStorage.setItem("hostDetailID", data.id);
     },

@@ -41,7 +41,7 @@
           <el-col :span="8">
             <el-form-item label="退款状态" prop="refundStatus">
               <el-select size="small" v-model="dataForm.refundStatus" clearable>
-                <el-option :value="2" label="待退款"></el-option>
+                <el-option :value="-2" label="待退款"></el-option>
                 <el-option :value="0" label="退款中"></el-option>
                 <el-option :value="1" label="退款成功"></el-option>
                 <el-option :value="-1" label="退款失败"></el-option>
@@ -202,6 +202,13 @@
           header-align="center"
           align="center"
         ></el-table-column>
+        <!-- <el-table-column
+          prop="approveDate"
+          label="退款原因"
+          min-width="160px"
+          header-align="center"
+          align="center"
+        ></el-table-column> -->
         <el-table-column
           prop="refundReason"
           label="备注"
