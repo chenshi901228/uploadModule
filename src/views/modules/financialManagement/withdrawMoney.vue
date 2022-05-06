@@ -309,7 +309,7 @@ export default {
       },
       dataList: [{ createDate: 1 }],
       userId: "",
-      dialogVisible: "",
+      dialogVisible: false,
       uuid: "",
       id: "",
       otherViewHeight: 0, //搜索栏高度
