@@ -236,18 +236,9 @@
           header-align="center"
           align="center"
         >
-          <template slot-scope="{ row }">
-            <el-popconfirm
-              title="确认下播？"
-              v-if="row.liveState == 1"
-              @confirm="closeLiveHandle(row.anchorUserId)"
-            >
-              <el-button slot="reference" type="text" size="small"
-                >下播</el-button
-              >
-            </el-popconfirm>
+          <template slot-scope="{ row }" v-if="row.liveState == 1">
+            <el-button type="text" @click="closeLiveHandle(row.anchorUserId)" size="small">下播</el-button>
             <el-button
-              v-if="row.liveState == 1"
               type="text"
               size="small"
               @click="joinLiveHandle(row)"
@@ -374,32 +365,38 @@ export default {
     },
     // 下播
     closeLiveHandle(id) {
-      this.$loading({background: "rgba(0,0,0,.5)"})
-      this.$http
-        .post("/sys/mixedflow/stopMixedFlow", {
-          UserId: id,
-          RoomId: id,
-        })
-        .then((res) => {
-          if (res.data.success && res.data.msg == "success") {
-            this.$nextTick(() => {
-              // 以服务的方式调用的 Loading 需要异步关闭
-              this.$loading().close();
+      this.$alert('确定关闭直播？', '提示', {
+        confirmButtonText: '确定',
+        callback: action => {
+          console.log(action)
+          if( action == 'confirm'){
+            this.$loading({background: "rgba(0,0,0,.5)"})
+            this.$http.post("/sys/mixedflow/stopMixedFlow", {
+                UserId: id,
+                RoomId: id,
+              }).then((res) => {
+                if (res.data.success && res.data.msg == "success") {
+                  this.$nextTick(() => {
+                    // 以服务的方式调用的 Loading 需要异步关闭
+                    this.$loading().close();
+                  });
+                  this.$message({ message: "直播已关闭", type: "success" });
+                  localStorage.removeItem("liveStatus"); //将直播状态移除
+                  localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
+                  localStorage.removeItem("isRecord"); //将录制状态移除
+                  localStorage.removeItem("studentList"); //将学生列表移除
+                  this.query();
+                } else {
+                  this.$nextTick(() => {
+                    // 以服务的方式调用的 Loading 需要异步关闭
+                    this.$loading().close();
+                  });
+                  this.$message({ message: "结束直播失败", type: "error" });
+              }
             });
-            this.$message({ message: "直播已关闭", type: "success" });
-            localStorage.removeItem("liveStatus"); //将直播状态移除
-            localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
-            localStorage.removeItem("isRecord"); //将录制状态移除
-            localStorage.removeItem("studentList"); //将学生列表移除
-            this.query();
-          } else {
-            this.$nextTick(() => {
-              // 以服务的方式调用的 Loading 需要异步关闭
-              this.$loading().close();
-            });
-            this.$message({ message: "结束直播失败", type: "error" });
           }
-        });
+        }
+      });
     },
     // 进入直播间
     joinLiveHandle(row) {

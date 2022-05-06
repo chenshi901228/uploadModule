@@ -778,7 +778,11 @@ export default {
     async shareDesk(){
       this.screenStream = await this.zg.createStream({ //屏幕共享流
         screen: {
-          videoQuality: 2,
+          videoQuality: 4,
+          width:1920,
+          height:1080,
+          frameRate: 15,
+          bitrate: 2000,
         },
       });
       let res = await this.zg.startPublishingStream('shareDesk'+this.roomId, this.screenStream, { videoCodec: 'VP8' }); //共享桌面流
@@ -987,6 +991,7 @@ export default {
           frameRate: 15,
           bitrate: 2000,
           videoInput:this.cameraId,
+          // videoInput:"1ed4bf93db702d620a4364790dd28de7300e3b19e76420e48ed3eb9aad50212b"
         },
       });
       // Step4
