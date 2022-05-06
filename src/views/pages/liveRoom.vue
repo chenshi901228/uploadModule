@@ -626,10 +626,14 @@ export default {
     };
   },
   created() {
-    let liveStatus = JSON.parse(localStorage.getItem("liveStatus")); //直播状态
-    if (liveStatus) {
-      this.liveStatus = liveStatus;
-    }
+    this.$http.get('/sys/mixedflow/getLiving').then(res=>{//获取直播状态
+      if(res.data.data){
+        this.liveStatus = true
+      }else{
+        this.liveStatus = false
+      }
+    })
+
     let connectMessageInfo = JSON.parse(
       localStorage.getItem("connectMessageInfo")
     ); //连麦列表状态
@@ -783,11 +787,11 @@ export default {
         this.$http.post('/sys/mixedflow/openDesktopSharing',{RoomId:this.roomId,StreamId:'shareDesk'+this.roomId}).then(res=>{
           console.log(res)
           if(res.data.code == 0){
+            this.uploadDialogVisible = false
             this.$message({
               message:'共享开启成功',
               type:'success'
             })
-            this.uploadDialogVisible = false
           }
         })
       }
@@ -1031,7 +1035,6 @@ export default {
         .then((res) => {
           if (res.data.data && res.data.data.Data) {
             this.liveStatus = true;
-            localStorage.setItem("liveStatus", JSON.stringify(this.liveStatus)); //将直播状态存起来
             this.joinGroup();
             this.$nextTick(() => {
               // 以服务的方式调用的 Loading 需要异步关闭
@@ -1061,7 +1064,7 @@ export default {
     },
 
     //关闭直播
-    async closeLive() {
+    closeLive() {
       this.$loading({background: "rgba(0,0,0,.5)"})
       this.$http
         .post("/sys/mixedflow/stopMixedFlow", {
@@ -1076,7 +1079,6 @@ export default {
             });
             this.$message({ message: "直播已关闭", type: "success" });
             this.liveStatus = false;
-            localStorage.removeItem("liveStatus"); //将直播状态移除
             localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
             localStorage.removeItem("isRecord"); //将录制状态移除
             localStorage.removeItem("studentList"); //将学生列表移除
@@ -1215,7 +1217,10 @@ export default {
             this.$alert(item.payload.userDefinedField, '系统提示', {
               confirmButtonText: '确定',
               callback: action => {
-                this.closeLive()
+                localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
+                localStorage.removeItem("isRecord"); //将录制状态移除
+                localStorage.removeItem("studentList"); //将学生列表移除
+                window.close()
               }
             });
           }
