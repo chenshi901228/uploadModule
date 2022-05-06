@@ -222,7 +222,7 @@
           prop="factStartDate"
           align="center"
         >
-         <template slot-scope="scope">
+          <template slot-scope="scope">
             <span>{{ scope.row.factStartDate || "--" }}</span>
           </template>
         </el-table-column>
@@ -232,6 +232,9 @@
           prop="factEndDate"
           align="center"
         >
+          <template slot-scope="scope">
+            <span>{{ scope.row.factEndDate || "--" }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           width="100%"
@@ -277,12 +280,16 @@
         <el-table-column
           width="100%"
           label="预约状态"
-          prop="appointmentState"
+          prop="delFlg"
           align="center"
         >
           <template slot-scope="scope">
             <span>{{
-              scope.row.appointmentState === 0 ? "已结束" : "预约中"
+              scope.row.delFlg === 1
+                ? "已删除"
+                : scope.row.appointmentState === 0
+                ? "已结束"
+                : "预约中"
             }}</span>
           </template>
         </el-table-column>
@@ -345,7 +352,7 @@
         >
           <template slot-scope="scope">
             <el-button
-              v-if="scope.row.appointmentState !== 0"
+              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1"
               type="text"
               size="small"
               @click="showThis(scope.$index, scope.row)"
@@ -353,7 +360,7 @@
             >
             <!-- <el-button size="mini">禁播</el-button> -->
             <el-button
-              v-if="scope.row.appointmentState !== 0"
+              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1"
               type="text"
               size="small"
               @click="handleDelete(scope.$index, scope.row)"
@@ -450,7 +457,7 @@ export default {
       let dataObj = {};
 
       for (const key in this.dataForm) {
-        if (this.dataForm[key] &&this.dataForm[key].length !== 0) {
+        if (this.dataForm[key] && this.dataForm[key].length !== 0) {
           dataObj[key] = this.dataForm[key];
         }
       }

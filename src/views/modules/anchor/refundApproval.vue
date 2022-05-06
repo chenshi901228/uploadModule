@@ -210,7 +210,7 @@
           align="center"
         ></el-table-column> -->
         <el-table-column
-          prop="refundReason"
+          prop="approveReason"
           label="备注"
           min-width="160px"
           header-align="center"
@@ -287,12 +287,18 @@
         class="demo-ruleForm"
       >
         <el-form-item label="备注" prop="desc">
-          <el-input placeholder="请输入,可不填" type="textarea" v-model="ruleForm.desc"></el-input>
+          <el-input
+            placeholder="请输入,可不填"
+            type="textarea"
+            v-model="ruleForm.desc"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="updateApproveStatus(id,-1)">驳 回</el-button>
-        <el-button type="primary" @click="updateApproveStatus(id,1)">通 过</el-button>
+        <el-button @click="updateApproveStatus(id, -1)">驳 回</el-button>
+        <el-button type="primary" @click="updateApproveStatus(id, 1)"
+          >通 过</el-button
+        >
       </div>
     </el-dialog>
   </el-card>
@@ -407,6 +413,7 @@ export default {
           this.$http["put"]("/sys/userRefund/updateApproveStatus", {
             id,
             approveStatus: status,
+            approveReason: this.ruleForm.desc,
           })
             .then(({ data: res }) => {
               if (res.code !== 0) {
@@ -414,7 +421,8 @@ export default {
               }
               this.getDataList();
               this.$message.success("操作成功");
-              this.dialogFormVisible = false
+              this.ruleForm.desc = "";
+              this.dialogFormVisible = false;
             })
             .catch(() => {});
         })
