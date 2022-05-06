@@ -986,7 +986,8 @@ export default {
           height: parseInt(document.getElementById('videoEle').getBoundingClientRect().height * 1),
           frameRate: 15,
           bitrate: 2000,
-          videoInput:this.cameraId,
+          // videoInput:this.cameraId,
+          videoInput:"1ed4bf93db702d620a4364790dd28de7300e3b19e76420e48ed3eb9aad50212b"
         },
       });
       // Step4
