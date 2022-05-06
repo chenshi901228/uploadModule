@@ -279,12 +279,16 @@
         <el-table-column
           width="100%"
           label="预约状态"
-          prop="appointmentState"
+          prop="delFlg"
           align="center"
         >
           <template slot-scope="scope">
             <span>{{
-              scope.row.appointmentState === 0 ? "已结束" : "预约中"
+              scope.row.delFlg === 1
+                ? "已删除"
+                : scope.row.appointmentState === 0
+                ? "已结束"
+                : "预约中"
             }}</span>
           </template>
         </el-table-column>
@@ -347,28 +351,28 @@
         >
           <template slot-scope="scope">
             <el-button
-              v-if="scope.row.appointmentState !== 0"
+              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1"
               type="text"
               size="small"
               @click="createRoom(scope.$index, scope.row)"
               >创建直播</el-button
             >
             <el-button
-              v-if="scope.row.appointmentState !== 0"
+              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1"
               type="text"
               size="small"
               @click="showThis(scope.$index, scope.row)"
               >{{ scope.row.showState === 0 ? "显示" : "隐藏" }}</el-button
             >
             <el-button
-              v-if="scope.row.appointmentState !== 0"
+              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1"
               type="text"
               size="small"
               @click="handle(scope.$index, scope.row)"
               >编辑</el-button
             >
             <el-button
-              v-if="scope.row.appointmentState !== 0"
+              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1"
               type="text"
               size="small"
               @click="handleDelete(scope.$index, scope.row)"

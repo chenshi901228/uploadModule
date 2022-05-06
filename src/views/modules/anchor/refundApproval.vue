@@ -11,70 +11,60 @@
       >
         <el-row>
           <el-col :span="8">
-            <el-form-item label="主播昵称" prop="nickName">
+            <el-form-item label="用户昵称" prop="userName">
               <el-input
                 size="small"
                 v-model="dataForm.userName"
                 clearable
+                placeholder="用户昵称"
               ></el-input>
             </el-form-item>
           </el-col>
-          <!-- <el-col :span="8">
-            <el-form-item label="真实姓名" prop="phone">
-              <el-input
-                size="small"
-                v-model="dataForm.phone"
-                clearable
-              ></el-input>
-            </el-form-item>
-          </el-col> -->
 
           <el-col :span="8">
-            <el-form-item label="手机号码" prop="phone">
+            <el-form-item label="手机号码" prop="userPhone">
               <el-input
                 size="small"
                 v-model="dataForm.userPhone"
                 clearable
+                placeholder="手机号码"
               ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="退款状态" prop="refundStatus">
-              <el-select size="small" v-model="dataForm.refundStatus" clearable>
-                <el-option :value="-2" label="待退款"></el-option>
-                <el-option :value="0" label="退款中"></el-option>
-                <el-option :value="1" label="退款成功"></el-option>
-                <el-option :value="-1" label="退款失败"></el-option>
-              </el-select>
+            <el-form-item label="商品类型" prop="productType">
+              <el-input
+                size="small"
+                v-model="dataForm.productType"
+                clearable
+                placeholder="商品类型"
+              ></el-input>
             </el-form-item>
           </el-col>
-          <!-- <div v-if="isOpen">
+          <div v-if="isOpen">
             <el-row >
               <el-col :span="8">
-                <el-form-item label="身份证" prop="phone">
+                <el-form-item label="商品名称" prop="productName">
                   <el-input
                     size="small"
-                    v-model="dataForm.phone"
+                    v-model="dataForm.productName"
                     clearable
+                    placeholder="商品名称"
                   ></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="审批状态" prop="delFlg">
-                  <el-select
+                <el-form-item label="关联订单编号" prop="weixinUserProductId">
+                  <el-input
                     size="small"
-                    v-model="dataForm.refundStatus"
+                    v-model="dataForm.weixinUserProductId"
                     clearable
-                  >
-                    <el-option :value="2" label="待退款"></el-option>
-                    <el-option :value="0" label="退款中"></el-option>
-                    <el-option :value="1" label="退款成功"></el-option>
-                    <el-option :value="-1" label="退款失败"></el-option>
-                  </el-select>
+                    placeholder="关联订单编号"
+                  ></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
-          </div> -->
+          </div>
           <el-col :span="24">
             <el-form-item style="float: right; padding-right: 10px">
               <el-button type="info" size="small" @click="exportHandle()">{{
@@ -86,13 +76,13 @@
               <el-button size="small" @click="resetDataForm()">{{
                 $t("reset")
               }}</el-button>
-              <!-- <el-button size="small" type="primary" @click="open">
+              <el-button size="small" type="primary" @click="open">
                 {{ isOpen ? "收起" : "展开"
                 }}<i
                   style="margin-left: 10px"
                   :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
                 ></i>
-              </el-button> -->
+              </el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -202,15 +192,15 @@
           header-align="center"
           align="center"
         ></el-table-column>
-        <!-- <el-table-column
-          prop="approveDate"
+        <el-table-column
+          prop="refundReason"
           label="退款原因"
           min-width="160px"
           header-align="center"
           align="center"
-        ></el-table-column> -->
+        ></el-table-column>
         <el-table-column
-          prop="refundReason"
+          prop="approveReason"
           label="备注"
           min-width="160px"
           header-align="center"
@@ -287,12 +277,18 @@
         class="demo-ruleForm"
       >
         <el-form-item label="备注" prop="desc">
-          <el-input placeholder="请输入,可不填" type="textarea" v-model="ruleForm.desc"></el-input>
+          <el-input
+            placeholder="请输入,可不填"
+            type="textarea"
+            v-model="ruleForm.desc"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="updateApproveStatus(id,-1)">驳 回</el-button>
-        <el-button type="primary" @click="updateApproveStatus(id,1)">通 过</el-button>
+        <el-button @click="updateApproveStatus(id, -1)">驳 回</el-button>
+        <el-button type="primary" @click="updateApproveStatus(id, 1)"
+          >通 过</el-button
+        >
       </div>
     </el-dialog>
   </el-card>
@@ -315,7 +311,9 @@ export default {
       dataForm: {
         userName: "",
         userPhone: "",
-        refundStatus: "",
+        productType: "",
+        productName: "",
+        weixinUserProductId: ""
       },
       dataList: [{ createDate: 1 }],
       userId: "",
@@ -407,6 +405,7 @@ export default {
           this.$http["put"]("/sys/userRefund/updateApproveStatus", {
             id,
             approveStatus: status,
+            approveReason: this.ruleForm.desc,
           })
             .then(({ data: res }) => {
               if (res.code !== 0) {
@@ -414,7 +413,8 @@ export default {
               }
               this.getDataList();
               this.$message.success("操作成功");
-              this.dialogFormVisible = false
+              this.ruleForm.desc = "";
+              this.dialogFormVisible = false;
             })
             .catch(() => {});
         })

@@ -56,7 +56,7 @@
         dataRule: {
           name: [
             { required: true, message: '请输入礼物名称', trigger: 'blur' },
-            { min: 1, max: 6, message: '长度在 1 到 6 个字符', trigger: 'blur' }
+            { min: 1, max: 4, message: '长度在 1 到 4 个字符', trigger: 'blur' }
           ],
         }
       }
