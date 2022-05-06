@@ -7,7 +7,7 @@
           <div class="user-info">
             <div class="username">
               <span>{{ userInfo.username }}</span>
-              <div class="anchor_detail_isLive">
+              <div class="anchor_detail_isLive" v-if="liveStatus">
                 <div class="live_icon_custom">
                   <div></div>
                   <div></div>
@@ -321,8 +321,9 @@
                 <img :src="item.img" alt="" />
                 <p>{{ item.text }}</p>
               </div>
-              <div @click="openEffect">开启美颜</div>
-              <div @click="closeEffect">关闭美颜</div>
+              <!-- <div @click="openEffect">开启美颜</div>
+              <div @click="closeEffect">关闭美颜</div> -->
+              <!-- <div @click="deviceDialogVisible=true">设备选择</div> -->
             </div>
             <div class="header_right">
               <div class="wacth_num">
@@ -375,26 +376,27 @@
                 </div>
               </div>
               <div class="screenShare">
-                <component
-                  :is="headerNavActive"
-                  :userInfo="
-                    headerNavActive == 'superboard'
-                      ? {
-                          token: this.token,
-                          roomId: this.roomId,
-                          userId: this.userID,
-                          appID: this.appID,
-                        }
-                      : {}
-                  "
-                ></component>
+                <Superboard 
+                  :userInfo="{
+                    token: this.token,
+                    roomId: this.roomId,
+                    userId: this.userID,
+                    appID: this.appID,
+                  }"
+                  v-if="headerNavActive == 'superboard'"
+                />
+              </div>
+              <div class="default" v-if="headerNavActive == 'desktopShare'" style="position:absolute;top:70px;left:10px;zIndex:2;">
+                <el-tooltip effect="dark" content="选择共享" placement="left" >
+                    <img @click="uploadDialogVisible = true" class="superboard-create" src="@/assets/icon/s_create.png" alt="">
+                </el-tooltip>
               </div>
               <video
                 autoplay
                 id="videoEle"
                 :src-object.prop="stream"
                 class="push_video"
-                :style="{width:videoWith+'px',height:videoHeight+'px'}"
+                :style="{width:'100%',height:'calc(100% - 60px)'}"
               ></video>
             </div>
             <div class="connect_list">
@@ -477,6 +479,53 @@
         </el-main>
       </el-container>
     </el-container>
+    <el-dialog
+      title="请选择共享方式"
+      :visible.sync="uploadDialogVisible"
+      top="200px"
+      width="30%">
+      <div class="createWrap">
+          <div class="createWrap-btn" @click="shareDesk" style="margin-right: 30px;">
+              <img class="icon" src="@/assets/icon/s_normal.png" alt="">
+              <span>共享桌面</span>
+              <img class="actived" src="@/assets/icon/s_selected.png" alt="">
+          </div>
+          <!-- <el-upload
+              action=""
+              :limit="1"
+              :file-list="fileList"
+              :http-request="uploadFile"
+              :show-file-list="false">
+              <div class="createWrap-btn">
+                  <img class="icon" src="@/assets/icon/s_file.png" alt="">
+                  <span>视频直播</span>
+                  <img class="actived" src="@/assets/icon/s_selected.png" alt="">
+              </div>
+          </el-upload> -->
+      </div>
+    </el-dialog>
+    <el-dialog
+        title="切换设备"
+        :visible.sync="deviceDialogVisible"
+        top="200px"
+        width="30%">
+          <el-select v-model="cameraId" @change="selectCamera" placeholder="请选择摄像头">
+            <el-option
+              v-for="item in camerasList"
+              :key="item.deviceID"
+              :label="item.deviceName"
+              :value="item.deviceID">
+            </el-option>
+          </el-select>
+          <el-select v-model="microphoneId" placeholder="请选择麦克风">
+            <el-option
+              v-for="item in microphonesList"
+              :key="item.deviceID"
+              :label="item.deviceName"
+              :value="item.deviceID">
+            </el-option>
+          </el-select>
+    </el-dialog>
   </div>
 </template>
 
@@ -556,24 +605,35 @@ export default {
           status: true,
         },
       ],
-      headerNavActive: "superboard", //顶部导航选中,
+      headerNavActive: "desktopShare", //顶部导航选中,
       liveStatus: false, //直播状态
       liveTheme: "", //直播主题
       beautifyParams:{ //美颜参数
-        smoothIntensity:50,
-        whitenIntensity:50,
-        rosyIntensity:50,
-        sharpenIntensity:50
+        smoothIntensity:0,
+        whitenIntensity:0,
+        rosyIntensity:0,
+        sharpenIntensity:0
       },
-      videoWith:300,
-      videoHeight:300,
+      videoWith:'',
+      videoHeight:'',
+      camerasList:[],//摄像头列表
+      microphonesList:[],//麦克风列表
+      deviceDialogVisible:false,//切换设备弹窗
+      cameraId:'',//摄像头设备
+      microphoneId:'',//麦克风设备
+      uploadDialogVisible:false,//共享桌面
+      fileList:[],
     };
   },
   created() {
-    let liveStatus = JSON.parse(localStorage.getItem("liveStatus")); //直播状态
-    if (liveStatus) {
-      this.liveStatus = liveStatus;
-    }
+    this.$http.get('/sys/mixedflow/getLiving').then(res=>{//获取直播状态
+      if(res.data.data){
+        this.liveStatus = true
+      }else{
+        this.liveStatus = false
+      }
+    })
+
     let connectMessageInfo = JSON.parse(
       localStorage.getItem("connectMessageInfo")
     ); //连麦列表状态
@@ -598,7 +658,34 @@ export default {
       this.appID,
       "wss://webliveroom467572390-api.imzego.com/ws"
     );
+    //获取摄像头列表
+    this.zg.getCameras().then(res=>{
+      console.log('摄像头',res)
+      this.camerasList = res
+      this.cameraId = this.camerasList[0].deviceID
+    })
 
+    //获取麦克风列表
+    this.zg.getMicrophones().then(res=>{
+      this.microphonesList = res
+    })
+
+    //屏幕共享中断
+    this.zg.on("screenSharingEnded",(stream)=>{
+      if(!stream.active){
+        this.$http.post('/sys/mixedflow/closeDesktopSharing',{RoomId:this.roomId}).then(res=>{
+          if(res.data.code==0){
+            this.$message({
+              message:'屏幕共享已关闭',
+              type:'success'
+            })
+            this.zg.stopPublishingStream('shareDesk'+this.roomId)
+            this.zg.destroyStream(this.screenStream);
+          }
+        })
+      }
+    })
+    
     // 监听zg连接状态
     this.zg.on("roomStateUpdate", (roomID, state, errorCode, extendedData) => {
       if (state == "DISCONNECTED") {
@@ -688,6 +775,33 @@ export default {
     });
   },
   methods: {
+    async shareDesk(){
+      this.screenStream = await this.zg.createStream({ //屏幕共享流
+        screen: {
+          videoQuality: 2,
+        },
+      });
+      let res = await this.zg.startPublishingStream('shareDesk'+this.roomId, this.screenStream, { videoCodec: 'VP8' }); //共享桌面流
+      console.log(res)
+      if(res){
+        this.$http.post('/sys/mixedflow/openDesktopSharing',{RoomId:this.roomId,StreamId:'shareDesk'+this.roomId}).then(res=>{
+          console.log(res)
+          if(res.data.code == 0){
+            this.uploadDialogVisible = false
+            this.$message({
+              message:'共享开启成功',
+              type:'success'
+            })
+          }
+        })
+      }
+    },
+    uploadFile({file}){
+      console.log(file)
+    },
+    selectCamera(value){
+      this.cameraId = value
+    },
     async toolClick(data) {
       if (data.type === "mike") {
         //麦克风
@@ -734,11 +848,17 @@ export default {
       }
     },
     headerNavClick(type) {
-      this.headerNavActive = type;
-      if (type == "superboard") {
-        //超级白板
-        
+      if (type != "beautify") {
+        this.headerNavActive = type;
+        if(type == "superboard"){
+          document.querySelector('#videoEle').style.width = '350px'
+          document.querySelector('#videoEle').style.height = '196px'
+        }else{
+          document.querySelector('#videoEle').style.width = '100%'
+          document.querySelector('#videoEle').style.height = 'calc(100% - 60px)'
+        }
       }
+      console.log(this.headerNavActive)
     },
     handleClick(tab, event) {
       console.log(tab, event);
@@ -859,7 +979,6 @@ export default {
     },
     // 创建流和渲染
     async createStr() {
-      console.log('sssssssssss',document.getElementById('videoEle').getBoundingClientRect().height * 1)
       this.stream = await this.zg.createStream({ //摄像头
         camera: {
           videoQuality: 4,
@@ -867,22 +986,15 @@ export default {
           height: parseInt(document.getElementById('videoEle').getBoundingClientRect().height * 1),
           frameRate: 15,
           bitrate: 2000,
+          videoInput:this.cameraId,
         },
       });
-      // console.error(this.stream);
       // Step4
-     
-      // this.screenStream = await this.zg.createStream({ //屏幕共享流
-      //   screen: {
-      //     videoQuality: 2,
-      //   },
-      // });
       this.startPublishingStream();
     },
     // 开始推流、开始直播
     async startPublishingStream() {
       let res = await this.zg.startPublishingStream(this.roomId, this.stream);
-      // let res = await this.zg.startPublishingStream(this.roomId, this.screenStream, { videoCodec: 'VP8' });
       console.log(res);
       if (res) {
         this.$loading().close();
@@ -923,7 +1035,6 @@ export default {
         .then((res) => {
           if (res.data.data && res.data.data.Data) {
             this.liveStatus = true;
-            localStorage.setItem("liveStatus", JSON.stringify(this.liveStatus)); //将直播状态存起来
             this.joinGroup();
             this.$nextTick(() => {
               // 以服务的方式调用的 Loading 需要异步关闭
@@ -953,7 +1064,7 @@ export default {
     },
 
     //关闭直播
-    async closeLive() {
+    closeLive() {
       this.$loading({background: "rgba(0,0,0,.5)"})
       this.$http
         .post("/sys/mixedflow/stopMixedFlow", {
@@ -968,12 +1079,12 @@ export default {
             });
             this.$message({ message: "直播已关闭", type: "success" });
             this.liveStatus = false;
-            localStorage.removeItem("liveStatus"); //将直播状态移除
             localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
             localStorage.removeItem("isRecord"); //将录制状态移除
             localStorage.removeItem("studentList"); //将学生列表移除
             this.tim.logout(); //退出IM
             this.tim.destroy();
+            window.close()
           } else {
             this.$nextTick(() => {
               // 以服务的方式调用的 Loading 需要异步关闭
@@ -986,9 +1097,11 @@ export default {
     },
     // 开启美颜
     async openEffect() {
-      let res = await this.zg.setEffectsBeauty(this.stream, true, this.beautifyParams);
-      if(res){
-        console.log('sdasdasdasdsadasd')
+      if(this.stream.active){
+        let res = await this.zg.setEffectsBeauty(this.stream, true, this.beautifyParams);
+        if(res){
+          console.log('sdasdasdasdsadasd',res)
+        }
       }
     },
     // 关闭美颜
@@ -1104,7 +1217,10 @@ export default {
             this.$alert(item.payload.userDefinedField, '系统提示', {
               confirmButtonText: '确定',
               callback: action => {
-                this.closeLive()
+                localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
+                localStorage.removeItem("isRecord"); //将录制状态移除
+                localStorage.removeItem("studentList"); //将学生列表移除
+                window.close()
               }
             });
           }
@@ -2145,14 +2261,19 @@ p {
               width: 100%;
               height: calc(100% - 60px);
               // background: pink;
+              .default{
+                width: 100%;
+                height: 100%;
+                background-color: #ffffff;
+              }
             }
 
             .push_video {
               position: absolute;
               bottom: 0;
               right: 0;
-              width: 100%;
-              height: calc(100% - 60px);
+              // width: 100%;
+              // height: calc(100% - 60px);
             }
           }
           .connect_list {
@@ -2229,6 +2350,43 @@ p {
           }
         }
       }
+    }
+  }
+  .createWrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    .createWrap-btn {
+        width: 130px;
+        padding: 36px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+        background: #F7F7F7;
+        font-size: 14px;
+        color: #151515;
+        cursor: pointer;
+        position: relative;
+        .actived{
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            width: 16px;
+            height: 16px;
+            opacity: 0;
+        } 
+        &:hover{
+            .actived {
+                opacity: 1;
+            }
+        }
+        .icon{
+            width: 56px;
+            height: 50px;
+            margin-bottom: 20px;
+        }      
     }
   }
 }
