@@ -847,21 +847,12 @@
         label-width="120px"
       >
         <el-form-item label="开户银行" prop="depositBank">
-          <el-input
+          <el-autocomplete
             v-model="bankForm.depositBank"
+            :fetch-suggestions="querySearchAsync"
             placeholder="开户银行"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="字典标签" prop="bankDictLabel">
-          <el-input
-            v-model="bankForm.bankDictLabel"
-            placeholder="字典标签"
-            :clearable="true"
-            @input="resetInput"
-          ></el-input>
-          <el-button size="small" type="primary" @click="showBankDictList"
-            >选择字典标签</el-button
-          >
+            @select="handleSelect"
+          ></el-autocomplete>
         </el-form-item>
         <el-form-item label="支行名称">
           <el-input
@@ -1054,84 +1045,6 @@
         >
       </span>
     </el-dialog>
-
-    <el-dialog
-      title="添加银行"
-      :visible.sync="showBankDictListDialog"
-      top="20px"
-      width="70%"
-    >
-      <el-form
-        :inline="true"
-        :model="bankList"
-        size="small"
-        @keyup.enter.native="queryBankList()"
-      >
-        <el-form-item label="字典值">
-          <el-input
-            v-model="bankList.dictValue"
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="字典标签">
-          <el-input
-            v-model="bankList.dictLabel"
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button @click="queryBankList">查询</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="resetBankList">重置</el-button>
-        </el-form-item>
-      </el-form>
-      <el-table
-        v-loading="dataBankListLoading"
-        :data="dataBankList"
-        border
-        fit
-        style="width: 100%"
-        max-height="500"
-      >
-        <el-table-column label="字典值" prop="dictValue" align="center">
-          <template slot-scope="scope">
-            <span>{{ scope.row.dictValue || "--" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="字典标签" prop="dictLabel" align="center">
-          <template slot-scope="scope">
-            <span>{{ scope.row.dictLabel || "--" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" header-align="center" align="center">
-          <template slot-scope="scope">
-            <el-button
-              type="text"
-              size="small"
-              @click="saveSelectBank(scope.$index, scope.row)"
-              >添加</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        :current-page="bankListPage"
-        :page-sizes="[10, 20, 50, 100]"
-        :page-size="bankListlimit"
-        :total="dataBankListTotal"
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="pageSizeChangeBankHandle"
-        @current-change="pageCurrentChangeBankHandle"
-      >
-      </el-pagination>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="showBankDictListDialog = false"
-          >取 消</el-button
-        >
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -1235,9 +1148,6 @@ export default {
         accountName: [
           { required: true, message: "请填写账户名称", trigger: "blur" },
         ],
-        bankDictLabel: [
-          { required: true, message: "请选择字典名", trigger: "submit" },
-        ],
         bankAccount: [
           { required: true, message: "请填写银行账户", trigger: "blur" },
         ],
@@ -1261,6 +1171,9 @@ export default {
       bankListlimit: 10,
       dataBankListTotal: 0,
       dictTypeId: "",
+      restaurants: [],
+      state: "",
+      timeout: null,
     };
   },
   computed: {
@@ -1296,68 +1209,59 @@ export default {
     this.getAccountAmount();
 
     this.changeTbas(1);
+
+    this.queryBankList();
   },
 
   methods: {
-    resetInput() {
-      this.$message.warning("请点击下方按钮选择字典名！");
-      this.bankForm.bankDictLabel = "";
-      return;
+    querySearchAsync(queryString, cb) {
+      var restaurants = this.restaurants;
+      var results = queryString
+        ? restaurants.filter(this.createStateFilter(queryString))
+        : restaurants;
+
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        cb(results);
+      }, 3000 * Math.random());
     },
-    // 分页, 每页条数
-    pageSizeChangeBankHandle(val) {
-      this.bankListPage = 1;
-      this.bankListlimit = val;
-      this.queryBankList();
-    },
-    pageCurrentChangeBankHandle(val) {
-      this.bankListPage = val;
-      this.queryBankList();
-    },
-    //添加
-    saveSelectBank(index, row) {
-      this.bankForm.bankDictValue = row.dictValue;
-      this.bankForm.bankDictLabel = row.dictLabel;
-      this.showBankDictListDialog = false;
-    },
-    resetBankList() {
-      this.bankList = {
-        dictValue: "",
-        dictLabel: "",
+    createStateFilter(queryString) {
+      return (state) => {
+        return (
+          state.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+        );
       };
-      this.queryBankList();
+    },
+    handleSelect(item) {
+      this.bankForm.depositBank = item.value;
+      this.bankForm.depositBankValue = item.dictValue;
     },
     //获取银行列表
     queryBankList() {
-      this.dataBankListLoading = true;
       this.$http
         .get("/sys/dict/data/page", {
           params: {
             page: this.bankListPage,
-            limit: this.bankListlimit,
-            dictValue: this.bankList.dictValue,
-            dictLabel: this.bankList.dictLabel,
+            limit: 100,
             dictTypeId: "1518837406719619074",
           },
         })
         .then(({ data: res }) => {
-          this.dataBankListLoading = false;
           if (res.code !== 0) {
-            this.dataBankList = [];
-            this.dataBankListTotal = 0;
-            return this.$message.error(res.msg);
+            this.restaurants = [];
+          } else {
+            res.data.list.forEach((v) => {
+              this.restaurants.push({
+                value: v.dictLabel,
+                dictValue: v.dictValue,
+              });
+            });
           }
-          this.dataBankList = res.data.list;
-          this.dataBankListTotal = res.data.total;
         })
         .catch((err) => {
           this.dataBankListLoading = false;
           throw err;
         });
-    },
-    showBankDictList() {
-      this.showBankDictListDialog = true;
-      this.queryBankList();
     },
     // 获取用户账户金额信息
     getAccountAmount() {
@@ -1970,8 +1874,12 @@ export default {
     //编辑银行卡信息
     editeUserBank() {
       this.dialogVisible_editBank = true;
+
       this.bankForm = {
         depositBank: this.diaForm.depositBank ? this.diaForm.depositBank : "",
+        depositBank: this.diaForm.depositBankValue
+          ? this.diaForm.depositBankValue
+          : "",
         branchName: this.diaForm.branchName ? this.diaForm.branchName : "",
         address: this.diaForm.province
           ? [this.diaForm.province, this.diaForm.city, this.diaForm.county]
@@ -1979,6 +1887,17 @@ export default {
         accountName: this.diaForm.accountName ? this.diaForm.accountName : "",
         bankAccount: this.diaForm.bankAccount ? this.diaForm.bankAccount : "",
       };
+
+      this.restaurants.forEach((v) => {
+        if (
+          this.diaForm.depositBank &&
+          this.diaForm.depositBank.length !== 0 &&
+          this.diaForm.depositBank === v.dictValue
+        ) {
+          this.bankForm.depositBank = v.value;
+          this.bankForm.depositBankValue = v.dictValue;
+        }
+      });
     },
     subimtEditBank() {
       this.$refs.bankForm_host.validate((valid) => {
@@ -1991,6 +1910,15 @@ export default {
               }
             });
           });
+          this.restaurants.forEach((v) => {
+            if (
+              this.diaForm.depositBank &&
+              this.diaForm.depositBank.length !== 0 &&
+              this.diaForm.depositBank === v.value
+            ) {
+              this.bankForm.depositBankValue = v.dictValue;
+            }
+          });
           this.$confirm("确认银行信息已填写无误", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
@@ -1999,8 +1927,11 @@ export default {
             .then(() => {
               this.$http
                 .post(`sys/sysbankinfo/save`, {
-                  depositBank: this.bankForm.depositBank
-                    ? this.bankForm.depositBank
+                  // depositBank: this.bankForm.depositBank
+                  //   ? this.bankForm.depositBank
+                  //   : "",
+                  depositBank: this.bankForm.depositBankValue
+                    ? this.bankForm.depositBankValue
                     : "",
                   branchName: this.bankForm.branchName
                     ? this.bankForm.branchName
@@ -2023,12 +1954,6 @@ export default {
                     : "",
                   bankAccount: this.bankForm.bankAccount
                     ? this.bankForm.bankAccount
-                    : "",
-                  bankDictValue: this.bankForm.bankDictValue
-                    ? this.bankForm.bankDictValue
-                    : "",
-                  bankDictLabel: this.bankForm.bankDictLabel
-                    ? this.bankForm.bankDictLabel
                     : "",
                   anchorInfoId: this.$store.state.user.id,
                 })
@@ -2284,6 +2209,9 @@ export default {
 /deep/.frontCoverImg {
   width: 100%;
   height: 80px;
+}
+/deep/.el-autocomplete {
+  width: 100% !important;
 }
 .withdraw_bank_info {
   .header {
