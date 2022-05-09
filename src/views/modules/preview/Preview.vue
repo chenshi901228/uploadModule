@@ -49,7 +49,7 @@
           </el-col>
           <div v-if="isOpen">
             <el-row>
-              <el-col :span="8">
+              <!-- <el-col :span="8">
                 <el-form-item label="结束时间" prop="factEndDate">
                   <el-date-picker
                     size="small"
@@ -57,6 +57,21 @@
                     style="width: 194px"
                     v-model="dataForm.factEndDate"
                     type="datetime"
+                    placeholder="选择日期时间"
+                    :formatter="dateFormat"
+                    :editable="false"
+                  >
+                  </el-date-picker>
+                </el-form-item>
+              </el-col> -->
+              <el-col :span="8">
+                <el-form-item label="实际开播时间" prop="factStartDate">
+                  <el-date-picker
+                    size="small"
+                    :clearable="true"
+                    v-model="dataForm.factStartDate"
+                    type="datetime"
+                    style="width: 194px"
                     placeholder="选择日期时间"
                     :formatter="dateFormat"
                     :editable="false"
@@ -91,6 +106,19 @@
                     v-model="dataForm.livingRoomId"
                     placeholder="请输入"
                   ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="预约状态" prop="appointmentState">
+                  <el-select
+                    size="small"
+                    :clearable="true"
+                    v-model="dataForm.appointmentState"
+                    placeholder="预约状态"
+                  >
+                    <el-option label="已结束" value="0"></el-option>
+                    <el-option label="预约中" value="1"></el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
@@ -285,7 +313,7 @@
           <template slot-scope="scope">
             <span>{{
               scope.row.delFlg === 1
-                ? "已删除"
+                ? "已结束"
                 : scope.row.appointmentState === 0
                 ? "已结束"
                 : "预约中"
@@ -300,7 +328,9 @@
         >
           <template slot-scope="scope">
             <span>{{
-              scope.row.liveState === 0
+              scope.row.delFlg === 1
+                ? "已删除"
+                : scope.row.liveState === 0
                 ? "已下播"
                 : scope.row.liveState === 1
                 ? "直播中"
@@ -317,7 +347,13 @@
           align="center"
         >
           <template slot-scope="scope" align="center">
-            <span>{{ scope.row.showState === 0 ? "隐藏" : "显示" }}</span>
+            <span>{{
+              scope.row.delFlg === 1
+                ? "隐藏"
+                : scope.row.showState === 0
+                ? "隐藏"
+                : "显示"
+            }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -430,11 +466,13 @@ export default {
         liveTheme: "",
         anchorUser: "",
         startDate: "",
-        factEndDate: "",
+        // factEndDate: "",
+        factStartDate: "",
         dynamicGroupName: "",
         livingRoomId: "",
         liveState: "",
         showState: "",
+        appointmentState: "",
       },
       page: 1, // 当前页码
       limit: 10, // 每页数
@@ -474,14 +512,20 @@ export default {
 
       if (this.dataForm.startDate) {
         dataObj.startDate = this.dateFormat(this.dataForm.startDate);
-      } else if (this.dataForm.factEndDate) {
-        dataObj.factEndDate = this.dateFormat(this.dataForm.factEndDate);
+      }
+      // else if (this.dataForm.factEndDate) {
+      //   dataObj.factEndDate = this.dateFormat(this.dataForm.factEndDate);
+      // }
+      else if (this.dataForm.factStartDate) {
+        dataObj.factStartDate = this.dateFormat(this.dataForm.factStartDate);
       } else if (this.dataForm.liveState) {
         dataObj.liveState = Number(this.dataForm.liveState);
       } else if (this.dataForm.showState) {
         dataObj.showState = Number(this.dataForm.showState);
       } else if (this.dataForm.transcribeFlg) {
         dataObj.transcribeFlg = Number(this.dataForm.transcribeFlg);
+      } else if (this.dataForm.appointmentState) {
+        dataObj.appointmentState = Number(this.dataForm.appointmentState);
       }
       this.$http
         .get("/sys/livePreview/pageOwn", {
@@ -630,14 +674,20 @@ export default {
 
       if (this.dataForm.startDate) {
         dataObj.startDate = this.dateFormat(this.dataForm.startDate);
-      } else if (this.dataForm.factEndDate) {
-        dataObj.factEndDate = this.dateFormat(this.dataForm.factEndDate);
+      }
+      // else if (this.dataForm.factEndDate) {
+      //   dataObj.factEndDate = this.dateFormat(this.dataForm.factEndDate);
+      // }
+      else if (this.dataForm.factStartDate) {
+        dataObj.factStartDate = this.dateFormat(this.dataForm.factStartDate);
       } else if (this.dataForm.liveState) {
         dataObj.liveState = Number(this.dataForm.liveState);
       } else if (this.dataForm.showState) {
         dataObj.showState = Number(this.dataForm.showState);
       } else if (this.dataForm.transcribeFlg) {
         dataObj.transcribeFlg = Number(this.dataForm.transcribeFlg);
+      } else if (this.dataForm.appointmentState) {
+        dataObj.appointmentState = Number(this.dataForm.appointmentState);
       }
 
       this.$http

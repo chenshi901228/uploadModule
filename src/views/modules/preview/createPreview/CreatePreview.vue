@@ -13,7 +13,7 @@
         <el-form-item label="直播主题" prop="liveTheme" required>
           <el-input v-model="ruleForm.liveTheme" maxlength="60"></el-input>
         </el-form-item>
-        <el-form-item label="预计开播时间" required prop="startDate">
+        <el-form-item label="预计开播时间" prop="startDate">
           <el-date-picker
             v-model="ruleForm.startDate"
             type="datetime"
@@ -202,6 +202,15 @@ Quill.register(Font, true);
 export default {
   components: { quillEditor },
   data() {
+    const blurText = async (rule, value, callback) => {
+      // const reg = /^\-\d\.?\d*$/
+      // const boolean = reg.test(value)
+      const boolean = new RegExp("^[1-9][0-9]*$").test(value); // console.log(boolean)
+      if (!boolean) {
+        this.$message.warning("请输入正整数");
+        this.ruleForm.estimateLiveTime = "";
+      }
+    };
     return {
       ruleForm: {
         liveTheme: "",
@@ -222,16 +231,17 @@ export default {
         liveTheme: [
           { required: true, message: "请输入直播主题", trigger: "blur" },
         ],
-        // startDate: [
-        //   {
-        //     type: "string",
-        //     required: true,
-        //     message: "请选择预计开播时间",
-        //     trigger: "change",
-        //   },
-        // ],
+        startDate: [
+          {
+            type: "date",
+            required: true,
+            message: "请选择预计开播时间",
+            trigger: "blur",
+          },
+        ],
         estimateLiveTime: [
           { required: true, message: "请输入预计时长", trigger: "blur" },
+          { validator: blurText, trigger: "blur" }, //表单验证的时候会调用的方法
         ],
         // frontCoverUrl: [
         //   { required: true, message: "请选择直播宣传图", trigger: "change" },
@@ -283,14 +293,13 @@ export default {
     this.getDynamicGroupList();
     this.ruleForm = {
       liveTheme: "",
-      startDate: null,
+      startDate: "",
       estimateLiveTime: "",
       frontCoverUrl: "",
       dynamicGroupIds: [],
       liveIntroduce: "",
     };
     this.getCoverPictureList();
-    this.ruleForm.frontCoverUrl = this.defaultImg[0];
   },
   methods: {
     //获取直播封面图
@@ -309,6 +318,7 @@ export default {
             });
           }
           this.defaultImg = list;
+          this.ruleForm.frontCoverUrl = this.defaultImg[0];
         })
         .catch((err) => {
           throw err;
@@ -339,7 +349,7 @@ export default {
               });
               this.ruleForm = {
                 liveTheme: "",
-                startDate: null,
+                startDate: "",
                 estimateLiveTime: "",
                 frontCoverUrl: "",
                 dynamicGroupIds: [],

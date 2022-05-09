@@ -312,7 +312,7 @@ export default {
     forbiddenHandle(type, data) {
       let url = "/sys/anchor/info/updateAnchorStatus"
       this.$http
-        .post(url, {disabledFlg:type, id: data })
+        .post(url, {disabledFlg:type, id: data.id, phone: data.phone })
         .then(({ data: res }) => {
           if (res.code == 0) {
             this.$message.success("操作成功");
@@ -334,7 +334,7 @@ export default {
           type: "warning",
         })
           .then(() => {
-            this.forbiddenHandle(row.disabledFlg == 1 ? 0 : 1, row.id);
+            this.forbiddenHandle(row.disabledFlg == 1 ? 0 : 1, row);
           })
           .catch(() => {
             this.$message.info("已取消操作");
