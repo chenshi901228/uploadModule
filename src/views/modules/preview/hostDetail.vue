@@ -465,6 +465,13 @@
                 >重新上传</el-button
               >
               <el-button
+                v-if="diaTbas === 5"
+                type="text"
+                size="small"
+                @click="downProduct(scope.row.id)"
+                >下架</el-button
+              >
+              <el-button
                 v-if="diaTbas === 6"
                 type="text"
                 size="small"
@@ -543,8 +550,8 @@
             <el-form-item style="float: right">
               <el-button
                 size="small"
+                type="primary"
                 v-if="dataListSelectionUsers.length !== 0"
-                type="danger"
                 @click="deleteUserSelect()"
                 >批量上架</el-button
               >
@@ -1530,7 +1537,7 @@ export default {
       this.queryPost_dia();
     },
     //下架商品
-    downProduct(i, row) {
+    downProduct(id) {
       this.$confirm("确认下架商品, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -1538,7 +1545,7 @@ export default {
       })
         .then(() => {
           this.ids = [];
-          this.ids.push({ productId: row.id });
+          this.ids.push({ productId: id });
           this.confirmDel();
         })
         .catch(() => {
