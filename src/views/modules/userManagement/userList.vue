@@ -29,10 +29,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="邀请人" prop="userId">
+            <el-form-item label="邀请人" prop="inviteUserName">
               <el-input
                 size="small"
-                v-model="dataForm.userId"
+                v-model="dataForm.inviteUserName"
                 clearable
               ></el-input>
             </el-form-item>
@@ -40,10 +40,10 @@
           <div v-if="isOpen">
             <el-row>
               <el-col :span="8">
-                <el-form-item label="邀请人号码" prop="userId">
+                <el-form-item label="邀请人号码" prop="invitePhone">
                   <el-input
                     size="small"
-                    v-model="dataForm.userId"
+                    v-model="dataForm.invitePhone"
                     clearable
                   ></el-input>
                 </el-form-item>
@@ -161,14 +161,14 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          prop="aaa1"
+          prop="inviteUserName"
           label="邀请人"
           header-align="center"
           align="center"
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip
-          prop="aaa2"
+          prop="invitePhone"
           label="邀请人号码"
           header-align="center"
           align="center"
@@ -244,6 +244,8 @@ export default {
       dataForm: {
         nickName: "",
         phone: "",
+        inviteUserName:"",
+        invitePhone:"",
         status: "",
       },
       dataList: [{ createDate: 1 }],
