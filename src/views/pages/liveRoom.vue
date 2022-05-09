@@ -55,14 +55,14 @@
                       <span class="nickName"
                         >{{ item.payload.data.userInfo.nickName }}&nbsp;</span
                       >
-                      <span
-                        class="fansCard"
-                        v-if="
-                          item.payload.data.fansInfo &&
-                          item.payload.data.fansInfo.isFans
-                        "
-                        >新粉&nbsp;{{ item.payload.data.fansInfo.grade }}</span
-                      >
+                      <div class="fansCard" v-if="item.payload.data.fansInfo &&item.payload.data.fansInfo.isFans">
+                        <i class="el-icon-star-on" style="color:#c2f8ff;"></i>
+                        粉丝&nbsp;{{ item.payload.data.fansInfo.grade }}
+                      </div>
+                      <div class="fansCard" style="background:#E58D26;" v-else>
+                        <i class="el-icon-star-on" style="color:#fde7c8;"></i>
+                        用户&nbsp;{{ item.payload.data.fansInfo.grade }}
+                      </div>
                     </div>
                     <p class="normalMsg">
                       {{
@@ -87,14 +87,14 @@
                       <span class="nickName"
                         >{{ item.payload.data.userInfo.nickName }}&nbsp;</span
                       >
-                      <span
-                        class="fansCard"
-                        v-if="
-                          item.payload.data.fansInfo &&
-                          item.payload.data.fansInfo.isFans
-                        "
-                        >新粉&nbsp;{{ item.payload.data.fansInfo.grade }}</span
-                      >
+                       <div class="fansCard" v-if="item.payload.data.fansInfo &&item.payload.data.fansInfo.isFans">
+                        <i class="el-icon-star-on" style="color:#c2f8ff;"></i>
+                        粉丝&nbsp;{{ item.payload.data.fansInfo.grade }}
+                      </div>
+                      <div class="fansCard" style="background:#E58D26;" v-else>
+                        <i class="el-icon-star-on" style="color:#fde7c8;"></i>
+                        用户&nbsp;{{ item.payload.data.fansInfo.grade }}
+                      </div>
                     </div>
                     <p class="normalMsg">
                       <span class="giftMsg"
@@ -372,7 +372,7 @@
                     ·&nbsp;<span>{{ liveRoomUserinfo.onlineNum || 0 }}</span
                     >人在线
                   </p>
-                  <p>·&nbsp;<span>55222000</span>热度</p>
+                  <p>·&nbsp;<span>{{ liveRoomUserinfo.liveHot || 0 }}</span>热度</p>
                 </div>
               </div>
               <div class="screenShare">
@@ -726,7 +726,7 @@ export default {
     this.zg.on("roomStreamUpdate", async (roomID, updateType, streamList) => {
       if (updateType == "ADD") {
         // 流新增，开始拉流
-        // console.log("流新增------------", streamList);
+        console.log("流新增------------", streamList);
         streamList.forEach((streamItem) => {
           this.connectMessageInfo.forEach(async (item) => {
             if (item.userInfo.userId === streamItem.user.userID) {
@@ -785,7 +785,7 @@ export default {
           bitrate: 2000,
         },
       });
-      let res = await this.zg.startPublishingStream('shareDesk'+this.roomId, this.screenStream, { videoCodec: 'VP8' }); //共享桌面流
+      let res = await this.zg.startPublishingStream('shareDesk'+this.roomId, this.screenStream); //共享桌面流
       console.log(res)
       if(res){
         this.$http.post('/sys/mixedflow/openDesktopSharing',{RoomId:this.roomId,StreamId:'shareDesk'+this.roomId}).then(res=>{
@@ -1745,7 +1745,7 @@ p {
                       }
                       .fansCard {
                         display: inline-block;
-                        width: 50px;
+                        width: 65px;
                         height: 16px;
                         text-align: center;
                         background-color: #51cada;
