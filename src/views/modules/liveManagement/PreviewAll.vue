@@ -314,7 +314,7 @@
           <template slot-scope="scope">
             <span>{{
               scope.row.delFlg === 1
-                ? "已删除"
+                ? "已结束"
                 : scope.row.appointmentState === 0
                 ? "已结束"
                 : "预约中"
@@ -329,7 +329,9 @@
         >
           <template slot-scope="scope">
             <span>{{
-              scope.row.liveState === 0
+              scope.row.delFlg === 1
+                ? "已删除"
+                : scope.row.liveState === 0
                 ? "已下播"
                 : scope.row.liveState === 1
                 ? "直播中"
