@@ -11,10 +11,10 @@
       >
         <el-row>
           <el-col :span="8">
-            <el-form-item label="真实姓名" prop="username">
+            <el-form-item label="真实姓名" prop="realName">
               <el-input
                 size="small"
-                v-model="dataForm.username"
+                v-model="dataForm.realName"
                 clearable
               ></el-input>
             </el-form-item>
@@ -37,37 +37,37 @@
               ></el-input>
             </el-form-item>
           </el-col>
-              <div v-if="isOpen">
-          <el-row>
-            <el-col :span="8">
-              <el-form-item label="身份证号" prop="username">
-                <el-input
-                  size="small"
-                  v-model="dataForm.username"
-                  clearable
-                ></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="性别" prop="gender">
-                <el-select size="small" v-model="dataForm.gender" clearable>
-                  <el-option :value="0" label="男"></el-option>
-                  <el-option :value="1" label="女"></el-option>
-                  <el-option :value="2" label="保密"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="8">
-              <el-form-item label="审批状态" prop="status">
-                <el-select size="small" v-model="dataForm.status" clearable>
-                  <el-option :value="0" label="待处理"></el-option>
-                  <el-option :value="1" label="同意"></el-option>
-                  <el-option :value="-1" label="拒绝"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
+          <div v-if="isOpen">
+            <el-row>
+              <el-col :span="8">
+                <el-form-item label="身份证号" prop="idCard">
+                  <el-input
+                    size="small"
+                    v-model="dataForm.idCard"
+                    clearable
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="性别" prop="gender">
+                  <el-select size="small" v-model="dataForm.gender" clearable>
+                    <el-option :value="0" label="男"></el-option>
+                    <el-option :value="1" label="女"></el-option>
+                    <el-option :value="2" label="保密"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="审批状态" prop="status">
+                  <el-select size="small" v-model="dataForm.status" clearable>
+                    <el-option :value="0" label="申请中"></el-option>
+                    <el-option :value="1" label="同意"></el-option>
+                    <el-option :value="-1" label="拒绝"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+          </div>
           <el-col :span="24">
             <el-form-item style="float: right; padding-right: 10px">
               <el-button type="info" size="small" @click="exportHandle()">{{
@@ -89,8 +89,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
-    
       </el-form>
       <el-table
         v-loading="dataListLoading"
@@ -154,7 +152,10 @@
         >
           <template slot-scope="scope">
             <img
-              :src="scope.row.avatarUrl || require('@/assets/img/default_avatar.png')"
+              :src="
+                scope.row.avatarUrl ||
+                require('@/assets/img/default_avatar.png')
+              "
               style="width: 60px; height: 60px"
             />
           </template>
@@ -169,7 +170,7 @@
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip
-          prop="username"
+          prop="realName"
           label="真实姓名"
           header-align="center"
           align="center"
@@ -185,7 +186,7 @@
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip
-          prop="username"
+          prop="idCard"
           label="身份证号"
           header-align="center"
           align="center"
@@ -276,13 +277,9 @@
           width="100"
         >
           <template slot-scope="scope">
-            <el-button
-              type="text"
-              size="small"
-              @click="openDetail(scope.row)"
+            <el-button type="text" size="small" @click="openDetail(scope.row)"
               >详情</el-button
             >
-      
           </template>
         </el-table-column>
       </el-table>
@@ -316,13 +313,15 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/anchor/applyInfo/page",
+        getDataListURL: "/sys/anchor/applyInfo/addPage",
         getDataListIsPage: true,
         exportURL: "/sys/anchor/applyInfo/export",
         deleteURL: "/sys/anchor/applyInfo",
         deleteIsBatch: true,
       },
       dataForm: {
+        realName: "",
+        idCard: "",
         username: "",
         phone: "",
         gender: "",
@@ -335,20 +334,22 @@ export default {
     AddOrUpdate,
   },
   methods: {
-          // 打开信息审批详情
+    // 打开信息审批详情
     openDetail(data) {
       this.$router.push({
         name: "anchor-sysanchorapplyinfoDetail",
       });
-      window.localStorage.setItem("sysanchorapplyinfoDetailData", JSON.stringify(data));
+      window.localStorage.setItem(
+        "sysanchorapplyinfoDetailData",
+        JSON.stringify(data)
+      );
     },
   },
- 
-   mounted() {
+
+  mounted() {
     this.$bus.$on("change", () => {
       this.getDataList();
     });
   },
-
 };
 </script>
