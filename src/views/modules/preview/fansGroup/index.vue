@@ -20,7 +20,7 @@
           <el-col :span="8">
             <el-form-item>
               <el-button size="small" type="primary" @click="getfansGroupList">查询</el-button>
-              <el-button size="small" @click="reset">重置</el-button>
+              <el-button size="small" @click="reset('main')">重置</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -124,7 +124,9 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="等级">
-              <el-input v-model="noJoinFansUserForm.level" placeholder="请输入"></el-input>
+              <el-select size="small" v-model="noJoinFansUserForm.level" clearable>
+                <el-option v-for="item in 10" :key="item" :value="(item - 1) + ''" :label="(item - 1) + ''"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -138,14 +140,10 @@
           </el-col>
           <el-col :span="24">
             <el-form-item style="float: right;">
+              <el-button size="small" type="primary" @click="addUserJoinGroup">批量添加</el-button>
               <el-button size="small" type="primary" @click="getNoJoinFansUserList">查询</el-button>
-              <el-button size="small" @click="reset">重置</el-button>
+              <el-button size="small" @click="reset('add')">重置</el-button>
             </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col>
-            <el-button size="small" type="primary" @click="addUserJoinGroup" style="marginBottom:10px;">添加</el-button>
           </el-col>
         </el-row>
         <el-table
@@ -259,7 +257,9 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="等级">
-              <el-input v-model="hasJoinFansUserForm.level" placeholder="请输入"></el-input>
+              <el-select size="small" v-model="hasJoinFansUserForm.level" clearable>
+                <el-option v-for="item in 10" :key="item" :value="(item - 1) + ''" :label="(item - 1) + ''"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -274,7 +274,7 @@
           <el-col :span="24">
             <el-form-item style="float: right;">
               <el-button size="small" type="primary" @click="getHasJoinFansUserList">查询</el-button>
-              <el-button size="small" @click="reset">重置</el-button>
+              <el-button size="small" @click="reset('get')">重置</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -506,7 +506,7 @@ export default {
       });
     },
     //重置
-    reset(){
+    reset(name){
       this.groupNameForm.groupName = ''
       this.hasJoinFansUserForm.nickName = ''
       this.hasJoinFansUserForm.phone = ''
@@ -516,6 +516,13 @@ export default {
       this.noJoinFansUserForm.phone = ''
       this.noJoinFansUserForm.level = ''
       this.noJoinFansUserForm.userType = ''
+      if(name == "main") {
+        this.getfansGroupList()
+      }else if(name == "add") {
+        this.getNoJoinFansUserList()
+      }else if(name == "get") {
+        this.getHasJoinFansUserList()
+      }
     },
     //添加成员
     handleAddUser(i, row){
@@ -532,7 +539,7 @@ export default {
     //查看加入群的粉丝
     getHasJoinFansUserList(){
       this.hasJoinFansUserForm.groupId = this.groupId
-      this.$http.get('/sys/weixinfansgroup/getPeople',{params:this.hasJoinFansUserForm}).then(({data:res})=>{
+      this.$http.get('/sys/weixinfansgroup/getPeople',{params:this.$httpParams(this.hasJoinFansUserForm)}).then(({data:res})=>{
         console.log(res)
         if (res.code !== 0) {
           this.hasJoinFansUserList = [];
@@ -546,7 +553,7 @@ export default {
     },
     //未加群的粉丝
     getNoJoinFansUserList(){
-      this.$http.get('/sys/weixinfansgroup/getAnchorFans',{params:this.noJoinFansUserForm}).then(({data:res})=>{
+      this.$http.get('/sys/weixinfansgroup/getAnchorFans',{params:this.$httpParams(this.noJoinFansUserForm)}).then(({data:res})=>{
         console.log(res)
         if (res.code !== 0) {
           this.noJoinFansUserList = [];
@@ -560,13 +567,22 @@ export default {
     },
     //添加进入群组
     addUserJoinGroup(i,row){
-      let userIds = []
-      this.dataListSelectionUsers.forEach(item=>{
-        userIds.push(item.weixinUserId)
-      })
-      let data = {
-        id:this.groupId,
-        userIds,
+      let userIds = [], data = {}
+
+      if(!row) { //批量添加
+        if(!this.dataListSelectionUsers.length) return this.$message.warning("请勾选要添加的成员")
+        this.dataListSelectionUsers.forEach(item=>{
+          userIds.push(item.weixinUserId)
+        })
+        data = {
+          id:this.groupId,
+          userIds,
+        }
+      }else { //单个添加
+        data = {
+          id:this.groupId,
+          userIds: [row.weixinUserId],
+        }
       }
       this.$http.post(`/sys/weixinfansgroup/addPeople`,data).then(({ data: res })=>{
         if (res.code !== 0) {

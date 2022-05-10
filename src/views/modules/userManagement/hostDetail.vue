@@ -174,12 +174,6 @@
               <el-option :value="2" label="副会长"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="状态" v-if="diaTbas === 4" prop="delFlg">
-            <el-select size="small" v-model="diaSearchForm.delFlg" clearable>
-              <el-option :value="0" label="正常"></el-option>
-              <el-option :value="1" label="取消关注"></el-option>
-            </el-select>
-          </el-form-item>
           <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
             <el-input
               size="small"
@@ -853,7 +847,6 @@ export default {
             userType: "粉丝团身份",
             groupName: "所在群组",
             createDate: "入团时间",
-            delFlg: "状态",
           };
           break;
         case 5:
@@ -933,7 +926,6 @@ export default {
             level: this.diaSearchForm.level,
             userName: this.diaSearchForm.userName,
             userType: this.diaSearchForm.userType,
-            delFlg: this.diaSearchForm.delFlg,
           };
           url =
             "/sys/manage/weixinUser/anchor/fans/achorFansWeixinUserInfoPage";
