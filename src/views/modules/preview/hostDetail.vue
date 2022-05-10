@@ -106,15 +106,16 @@
           :model="diaSearchForm"
           @keyup.enter.native="queryPost_dia()"
           size="small"
+          ref="searchForm"
         >
-          <el-form-item label="收益类型" v-if="diaTbas === 1">
+          <el-form-item label="收益类型" v-if="diaTbas === 1" prop="type">
             <el-select size="small" v-model="diaSearchForm.type" clearable>
               <el-option :value="1" label="直播间礼物"></el-option>
               <el-option :value="2" label="粉丝团"></el-option>
               <el-option :value="3" label="课程返利"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="结算时间" v-if="diaTbas === 1">
+          <el-form-item label="结算时间" v-if="diaTbas === 1" prop="date">
             <el-date-picker
               v-model="diaSearchForm.date"
               type="datetimerange"
@@ -125,14 +126,14 @@
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="银行账户" v-if="diaTbas === 2">
+          <el-form-item label="银行账户" v-if="diaTbas === 2" prop="bankAccount">
             <el-input
               size="small"
               v-model="diaSearchForm.bankAccount"
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="提现时间" v-if="diaTbas === 2">
+          <el-form-item label="提现时间" v-if="diaTbas === 2" prop="date">
             <el-date-picker
               v-model="diaSearchForm.date"
               type="datetimerange"
@@ -143,7 +144,7 @@
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="审批状态" v-if="diaTbas === 2">
+          <el-form-item label="审批状态" v-if="diaTbas === 2" prop="approveStatus">
             <el-select
               size="small"
               v-model="diaSearchForm.approveStatus"
@@ -154,47 +155,53 @@
               <el-option :value="-1" label="未通过"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="支付状态" v-if="diaTbas === 2">
+          <el-form-item label="支付状态" v-if="diaTbas === 2" prop="payStatus">
             <el-select size="small" v-model="diaSearchForm.payStatus" clearable>
               <el-option :value="0" label="未支付"></el-option>
               <el-option :value="1" label="已支付"></el-option>
               <el-option :value="-1" label="支付失败"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="用户昵称" v-if="diaTbas === 3 || diaTbas === 4">
+          <el-form-item label="用户昵称" v-if="diaTbas === 3 || diaTbas === 4" prop="userName">
             <el-input v-model="diaSearchForm.userName" clearable></el-input>
           </el-form-item>
-          <el-form-item label="商品名称" v-if="diaTbas === 5">
+          <el-form-item label="商品名称" v-if="diaTbas === 5" prop="productName">
             <el-input v-model="diaSearchForm.productName" clearable></el-input>
           </el-form-item>
           <el-form-item
             label="手机号码"
             v-if="diaTbas === 3 || diaTbas === 4 || diaTbas === 6"
+            prop="phone"
           >
             <el-input v-model="diaSearchForm.phone" clearable></el-input>
           </el-form-item>
-          <el-form-item label="粉丝团身份" v-if="diaTbas === 4">
+          <el-form-item label="等级" v-if="diaTbas === 4" prop="level">
+            <el-select size="small" v-model="diaSearchForm.level" clearable>
+              <el-option v-for="item in 10" :key="item" :value="(item - 1) + ''" :label="(item - 1) + ''"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="粉丝团身份" v-if="diaTbas === 4" prop="userType">
             <el-select v-model="diaSearchForm.userType" clearable>
               <el-option :value="0" label="普通会员"></el-option>
               <el-option :value="1" label="会长"></el-option>
               <el-option :value="2" label="副会长"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="状态" v-if="diaTbas === 4">
+          <el-form-item label="状态" v-if="diaTbas === 4" prop="delFlg">
             <el-select v-model="diaSearchForm.delFlg" clearable>
               <el-option :value="0" label="正常"></el-option>
               <el-option :value="1" label="取消关注"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="主播昵称" v-if="diaTbas === 6">
+          <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
             <el-input v-model="diaSearchForm.anchorName" clearable></el-input>
           </el-form-item>
-          <el-form-item label="商品类型" v-if="diaTbas === 5">
+          <el-form-item label="商品类型" v-if="diaTbas === 5" prop="productType">
             <el-select v-model="diaSearchForm.productType" clearable>
               <el-option value="专业课" label="专业课"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="是否免费" v-if="diaTbas === 5">
+          <el-form-item label="是否免费" v-if="diaTbas === 5" prop="isFree">
             <el-select v-model="diaSearchForm.isFree" clearable>
               <el-option :value="0" label="否"></el-option>
               <el-option :value="1" label="是"></el-option>
@@ -228,7 +235,8 @@
               type="primary"
               >添加主播</el-button
             >
-            <el-button @click="queryPost_dia()">{{ $t("query") }}</el-button>
+            <el-button type="primary" @click="queryPost_dia()">{{ $t("query") }}</el-button>
+            <el-button @click="mainReset">重置</el-button>
           </el-form-item>
         </el-form>
         <el-table
@@ -400,14 +408,14 @@
               :key="prop"
               header-align="center"
               align="center"
-              v-else-if="prop === 'userTyoe'"
+              v-else-if="prop === 'userType'"
             >
               <template slot-scope="scope">
                 <div>
                   {{
-                    scope.row.userTyoe === 1
+                    scope.row.userType === 1
                       ? "会长"
-                      : scope.row.userTyoe === 2
+                      : scope.row.userType === 2
                       ? "副会长"
                       : "普通会员"
                   }}
@@ -438,6 +446,7 @@
               header-align="center"
               align="center"
               v-else
+              show-overflow-tooltip
             >
             </el-table-column>
           </template>
@@ -558,7 +567,7 @@
               <el-button size="small" type="primary" @click="queryUserList"
                 >查询</el-button
               >
-              <el-button size="small" @click="reset">重置</el-button>
+              <el-button size="small" @click="reset('productForm')">重置</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -744,7 +753,7 @@
               <el-button size="small" type="primary" @click="getRecommendList"
                 >查询</el-button
               >
-              <el-button size="small" @click="reset">重置</el-button>
+              <el-button size="small" @click="reset('recommendForm')">重置</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -1308,6 +1317,7 @@ export default {
               anchorName: "",
               userName: "",
               phone: "",
+              level: "",
               userType: "",
               delFlg: "",
               productName: "",
@@ -1340,6 +1350,7 @@ export default {
         anchorName: "",
         userName: "",
         phone: "",
+        level: "",
         userType: "",
         delFlg: "",
         productName: "",
@@ -1472,6 +1483,7 @@ export default {
             page: this.page_dia,
             anchorId: this.userId,
             phone: this.diaSearchForm.phone,
+            level: this.diaSearchForm.level,
             userName: this.diaSearchForm.userName,
             userType: this.diaSearchForm.userType,
             delFlg: this.diaSearchForm.delFlg,
@@ -1507,7 +1519,7 @@ export default {
       }
       this.$http
         .get(url, {
-          params: data,
+          params: this.$httpParams(data),
         })
         .then(({ data: res }) => {
           this.dataListLoading = false;
@@ -1524,6 +1536,11 @@ export default {
         .catch(() => {
           this.dataListLoading = false;
         });
+    },
+    // 主页搜索重置
+    mainReset() {
+      this.$refs.searchForm.resetFields()
+      this.queryPost_dia()
     },
     // 分页, 每页条数
     pageSizeChangeHandle_dia(val) {
@@ -1751,14 +1768,22 @@ export default {
     },
 
     //重置
-    reset() {
-      this.productForm = {
-        productName: "",
-        productType: "",
-        isFree: "",
-        id: "",
-      };
-      this.queryUserList();
+    reset(name) {
+      if(name == "productForm") {
+        this.productForm = {
+          productName: "",
+          productType: "",
+          isFree: "",
+          id: "",
+        }
+        this.queryUserList()
+      }else if(name == "recommendForm") {
+        this.recommendForm = {
+          anchorName: "",
+          anchorPhone: "",
+        }
+        this.getRecommendList()
+      }
     },
     //上架商品
     handleDeleteUser(index, row) {
@@ -1791,6 +1816,7 @@ export default {
                 anchorName: "",
                 userName: "",
                 phone: "",
+                level: "",
                 userType: "",
                 delFlg: "",
                 productName: "",
@@ -1842,6 +1868,7 @@ export default {
                 anchorName: "",
                 userName: "",
                 phone: "",
+                level: "",
                 userType: "",
                 delFlg: "",
                 productName: "",
