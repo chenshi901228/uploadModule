@@ -87,27 +87,29 @@
           :style="{ margin: '20px' }"
           :model="diaSearchForm"
           @keyup.enter.native="queryPost_dia()"
+          size="small"
+          ref="searchForm"
         >
-          <el-form-item label="支付方式" v-if="diaTbas === 1">
+          <el-form-item label="支付方式" v-if="diaTbas === 1" prop="payType">
             <el-select size="small" v-model="diaSearchForm.payType" clearable>
               <el-option :value="1" label="微信"></el-option>
               <el-option :value="2" label="支付宝"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="充值来源" v-if="diaTbas === 1">
+          <el-form-item label="充值来源" v-if="diaTbas === 1" prop="paySource">
             <el-select size="small" v-model="diaSearchForm.paySource" clearable>
               <el-option :value="1" label="小程序端"></el-option>
               <el-option :value="2" label="大于众学"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="礼物名称" v-if="diaTbas === 2">
+          <el-form-item label="礼物名称" v-if="diaTbas === 2" prop="name">
             <el-input
               size="small"
               v-model="diaSearchForm.name"
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="消费来源" v-if="diaTbas === 2">
+          <el-form-item label="消费来源" v-if="diaTbas === 2" prop="paySource">
             <el-select size="small" v-model="diaSearchForm.paySource" clearable>
               <el-option :value="1" label="小程序端"></el-option>
               <el-option :value="2" label="大于众学"></el-option>
@@ -116,6 +118,7 @@
           <el-form-item
             label="粉丝团名称"
             v-if="diaTbas === 4 || diaTbas === 5"
+            prop="title"
           >
             <el-input
               size="small"
@@ -123,57 +126,58 @@
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="主播昵称" v-if="diaTbas === 4 || diaTbas === 5">
+          <el-form-item label="主播昵称" v-if="diaTbas === 4 || diaTbas === 5" prop="anchorName">
             <el-input
               size="small"
               v-model="diaSearchForm.anchorName"
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="手机号码" v-if="diaTbas === 4 || diaTbas === 5">
+          <el-form-item label="手机号码" v-if="diaTbas === 4 || diaTbas === 5" prop="phone">
             <el-input
               size="small"
               v-model="diaSearchForm.phone"
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="商品名称" v-if="diaTbas === 3">
+          <el-form-item label="商品名称" v-if="diaTbas === 3" prop="productName">
             <el-input
               size="small"
               v-model="diaSearchForm.productName"
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="商品类型" v-if="diaTbas === 3">
+          <el-form-item label="商品类型" v-if="diaTbas === 3" prop="productType">
             <el-input
               size="small"
               v-model="diaSearchForm.productType"
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="是否免费" v-if="diaTbas === 3">
+          <el-form-item label="是否免费" v-if="diaTbas === 3" prop="isFree">
             <el-select size="small" v-model="diaSearchForm.isFree" clearable>
               <el-option :value="0" label="否"></el-option>
               <el-option :value="1" label="是"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="关联商品编号" v-if="diaTbas === 3">
+          <el-form-item label="关联商品编号" v-if="diaTbas === 3" prop="productId">
             <el-input
               size="small"
               v-model="diaSearchForm.productId"
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="使用状态" v-if="diaTbas === 3">
+          <el-form-item label="使用状态" v-if="diaTbas === 3" prop="useStatus">
             <el-select size="small" v-model="diaSearchForm.useStatus" clearable>
               <el-option :value="0" label="未使用"></el-option>
               <el-option :value="1" label="已使用"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item v-if="diaTbas !== 6">
-            <el-button size="small" @click="queryPost_dia()">{{
+            <el-button type="primary" size="small" @click="queryPost_dia()">{{
               $t("query")
             }}</el-button>
+            <el-button @click="mainReset">重置</el-button>
           </el-form-item>
         </el-form>
         <el-table
@@ -610,6 +614,12 @@ export default {
           this.total_dia = res.data.total;
         })
         .catch(() => {});
+    },
+
+    // 主页搜索重置
+    mainReset() {
+      this.$refs.searchForm.resetFields()
+      this.queryPost_dia()
     },
 
     // 重置搜索条件
