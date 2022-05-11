@@ -1689,6 +1689,7 @@ export default {
             productName: this.productForm.productName,
             productType: this.productForm.productType,
             isFree: this.productForm.isFree,
+            id: this.productForm.id,
             anchorId: this.userId,
           }),
         })

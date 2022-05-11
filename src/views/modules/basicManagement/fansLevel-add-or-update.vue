@@ -2,13 +2,13 @@
   <el-dialog top="20px" :visible.sync="visible" :title="!dataForm.id ? $t('add') : $t('update')" :close-on-click-modal="false" :close-on-press-escape="false">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" :label-width="$i18n.locale === 'en-US' ? '120px' : '120px'">
             <el-form-item label="等级" prop="level">
-              <el-input v-model="dataForm.level" placeholder="等级" type="number" :readonly="dataForm.id"></el-input>
+              <el-input-number style="width:100%;text-align: left;" v-model="dataForm.level" placeholder="等级"  :controls='false' :min="1"  :step="1" step-strictly :disabled="dataForm.id"></el-input-number>
             </el-form-item>
             <el-form-item label="等级名称" prop="levelName">
-              <el-input v-model="dataForm.levelName" placeholder="等级名称" :readonly="dataForm.id"></el-input>
+              <el-input v-model="dataForm.levelName" placeholder="等级名称" :disabled="dataForm.id"></el-input>
             </el-form-item>
             <el-form-item label="亲密值要求" prop="intimacyNum">
-              <el-input v-model="dataForm.intimacyNum" type="number" placeholder="亲密值要求" ></el-input>
+              <el-input-number v-model="dataForm.intimacyNum" style="width:100%;text-align: left;" :controls='false' :min="0"  :step="1" step-strictly placeholder="亲密值要求" ></el-input-number>
             </el-form-item>
     </el-form>
     <template slot="footer">
@@ -109,3 +109,8 @@
     }
   }
 </script>
+<style  >
+ .el-input-number .el-input__inner {
+    text-align: left;
+}
+</style>
