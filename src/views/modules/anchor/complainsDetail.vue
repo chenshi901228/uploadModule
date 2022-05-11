@@ -2,7 +2,7 @@
   <div class="detalilBox">
     <div class="detalilBox_top">
       <div style="display: flex">
-        <div>直播昵称：{{ diaForm.username }}</div>
+        <div>用户昵称：{{ diaForm.username }}</div>
         <div style="margin: 0 80px">手机号码：{{ diaForm.phone }}</div>
       </div>
       <div style="display: flex; margin: 20px 0">

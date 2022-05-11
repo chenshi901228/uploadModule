@@ -195,6 +195,7 @@
         <el-table-column
           prop="refundReason"
           label="退款原因"
+          show-overflow-tooltip
           min-width="160px"
           header-align="center"
           align="center"
@@ -202,6 +203,7 @@
         <el-table-column
           prop="approveReason"
           label="备注"
+          show-overflow-tooltip
           min-width="160px"
           header-align="center"
           align="center"
@@ -280,6 +282,8 @@
           <el-input
             placeholder="请输入,可不填"
             type="textarea"
+            :maxlength="100"
+            show-word-limit
             v-model="ruleForm.desc"
           ></el-input>
         </el-form-item>
