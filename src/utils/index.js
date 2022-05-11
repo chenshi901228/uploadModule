@@ -192,7 +192,9 @@ export function getVideoDuration(url) {
       flvPlayer.attachMediaElement(video);
       flvPlayer.load();
       console.log(flvPlayer)
+      let res = flvPlayer.duration
       video.remove()
+      console.log(res)
       return "11111"
     }
   }

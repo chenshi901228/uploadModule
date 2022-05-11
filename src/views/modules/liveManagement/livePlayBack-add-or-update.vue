@@ -242,6 +242,9 @@ export default {
                         delete params.dynamicGroupIds
                     }
 
+
+                    // console.log(params)
+                    // return
                     this.submitLoading = true
                     this.$http.post("/sys/livePlayback/save", {...params, ...o}).then(({ data: res }) => {
                         if(res.code == 0){
