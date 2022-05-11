@@ -42,6 +42,9 @@
       <div style="display: flex; margin: 20px 0 10px">
        <span style="width:100px;text-align:right;margin:0 10px">是否是指导师：</span> {{ diaForm.tutorFlg === 1 ? "认证" : "未认证" }}
       </div>
+      <div style="display: flex; margin: 20px 0 10px">
+       <span style="width:100px;text-align:right;margin:0 10px">备注：</span> {{ diaForm.remark }}
+      </div>
     </div>
 
     <div class="detalilBox_bottom">

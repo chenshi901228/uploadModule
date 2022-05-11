@@ -8,8 +8,8 @@
         @keyup.enter.native="getfansGroupList()"
         label-width="100px"
       >
-        <el-row>
-          <el-col :span="6">
+        <el-row type="flex">
+          <el-col :span="8">
             <el-form-item label="群组名称">
               <el-input
                 v-model="groupNameForm.groupName"

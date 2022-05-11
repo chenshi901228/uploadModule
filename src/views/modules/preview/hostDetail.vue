@@ -106,15 +106,16 @@
           :model="diaSearchForm"
           @keyup.enter.native="queryPost_dia()"
           size="small"
+          ref="searchForm"
         >
-          <el-form-item label="收益类型" v-if="diaTbas === 1">
+          <el-form-item label="收益类型" v-if="diaTbas === 1" prop="type">
             <el-select size="small" v-model="diaSearchForm.type" clearable>
               <el-option :value="1" label="直播间礼物"></el-option>
               <el-option :value="2" label="粉丝团"></el-option>
               <el-option :value="3" label="课程返利"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="结算时间" v-if="diaTbas === 1">
+          <el-form-item label="结算时间" v-if="diaTbas === 1" prop="date">
             <el-date-picker
               v-model="diaSearchForm.date"
               type="datetimerange"
@@ -125,14 +126,14 @@
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="银行账户" v-if="diaTbas === 2">
+          <el-form-item label="银行账户" v-if="diaTbas === 2" prop="bankAccount">
             <el-input
               size="small"
               v-model="diaSearchForm.bankAccount"
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="提现时间" v-if="diaTbas === 2">
+          <el-form-item label="提现时间" v-if="diaTbas === 2" prop="date">
             <el-date-picker
               v-model="diaSearchForm.date"
               type="datetimerange"
@@ -143,7 +144,7 @@
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="审批状态" v-if="diaTbas === 2">
+          <el-form-item label="审批状态" v-if="diaTbas === 2" prop="approveStatus">
             <el-select
               size="small"
               v-model="diaSearchForm.approveStatus"
@@ -154,47 +155,53 @@
               <el-option :value="-1" label="未通过"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="支付状态" v-if="diaTbas === 2">
+          <el-form-item label="支付状态" v-if="diaTbas === 2" prop="payStatus">
             <el-select size="small" v-model="diaSearchForm.payStatus" clearable>
               <el-option :value="0" label="未支付"></el-option>
               <el-option :value="1" label="已支付"></el-option>
               <el-option :value="-1" label="支付失败"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="用户昵称" v-if="diaTbas === 3 || diaTbas === 4">
+          <el-form-item label="用户昵称" v-if="diaTbas === 3 || diaTbas === 4" prop="userName">
             <el-input v-model="diaSearchForm.userName" clearable></el-input>
           </el-form-item>
-          <el-form-item label="商品名称" v-if="diaTbas === 5">
+          <el-form-item label="商品名称" v-if="diaTbas === 5" prop="productName">
             <el-input v-model="diaSearchForm.productName" clearable></el-input>
           </el-form-item>
           <el-form-item
             label="手机号码"
             v-if="diaTbas === 3 || diaTbas === 4 || diaTbas === 6"
+            prop="phone"
           >
             <el-input v-model="diaSearchForm.phone" clearable></el-input>
           </el-form-item>
-          <el-form-item label="粉丝团身份" v-if="diaTbas === 4">
+          <el-form-item label="等级" v-if="diaTbas === 4" prop="level">
+            <el-select size="small" v-model="diaSearchForm.level" clearable>
+              <el-option v-for="item in 10" :key="item" :value="(item - 1) + ''" :label="(item - 1) + ''"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="粉丝团身份" v-if="diaTbas === 4" prop="userType">
             <el-select v-model="diaSearchForm.userType" clearable>
               <el-option :value="0" label="普通会员"></el-option>
               <el-option :value="1" label="会长"></el-option>
               <el-option :value="2" label="副会长"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="状态" v-if="diaTbas === 4">
+          <el-form-item label="状态" v-if="diaTbas === 4" prop="delFlg">
             <el-select v-model="diaSearchForm.delFlg" clearable>
               <el-option :value="0" label="正常"></el-option>
               <el-option :value="1" label="取消关注"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="主播昵称" v-if="diaTbas === 6">
+          <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
             <el-input v-model="diaSearchForm.anchorName" clearable></el-input>
           </el-form-item>
-          <el-form-item label="商品类型" v-if="diaTbas === 5">
+          <el-form-item label="商品类型" v-if="diaTbas === 5" prop="productType">
             <el-select v-model="diaSearchForm.productType" clearable>
               <el-option value="专业课" label="专业课"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="是否免费" v-if="diaTbas === 5">
+          <el-form-item label="是否免费" v-if="diaTbas === 5" prop="isFree">
             <el-select v-model="diaSearchForm.isFree" clearable>
               <el-option :value="0" label="否"></el-option>
               <el-option :value="1" label="是"></el-option>
@@ -228,7 +235,8 @@
               type="primary"
               >添加主播</el-button
             >
-            <el-button @click="queryPost_dia()">{{ $t("query") }}</el-button>
+            <el-button type="primary" @click="queryPost_dia()">{{ $t("query") }}</el-button>
+            <el-button @click="mainReset">重置</el-button>
           </el-form-item>
         </el-form>
         <el-table
@@ -400,14 +408,14 @@
               :key="prop"
               header-align="center"
               align="center"
-              v-else-if="prop === 'userTyoe'"
+              v-else-if="prop === 'userType'"
             >
               <template slot-scope="scope">
                 <div>
                   {{
-                    scope.row.userTyoe === 1
+                    scope.row.userType === 1
                       ? "会长"
-                      : scope.row.userTyoe === 2
+                      : scope.row.userType === 2
                       ? "副会长"
                       : "普通会员"
                   }}
@@ -438,6 +446,7 @@
               header-align="center"
               align="center"
               v-else
+              show-overflow-tooltip
             >
             </el-table-column>
           </template>
@@ -463,6 +472,13 @@
                 size="small"
                 @click="updateInvoiceImg(scope.row)"
                 >重新上传</el-button
+              >
+              <el-button
+                v-if="diaTbas === 5"
+                type="text"
+                size="small"
+                @click="downProduct(scope.row.id)"
+                >下架</el-button
               >
               <el-button
                 v-if="diaTbas === 6"
@@ -543,15 +559,15 @@
             <el-form-item style="float: right">
               <el-button
                 size="small"
+                type="primary"
                 v-if="dataListSelectionUsers.length !== 0"
-                type="danger"
                 @click="deleteUserSelect()"
                 >批量上架</el-button
               >
               <el-button size="small" type="primary" @click="queryUserList"
                 >查询</el-button
               >
-              <el-button size="small" @click="reset">重置</el-button>
+              <el-button size="small" @click="reset('productForm')">重置</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -737,7 +753,7 @@
               <el-button size="small" type="primary" @click="getRecommendList"
                 >查询</el-button
               >
-              <el-button size="small" @click="reset">重置</el-button>
+              <el-button size="small" @click="reset('recommendForm')">重置</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -847,21 +863,12 @@
         label-width="120px"
       >
         <el-form-item label="开户银行" prop="depositBank">
-          <el-input
+          <el-autocomplete
             v-model="bankForm.depositBank"
+            :fetch-suggestions="querySearchAsync"
             placeholder="开户银行"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="字典标签" prop="bankDictLabel">
-          <el-input
-            v-model="bankForm.bankDictLabel"
-            placeholder="字典标签"
-            :clearable="true"
-            @input="resetInput"
-          ></el-input>
-          <el-button size="small" type="primary" @click="showBankDictList"
-            >选择字典标签</el-button
-          >
+            @select="handleSelect"
+          ></el-autocomplete>
         </el-form-item>
         <el-form-item label="支行名称">
           <el-input
@@ -1054,84 +1061,6 @@
         >
       </span>
     </el-dialog>
-
-    <el-dialog
-      title="添加银行"
-      :visible.sync="showBankDictListDialog"
-      top="20px"
-      width="70%"
-    >
-      <el-form
-        :inline="true"
-        :model="bankList"
-        size="small"
-        @keyup.enter.native="queryBankList()"
-      >
-        <el-form-item label="字典值">
-          <el-input
-            v-model="bankList.dictValue"
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="字典标签">
-          <el-input
-            v-model="bankList.dictLabel"
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-
-        <el-form-item>
-          <el-button @click="queryBankList">查询</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button @click="resetBankList">重置</el-button>
-        </el-form-item>
-      </el-form>
-      <el-table
-        v-loading="dataBankListLoading"
-        :data="dataBankList"
-        border
-        fit
-        style="width: 100%"
-        max-height="500"
-      >
-        <el-table-column label="字典值" prop="dictValue" align="center">
-          <template slot-scope="scope">
-            <span>{{ scope.row.dictValue || "--" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="字典标签" prop="dictLabel" align="center">
-          <template slot-scope="scope">
-            <span>{{ scope.row.dictLabel || "--" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" header-align="center" align="center">
-          <template slot-scope="scope">
-            <el-button
-              type="text"
-              size="small"
-              @click="saveSelectBank(scope.$index, scope.row)"
-              >添加</el-button
-            >
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination
-        :current-page="bankListPage"
-        :page-sizes="[10, 20, 50, 100]"
-        :page-size="bankListlimit"
-        :total="dataBankListTotal"
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="pageSizeChangeBankHandle"
-        @current-change="pageCurrentChangeBankHandle"
-      >
-      </el-pagination>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="showBankDictListDialog = false"
-          >取 消</el-button
-        >
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -1235,9 +1164,6 @@ export default {
         accountName: [
           { required: true, message: "请填写账户名称", trigger: "blur" },
         ],
-        bankDictLabel: [
-          { required: true, message: "请选择字典名", trigger: "submit" },
-        ],
         bankAccount: [
           { required: true, message: "请填写银行账户", trigger: "blur" },
         ],
@@ -1261,6 +1187,9 @@ export default {
       bankListlimit: 10,
       dataBankListTotal: 0,
       dictTypeId: "",
+      restaurants: [],
+      state: "",
+      timeout: null,
     };
   },
   computed: {
@@ -1296,68 +1225,59 @@ export default {
     this.getAccountAmount();
 
     this.changeTbas(1);
+
+    this.queryBankList();
   },
 
   methods: {
-    resetInput() {
-      this.$message.warning("请点击下方按钮选择字典名！");
-      this.bankForm.bankDictLabel = "";
-      return;
+    querySearchAsync(queryString, cb) {
+      var restaurants = this.restaurants;
+      var results = queryString
+        ? restaurants.filter(this.createStateFilter(queryString))
+        : restaurants;
+
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        cb(results);
+      }, 3000 * Math.random());
     },
-    // 分页, 每页条数
-    pageSizeChangeBankHandle(val) {
-      this.bankListPage = 1;
-      this.bankListlimit = val;
-      this.queryBankList();
-    },
-    pageCurrentChangeBankHandle(val) {
-      this.bankListPage = val;
-      this.queryBankList();
-    },
-    //添加
-    saveSelectBank(index, row) {
-      this.bankForm.bankDictValue = row.dictValue;
-      this.bankForm.bankDictLabel = row.dictLabel;
-      this.showBankDictListDialog = false;
-    },
-    resetBankList() {
-      this.bankList = {
-        dictValue: "",
-        dictLabel: "",
+    createStateFilter(queryString) {
+      return (state) => {
+        return (
+          state.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+        );
       };
-      this.queryBankList();
+    },
+    handleSelect(item) {
+      this.bankForm.depositBank = item.value;
+      this.bankForm.depositBankValue = item.dictValue;
     },
     //获取银行列表
     queryBankList() {
-      this.dataBankListLoading = true;
       this.$http
         .get("/sys/dict/data/page", {
           params: {
             page: this.bankListPage,
-            limit: this.bankListlimit,
-            dictValue: this.bankList.dictValue,
-            dictLabel: this.bankList.dictLabel,
+            limit: 100,
             dictTypeId: "1518837406719619074",
           },
         })
         .then(({ data: res }) => {
-          this.dataBankListLoading = false;
           if (res.code !== 0) {
-            this.dataBankList = [];
-            this.dataBankListTotal = 0;
-            return this.$message.error(res.msg);
+            this.restaurants = [];
+          } else {
+            res.data.list.forEach((v) => {
+              this.restaurants.push({
+                value: v.dictLabel,
+                dictValue: v.dictValue,
+              });
+            });
           }
-          this.dataBankList = res.data.list;
-          this.dataBankListTotal = res.data.total;
         })
         .catch((err) => {
           this.dataBankListLoading = false;
           throw err;
         });
-    },
-    showBankDictList() {
-      this.showBankDictListDialog = true;
-      this.queryBankList();
     },
     // 获取用户账户金额信息
     getAccountAmount() {
@@ -1397,6 +1317,7 @@ export default {
               anchorName: "",
               userName: "",
               phone: "",
+              level: "",
               userType: "",
               delFlg: "",
               productName: "",
@@ -1429,6 +1350,7 @@ export default {
         anchorName: "",
         userName: "",
         phone: "",
+        level: "",
         userType: "",
         delFlg: "",
         productName: "",
@@ -1561,6 +1483,7 @@ export default {
             page: this.page_dia,
             anchorId: this.userId,
             phone: this.diaSearchForm.phone,
+            level: this.diaSearchForm.level,
             userName: this.diaSearchForm.userName,
             userType: this.diaSearchForm.userType,
             delFlg: this.diaSearchForm.delFlg,
@@ -1596,7 +1519,7 @@ export default {
       }
       this.$http
         .get(url, {
-          params: data,
+          params: this.$httpParams(data),
         })
         .then(({ data: res }) => {
           this.dataListLoading = false;
@@ -1614,6 +1537,11 @@ export default {
           this.dataListLoading = false;
         });
     },
+    // 主页搜索重置
+    mainReset() {
+      this.$refs.searchForm.resetFields()
+      this.queryPost_dia()
+    },
     // 分页, 每页条数
     pageSizeChangeHandle_dia(val) {
       this.page_dia = 1;
@@ -1626,7 +1554,7 @@ export default {
       this.queryPost_dia();
     },
     //下架商品
-    downProduct(i, row) {
+    downProduct(id) {
       this.$confirm("确认下架商品, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -1634,7 +1562,7 @@ export default {
       })
         .then(() => {
           this.ids = [];
-          this.ids.push({ productId: row.id });
+          this.ids.push({ productId: id });
           this.confirmDel();
         })
         .catch(() => {
@@ -1841,14 +1769,22 @@ export default {
     },
 
     //重置
-    reset() {
-      this.productForm = {
-        productName: "",
-        productType: "",
-        isFree: "",
-        id: "",
-      };
-      this.queryUserList();
+    reset(name) {
+      if(name == "productForm") {
+        this.productForm = {
+          productName: "",
+          productType: "",
+          isFree: "",
+          id: "",
+        }
+        this.queryUserList()
+      }else if(name == "recommendForm") {
+        this.recommendForm = {
+          anchorName: "",
+          anchorPhone: "",
+        }
+        this.getRecommendList()
+      }
     },
     //上架商品
     handleDeleteUser(index, row) {
@@ -1881,6 +1817,7 @@ export default {
                 anchorName: "",
                 userName: "",
                 phone: "",
+                level: "",
                 userType: "",
                 delFlg: "",
                 productName: "",
@@ -1932,6 +1869,7 @@ export default {
                 anchorName: "",
                 userName: "",
                 phone: "",
+                level: "",
                 userType: "",
                 delFlg: "",
                 productName: "",
@@ -1971,8 +1909,12 @@ export default {
     //编辑银行卡信息
     editeUserBank() {
       this.dialogVisible_editBank = true;
+
       this.bankForm = {
         depositBank: this.diaForm.depositBank ? this.diaForm.depositBank : "",
+        depositBank: this.diaForm.depositBankValue
+          ? this.diaForm.depositBankValue
+          : "",
         branchName: this.diaForm.branchName ? this.diaForm.branchName : "",
         address: this.diaForm.province
           ? [this.diaForm.province, this.diaForm.city, this.diaForm.county]
@@ -1980,6 +1922,17 @@ export default {
         accountName: this.diaForm.accountName ? this.diaForm.accountName : "",
         bankAccount: this.diaForm.bankAccount ? this.diaForm.bankAccount : "",
       };
+
+      this.restaurants.forEach((v) => {
+        if (
+          this.diaForm.depositBank &&
+          this.diaForm.depositBank.length !== 0 &&
+          this.diaForm.depositBank === v.dictValue
+        ) {
+          this.bankForm.depositBank = v.value;
+          this.bankForm.depositBankValue = v.dictValue;
+        }
+      });
     },
     subimtEditBank() {
       this.$refs.bankForm_host.validate((valid) => {
@@ -1992,6 +1945,15 @@ export default {
               }
             });
           });
+          this.restaurants.forEach((v) => {
+            if (
+              this.diaForm.depositBank &&
+              this.diaForm.depositBank.length !== 0 &&
+              this.diaForm.depositBank === v.value
+            ) {
+              this.bankForm.depositBankValue = v.dictValue;
+            }
+          });
           this.$confirm("确认银行信息已填写无误", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
@@ -2000,8 +1962,11 @@ export default {
             .then(() => {
               this.$http
                 .post(`sys/sysbankinfo/save`, {
-                  depositBank: this.bankForm.depositBank
-                    ? this.bankForm.depositBank
+                  // depositBank: this.bankForm.depositBank
+                  //   ? this.bankForm.depositBank
+                  //   : "",
+                  depositBank: this.bankForm.depositBankValue
+                    ? this.bankForm.depositBankValue
                     : "",
                   branchName: this.bankForm.branchName
                     ? this.bankForm.branchName
@@ -2024,12 +1989,6 @@ export default {
                     : "",
                   bankAccount: this.bankForm.bankAccount
                     ? this.bankForm.bankAccount
-                    : "",
-                  bankDictValue: this.bankForm.bankDictValue
-                    ? this.bankForm.bankDictValue
-                    : "",
-                  bankDictLabel: this.bankForm.bankDictLabel
-                    ? this.bankForm.bankDictLabel
                     : "",
                   anchorInfoId: this.$store.state.user.id,
                 })
@@ -2285,6 +2244,9 @@ export default {
 /deep/.frontCoverImg {
   width: 100%;
   height: 80px;
+}
+/deep/.el-autocomplete {
+  width: 100% !important;
 }
 .withdraw_bank_info {
   .header {

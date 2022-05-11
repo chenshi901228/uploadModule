@@ -13,7 +13,7 @@
         <el-form-item label="直播主题" prop="liveTheme" required>
           <el-input v-model="ruleForm.liveTheme"></el-input>
         </el-form-item>
-        <el-form-item label="预计开播时间" required prop="startDate">
+        <el-form-item label="预计开播时间" prop="startDate">
           <el-date-picker
             v-model="ruleForm.startDate"
             type="datetime"
@@ -206,6 +206,15 @@ Quill.register(Font, true);
 export default {
   components: { quillEditor },
   data() {
+    const blurText = async (rule, value, callback) => {
+      // const reg = /^\-\d\.?\d*$/
+      // const boolean = reg.test(value)
+      const boolean = new RegExp("^[1-9][0-9]*$").test(value); // console.log(boolean)
+      if (!boolean) {
+        this.$message.warning("请输入正整数");
+        this.ruleForm.estimateLiveTime = "";
+      }
+    };
     return {
       ruleForm: {
         id: "",
@@ -228,16 +237,16 @@ export default {
         liveTheme: [
           { required: true, message: "请输入直播主题", trigger: "blur" },
         ],
-        // startDate: [
-        //   {
-        //     type: "string",
-        //     required: true,
-        //     message: "请选择预计开播时间",
-        //     trigger: "change",
-        //   },
-        // ],
+        startDate: [
+          {
+            required: true,
+            message: "请选择预计开播时间",
+            trigger: "blur",
+          },
+        ],
         estimateLiveTime: [
           { required: true, message: "请输入预计时长", trigger: "blur" },
+          { validator: blurText, trigger: "blur" }, //表单验证的时候会调用的方法
         ],
         // frontCoverUrl: [
         //   { required: true, message: "请选择直播宣传图", trigger: "change" },
@@ -373,7 +382,7 @@ export default {
               if (res.code !== 0) {
                 return this.$message.error(res.msg);
               }
-              this.$message.success("修改成功！")
+              this.$message.success("修改成功！");
               window.sessionStorage.removeItem("dataForm");
               this.$router.push({
                 path: "/preview-Preview",

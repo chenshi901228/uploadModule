@@ -84,6 +84,7 @@
 </template>
 <script>
 import CustomUpload from "@/components/common/custom-upload"
+import { getVideoDuration } from "@/utils/index"
 export default {
     components: {
         CustomUpload
@@ -205,7 +206,7 @@ export default {
         },
         // 表单提交
         submit() {
-            this.$refs.dataForm.validate((valid) => {
+            this.$refs.dataForm.validate(async (valid) => {
                 if(valid){
 
                     if(!this.$refs.frontCoverUpload.isUploadAll() || !this.$refs.relationLiveUpload.isUploadAll()){
@@ -232,6 +233,7 @@ export default {
                     params.frontCoverUrl = this.frontCoverList[0].url
                     params.relationLiveUrl = this.relationLiveList[0].url
                     params.videoSize = this.relationLiveList[0].size
+                    // params.liveDuration = await getVideoDuration(this.relationLiveList[0].url)
 
                     // 投放人群处理
                     if(this.dataForm.dynamicGroupIds) {
@@ -240,6 +242,9 @@ export default {
                         delete params.dynamicGroupIds
                     }
 
+
+                    // console.log(params)
+                    // return
                     this.submitLoading = true
                     this.$http.post("/sys/livePlayback/save", {...params, ...o}).then(({ data: res }) => {
                         if(res.code == 0){

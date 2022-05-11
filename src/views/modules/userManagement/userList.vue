@@ -29,21 +29,37 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="邀请人" prop="userId">
-              <el-input
-                size="small"
-                v-model="dataForm.userId"
-                clearable
-              ></el-input>
+            <el-form-item label="是否认证" prop="legalizeFlg">
+              <el-select size="small" v-model="dataForm.legalizeFlg" clearable>
+                <el-option :value="0" label="未认证"></el-option>
+                <el-option :value="1" label="认证"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <div v-if="isOpen">
             <el-row>
               <el-col :span="8">
-                <el-form-item label="邀请人号码" prop="userId">
+                <el-form-item label="是否认证导师" prop="tutorFlg">
+                  <el-select size="small" v-model="dataForm.tutorFlg" clearable>
+                    <el-option :value="0" label="未认证"></el-option>
+                    <el-option :value="1" label="认证"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="邀请人" prop="inviteUserName">
                   <el-input
                     size="small"
-                    v-model="dataForm.userId"
+                    v-model="dataForm.inviteUserName"
+                    clearable
+                  ></el-input>
+                </el-form-item>
+              </el-col>
+              <el-col :span="8">
+                <el-form-item label="邀请人号码" prop="invitePhone">
+                  <el-input
+                    size="small"
+                    v-model="dataForm.invitePhone"
                     clearable
                   ></el-input>
                 </el-form-item>
@@ -79,18 +95,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <!-- <el-form-item label="是否认证">
-          <el-select v-model="dataForm.status">
-            <el-option value="1" label="是"></el-option>
-            <el-option value="0" label="否"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="是否是指导师">
-          <el-select v-model="dataForm.status">
-            <el-option value="1" label="是"></el-option>
-            <el-option value="0" label="否"></el-option>
-          </el-select>
-        </el-form-item> -->
       </el-form>
       <el-table
         v-loading="dataListLoading"
@@ -161,14 +165,14 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          prop="aaa1"
+          prop="inviteUserName"
           label="邀请人"
           header-align="center"
           align="center"
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip
-          prop="aaa2"
+          prop="invitePhone"
           label="邀请人号码"
           header-align="center"
           align="center"
@@ -244,6 +248,10 @@ export default {
       dataForm: {
         nickName: "",
         phone: "",
+        legalizeFlg: null,
+        tutorFlg: null,
+        inviteUserName:"",
+        invitePhone:"",
         status: "",
       },
       dataList: [{ createDate: 1 }],

@@ -29,19 +29,21 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="礼物名称" prop="name">
-              <el-select
-                size="small"
-                v-model="dataForm.name"
-                clearable
-              />
-             
+              <el-select size="small" v-model="dataForm.name" clearable>
+                <el-option
+                  v-for="(v, i) in getGiftList"
+                  :key="i"
+                  :value="v"
+                  :label="v"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <div v-if="isOpen">
-            <el-row >
+            <el-row>
               <el-col :span="8">
                 <el-form-item label="消费来源" prop="paySource">
-                   <el-select
+                  <el-select
                     size="small"
                     v-model="dataForm.paySource"
                     clearable
@@ -213,6 +215,7 @@ export default {
 
       otherViewHeight: 0, //搜索栏高度
       isOpen: false, //搜索栏展开/收起
+      giftList: [],
     };
   },
   components: { Template },
@@ -240,6 +243,7 @@ export default {
     this.$nextTick(() => {
       this.$refs.table.doLayout();
     });
+    this.getGiftList();
   },
   mounted() {
     this.$bus.$on("change", () => {
@@ -247,6 +251,17 @@ export default {
     });
   },
   methods: {
+    //获取礼物列表
+    getGiftList() {
+      this.$http["get"]("/sys/sys/gift/getAllGiftName")
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          this.getGiftList = res.data;
+        })
+        .catch(() => {});
+    },
     // 搜索栏高度设置
     setOtherViewHeight() {
       setTimeout(() => {
@@ -261,7 +276,7 @@ export default {
     // 搜索栏收起/展开
     open() {
       this.isOpen = !this.isOpen;
-        this.resetDataForm()
+      this.resetDataForm();
     },
 
     // 重置搜索条件

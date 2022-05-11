@@ -40,7 +40,7 @@
         <el-menu-item index="4" class="aui-navbar__avatar">
           <el-dropdown placement="bottom" :show-timeout="0">
             <span class="el-dropdown-link">
-              <img src="~@/assets/img/avatar.png">
+              <img :src="$store.state.user.headUrl || require('@/assets/img/avatar.png')">
               <span>{{ $store.state.user.realName }}</span>
               <i class="el-icon-arrow-down"></i>
             </span>
