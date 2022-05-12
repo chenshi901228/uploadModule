@@ -11,6 +11,7 @@
                     :class="['t-message']">
                         <img 
                             class="avatar" 
+                            style="margin-right: 10px"
                             :src="item.avatar || require('@/assets/img/default_avatar.png')"
                             v-if="item.flow == 'in'"
                             alt="">
@@ -19,6 +20,7 @@
                             <img-message v-if="item.type === 'TIMImageElem'" :message="item"></img-message>
                         </div>
                         <img 
+                            style="margin-left: 10px"
                             class="avatar" 
                             :src="item.avatar || require('@/assets/img/default_avatar.png')"
                             v-if="item.flow == 'out'"
