@@ -219,7 +219,7 @@ export default {
         { prop: "id", label: "关联产品编号" },
         { prop: "proportion", label: "分成比例" },
         { prop: "buyers", label: "已购买人数" },
-        { prop: "updateDate", label: "上架时间", width: 180 },
+        { prop: "updateDate", label: "更新时间", width: 180 },
         { prop: "status", label: "状态" },
       ],
       loading: false, //搜索loading

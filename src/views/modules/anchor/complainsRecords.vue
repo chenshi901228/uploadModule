@@ -259,9 +259,9 @@ export default {
         nickName: "",
         phone: "",
         delFlg: "",
-        handlingStatus: "",
-        type: "",
-        tag: "",
+        handlingStatus:"",
+        type:"",
+        tag:""
       },
       dataList: [{ createDate: 1 }],
       userId: "",
@@ -338,17 +338,17 @@ export default {
         nickName: "",
         phone: "",
         delFlg: "",
-        handlingStatus: "",
-        type: "",
-        tag: "",
-      };
+        handlingStatus:"",
+        type:"",
+        tag:""
+      }
       this.$refs.complainsRecords.resetFields();
       this.getDataList();
     },
   },
 };
 </script>
-<style lang="scss"  scoped>
+<style  scoped>
 .forbiddenAllBtn {
   width: 120px;
   height: 35px;
@@ -359,11 +359,5 @@ export default {
   text-align: center;
   cursor: pointer;
   margin: 10px 0;
-}
-
-.el-table {
-  /deep/tbody tr:hover > td {
-    width: 90%;
-  }
 }
 </style>
