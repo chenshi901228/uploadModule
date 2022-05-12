@@ -237,7 +237,6 @@ export default {
 
 
         uploadFile(param) {
-            console.log(param)
             if(!this.beforeUpload(param.file)) return
             this.$sendImgMessage(param.file)
         },
@@ -257,10 +256,7 @@ export default {
 
 
         scrollToButtom() {
-            setTimeout(() => {
-                let el = document.querySelector(".message-content-body")
-                el.scrollTop = el.scrollHeight
-            }, 500)
+            if(this.elParams) this.elParams.scrollTop = this.elParams.scrollHeight
         },
         messageContentScroll(e) {
             if(!this.timer) {
