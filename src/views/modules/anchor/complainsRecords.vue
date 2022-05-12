@@ -28,7 +28,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="投诉分类" prop="delFlg">
+            <el-form-item label="投诉分类" prop="type">
               <el-select size="small" v-model="dataForm.type" clearable>
                 <el-option :value="1" label="平台投诉"></el-option>
                 <el-option :value="2" label="直播间投诉"></el-option>
@@ -38,7 +38,7 @@
           <div v-if="isOpen">
             <el-row>
               <el-col :span="8">
-                <el-form-item label="投诉标签" prop="delFlg">
+                <el-form-item label="投诉标签" prop="tag">
                   <el-select size="small" v-model="dataForm.tag" clearable>
                     <el-option value="违法违禁" label="违法违禁"></el-option>
                     <el-option value="淫秽色情" label="淫秽色情"></el-option>
@@ -60,7 +60,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="8">
-                <el-form-item label="处理状态" prop="delFlg">
+                <el-form-item label="处理状态" prop="handlingStatus">
                   <el-select
                     size="small"
                     v-model="dataForm.handlingStatus"
@@ -259,6 +259,9 @@ export default {
         nickName: "",
         phone: "",
         delFlg: "",
+        handlingStatus:"",
+        type:"",
+        tag:""
       },
       dataList: [{ createDate: 1 }],
       userId: "",
@@ -331,6 +334,14 @@ export default {
 
     // 重置搜索条件
     resetDataForm() {
+      this.dataForm = {
+        nickName: "",
+        phone: "",
+        delFlg: "",
+        handlingStatus:"",
+        type:"",
+        tag:""
+      }
       this.$refs.complainsRecords.resetFields();
       this.getDataList();
     },

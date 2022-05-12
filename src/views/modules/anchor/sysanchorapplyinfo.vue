@@ -313,7 +313,7 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/anchor/applyInfo/addPage",
+        getDataListURL: "/sys/anchor/applyInfo/page",
         getDataListIsPage: true,
         exportURL: "/sys/anchor/applyInfo/export",
         deleteURL: "/sys/anchor/applyInfo",
