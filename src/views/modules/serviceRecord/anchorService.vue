@@ -10,22 +10,29 @@
                         v-model="searchParams">
                     </el-input>
                 </div>
-                <ul>
-                    <li>1</li>
-                    <li>2</li>
-                    <li>3</li>
-                    <li>4</li>
-                    <li>5</li>
-                </ul>
+                <!-- 会话列表 -->
+                <message-list 
+                    :messageListLoading="messageListLoading"
+                    :conversationList="conversationList" 
+                    @conversationSelect="conversationSelect"></message-list>
             </div>
-            <div class="message-content"></div>
+            <!-- 消息列表 -->
+            <message-content 
+                :conversation="conversation" 
+                :tim="tim"></message-content>
         </div>
     </el-card>
 </template>
 <script>
 import TIM from 'tim-js-sdk';
 import TIMUploadPlugin from 'tim-upload-plugin';
+import MessageList from "./component/message-list.vue"
+import MessageContent from "./component/message-content.vue"
 export default {
+    components: {
+        MessageList,
+        MessageContent
+    },
     computed: {
         documentClientHeight: {
             get() {
@@ -52,6 +59,9 @@ export default {
         return {
             searchParams: "", //搜索内容
             tim: null,
+            conversationList: [], //会话列表
+            messageListLoading: false, //会话列表加载loading
+            conversation: null, //当前消息
         }
     },
     methods: {
@@ -75,7 +85,7 @@ export default {
             let promise = this.tim.login({userID: userId, userSig: userSig});
 
             promise.then((imResponse) => {
-                console.log(imResponse.data); // 登录成功
+                console.log("login success:", imResponse.data); // 登录成功
                 if (imResponse.data.repeatLogin === true) {
                     // 标识帐号已登录，本次登录操作为重复登录。v2.5.1 起支持
                     console.log(imResponse.data.errorInfo);
@@ -83,7 +93,7 @@ export default {
                 }
                 
             }).catch((imError) => {
-                this.$message.warn( 'login error:' + imError ); // 登录失败的相关信息
+                this.$message.error( 'login error:' + imError ); // 登录失败的相关信息
             });
 
             // sdk ready 拉取会话列表
@@ -92,17 +102,30 @@ export default {
                     this.getConversationList()
                 }
             });
+            // 会话列表更新
+            this.tim.on(TIM.EVENT.CONVERSATION_LIST_UPDATED, (event) => {
+                console.log('TUI-conversation | onConversationListUpdated  |ok')
+                this.conversationList = event.data
+            });
         },
         getConversationList() {
             // 拉取会话列表
+            this.messageListLoading = true
             let promise = this.tim.getConversationList();
             promise.then((imResponse) => {
-                let conversationList = imResponse.data.conversationList; // 会话列表，用该列表覆盖原有的会话列表
-                console.log("conversationList", conversationList)
+                this.messageListLoading = false
+                console.log(`TUI-conversation | getConversationList | getConversationList-length: ${imResponse.data.conversationList.length}`)
+                this.conversationList = imResponse.data.conversationList; // 会话列表，用该列表覆盖原有的会话列表
+                console.log(imResponse.data.conversationList)
             }).catch((imError) => {
                 console.warn('getConversationList error:', imError); // 获取会话列表失败的相关信息
+                this.messageListLoading = false
             });
-        }
+        },
+        // 选中某个会话拉取消息列表
+        conversationSelect(conversation) {
+            this.conversation = conversation
+        },
     }
 
 }
@@ -113,7 +136,8 @@ export default {
         .message-list {
             width: 30%;
             height: 100%;
-            background: pink;
+            // background: pink;
+            padding-right: 10px;
             display: flex;
             flex-direction: column;
             ul {
@@ -127,11 +151,5 @@ export default {
             }
         }
 
-
-        .message-content {
-            width: 70%;
-            height: 100%;
-            background: salmon;
-        }
     }
 </style>
