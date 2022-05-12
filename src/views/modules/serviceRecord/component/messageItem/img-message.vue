@@ -51,12 +51,12 @@ export default {
 <style lang="scss" scoped>
     .priviewImg {
         max-width: 100%;
+        margin: 0 auto;
     }
     .img-message {
         padding: 10px;
         border-radius: 5px;
         background: #F6F7F9;
-        margin-right: 10px;
         display: flex;
         flex-direction: column;
         .message-body-time {

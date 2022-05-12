@@ -29,15 +29,13 @@
                                 src="~@/assets/icon/icon_pmsg_face-emoji.png" alt="">
                     </el-popover>
                     <el-upload
-                        :action="uploadUrl"
+                        action=""
                         multiple
                         accept="image/png,image/jpeg,image/jpg,image/gif" 
                         :limit="1"
                         :show-file-list="false"
-                        :before-upload="beforeUpload" 
-                        :on-error="uploadError"
-                        :on-success="uploadSuccess"
-                        :file-list="fileList">
+                        :file-list="fileList"
+                        :http-request="uploadFile">
                             <img 
                                 style="width: 20px;height:auto;cursor: pointer;" 
                                 src="~@/assets/icon/icon_pmsg_send-img.png" alt="">
@@ -225,7 +223,9 @@ export default {
 
             }).catch((imError) => {
                 // 发送失败
+                this.fileList = []
                 console.warn('sendMessage error:', imError);
+
             });
         },
 
@@ -236,18 +236,12 @@ export default {
 		},
 
 
-        // 图片上传成功的回调
-        uploadSuccess(res, file, fileList){    
-            if(res.code===0){
-                this.$sendImgMessage(file.raw)
-            }else{
-                this.$message.error(res.msg);
-            }
+        uploadFile(param) {
+            console.log(param)
+            if(!this.beforeUpload(param.file)) return
+            this.$sendImgMessage(param.file)
         },
-        // 图片上传出错的回调
-        uploadError(err, file){
-            this.$message.error('上传失败！');
-        },
+
         // 图片上传之前的回调
         beforeUpload(file){
             const isLt2M = file.size / 1024 / 1024 < 20;
@@ -263,10 +257,10 @@ export default {
 
 
         scrollToButtom() {
-            this.$nextTick(() => {
+            setTimeout(() => {
                 let el = document.querySelector(".message-content-body")
                 el.scrollTop = el.scrollHeight
-            })
+            }, 500)
         },
         messageContentScroll(e) {
             if(!this.timer) {
