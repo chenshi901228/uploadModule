@@ -9,15 +9,13 @@
         label-width="100px"
       >
         <el-row type="flex">
-          <el-col :span="8">
+          <el-col :span="24">
             <el-form-item label="群组名称">
               <el-input
                 v-model="groupNameForm.groupName"
                 placeholder="请输入"
               ></el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
             <el-form-item>
               <el-button size="small" type="primary" @click="getfansGroupList">查询</el-button>
               <el-button size="small" @click="reset">重置</el-button>
