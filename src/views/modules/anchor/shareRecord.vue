@@ -205,14 +205,14 @@
           </template></el-table-column
         >
         <el-table-column
-          prop="urpassiveShareUserTell"
+          prop="passiveShareUserTel"
           label="手机号码"
           min-width="120px"
           header-align="center"
           align="center"
           show-overflow-tooltip
           ><template slot-scope="scope">
-            <span>{{ scope.row.urpassiveShareUserTell || "--" }}</span>
+            <span>{{ scope.row.passiveShareUserTel || "--" }}</span>
           </template></el-table-column
         >
       </el-table>

@@ -186,12 +186,13 @@
               ></el-input>
             </el-form-item>
             <el-form-item label="用户等级" prop="level">
-              <el-input
+              <el-select
                 size="small"
                 v-model="dataForm_fans.level"
-                placeholder="用户等级"
                 clearable
-              ></el-input>
+              >
+                <el-option v-for="item in 11" :key="item" :value="(item - 1) + ''" :label="(item - 1) + ''"></el-option>
+              </el-select>
             </el-form-item>
             <el-form-item label="粉丝团身份" prop="userType">
               <el-select
@@ -377,7 +378,7 @@ export default {
       };
       this.$http
         .get(`/sys/manage/weixinUser/anchor/fans/achorFansWeixinUserInfoPage`, {
-          params: data,
+          params: this.$httpParams(data),
         })
         .then(({ data: res }) => {
           if (res.code !== 0) {
