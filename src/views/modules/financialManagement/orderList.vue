@@ -38,44 +38,54 @@
           </el-col>
           <div v-if="isOpen">
             <el-row>
-              
-            <el-col :span="8">
-              <el-form-item label="商品类型" prop="productType">
-                <el-input
+              <el-col :span="8">
+                <el-form-item label="商品类型" prop="productType">
+                  <!-- <el-input
                   size="small"
                   v-model="dataForm.productType"
                   clearable
-                />
-              </el-form-item>
-            </el-col>
+                /> -->
+                  <el-select
+                    size="small"
+                    v-model="dataForm.productType"
+                    clearable
+                  >
+                    <el-option value="专业课" label="专业课"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
               <el-col :span="8">
                 <el-form-item label="支付方式" prop="payType">
-                  <el-input
+                  <!-- <el-input
                     size="small"
                     v-model="dataForm.payType"
                     clearable
-                  />
-                  
+                  /> -->
+                  <el-select size="small" v-model="dataForm.payType" clearable>
+                    <el-option value="微信" label="微信"></el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="消费来源" prop="consumptionSource">
-                  <el-input
+                  <!-- <el-input
                     size="small"
                     v-model="dataForm.consumptionSource"
                     clearable
-                  />
-               
+                  /> -->
+                  <el-select
+                    size="small"
+                    v-model="dataForm.consumptionSource"
+                    clearable
+                  >
+                    <el-option value="小程序端" label="小程序端"></el-option>
+                  </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="8">
                 <el-form-item label="订单状态" prop="status">
-                  <el-select
-                    size="small"
-                    v-model="dataForm.status"
-                    clearable
-                  >
-                    <el-option :value="-1" label="待支付"></el-option>
+                  <el-select size="small" v-model="dataForm.status" clearable>
+                    <el-option :value="0" label="待支付"></el-option>
                     <el-option :value="1" label="已支付"></el-option>
                     <el-option :value="2" label="已完成"></el-option>
                     <el-option :value="3" label="退款中"></el-option>
@@ -209,7 +219,6 @@
           align="center"
           show-overflow-tooltip
         >
-       
         </el-table-column>
         <el-table-column
           prop="productId"
@@ -316,7 +325,6 @@ export default {
         }
       }, 150);
     },
- 
   },
 };
 </script>

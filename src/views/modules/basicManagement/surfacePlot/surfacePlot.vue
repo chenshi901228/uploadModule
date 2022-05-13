@@ -80,11 +80,7 @@
             <span>{{ scope.row.showStatus === 0 ? "隐藏" : "显示" }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="操作"
-          header-align="center"
-          align="center"
-        >
+        <el-table-column label="操作" header-align="center" align="center">
           <template slot-scope="scope">
             <el-button
               v-if="scope.row.appointmentState !== 0"
@@ -170,6 +166,7 @@
             :on-exceed="handleExceed1"
             :limit="1"
             ref="upload"
+            :class="imgForm.img.length !== 0 ? 'hide_box' : ''"
           >
             <i class="el-icon-plus"></i>
           </el-upload>
@@ -181,7 +178,7 @@
           <div>图片大小不得小于630px*347px</div>
         </el-form-item>
         <el-form-item label="封面图名称" prop="name" required>
-          <el-input v-model="imgForm.name"></el-input>
+          <el-input maxlength="15" v-model="imgForm.name"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -267,7 +264,7 @@
           <span>点击可看大图</span>
         </el-form-item>
         <el-form-item label="封面图名称" prop="name">
-          <el-input v-model="editeImgForm.name"></el-input>
+          <el-input maxlength="15" v-model="editeImgForm.name"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -364,14 +361,14 @@ export default {
     this.query();
   },
   methods: {
-    handleExceed1(file, fileList){
-      if(fileList.length >= 1){
-        this.$message.warning("只能上传一张！")
+    handleExceed1(file, fileList) {
+      if (fileList.length >= 1) {
+        this.$message.warning("只能上传一张！");
       }
     },
-    handleExceed2(file, fileList){
-      if(fileList.length >= 1){
-        this.$message.warning("只能上传一张！")
+    handleExceed2(file, fileList) {
+      if (fileList.length >= 1) {
+        this.$message.warning("只能上传一张！");
       }
     },
     //编辑图片
@@ -652,5 +649,9 @@ export default {
 
 /deep/.el-dialog__wrapper {
   overflow: hidden; /*隐藏ie和edge中遮罩的滚动条*/
+}
+
+/deep/.hide_box .el-upload--picture-card {
+  display: none;
 }
 </style>

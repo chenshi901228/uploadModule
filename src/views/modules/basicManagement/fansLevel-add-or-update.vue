@@ -30,6 +30,7 @@
           v-model="dataForm.level"
           placeholder="等级"
           :disabled="dataForm.id"
+          :oninput="(dataForm.level = dataForm.level.replace(/[^0-9.]/g, ''))"
         ></el-input>
       </el-form-item>
       <el-form-item label="等级名称" prop="levelName">
@@ -46,6 +47,7 @@
           v-model="dataForm.intimacyNum"
           placeholder="亲密值要求"
           :disabled="dataForm.id"
+          :oninput="(dataForm.intimacyNum = dataForm.intimacyNum.replace(/[^0-9.]/g, ''))"
         ></el-input>
 
         <!-- <el-input-number
@@ -61,7 +63,7 @@
     </el-form>
     <template slot="footer">
       <el-button @click="visible = false">{{ $t("cancel") }}</el-button>
-      <el-button type="primary" @click="dataFormSubmitHandle()">{{
+      <el-button type="primary" @click="dataFormSubmitHandle('dataForm')">{{
         $t("confirm")
       }}</el-button>
     </template>
@@ -74,12 +76,6 @@ import Upload from "@/components/upload/index";
 
 export default {
   data() {
-    const blurText = async (rule, value, callback) => {
-      const boolean = new RegExp("^[1-9][0-9]*$").test(value); // console.log(boolean)
-      if (!boolean) {
-        this.$message.warning("请输入正整数");
-      }
-    };
     return {
       visible: false,
       dataForm: {
@@ -97,14 +93,12 @@ export default {
       dataRule: {
         level: [
           { required: true, message: "请输入等级", trigger: "blur" },
-          { validator: blurText, trigger: "blur" },
         ],
         levelName: [
           { required: true, message: "请输入等级名称", trigger: "blur" },
         ],
         intimacyNum: [
           { required: true, message: "请输入亲密值要求", trigger: "blur" },
-          { validator: blurText, trigger: "blur" },
         ],
       },
     };
@@ -115,18 +109,18 @@ export default {
   watch: {
     "dataForm.level"(v, o) {
       let str = v.toString();
-      if (str.length >= 10) {
+      if (str.length > 10) {
         this.$message.warning("最大字数不能超过10");
       }
     },
     "dataForm.levelName"(v, o) {
-      if (v.length >= 6) {
+      if (v.length > 6) {
         this.$message.warning("最大字数不能超过6");
       }
     },
     "dataForm.intimacyNum"(v, o) {
       let str = v.toString();
-      if (str.length >= 10) {
+      if (str.length > 10) {
         this.$message.warning("最大字数不能超过10");
       }
     },
@@ -157,13 +151,9 @@ export default {
         .catch(() => {});
     },
     // 表单提交
-    dataFormSubmitHandle: debounce(
-      function () {
-        this.$refs["dataForm"].validate((valid) => {
-          if (!valid) {
-            return false;
-          }
-
+    dataFormSubmitHandle(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
           this.$http[!this.dataForm.id ? "post" : "put"](
             "/sys/sysfanslevel",
             this.dataForm
@@ -183,11 +173,12 @@ export default {
               });
             })
             .catch(() => {});
-        });
-      },
-      1000,
-      { leading: true, trailing: false }
-    ),
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
   },
 };
 </script>

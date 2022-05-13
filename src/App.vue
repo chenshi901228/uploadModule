@@ -31,6 +31,9 @@ export default {
 .el-row {
     position: unset !important;
 }
+.el-tooltip__popper{
+  max-width: 700px;
+}
 .live_room_popover{
   .el-slider__bar{
     background-color: #fa3622 !important;
