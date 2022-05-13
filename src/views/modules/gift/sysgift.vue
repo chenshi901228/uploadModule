@@ -136,18 +136,21 @@
           label="礼物名称"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="price"
           label="礼物价格"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="isFree"
           label="是否免费"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <el-tag v-if="scope.row.isFree === 0" size="small" type="danger"
@@ -161,12 +164,15 @@
           label="更新时间"
           header-align="center"
           align="center"
+          width="180"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="status"
           label="上架状态"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <el-tag

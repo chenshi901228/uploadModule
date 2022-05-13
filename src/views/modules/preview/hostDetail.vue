@@ -445,6 +445,7 @@
               :key="prop"
               header-align="center"
               align="center"
+              min-width="120"
               v-else
               show-overflow-tooltip
             >

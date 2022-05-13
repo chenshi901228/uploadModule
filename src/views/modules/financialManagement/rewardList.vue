@@ -93,6 +93,7 @@
           min-width="200px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="userName"
@@ -100,6 +101,7 @@
           header-align="center"
           align="center"
           min-width="120px"
+          show-overflow-tooltip
         ></el-table-column>
 
         <el-table-column
@@ -108,6 +110,7 @@
           min-width="120px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -115,6 +118,7 @@
           label="礼物名称"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -122,6 +126,7 @@
           label="数量"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
 
@@ -174,6 +179,7 @@
           min-width="160px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
       </el-table>

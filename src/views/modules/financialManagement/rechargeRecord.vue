@@ -101,6 +101,7 @@
           min-width="200px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="userName"
@@ -108,6 +109,7 @@
           header-align="center"
           align="center"
           min-width="120px"
+          show-overflow-tooltip
         ></el-table-column>
 
         <el-table-column
@@ -116,6 +118,7 @@
           min-width="120px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -123,6 +126,7 @@
           label="充值大豆"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
 
@@ -167,6 +171,7 @@
           min-width="160px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -174,6 +179,7 @@
           label="充值状态"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <div>

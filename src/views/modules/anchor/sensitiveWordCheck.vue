@@ -95,12 +95,14 @@
           label="用户昵称"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="phone"
           label="手机号码"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -108,6 +110,7 @@
           label="审核类型"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <div>
@@ -134,6 +137,7 @@
           label="审核状态"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <div>
@@ -153,6 +157,7 @@
           label="备注"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
 

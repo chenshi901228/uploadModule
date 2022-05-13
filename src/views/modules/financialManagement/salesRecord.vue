@@ -114,6 +114,7 @@
           min-width="200px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="userName"
@@ -121,6 +122,7 @@
           header-align="center"
           align="center"
           min-width="120px"
+          show-overflow-tooltip
         ></el-table-column>
 
         <el-table-column
@@ -129,6 +131,7 @@
           min-width="120px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -136,6 +139,7 @@
           label="商品类型"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -144,6 +148,7 @@
           min-width="150px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
 
         <el-table-column
@@ -185,6 +190,7 @@
           min-width="160px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -192,13 +198,14 @@
           label="订单状态"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
     
         </el-table-column>
         <el-table-column
           prop="productId"
           label="关联产品编号"
-          min-width="100px"
+          min-width="120px"
           header-align="center"
           show-overflow-tooltip
           align="center"
@@ -210,6 +217,7 @@
           min-width="160px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
       </el-table>
       <el-pagination
