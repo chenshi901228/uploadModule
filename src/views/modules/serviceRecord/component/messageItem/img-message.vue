@@ -9,7 +9,9 @@
             :visible.sync="dialogVisible"
             width="70%"
             top="20px">
-                <img class="priviewImg" :src="renderDom[0].src" alt="">
+                <div class="priviewImg">
+                    <img :src="renderDom[0].src" alt="">
+                </div>
         </el-dialog>
     </div>
 </template>
@@ -50,8 +52,11 @@ export default {
 </script>
 <style lang="scss" scoped>
     .priviewImg {
-        max-width: 100%;
-        margin: 0 auto;
+        width: 100%;
+        text-align: center;
+        img {
+            max-width: 100%;
+        }
     }
     .img-message {
         padding: 10px;

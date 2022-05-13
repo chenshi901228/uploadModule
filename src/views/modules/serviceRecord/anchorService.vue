@@ -5,15 +5,17 @@
             <div class="message-list">
                 <div class="message-list-search">
                     <el-input
+                        :maxlength="10"
                         placeholder="请输入内容"
                         prefix-icon="el-icon-search"
-                        v-model="searchParams">
+                        v-model.trim="searchParams"
+                        clearable>
                     </el-input>
                 </div>
                 <!-- 会话列表 -->
                 <message-list 
                     :messageListLoading="messageListLoading"
-                    :conversationList="conversationList" 
+                    :conversationList="filterConversationList" 
                     @conversationSelect="conversationSelect"></message-list>
             </div>
             <!-- 消息列表 -->
@@ -43,6 +45,12 @@ export default {
             var height = this.documentClientHeight - ( 50 + 38 + 30 + 40 + 2 );
             return height;
         },
+        filterConversationList() {
+            return this.conversationList.filter(item => {
+                if(!this.searchParams) return true
+                return item.userProfile.nick.includes(this.searchParams)
+            })
+        }
     },
     mounted() {
         this.loginIM()

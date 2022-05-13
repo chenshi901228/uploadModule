@@ -7,6 +7,7 @@
                 <p>{{conversation && (conversation.userProfile.nick || conversation.userProfile.userID)}}</p>
             </div>
             <div class="message-content-body">
+                <p class="handleTips" v-if="msgLoading">{{ msgLoadingText + (uploadProgress * 100)}}%</p>
                 <message-content-item :messageList="messageList"></message-content-item>
             </div>
             <div class="message-content-footer">
@@ -47,7 +48,7 @@
                         :rows="2"
                         resize="none"
                         placeholder="请输入内容"
-                        v-model="textarea">
+                        v-model.trim="textarea">
                     </el-input>
                 </div>
                 <div class="sendBtn">
@@ -57,7 +58,6 @@
     </div>
 </template>
 <script>
-import Cookies from 'js-cookie'
 import { emojiName, emojiUrl, emojiMap } from "./baseUtil/emojiMap"
 import MessageContentItem from "./message-content-item.vue"
 export default {
@@ -106,7 +106,9 @@ export default {
             messageListLoading: false,
             textarea: "",
             fileList: [],
-            uploadUrl: `${window.SITE_CONFIG['apiURL']}/oss/file/upload?access_token=${Cookies.get('access_token')}`
+            msgLoading: false,
+            msgLoadingText: "上传进度：",
+            uploadProgress: 0, 
         }
     },
     mounted() {
@@ -185,6 +187,8 @@ export default {
         },
         // 发送消息
         sendMessage() {
+            if(!this.conversation) return this.$message.warning("请选择发送对象")
+            if(!this.textarea) return this.$message.warning("请输入要发送的内容")
             const to = this.getToAccount();
 			const message = this.tim.createTextMessage({
 				to,
@@ -193,11 +197,17 @@ export default {
 					text: this.textarea
 				}
 			});
-            this.textarea = ""
+            
 
-            this.tim.sendMessage(message);
-            this.scrollToButtom()
-            // this.updateMessageList(message)
+            let promise = this.tim.sendMessage(message);
+            promise.then((imResponse) => {
+                // 发送成功
+                // console.log(imResponse);
+                this.textarea = ""
+            }).catch((imError) => {
+                // 发送失败
+                this.$message.error('sendMessage error:' + imError);
+            });
         },
 
 
@@ -210,34 +220,31 @@ export default {
                 payload: {
                     file: file,
                 },
-                onProgress: (event) => { console.log('file uploading:', event) }
+                onProgress: (event) => { this.uploadProgress = event }
             });
             // 2. 发送消息
             let promise = this.tim.sendMessage(message);
             promise.then((imResponse) => {
                 // 发送成功
-                console.log(imResponse);
+                // console.log(imResponse);
+                this.msgLoading = false
                 this.fileList = []
-                this.scrollToButtom()
-                // this.updateMessageList(message)
 
             }).catch((imError) => {
                 // 发送失败
+                this.msgLoading = false
                 this.fileList = []
-                console.warn('sendMessage error:', imError);
+                this.$message.error('sendMessage error:' + imError);
 
             });
         },
 
-        // 自己的消息上屏
-		updateMessageList(msg) {
-			this.messageList = [...this.messageList, msg];
-            this.scrollToButtom()
-		},
 
-
+        // 选择图片发送
         uploadFile(param) {
+            if(!this.conversation) return this.$message.warning("请选择发送对象")
             if(!this.beforeUpload(param.file)) return
+            this.msgLoading = true
             this.$sendImgMessage(param.file)
         },
 
@@ -245,18 +252,25 @@ export default {
         beforeUpload(file){
             const isLt2M = file.size / 1024 / 1024 < 20;
             if (!isLt2M) {
-                this.$message.error("上传图片大小不能超过 20MB!");
+                this.$message.error("发送的图片大小不能超过 20MB!");
             }
             const isJPG = (file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png' || file.type === 'image/gif');
             if (!isJPG) {
-                this.$message.error("上传头像图片格式为 jpg,jpeg,png,gif");
+                this.$message.error("发送的图片格式为 jpg,jpeg,png,gif");
             }
             return isJPG && isLt2M;
         },
 
 
         scrollToButtom() {
-            if(this.elParams) this.elParams.scrollTop = this.elParams.scrollHeight
+            this.$nextTick(() => {
+                let el = document.querySelector(".message-content-body")
+                // el.scrollTop = el.scrollHeight
+                el.scrollTo({ top: el.scrollHeight })
+
+                console.log(el)
+
+            })
         },
         messageContentScroll(e) {
             if(!this.timer) {
@@ -282,20 +296,36 @@ export default {
         border-radius: 5px;
         padding: 10px;
         .message-content-header {
-            height: 10%;
             border-bottom: 1px solid #999;
             margin: 0;
             padding: 0;
             display: flex;
             align-items: center;
+            line-height: 40px;
+            height: 40px;
+            p {
+                margin: 0;
+                padding: 0;
+            }
         }
         .message-content-body {
-            height: 60%;
+            height: calc(100% - 192px);
             overflow-y: auto;
             padding: 10px;
+            position: relative;
+            .handleTips {
+                position: absolute;
+                left: 0;
+                top: 0;
+                text-align: center;
+                width: 100%;
+                margin: 0;
+                padding: 4px 0;
+                background: #cacaca;
+            }
         }
         .message-content-footer {
-            height: 30%;
+            height: 150px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;

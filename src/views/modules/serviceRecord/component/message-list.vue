@@ -49,14 +49,15 @@ export default {
     .message-list-wrap {
         max-height: 100%;
         overflow-y: auto;
-        background: #F6F7F9;
+        background: #E9E9E9;
         margin-top: 10px;
     }
     .message-list-item{
         display: flex;
         padding: 10px;
+        cursor: pointer;
         &.active {
-            background: #fcfcfc;
+            background: #c0c0c0;
         }
         img {
             width: 50px;
@@ -68,9 +69,14 @@ export default {
             display: flex;
             flex-direction: column;
             justify-content: center;
+            max-width: calc(100% - 80px);
             p {
                 margin: 0;
                 padding: 0;
+                max-width: 100%;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
                 &:first-child {
                     font-weight: 600;
                 }

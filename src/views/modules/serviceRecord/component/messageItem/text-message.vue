@@ -2,7 +2,7 @@
     <div style="padding: 10px;border-radius: 5px;background: #F6F7F9;">
         <span class="message-body-time">{{renderTime}}</span>
         <div class="message-body-span">
-            <template v-for="(item) in renderDom">
+            <template v-for="item in renderDom">
                 <span class="message-body-span-text" v-if="item.name === 'span'">{{item.text}}</span>
                 <img v-if="item.name === 'img'" class="emoji-icon" :src="item.src" alt="">
             </template>
