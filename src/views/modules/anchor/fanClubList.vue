@@ -165,10 +165,11 @@
         <div style="margin: 10px 0">
           <el-form
             :inline="true"
-            :model="dataForm"
+            :model="dataForm_fans"
             @keyup.enter.native="queryPost_fans()"
+            ref="dataForm_fans"
           >
-            <el-form-item label="用户昵称">
+            <el-form-item label="用户昵称" prop="userName">
               <el-input
                 size="small"
                 v-model="dataForm_fans.userName"
@@ -176,7 +177,7 @@
                 clearable
               ></el-input>
             </el-form-item>
-            <el-form-item label="手机号码">
+            <el-form-item label="手机号码" prop="phone">
               <el-input
                 size="small"
                 v-model="dataForm_fans.phone"
@@ -184,7 +185,7 @@
                 clearable
               ></el-input>
             </el-form-item>
-            <el-form-item label="用户等级">
+            <el-form-item label="用户等级" prop="level">
               <el-input
                 size="small"
                 v-model="dataForm_fans.level"
@@ -192,7 +193,7 @@
                 clearable
               ></el-input>
             </el-form-item>
-            <el-form-item label="粉丝团身份">
+            <el-form-item label="粉丝团身份" prop="userType">
               <el-select
                 size="small"
                 v-model="dataForm_fans.userType"
@@ -209,6 +210,11 @@
                 type="primary"
                 @click="queryPost_fans()"
                 >{{ $t("query") }}</el-button
+              >
+              <el-button
+                size="small"
+                @click="queryPost_fans_reset"
+                >重置</el-button
               >
             </el-form-item>
           </el-form>
@@ -386,6 +392,11 @@ export default {
         .catch(() => {
           this.loading_fans = false
         });
+    },
+    // 粉丝团成员列表重置
+    queryPost_fans_reset() {
+      this.$refs.dataForm_fans.resetFields()
+      this.queryPost_fans()
     },
     // 分页, 每页条数
     pageSizeChangeHandle_fans(val) {
