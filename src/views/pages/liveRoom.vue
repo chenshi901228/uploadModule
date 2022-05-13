@@ -1961,6 +1961,7 @@ p {
                   }
                   > p {
                     margin-left: 10px;
+                    word-break: break-all;
                   }
                 }
                 .preview_time {
