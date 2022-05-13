@@ -153,6 +153,7 @@
           label="备注"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
 

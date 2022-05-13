@@ -237,7 +237,7 @@
               >
                 <div class="preview_content">
                   <img :src="item.frontCoverUrl" alt="" />
-                  <p>{{ item.liveIntroduce }}</p>
+                  <p>{{ item.liveTheme }}</p>
                 </div>
                 <div class="preview_time">
                   <div>
@@ -345,7 +345,7 @@
                   alt=""
                   @click="toolClick(item)"
                 />
-                <p>{{ item.text }}</p>
+                <p>{{ item.type=='record'&&item.status?'已录制':item.text }}</p>
               </div>
               <div class="start_live" @click="startPlayLive" v-if="!liveStatus">
                 <img src="../../assets/img/startLive.png" alt="" />
@@ -633,20 +633,21 @@ export default {
         this.liveStatus = false
       }
     })
-
-    let connectMessageInfo = JSON.parse(
-      localStorage.getItem("connectMessageInfo")
-    ); //连麦列表状态
-    if (connectMessageInfo) {
-      this.connectMessageInfo = connectMessageInfo;
-    }
-    let isRecord = localStorage.getItem("isRecord"); //录制状态
-    if (isRecord) {
-      this.toolNav[0].status = isRecord;
-    }
-    let studentList = JSON.parse(localStorage.getItem("studentList")); //学生列表
-    if (studentList) {
-      this.studentList = studentList;
+    if(this.liveStatus){
+      let connectMessageInfo = JSON.parse(
+        localStorage.getItem("connectMessageInfo")
+      ); //连麦列表状态
+      if (connectMessageInfo) {
+        this.connectMessageInfo = connectMessageInfo;
+      }
+      let isRecord = localStorage.getItem("isRecord"); //录制状态
+      if (isRecord) {
+        this.toolNav[0].status = isRecord;
+      }
+      let studentList = JSON.parse(localStorage.getItem("studentList")); //学生列表
+      if (studentList) {
+        this.studentList = studentList;
+      }
     }
     this.getTimUserSig();
   },
@@ -825,6 +826,7 @@ export default {
         }
       } else if (data.type === "record") {
         //录制
+        console.log(this.liveStatus)
         if (this.liveStatus) {
           if (!data.status) {
             this.$http.post("/sys/mixedflow/startRecord", {}).then((res) => {
@@ -1463,7 +1465,7 @@ export default {
     },
     // 获取直播预约列表
     getLivePreviewList() {
-      this.$http.get(`/sys/livePreview/pageOwn`).then((res) => {
+      this.$http.get(`/sys/livePreview/pageOwn`,{params:{appointmentState: 1,showState: 1}}).then((res) => {
         console.log("获取直播预约列表", res);
         this.livePreviewList = res.data.data.list;
       });
