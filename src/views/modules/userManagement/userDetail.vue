@@ -7,6 +7,7 @@
           <el-avatar
             :size="75"
             :src="diaForm.avatarUrl"
+            fit="cover"
             style="margin: 0px 85px 10px"
           ></el-avatar>
           <div>用户昵称：{{ diaForm.nickName }}</div>
@@ -26,7 +27,7 @@
           </div>
           <div>
             累计充值：￥{{
-              diaForm.priceConsumption ? diaForm.priceConsumption : 0
+              diaForm.priceRecharge ? diaForm.priceRecharge : 0
             }}元
           </div>
           <div>购买商品消费：￥{{ diaForm.shoppingConsumption || 0 }}元</div>
@@ -424,8 +425,7 @@ export default {
             return vm.$message.error(res.msg);
           }
           vm.diaForm = {
-            priceConsumption: res.data.priceConsumption,
-            priceBalance: res.data.priceBalance,
+            ...res.data,
             ...JSON.parse(window.localStorage.getItem("userDetailData")),
             // priceConsumption:res.data.priceConsumption,
             // priceConsumption:res.data.priceConsumption,
