@@ -10328,6 +10328,11 @@ tim-js-sdk@^2.18.0:
   resolved "https://registry.npmmirror.com/tim-js-sdk/-/tim-js-sdk-2.18.0.tgz#0360f036dd0183dd6e3e449b2c81c04c9afee5fb"
   integrity sha512-JB+o8TSrA3zcyJPuS6RNcTItTavTeSrmL3Pq1qioayTt6mCduuqYpGVwX6CvSxUUZOKMZF+j731QytijG9scHg==
 
+tim-upload-plugin@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.npmmirror.com/tim-upload-plugin/-/tim-upload-plugin-1.0.4.tgz#b23d60b3c21cb9ffa9fa828e71062cbb619f1c2c"
+  integrity sha512-Ib/Ql5vdKoLg2wSFBQ34nzBnaUFa6IxiV8060BF+RnWVlhBZSd3MpBXT32wWcmPj/Sl2yOSCM+dC4fn1sm+y/w==
+
 time-stamp@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/time-stamp/-/time-stamp-1.1.0.tgz#764a5a11af50561921b133f3b44e618687e0f5c3"

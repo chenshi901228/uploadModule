@@ -233,7 +233,6 @@ export default {
         ],
         startDate: [
           {
-            type: "date",
             required: true,
             message: "请选择预计开播时间",
             trigger: "blur",

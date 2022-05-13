@@ -1,6 +1,8 @@
 import Cookies from 'js-cookie'
 import store from '@/store'
 
+import flvJs from "flv.js" 
+
 /**
  * 权限
  * @param {*} key
@@ -164,4 +166,36 @@ export function downloadFileUrl(url) {
   //   console.log('失败');
   // }
   // xhr.send()
+}
+// 获取视频时长
+export function getVideoDuration(url) {
+  let type = url.split(".")
+  type = type[type.length - 1].toLocaleLowerCase()
+  if(type == "mp4") {
+    return new Promise((resolve, reject) => {
+      let audio = new Audio(downloadFileUrl(url))
+      audio.muted = true
+      audio.addEventListener("loadedmetadata", () => {
+        resolve(parseInt((audio.duration * 1000).toString(), 10))
+      })
+      audio.muted = false
+    })
+  }
+  if(type == "flv") {
+    let video = document.createElement("video")
+    let flvPlayer
+    if(flvJs.isSupported()) {
+      flvPlayer = flvJs.createPlayer({
+        type: 'flv',
+        url: downloadFileUrl(url)
+      });
+      flvPlayer.attachMediaElement(video);
+      flvPlayer.load();
+      console.log(flvPlayer)
+      let res = flvPlayer.duration
+      video.remove()
+      console.log(res)
+      return "11111"
+    }
+  }
 }

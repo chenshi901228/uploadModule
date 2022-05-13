@@ -53,6 +53,7 @@
               >
                 <el-option label="上架" :value="1"></el-option>
                 <el-option label="下架" :value="0"></el-option>
+                <el-option label="已删除" :value="-2"></el-option>
               </el-select>
             </el-form-item>
           </el-col>

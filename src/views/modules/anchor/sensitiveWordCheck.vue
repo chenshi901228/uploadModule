@@ -35,7 +35,7 @@
           <div v-if="isOpen">
             <el-row>
               <el-col :span="8">
-                <el-form-item label="审核状态" prop="delFlg">
+                <el-form-item label="审核状态" prop="checkStatus">
                   <el-select
                     size="small"
                     v-model="dataForm.checkStatus"
@@ -43,7 +43,7 @@
                   >
                     <el-option :value="1" label="通过"></el-option>
                     <el-option :value="2" label="待审核"></el-option>
-                    <el-option :value="3" label="驳回"></el-option>
+                    <el-option :value="4" label="驳回"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -203,6 +203,7 @@ export default {
         nickName: "",
         phone: "",
         delFlg: "",
+        checkStatus:""
       },
       dataList: [{ createDate: 1 }],
       userId: "",
@@ -275,6 +276,12 @@ export default {
 
     // 重置搜索条件
     resetDataForm() {
+      this.dataForm = {
+        nickName: "",
+        phone: "",
+        delFlg: "",
+        checkStatus:""
+      }
       this.$refs.sensitiveWordCheck.resetFields();
       this.getDataList();
     },

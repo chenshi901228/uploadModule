@@ -119,13 +119,13 @@
         :height="siteContentViewHeight"
         style="width: 100%"
       >
-        <el-table-column
+        <!-- <el-table-column
           type="selection"
           header-align="center"
           align="center"
           width="50"
           fixed="left"
-        ></el-table-column>
+        ></el-table-column> -->
 
         <el-table-column
           header-align="center"

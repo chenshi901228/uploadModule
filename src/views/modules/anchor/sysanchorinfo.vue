@@ -20,10 +20,10 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="真实姓名" prop="username">
+            <el-form-item label="真实姓名" prop="realName">
               <el-input
                 size="small"
-                v-model="dataForm.username"
+                v-model="dataForm.realName"
                 clearable
               ></el-input>
             </el-form-item>
@@ -40,15 +40,15 @@
           
         <div v-if="isOpen">
           <el-row>
-            <el-col :span="8">
-              <el-form-item label="身份证号" prop="username">
+            <!-- <el-col :span="8">
+              <el-form-item label="身份证号" prop="idCard">
                 <el-input
                   size="small"
-                  v-model="dataForm.username"
+                  v-model="dataForm.idCard"
                   clearable
                 ></el-input>
               </el-form-item>
-            </el-col>
+            </el-col> -->
             <el-col :span="8">
               <el-form-item label="性别" prop="gender">
                 <el-select size="small" v-model="dataForm.gender" clearable>
@@ -58,15 +58,15 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="8">
+            <!-- <el-col :span="8">
               <el-form-item label="审批状态" prop="status">
                 <el-select size="small" v-model="dataForm.status" clearable>
-                  <el-option :value="0" label="待处理"></el-option>
+                  <el-option :value="0" label="申请中"></el-option>
                   <el-option :value="1" label="同意"></el-option>
                   <el-option :value="-1" label="拒绝"></el-option>
                 </el-select>
               </el-form-item>
-            </el-col>
+            </el-col> -->
           </el-row>
         </div>
           <el-col :span="24">
@@ -171,7 +171,7 @@
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip
-          prop="username"
+          prop="realName"
           label="真实姓名"
           header-align="center"
           align="center"
@@ -187,7 +187,7 @@
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip
-          prop="username"
+          prop="idCard"
           label="身份证号"
           header-align="center"
           align="center"
@@ -323,7 +323,14 @@ export default {
         deleteURL: "/sys/anchor/info",
         deleteIsBatch: true,
       },
-      dataForm: {},
+      dataForm: {
+        realName: "",
+        // idCard: "",
+        username: "",
+        phone: "",
+        gender: "",
+        // status: "",
+      },
     };
   },
   watch: {},
