@@ -100,6 +100,7 @@
           header-align="center"
           align="center"
           min-width="120px"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.anchorName || "--" }}</span>
@@ -110,6 +111,7 @@
           label="真实姓名"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.realName || "--" }}</span>
@@ -121,6 +123,7 @@
           min-width="120px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.phone || "--" }}</span>
@@ -132,6 +135,7 @@
           min-width="150px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.idCard || "--" }}</span>
@@ -143,6 +147,7 @@
           min-width="120px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.accountName || "--" }}</span>
@@ -154,6 +159,7 @@
           min-width="150px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.bankAccount || "--" }}</span>
@@ -165,6 +171,7 @@
           min-width="100px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.depositBank || "--" }}</span>
@@ -188,6 +195,7 @@
           min-width="120px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.address || "--" }}</span>
@@ -223,6 +231,7 @@
           min-width="160px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.createDate || "--" }}</span>
@@ -233,6 +242,7 @@
           label="提现状态"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <div>

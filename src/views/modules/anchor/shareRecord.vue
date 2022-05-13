@@ -101,6 +101,7 @@
           header-align="center"
           align="center"
           min-width="120px"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="shareUserTel"
@@ -108,6 +109,7 @@
           min-width="120px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -116,6 +118,7 @@
           min-width="150px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{
@@ -137,6 +140,7 @@
           min-width="150px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
 
         <el-table-column
@@ -145,6 +149,7 @@
           min-width="160px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
 
@@ -153,6 +158,7 @@
           label="分享状态"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <div>
@@ -171,6 +177,7 @@
           label="成功事件"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{
@@ -192,6 +199,7 @@
           min-width="120px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
           ><template slot-scope="scope">
             <span>{{ scope.row.passiveShareUserName || "--" }}</span>
           </template></el-table-column
@@ -202,6 +210,7 @@
           min-width="120px"
           header-align="center"
           align="center"
+          show-overflow-tooltip
           ><template slot-scope="scope">
             <span>{{ scope.row.urpassiveShareUserTell || "--" }}</span>
           </template></el-table-column

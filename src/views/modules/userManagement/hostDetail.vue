@@ -7,6 +7,7 @@
           <el-avatar
             :size="75"
             :src="diaForm.avatarUrl"
+            fit="cover"
             style="margin: 0px 85px 10px"
           ></el-avatar>
           <div>主播昵称：{{ diaForm.username }}</div>
@@ -29,7 +30,7 @@
         <div class="diaBoxLeft_mes">
           <div>
             累计收益：￥{{
-              diaForm.priceConsumption ? diaForm.priceConsumption : 0
+              diaForm.priceIncome ? diaForm.priceIncome : 0
             }}元
           </div>
           <div>已提现金额：￥{{ diaForm.anchorWithdraw || 0 }}元</div>
@@ -194,12 +195,6 @@
             <el-select size="small" v-model="diaSearchForm.isFree" clearable>
               <el-option :value="0" label="否"></el-option>
               <el-option :value="1" label="是"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="状态" v-if="diaTbas === 6" prop="delFlg">
-            <el-select size="small" v-model="diaSearchForm.delFlg" clearable>
-              <el-option :value="0" label="上架"></el-option>
-              <el-option :value="1" label="下架"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item>
@@ -395,7 +390,7 @@
               v-else-if="prop === 'delFlg'"
             >
               <template slot-scope="scope">
-                <div v-if="!scope.row.anchorName && diaTbas === (4 || 6)">
+                <div v-if="!scope.row.anchorName && diaTbas === 4">
                   {{ scope.row.delFlg === 1 ? "取消关注" : "正常" }}
                 </div>
                 <div v-else>
@@ -410,6 +405,7 @@
               header-align="center"
               align="center"
               v-else
+              min-width="120"
               show-overflow-tooltip
             >
             </el-table-column>
@@ -726,7 +722,7 @@ export default {
           }
           vm.diaForm = {
             ...vm.diaForm,
-            priceConsumption: res.data.priceConsumption,
+            priceIncome: res.data.priceIncome,
             anchorWithdraw:res.data.anchorWithdraw,
             anchorBalance: res.data.anchorBalance,
           };
@@ -858,7 +854,7 @@ export default {
             productType: "商品类型",
             isFree: "是否免费",
             id: "关联产品编号",
-            updateDate: "更新时间",
+            updateDate: "上架时间",
             delFlg: "上架状态",
           };
           break;
@@ -867,8 +863,7 @@ export default {
             avatarUrl: "主播头像",
             anchorName: "主播昵称",
             phone: "手机号码",
-            createDate: "更新时间",
-            delFlg: "上架状态",
+            createDate: "推荐时间",
           };
           break;
 

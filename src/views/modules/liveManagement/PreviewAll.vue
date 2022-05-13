@@ -221,6 +221,7 @@
           label="直播主题"
           prop="liveTheme"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -228,6 +229,7 @@
           label="主播"
           prop="anchorUser"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -235,6 +237,7 @@
           label="手机号码"
           prop="anchorTel"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -242,6 +245,7 @@
           label="预计开播时间"
           prop="startDate"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -249,6 +253,7 @@
           label="实际开播时间"
           prop="factStartDate"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.factStartDate || "--" }}</span>
@@ -259,23 +264,26 @@
           label="结束时间"
           prop="factEndDate"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.factEndDate || "--" }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          width="100%"
+          width="120"
           label="预计直播时长"
           prop="estimateLiveTime"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
-          width="100%"
+          width="120"
           label="实际直播时长"
           prop="liveTime"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.liveTime || "--" }}</span>
@@ -286,6 +294,7 @@
           label="投放人群"
           prop="dynamicGroupName"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.dynamicGroupName || "--" }}</span>
@@ -296,6 +305,7 @@
           label="预约人数"
           prop="appointmentNum"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -303,6 +313,7 @@
           label="新增用户"
           prop="addUserNum"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -310,6 +321,7 @@
           label="预约状态"
           prop="delFlg"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{
@@ -326,6 +338,7 @@
           label="直播状态"
           prop="liveState"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{
@@ -346,6 +359,7 @@
           label="显示状态"
           prop="showState"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope" align="center">
             <span>{{
@@ -358,10 +372,11 @@
           </template>
         </el-table-column>
         <el-table-column
-          width="100%"
+          width="180"
           label="直播间ID"
           prop="livingRoomId"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.livingRoomId || "--" }}</span>
@@ -377,6 +392,7 @@
           label="创建时间"
           prop="createDate"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column

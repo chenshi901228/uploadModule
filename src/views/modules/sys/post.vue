@@ -47,10 +47,10 @@
         ref="table" 
         style="width: 100%;">
         <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-        <el-table-column prop="postCode" :label="$t('post.postCode')" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="postName" :label="$t('post.postName')" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="sort" :label="$t('post.sort')" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="status" :label="$t('post.status')" header-align="center" align="center">
+        <el-table-column show-overflow-tooltip prop="postCode" :label="$t('post.postCode')" header-align="center" align="center"></el-table-column>
+        <el-table-column show-overflow-tooltip prop="postName" :label="$t('post.postName')" header-align="center" align="center"></el-table-column>
+        <el-table-column show-overflow-tooltip prop="sort" :label="$t('post.sort')" header-align="center" align="center"></el-table-column>
+        <el-table-column show-overflow-tooltip prop="status" :label="$t('post.status')" header-align="center" align="center">
           <template slot-scope="scope">
             {{ $getDictLabel("post_status", scope.row.status) }}
           </template>

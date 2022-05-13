@@ -328,6 +328,7 @@ export default {
     // 禁用，解除用户
     forbidden(row) {
       if(row) {
+        if(row.liveState == 0 && row.disabledFlg != 1) return this.$message.error("主播正在直播，无法禁用此账号")
         this.$confirm(`确认[${row.disabledFlg == 1 ? "解除" : "禁用"}]${row.username}?`, "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",

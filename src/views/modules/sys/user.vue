@@ -92,18 +92,21 @@
           sortable="custom"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="deptName"
           :label="$t('user.deptName')"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="email"
           :label="$t('user.email')"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="mobile"
@@ -111,6 +114,7 @@
           sortable="custom"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="gender"
@@ -118,6 +122,7 @@
           sortable="custom"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             {{ $getDictLabel("gender", scope.row.gender) }}
@@ -129,6 +134,7 @@
           sortable="custom"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <el-tag v-if="scope.row.status === 0" size="small" type="danger">{{
@@ -146,6 +152,7 @@
           header-align="center"
           align="center"
           width="180"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           :label="$t('handle')"
