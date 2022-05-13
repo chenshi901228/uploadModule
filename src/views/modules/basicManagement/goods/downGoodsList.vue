@@ -140,10 +140,7 @@
             <div v-if="item.prop == 'productImage'">
               <img
                 style="width: 100%; height: 60px"
-                class="frontCoverImg"
-                :src="
-                  row.productImage || 'https://picsum.photos/400/300?random=1'
-                "
+                :src="row.productImage || 'https://picsum.photos/400/300?random=1'"
                 alt=""
               />
             </div>
