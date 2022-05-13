@@ -7,7 +7,7 @@
       :inline="true"
       :model="dataForm"
       ref="dataForm"
-      @keyup.enter.native="getDataList"
+      @keyup.enter.native="queryDynamicGroup"
     >
       <el-row>
         <el-col :span="8">
@@ -162,7 +162,7 @@
           <el-input
             @input="changeValueNum"
             clearable
-            maxlength="20"
+            maxlength="15"
             style="width: 400px"
             v-model="groupForm.name"
             autocomplete="off"
@@ -189,7 +189,7 @@
           <el-input
             @input="changeValueNum"
             clearable
-            maxlength="20"
+            maxlength="15"
             style="width: 400px"
             v-model="editeGroupForm.name"
             autocomplete="off"
