@@ -312,9 +312,7 @@
         >
           <template slot-scope="scope">
             <span>{{
-              scope.row.delFlg === 1
-                ? "已结束"
-                : scope.row.appointmentState === 0
+              scope.row.appointmentState === 0
                 ? "已结束"
                 : "预约中"
             }}</span>

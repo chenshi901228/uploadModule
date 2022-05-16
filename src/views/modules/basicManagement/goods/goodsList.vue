@@ -38,13 +38,21 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="商品类型" prop="productType">
-              <el-input
+              <!-- <el-input
                 size="small"
                 v-model.trim="dataForm.productType"
                 placeholder="请输入"
                 clearable
               >
-              </el-input>
+              </el-input> -->
+               <el-select
+                clearable
+                size="small"
+                v-model="dataForm.productType"
+                placeholder="请选择"
+              >
+                <el-option label="专业课" value="专业课"></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
             <el-col :span="8">

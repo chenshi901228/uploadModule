@@ -52,9 +52,7 @@
             <el-button size="small" type="primary" @click="queryPageWithGroupId"
               >查询</el-button
             >
-            <!-- <el-button size="small" @click="resetDataForm()">{{
-              $t("reset")
-            }}</el-button> -->
+            <el-button size="small" @click="resetDataForm()">重置</el-button>
             <!-- <el-button 
                   size="small" 
                   type="primary"
@@ -269,7 +267,13 @@ export default {
       showBtn: true,
     };
   },
-  watch: {},
+  watch: {
+    dialogUserFormVisible(n, o) {
+      if (n) {
+        this.reset();
+      }
+    },
+  },
   created() {},
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -280,7 +284,7 @@ export default {
   activated() {},
   methods: {
     addUser() {
-      this.queryUserList();
+      // this.queryUserList();
       this.dialogUserFormVisible = true;
     },
     //获取未加入用户组
@@ -383,6 +387,10 @@ export default {
       this.queryUserList();
     },
     resetDataForm() {
+      this.dataForm = {
+        name: "",
+        tel: "",
+      }
       this.$refs.dataForm.resetFields();
       this.queryPageWithGroupId();
     },

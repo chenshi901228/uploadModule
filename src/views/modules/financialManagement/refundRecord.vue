@@ -14,7 +14,7 @@
             <el-form-item label="用户昵称" prop="nickName">
               <el-input
                 size="small"
-                v-model="dataForm.username"
+                v-model="dataForm.nickName"
                 clearable
               ></el-input>
             </el-form-item>
@@ -22,32 +22,30 @@
           </el-col>
           <el-col :span="8">
            
-            <el-form-item label="手机号码" prop="phone">
+            <el-form-item label="手机号码" prop="phouserPhonene">
               <el-input
                 size="small"
-                v-model="dataForm.phone"
+                v-model="dataForm.phouserPhonene"
                 clearable
               ></el-input>
             </el-form-item>
           </el-col>
             <el-col :span="8">
-              <el-form-item label="商品名称" prop="phone">
+              <el-form-item label="商品名称" prop="productName">
                 <el-input
                   size="small"
-                  v-model="dataForm.phone"
+                  v-model="dataForm.productName"
                   clearable
                 ></el-input>
               </el-form-item>
             </el-col>
               <div v-if="isOpen">
           <el-row>
-          
-
             <el-col :span="8">
-              <el-form-item label="商品类型" prop="delFlg">
+              <el-form-item label="商品类型" prop="productType">
                 <el-select
                   size="small"
-                  v-model="dataForm.handlingStatus"
+                  v-model="dataForm.productType"
                   clearable
                 >
                   <el-option :value="1" label="已处理"></el-option>
@@ -56,10 +54,10 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="退款方式" prop="delFlg">
+              <el-form-item label="退款方式" prop="payType">
                 <el-select
                   size="small"
-                  v-model="dataForm.handlingStatus"
+                  v-model="dataForm.payType"
                   clearable
                 >
                   <el-option :value="1" label="已处理"></el-option>
@@ -68,19 +66,19 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="关联订单编号" prop="phone">
+              <el-form-item label="关联订单编号" prop="weixinUserProductId">
                 <el-input
                   size="small"
-                  v-model="dataForm.phone"
+                  v-model="dataForm.weixinUserProductId"
                   clearable
                 ></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="退款单号" prop="delFlg">
+              <el-form-item label="退款单号" prop="id">
                 <el-select
                   size="small"
-                  v-model="dataForm.handlingStatus"
+                  v-model="dataForm.id"
                   clearable
                 >
                   <el-option :value="1" label="已处理"></el-option>
@@ -89,10 +87,10 @@
               </el-form-item>
             </el-col>
             <el-col :span="8">
-              <el-form-item label="退款状态" prop="delFlg">
+              <el-form-item label="退款状态" prop="refundStatus">
                 <el-select
                   size="small"
-                  v-model="dataForm.handlingStatus"
+                  v-model="dataForm.refundStatus"
                   clearable
                 >
                   <el-option :value="1" label="已处理"></el-option>
@@ -235,7 +233,7 @@
         </el-table-column>
         <el-table-column
           prop="weixinUserProductId"
-          label="关联产品编号"
+          label="关联订单编号"
           min-width="180px"
           header-align="center"
           show-overflow-tooltip
@@ -298,8 +296,13 @@ export default {
       },
       dataForm: {
         nickName: "",
-        phone: "",
-        delFlg: "",
+        phouserPhonene: "",
+        productName:"",
+        productType:"",
+        payType:"",
+        weixinUserProductId: "",
+        id:"",
+        refundStatus:""
       },
       dataList: [{ createDate: 1 }],
       userId: "",
@@ -359,6 +362,16 @@ export default {
 
     // 重置搜索条件
     resetDataForm() {
+      this.dataForm = {
+         nickName: "",
+        phouserPhonene: "",
+        productName:"",
+        productType:"",
+        payType:"",
+        weixinUserProductId: "",
+        id:"",
+        refundStatus:""
+      }
       this.$refs.salesRecord.resetFields();
       this.getDataList();
     },

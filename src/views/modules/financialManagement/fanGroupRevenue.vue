@@ -19,7 +19,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="手机号码" prop="userPhone">
+            <el-form-item label="用户手机号码" prop="userPhone">
               <el-input
                 size="small"
                 v-model="dataForm.userPhone"
@@ -28,6 +28,33 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
+            <el-form-item label="粉丝团名称" prop="title">
+              <el-input
+                size="small"
+                v-model="dataForm.title"
+                clearable
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="主播" prop="anchorName">
+              <el-input
+                size="small"
+                v-model="dataForm.anchorName"
+                clearable
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="主播手机号码" prop="anchorPhone">
+              <el-input
+                size="small"
+                v-model="dataForm.anchorPhone"
+                clearable
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <!-- <el-col :span="8">
            <el-form-item label="消费来源" prop="paySource">
                    <el-select
                     size="small"
@@ -38,8 +65,8 @@
                     <el-option :value="2" label="大于众学"></el-option>
                   </el-select>
                 </el-form-item>
-          </el-col>
-     
+          </el-col> -->
+
           <el-col :span="24">
             <el-form-item style="float: right; padding-right: 10px">
               <el-button type="info" size="small" @click="exportHandle()">{{
@@ -51,7 +78,6 @@
               <el-button size="small" @click="resetDataForm()">{{
                 $t("reset")
               }}</el-button>
-        
             </el-form-item>
           </el-col>
         </el-row>
@@ -185,15 +211,19 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/user/consumption/selectUserJoinFansPageWithFinance",
+        getDataListURL:
+          "/sys/user/consumption/selectUserJoinFansPageWithFinance",
         getDataListIsPage: true,
         deleteIsBatch: true,
-        exportURL: "/sys/user/consumption/selectUserJoinFansPageWithFinanceExport",
+        exportURL:
+          "/sys/user/consumption/selectUserJoinFansPageWithFinanceExport",
       },
       dataForm: {
-        nickName: "",
-        phone: "",
-        delFlg: "",
+        userName: "",
+        userPhone: "",
+        title: "",
+        anchorName: "",
+        anchorPhone: "",
       },
       dataList: [{ createDate: 1 }],
       userId: "",
@@ -248,11 +278,18 @@ export default {
     // 搜索栏收起/展开
     open() {
       this.isOpen = !this.isOpen;
-      this.resetDataForm()
+      this.resetDataForm();
     },
 
     // 重置搜索条件
     resetDataForm() {
+      this.dataForm = {
+        userName: "",
+        userPhone: "",
+        title: "",
+        anchorName: "",
+        anchorPhone: "",
+      };
       this.$refs.fanGroupRevenue.resetFields();
       this.getDataList();
     },

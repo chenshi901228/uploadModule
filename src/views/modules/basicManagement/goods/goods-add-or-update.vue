@@ -84,25 +84,19 @@
 export default {
   data() {
     const blurText1 = async (rule, value, callback) => {
-      const boolean = new RegExp(
-        "^(?!(0[0-9]{0,}$))[0-9]{1,}[.]{0,}[0-9]{0,}$"
-      ).test(value);
-      const boolean1 = new RegExp("^0|0[.]?[0]∗0").test(value);
-      //  const boolean = new RegExp("^[1-9][0-9]*$").test(value);
-      if (!boolean && !boolean1) {
-        this.$message.warning("请输入0或正数");
+      if (!Number(value) || Number(value) < 0) {
+        callback(new Error("请输入0或正数"));
       }
     };
     const blurText2 = async (rule, value, callback) => {
-      let num = Number(value);
-      if (num < 10 || num > 20) {
-        this.$message.warning("请输入10到20之间的数字");
+      if (!Number(value) || Number(value) < 10 || Number(value) > 20) {
+        callback(new Error("请输入10到20之间的数字"));
       }
     };
     const blurText3 = async (rule, value, callback) => {
       const boolean = new RegExp("^\\d+$").test(value);
       if (!boolean) {
-        this.$message.warning("请输入0或正整数");
+        callback(new Error("请输入0或正整数"));
       }
     };
     return {
@@ -111,23 +105,23 @@ export default {
       submitLoading: false,
       dataRule: {
         price: [
-          { required: true, message: "请输入销售价格", trigger: "blur" },
-          { validator: blurText1, trigger: "blur" },
+          { required: true, message: "请输入销售价格", trigger: "change" },
+          { validator: blurText1, trigger: "change" },
         ],
         proportion: [
-          { required: true, message: "请输入分成比例", trigger: "blur" },
-          { validator: blurText2, trigger: "blur" },
+          { required: true, message: "请输入分成比例", trigger: "change" },
+          { validator: blurText2, trigger: "change" },
         ],
         buyers: [
-          { required: true, message: "请输入已购买人数", trigger: "blur" },
-          { validator: blurText3, trigger: "blur" },
+          { required: true, message: "请输入已购买人数", trigger: "change" },
+          { validator: blurText3, trigger: "change" },
         ],
       },
     };
   },
   watch: {
     "dataForm.price"(v, o) {
-      if (v && v.length >= 8) {
+      if (v && v.length > 8) {
         this.$message.warning("最大字数不能超过8");
       }
     },
