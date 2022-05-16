@@ -23,7 +23,7 @@
               <div>是否指导师：{{ diaForm.nickName }}</div> -->
           <div>真实姓名：{{ diaForm.realName }}</div>
           <div>身份证号：{{ diaForm.idCard }}</div>
-          <div>主播简介：{{ diaForm.introduce }}</div>
+          <div style="word-break: break-all;">主播简介：{{ diaForm.introduce }}</div>
         </div>
 
         <div class="diaBoxLeft_title">

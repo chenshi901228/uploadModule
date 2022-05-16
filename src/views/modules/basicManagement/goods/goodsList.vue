@@ -15,7 +15,7 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="商品名称" prop="productName">
-              <el-select
+              <!-- <el-select
                 size="small"
                 v-model="dataForm.productName"
                 filterable
@@ -33,7 +33,14 @@
                   :value="item.value"
                 >
                 </el-option>
-              </el-select>
+              </el-select> -->
+              <el-input
+                size="small"
+                v-model.trim="dataForm.productName"
+                placeholder="请输入商品名称"
+                clearable
+              >
+              </el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">

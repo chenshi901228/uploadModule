@@ -156,8 +156,8 @@
           </quill-editor>
           <span
             class="wordNumber"
-            style="position: absolute; right: 30px; bottom: 30px"
-            >{{ TiLength }}/300</span
+            style="position: absolute; right: 40px; bottom: 30px"
+            >{{ TiLength }}/2000</span
           >
         </el-form-item>
         <el-form-item>
@@ -274,12 +274,12 @@ export default {
   },
   watch: {
     "ruleForm.liveTheme"(nv, ov) {
-      if (nv.length >= 60) {
+      if (nv.length > 60) {
         this.$message.warning("直播主题字数不得超过60字！");
       }
     },
     "ruleForm.liveIntroduce"(nv, ov) {
-      if (nv.length >= 307) {
+      if (nv.length > 2007) {
         this.$message.warning("直播介绍字数不得超过300字！");
       }
     },
@@ -324,7 +324,7 @@ export default {
         });
     },
     onEditorChange(e) {
-      e.quill.deleteText(300, 4);
+      e.quill.deleteText(2000, 4);
       if (this.ruleForm.liveIntroduce == "") {
         this.TiLength = 0;
       } else {

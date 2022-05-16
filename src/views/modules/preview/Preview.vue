@@ -133,6 +133,7 @@
                     <el-option label="直播中" value="1"></el-option>
                     <el-option label="已禁播" value="2"></el-option>
                     <el-option label="未开播" value="3"></el-option>
+                    <el-option label="已删除" value="4"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>

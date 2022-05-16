@@ -14,7 +14,7 @@
         <el-row>
           <el-col :span="8">
             <el-form-item label="商品名称" prop="productName">
-              <el-select
+              <!-- <el-select
                 size="small"
                 v-model="dataForm.productName"
                 filterable
@@ -32,7 +32,14 @@
                   :value="item.value"
                 >
                 </el-option>
-              </el-select>
+              </el-select> -->
+              <el-input
+                size="small"
+                v-model.trim="dataForm.productName"
+                placeholder="请输入商品名称"
+                clearable
+              >
+              </el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -140,7 +147,9 @@
             <div v-if="item.prop == 'productImage'">
               <img
                 style="width: 100%; height: 60px"
-                :src="row.productImage || 'https://picsum.photos/400/300?random=1'"
+                :src="
+                  row.productImage || 'https://picsum.photos/400/300?random=1'
+                "
                 alt=""
               />
             </div>
