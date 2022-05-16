@@ -237,6 +237,9 @@
             <el-button type="text" size="small" @click="openDetail(scope.row)"
               >详情</el-button
             >
+            <el-button type="text" size="small" @click="editDetail(scope.row)"
+              >编辑</el-button
+            >
             <el-button
               type="text"
               size="small"
@@ -308,7 +311,13 @@ export default {
       });
       window.localStorage.setItem("hostDetailID", data.id);
     },
-
+    //编辑
+    editDetail(data){
+      this.$router.push({
+        name:"preview-editeUserInfo-EditeUserInfo",
+        params:{ info: data }
+      });
+    },
     forbiddenHandle(type, data) {
       let url = "/sys/anchor/info/updateAnchorStatus"
       this.$http
