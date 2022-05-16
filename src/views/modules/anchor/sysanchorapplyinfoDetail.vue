@@ -43,7 +43,8 @@
        <span style="width:100px;text-align:right;margin:0 10px">是否是指导师：</span> {{ diaForm.tutorFlg === 1 ? "认证" : "未认证" }}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">备注：</span> {{ diaForm.remark }}
+       <span style="width:100px;text-align:right;margin:0 10px">备注：</span>
+       <el-input show-word-limit type="textarea" maxlength="100" placeholder="请输入，可不填" v-model="diaForm.remark" :disabled="diaForm.status != 0"/>
       </div>
     </div>
 
@@ -104,6 +105,7 @@ export default {
           this.$http["put"]("/sys/anchor/applyInfo/", {
             id: this.diaForm.id,
             status,
+            remark:this.diaForm.remark
           })
             .then(({ data: res }) => {
               if (res.code !== 0) {

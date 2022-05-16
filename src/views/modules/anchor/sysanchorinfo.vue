@@ -40,7 +40,7 @@
           
         <div v-if="isOpen">
           <el-row>
-            <!-- <el-col :span="8">
+            <el-col :span="8">
               <el-form-item label="身份证号" prop="idCard">
                 <el-input
                   size="small"
@@ -48,7 +48,7 @@
                   clearable
                 ></el-input>
               </el-form-item>
-            </el-col> -->
+            </el-col>
             <el-col :span="8">
               <el-form-item label="性别" prop="gender">
                 <el-select size="small" v-model="dataForm.gender" clearable>
@@ -58,7 +58,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <!-- <el-col :span="8">
+            <el-col :span="8">
               <el-form-item label="审批状态" prop="status">
                 <el-select size="small" v-model="dataForm.status" clearable>
                   <el-option :value="0" label="申请中"></el-option>
@@ -66,7 +66,7 @@
                   <el-option :value="-1" label="拒绝"></el-option>
                 </el-select>
               </el-form-item>
-            </el-col> -->
+            </el-col>
           </el-row>
         </div>
           <el-col :span="24">
@@ -257,6 +257,14 @@
             {{ scope.row.status === 0 ? "" : scope.row.updateDate }}
           </template>
         </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          prop="remark"
+          label="备注"
+          header-align="center"
+          align="center"
+          width="180"
+        ></el-table-column>
         <el-table-column
           show-overflow-tooltip
           prop="status"

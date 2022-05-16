@@ -75,9 +75,9 @@ export default {
   },
   watch: {},
   created() {},
-  activated() {},
-  mounted() {
+  activated() {
     let info = this.$route.params.info
+    console.log(info)
     if(info) {
       this.id = info.weixinUserId
       this.ruleForm.username = info.username
@@ -89,6 +89,9 @@ export default {
         }
       ]
     }
+  },
+  mounted() {
+    
   },
   methods: {
     // 头像上传

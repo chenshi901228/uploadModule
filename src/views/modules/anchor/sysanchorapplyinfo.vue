@@ -258,6 +258,15 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
+          prop="remark"
+          label="备注"
+          header-align="center"
+          align="center"
+          width="180"
+        >
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
           prop="status"
           label="状态"
           header-align="center"
