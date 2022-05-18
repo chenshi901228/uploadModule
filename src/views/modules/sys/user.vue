@@ -6,74 +6,94 @@
         :inline="true"
         :model="dataForm"
         ref="dataForm"
+        size="small"
+        label-width="100px"
+        label-position="right"
         @keyup.enter.native="getDataList"
       >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item :label="$t('user.username')" prop="username">
-              <el-input
-                size="small"
-                v-model="dataForm.username"
-                :placeholder="$t('user.username')"
-                clearable
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item :label="$t('user.gender')" prop="gender">
-              <ren-select
-                v-model="dataForm.gender"
-                dict-type="gender"
-                :placeholder="$t('user.gender')"
-              ></ren-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item :label="$t('dept.title')" prop="deptId">
-              <ren-dept-tree
-                v-model="dataForm.deptId"
-                :placeholder="$t('dept.title')"
-                :query="true"
-              ></ren-dept-tree>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item style="float: right; padding-right: 10px">
+        <el-form-item :label="$t('user.username')" prop="username">
+          <el-input
+            size="small"
+            v-model="dataForm.username"
+            :placeholder="$t('user.username')"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item :label="$t('user.gender')" prop="gender">
+          <ren-select
+            v-model="dataForm.gender"
+            dict-type="gender"
+            :placeholder="$t('user.gender')"
+          ></ren-select>
+        </el-form-item>
+        <el-form-item :label="$t('dept.title')" prop="deptId">
+          <ren-dept-tree
+            v-model="dataForm.deptId"
+            :placeholder="$t('dept.title')"
+            :query="true"
+          ></ren-dept-tree>
+        </el-form-item>
+        <!-- 搜索重置展开按钮 -->
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button 
+              type="primary" 
+              icon="el-icon-search" 
+              size="mini"
+              @click="getDataList">{{ $t("query") }}</el-button>
+            <el-button 
+              icon="el-icon-refresh" 
+              size="mini" 
+              @click="resetDataForm()">{{ $t("reset") }}</el-button>
+            <!-- <el-button size="mini" plain @click="open">
+              <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button> -->
+          </el-form-item>
+        </div>
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
               <el-button
-                size="small"
+                type="warning"
+                plain
+                icon="el-icon-download"
                 v-if="$hasPermission('sys:user:export')"
-                type="info"
-                @click="exportHandle()"
-                >{{ $t("export") }}</el-button
-              >
+                size="mini"
+                @click="exportHandle"
+              >{{ $t("export") }}</el-button>
               <el-button
-                size="small"
+                size="mini"
                 v-if="$hasPermission('sys:dict:save')"
+                icon="el-icon-plus"
+                plain
                 type="primary"
                 @click="addOrUpdateHandle()"
                 >{{ $t("add") }}</el-button
               >
               <el-button
-                size="small"
+                size="mini"
                 v-if="$hasPermission('sys:dict:delete')"
+                icon="el-icon-delete"
+                plain
                 type="danger"
                 @click="deleteHandle()"
-                >{{ $t("deleteBatch") }}</el-button
-              >
-              <el-button size="small" type="primary" @click="getDataList">{{
-                $t("query")
-              }}</el-button>
-              <el-button size="small" @click="resetDataForm()">{{
-                $t("reset")
-              }}</el-button>
+                >{{ $t("deleteBatch") }}</el-button>
             </el-form-item>
-          </el-col>
-        </el-row>
+          </div>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                <el-button size="small" icon="el-icon-refresh" circle @click="getDataList"></el-button>
+              </el-tooltip>
+            </el-form-item>
+          </div>
+        </div>
       </el-form>
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        border
         @selection-change="dataListSelectionChangeHandle"
         @sort-change="dataListSortChangeHandle"
         :height="siteContentViewHeight"
@@ -165,14 +185,16 @@
             <el-button
               v-if="$hasPermission('sys:user:update')"
               type="text"
-              size="small"
+              size="mini"
+              icon="el-icon-edit"
               @click="addOrUpdateHandle(scope.row.id)"
               >{{ $t("update") }}</el-button
             >
             <el-button
               v-if="$hasPermission('sys:user:delete')"
               type="text"
-              size="small"
+              size="mini"
+              icon="el-icon-delete"
               @click="deleteHandle(scope.row.id)"
               >{{ $t("delete") }}</el-button
             >

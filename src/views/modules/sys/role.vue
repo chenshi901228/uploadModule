@@ -6,37 +6,54 @@
         :inline="true"
         :model="dataForm"
         ref="dataForm"
+        size="small"
+        label-width="100px"
+        label-position="right"
         @keyup.enter.native="getDataList"
       >
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="$t('role.name')" prop="name">
-              <el-input size="small" v-model="dataForm.name" :placeholder="$t('role.name')" clearable></el-input>
+        <el-form-item :label="$t('role.name')" prop="name">
+          <el-input size="small" v-model="dataForm.name" :placeholder="$t('role.name')" clearable></el-input>
+        </el-form-item>
+        <!-- 搜索重置展开按钮 -->
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button 
+              type="primary" 
+              icon="el-icon-search" 
+              size="mini"
+              @click="getDataList">{{ $t("query") }}</el-button>
+            <el-button 
+              icon="el-icon-refresh" 
+              size="mini" 
+              @click="resetDataForm()">{{ $t("reset") }}</el-button>
+            <!-- <el-button size="mini" plain @click="open">
+              <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button> -->
+          </el-form-item>
+        </div>
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
+              <el-button size="mini" v-if="$hasPermission('sys:dict:save')" icon="el-icon-plus" plain type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
+              <el-button size="mini" v-if="$hasPermission('sys:dict:delete')" icon="el-icon-delete" plain type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
             </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item style="float:right; padding-right:10px">          
-              <el-button size="small" v-if="$hasPermission('sys:dict:save')" type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
-              <el-button size="small" v-if="$hasPermission('sys:dict:delete')" type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
-              <el-button size="small" type="primary" @click="getDataList">{{ $t("query") }}</el-button>
-              <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
-              <!-- <el-button 
-                  size="small" 
-                  type="primary"
-                  @click="open"
-              >
-                  {{ isOpen ? "收起" : "展开"}}<i style="margin-left:10px" :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
-              </el-button> -->
+          </div>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                <el-button size="mini" icon="el-icon-refresh" circle @click="getDataList"></el-button>
+              </el-tooltip>
             </el-form-item>
-          </el-col>
-        </el-row>
+          </div>
+        </div>
         <div v-if="isOpen">
         </div>
       </el-form>
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        border
         @selection-change="dataListSelectionChangeHandle"
         @sort-change="dataListSortChangeHandle"
         :height="siteContentViewHeight"
@@ -48,8 +65,8 @@
         <el-table-column prop="createDate" :label="$t('role.createDate')" sortable="custom" header-align="center" align="center" width="180"></el-table-column>
         <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
           <template slot-scope="scope">
-            <el-button v-if="$hasPermission('sys:role:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">{{ $t('update') }}</el-button>
-            <el-button v-if="$hasPermission('sys:role:delete')" type="text" size="small" @click="deleteHandle(scope.row.id)">{{ $t('delete') }}</el-button>
+            <el-button v-if="$hasPermission('sys:role:update')" type="text" icon="el-icon-edit" size="mini" @click="addOrUpdateHandle(scope.row.id)">{{ $t('update') }}</el-button>
+            <el-button v-if="$hasPermission('sys:role:delete')" type="text" icon="el-icon-delete" size="mini" @click="deleteHandle(scope.row.id)">{{ $t('delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
