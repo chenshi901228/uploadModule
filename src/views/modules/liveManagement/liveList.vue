@@ -239,6 +239,7 @@
               v-if="row.liveState == 1"
               type="text"
               size="small"
+              icon="el-icon-edit"
               @click="banLiveHandle(row.id)"
               >禁播</el-button
             >

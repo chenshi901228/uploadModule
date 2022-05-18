@@ -95,8 +95,8 @@ img {
     width: 8%;
   }
   .el-table th {
-    color: $--color-text-primary;
-    background-color: #fff;
+    color: #515a6e;
+    // background-color: #f8f8f9;
   }
   .el-pagination {
     margin-top: 15px;
@@ -153,6 +153,15 @@ img {
     }
   }
 }
+
+.el-button--primary {
+  border-color: $--color-primary;
+  background-color: $--color-primary;
+}
+.el-button--text {
+  color: $--color-primary;
+}
+
 // 主题工具
 .aui-theme-tools {
   position: fixed;
