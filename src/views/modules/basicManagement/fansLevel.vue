@@ -7,54 +7,96 @@
         :model="dataForm"
         ref="dataForm"
         size="small"
+        label-width="100px"
+        label-position="right"
         @keyup.enter.native="getDataList"
       >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="等级" prop="level">
-              <el-input
-                clearable
-                v-model="dataForm.level"
-              >
-        
-              </el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="等级名称" prop="levelName">
-                   <el-input
-                clearable
-                v-model="dataForm.levelName"
-              >
-        
-              </el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item style="float: right; padding-right: 10px">
+        <el-form-item
+          label="等级"
+          prop="level"
+          v-if="isOpen || formItemCount >= 1"
+        >
+          <el-input style="width: 200px" clearable v-model="dataForm.level">
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          label="等级名称"
+          prop="levelName"
+          v-if="isOpen || formItemCount >= 2"
+        >
+          <el-input style="width: 200px" clearable v-model="dataForm.levelName">
+          </el-input>
+        </el-form-item>
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button
+              type="primary"
+              icon="el-icon-search"
+              size="mini"
+              @click="getDataList"
+              >{{ $t("query") }}</el-button
+            >
+            <el-button
+              icon="el-icon-refresh"
+              size="mini"
+              @click="resetDataForm()"
+              >{{ $t("reset") }}</el-button
+            >
+            <el-button size="mini" plain @click="open" v-if="formItemCount > 3">
+              <i
+                :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
+              ></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button>
+          </el-form-item>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
               <el-button
-                type="primary"
-                icon="el-icon-plus"
+                type="success"
+                plain
+                icon="el-icon-circle-plus-outline"
+                size="mini"
                 @click="addOrUpdateHandle()"
                 >{{ $t("add") }}</el-button
               >
-              <el-button size="small" type="info" @click="exportHandle()">{{
-                $t("export")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="getDataList">{{
-                $t("query")
-              }}</el-button>
-              <el-button size="small" @click="resetDataForm()">{{
-                $t("reset")
-              }}</el-button>
             </el-form-item>
-          </el-col>
-        </el-row>
+            <el-form-item>
+              <el-button
+                type="warning"
+                plain
+                icon="el-icon-download"
+                size="mini"
+                @click="exportHandle"
+                >{{ $t("export") }}</el-button
+              >
+            </el-form-item>
+          </div>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="刷新"
+                placement="top"
+              >
+                <el-button
+                  size="small"
+                  icon="el-icon-refresh"
+                  circle
+                  @click="getDataList"
+                ></el-button>
+              </el-tooltip>
+            </el-form-item>
+          </div>
+        </div>
       </el-form>
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        border
         @selection-change="dataListSelectionChangeHandle"
         :height="siteContentViewHeight"
         style="width: 100%"
@@ -93,7 +135,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            {{scope.row.delFlg?'删除':'正常'}}
+            {{ scope.row.delFlg ? "删除" : "正常" }}
           </template>
         </el-table-column>
         <el-table-column
@@ -111,16 +153,17 @@
         >
           <template slot-scope="scope">
             <el-button
+              icon="el-icon-edit"
               type="text"
               size="small"
               @click="addOrUpdateHandle(scope.row.id)"
               >{{ $t("update") }}</el-button
             >
-    
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
+        background
         :current-page="page"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="limit"
@@ -161,16 +204,13 @@ export default {
         status: null,
       },
       loading: false, //礼物输入下拉选择loading
-      giftOptions: [] //礼物下拉选择内容
+      giftOptions: [], //礼物下拉选择内容
     };
   },
   watch: {},
   components: {
     AddOrUpdate,
   },
-  methods: {
-
-    
-  },
+  methods: {},
 };
 </script>

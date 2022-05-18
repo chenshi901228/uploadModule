@@ -7,77 +7,110 @@
       :inline="true"
       :model="dataForm"
       ref="dataForm"
+      size="small"
+      label-width="100px"
+      label-position="right"
       @keyup.enter.native="queryDynamicGroup"
     >
-      <el-row>
-        <el-col :span="8">
-          <el-form-item label="动态组" prop="name">
-            <el-input
-              size="small"
-              clearable
-              v-model="dataForm.name"
-              placeholder="请输入"
-            ></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="显示状态" prop="showState">
-            <el-select
-              size="small"
-              :clearable="true"
-              v-model="dataForm.showState"
-              placeholder="显示状态"
-            >
-              <el-option label="显示" value="1"></el-option>
-              <el-option label="隐藏" value="0"></el-option>
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item style="float: right; padding-right: 10px">
+      <el-form-item
+        label="动态组"
+        prop="name"
+        v-if="isOpen || formItemCount >= 1"
+      >
+        <el-input
+          size="small"
+          clearable
+          style="width: 200px"
+          v-model="dataForm.name"
+          placeholder="请输入"
+        ></el-input>
+      </el-form-item>
+      <el-form-item
+        label="显示状态"
+        prop="showState"
+        v-if="isOpen || formItemCount >= 2"
+      >
+        <el-select
+          size="small"
+          style="width: 200px"
+          :clearable="true"
+          v-model="dataForm.showState"
+          placeholder="显示状态"
+        >
+          <el-option label="显示" value="1"></el-option>
+          <el-option label="隐藏" value="0"></el-option>
+        </el-select>
+      </el-form-item>
+
+      <div class="headerTool-search-btns">
+        <el-form-item>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            size="mini"
+            @click="queryDynamicGroup"
+            >{{ $t("query") }}</el-button
+          >
+          <el-button
+            icon="el-icon-refresh"
+            size="mini"
+            @click="resetDataForm()"
+            >{{ $t("reset") }}</el-button
+          >
+          <el-button size="mini" plain @click="open" v-if="formItemCount > 3">
+            <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+            {{ isOpen ? "收起" : "展开" }}
+          </el-button>
+        </el-form-item>
+      </div>
+
+      <!-- 操作按钮 -->
+      <div class="headerTool-handle-btns">
+        <div class="headerTool--handle-btns-left">
+          <el-form-item>
             <el-button
-              size="small"
+              plain
+              icon="el-icon-delete"
+              size="mini"
               v-if="dataListSelections.length !== 0"
               type="danger"
               @click="deleteSelect()"
               >批量删除</el-button
             >
+          </el-form-item>
+          <el-form-item>
             <el-button
-              size="small"
-              type="primary"
+              size="mini"
+              plain
+              icon="el-icon-circle-plus-outline"
+              type="success"
               @click="dialogFormVisible = true"
               >添加</el-button
             >
-            <el-button
-              size="small"
-              type="primary"
-              @click="queryDynamicGroup()"
-              >{{ $t("query") }}</el-button
-            >
-            <el-button size="small" @click="resetDataForm()">{{
-              $t("reset")
-            }}</el-button>
-            <!-- <el-button 
-                  size="small" 
-                  type="primary"
-                  @click="open"
-              >
-                  {{ isOpen ? "收起" : "展开"}}<i style="margin-left:10px" :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
-              </el-button> -->
           </el-form-item>
-        </el-col>
-      </el-row>
-      <div v-if="isOpen">
-        <!-- <el-row>
-          <el-col :span="6">
-          </el-col>
-        </el-row> -->
+        </div>
+        <div class="headerTool--handle-btns-right">
+          <el-form-item>
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="刷新"
+              placement="top"
+            >
+              <el-button
+                size="small"
+                icon="el-icon-refresh"
+                circle
+                @click="queryDynamicGroup"
+              ></el-button>
+            </el-tooltip>
+          </el-form-item>
+        </div>
       </div>
     </el-form>
     <el-table
       v-loading="loadingGroup"
       :data="groupMens"
-      border
       fit
       @selection-change="dataListSelectionChangeHandle"
       style="width: 100%"
@@ -119,6 +152,7 @@
       >
         <template slot-scope="scope">
           <el-button
+            icon="el-icon-sort-down"
             @click="importXlx(scope.$index, scope.row)"
             type="text"
             size="small"
@@ -128,15 +162,18 @@
             @click="edite(scope.$index, scope.row)"
             type="text"
             size="small"
+            icon="el-icon-edit"
             >编辑</el-button
           >
           <el-button
+            icon="el-icon-sort"
             @click="changeShowState(scope.$index, scope.row)"
             type="text"
             size="small"
             >{{ scope.row.showState === 1 ? "隐藏" : "显示" }}</el-button
           >
           <el-button
+            icon="el-icon-view"
             @click="toDetail(scope.$index, scope.row)"
             type="text"
             size="small"
@@ -146,6 +183,7 @@
       </el-table-column>
     </el-table>
     <el-pagination
+      background
       :current-page="groupMensPage"
       :page-sizes="[10, 20, 50, 100]"
       :page-size="groupMensLimit"

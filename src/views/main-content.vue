@@ -33,7 +33,7 @@
       </el-tabs>
       <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
         <li @click="refreshPage"><i class="el-icon-refresh-right"></i> 刷新页面</li>
-        <li @click="tabRemoveHandle($store.state.contentTabsActiveName)"><i class="el-icon-close"></i> {{ $t('contentTabs.closeCurrent') }}</li>
+        <li v-if="selectedTag != 'home'" @click="tabRemoveHandle(selectedTag)"><i class="el-icon-close"></i> {{ $t('contentTabs.closeCurrent') }}</li>
         <li @click="tabsCloseOtherHandle()"><i class="el-icon-circle-close"></i> {{ $t('contentTabs.closeOther') }}</li>
         <!-- <li v-if="!isFirstView()" @click="closeLeftTags"><i class="el-icon-back"></i> 关闭左侧</li>
         <li v-if="!isLastView()" @click="closeRightTags"><i class="el-icon-right"></i> 关闭右侧</li> -->
@@ -58,7 +58,8 @@ export default {
       visible: false,
       top: 0,
       left: 0,
-      selectedTag: {}
+      selectedTag: "",
+      currentTab: ""
     }
   },
   watch: {
@@ -70,6 +71,9 @@ export default {
       }
     }
   },
+  mounted() {
+    this.currentTab = this.$store.state.contentTabsActiveName
+  },
   methods: {
     // tabs, 是否通过iframe展示
     tabIsIframe (url) {
@@ -77,6 +81,8 @@ export default {
     },
     // tabs, 选中tab
     tabSelectedHandle (tab) {
+      if(this.currentTab == tab.name) return
+      this.currentTab = tab.name
       tab = this.$store.state.contentTabs.filter(item => item.name === tab.name)[0]
       if (tab) {
         this.$router.push({
@@ -109,8 +115,18 @@ export default {
     // tabs, 关闭其它
     tabsCloseOtherHandle () {
       this.$store.state.contentTabs = this.$store.state.contentTabs.filter(item => {
-        return item.name === 'home' || item.name === this.$store.state.contentTabsActiveName
+        return item.name === 'home' || item.name === this.selectedTag
       })
+      if(this.$store.state.contentTabs.length == 1) { //只剩首页则跳转到首页
+        this.$router.push({ name: 'home' })
+      }else {
+        let tab = this.$store.state.contentTabs[this.$store.state.contentTabs.length - 1]
+        this.$router.push({
+          name: /^iframe_.+/.test(tab.name) ? 'iframe' : tab.name,
+          params: { ...tab.params },
+          query: { ...tab.query }
+        })
+      }
     },
     // tabs, 关闭全部
     tabsCloseAllHandle () {
@@ -125,6 +141,7 @@ export default {
       tab["name"] = this.selectedTag
       if(this.$route.name == this.selectedTag) return this.refresh()
       this.tabSelectedHandle(tab)
+      this.refresh()
     },
     // tab标签右键操作
     openMenu(e) {

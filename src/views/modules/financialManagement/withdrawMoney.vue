@@ -6,89 +6,96 @@
         :inline="true"
         :model="dataForm"
         ref="withdrawMoney"
+        size="small"
+        label-width="100px"
         @keyup.enter.native="getDataList()"
       >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="主播昵称" prop="anchorName">
-              <el-input
-                size="small"
-                v-model="dataForm.anchorName"
-                clearable
-              ></el-input>
+        <el-form-item v-if="isOpen || formItemCount >= 1" label="主播昵称" prop="anchorName">
+          <el-input
+            style="width: 200px"
+            placeholder="主播昵称"
+            v-model="dataForm.anchorName"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 2" label="真实姓名" prop="realName">
+          <el-input
+            style="width: 200px"
+            placeholder="真实姓名"
+            v-model="dataForm.realName"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 3" label="手机号码" prop="phone">
+          <el-input
+            style="width: 200px"
+            placeholder="手机号码"
+            v-model="dataForm.phone"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 4" label="身份证" prop="idCard">
+          <el-input
+            style="width: 200px"
+            placeholder="身份证"
+            v-model="dataForm.idCard"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 5" label="提现状态" prop="confirmStatus">
+          <el-select
+            style="width: 200px"
+            placeholder="提现状态"
+            v-model="dataForm.confirmStatus"
+            clearable
+          >
+            <el-option :value="1" label="已确认打款"></el-option>
+            <el-option :value="0" label="未打款"></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- 搜索重置展开按钮 -->
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button 
+              type="primary" 
+              icon="el-icon-search" 
+              size="mini"
+              @click="getDataList">{{ $t("query") }}</el-button>
+            <el-button 
+              icon="el-icon-refresh" 
+              size="mini" 
+              @click="resetDataForm()">{{ $t("reset") }}</el-button>
+            <el-button size="mini" plain @click="open">
+              <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button>
+          </el-form-item>
+        </div>
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
+              <el-button 
+                type="warning"
+                plain
+                icon="el-icon-download" 
+                size="mini"
+                @click="exportHandle">{{ $t("export") }}</el-button>
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="真实姓名" prop="realName">
-              <el-input
-                size="small"
-                v-model="dataForm.realName"
-                clearable
-              ></el-input>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="8">
-            <el-form-item label="手机号码" prop="phone">
-              <el-input
-                size="small"
-                v-model="dataForm.phone"
-                clearable
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <div v-if="isOpen">
-            <el-row>
-              <el-col :span="8">
-                <el-form-item label="身份证" prop="idCard">
-                  <el-input
-                    size="small"
-                    v-model="dataForm.idCard"
-                    clearable
-                  ></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="提现状态" prop="confirmStatus">
-                  <el-select
-                    size="small"
-                    v-model="dataForm.confirmStatus"
-                    clearable
-                  >
-                    <el-option :value="1" label="已确认打款"></el-option>
-                    <el-option :value="0" label="未打款"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
           </div>
-          <el-col :span="24">
-            <el-form-item style="float: right; padding-right: 10px">
-              <el-button type="info" size="small" @click="exportHandle()">{{
-                $t("export")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="getDataList()">{{
-                $t("query")
-              }}</el-button>
-              <el-button size="small" @click="resetDataForm()">{{
-                $t("reset")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="open">
-                {{ isOpen ? "收起" : "展开"
-                }}<i
-                  style="margin-left: 10px"
-                  :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
-                ></i>
-              </el-button>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                <el-button size="small" icon="el-icon-refresh" circle @click="getDataList"></el-button>
+              </el-tooltip>
             </el-form-item>
-          </el-col>
-        </el-row>
+          </div>
+        </div>
       </el-form>
 
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        border
         @selection-change="dataListSelectionChangeHandle"
         :height="siteContentViewHeight"
         style="width: 100%"
@@ -267,6 +274,7 @@
             <el-button
               type="text"
               size="small"
+              icon="el-icon-position"
               v-if="scope.row.confirmStatus === 0"
               @click="confirm(scope.row.id)"
               >确认打款</el-button
@@ -275,6 +283,7 @@
         </el-table-column>
       </el-table>
       <el-pagination
+        background
         :current-page="page"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="limit"
@@ -288,8 +297,8 @@
     <el-dialog title="确认打款" :visible.sync="dialogVisible" width="30%">
       <span>确认向该主播打款吗？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmShowState">确 定</el-button>
+        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="confirmShowState">确 定</el-button>
       </span>
     </el-dialog>
   </el-card>
@@ -322,36 +331,9 @@ export default {
       dialogVisible: false,
       uuid: "",
       id: "",
-      otherViewHeight: 0, //搜索栏高度
-      isOpen: false, //搜索栏展开/收起
     };
   },
   components: { Template },
-  computed: {
-    documentClientHeight: {
-      get() {
-        return this.$store.state.documentClientHeight;
-      },
-    },
-    siteContentViewHeight() {
-      var height =
-        this.documentClientHeight -
-        this.otherViewHeight -
-        (50 + 40 + 30 + 40 + 47);
-      return height;
-    },
-  },
-  watch: {
-    isOpen() {
-      this.setOtherViewHeight();
-    },
-  },
-  activated() {
-    this.setOtherViewHeight();
-    this.$nextTick(() => {
-      this.$refs.table.doLayout();
-    });
-  },
   mounted() {
     this.$bus.$on("change", () => {
       this.getDataList();
@@ -377,22 +359,6 @@ export default {
           this.dialogVisible = false;
         })
         .catch(() => {});
-    },
-    // 搜索栏高度设置
-    setOtherViewHeight() {
-      setTimeout(() => {
-        if (document.querySelector(".headerTool")) {
-          let h = document
-            .querySelector(".headerTool")
-            .getBoundingClientRect().height;
-          this.otherViewHeight = Math.ceil(h);
-        }
-      }, 150);
-    },
-    // 搜索栏收起/展开
-    open() {
-      this.isOpen = !this.isOpen;
-      this.resetDataForm();
     },
 
     // 重置搜索条件
