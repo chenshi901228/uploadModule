@@ -27,13 +27,14 @@
           <el-table-column prop="readDate" :label="$t('notice.readDate')" header-align="center" align="center"></el-table-column>
       </el-table>
       <el-pagination
-              :current-page="page"
-              :page-sizes="[10, 20, 50, 100]"
-              :page-size="limit"
-              :total="total"
-              layout="total, sizes, prev, pager, next, jumper"
-              @size-change="pageSizeChangeHandle"
-              @current-change="pageCurrentChangeHandle">
+        background
+        :current-page="page"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="limit"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="pageSizeChangeHandle"
+        @current-change="pageCurrentChangeHandle">
       </el-pagination>
       <el-divider></el-divider>
       <div style="text-align: center;"><el-button type="danger" @click="closeCurrentTab()">{{ $t('notice.close') }}</el-button></div>

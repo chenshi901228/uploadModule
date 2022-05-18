@@ -8,66 +8,104 @@
       :model="dataForm"
       ref="dataForm"
       size="small"
+      label-width="100px"
+      label-position="right"
       @keyup.enter.native="queryPageWithGroupId()"
     >
-      <el-row>
-        <el-col :span="8">
-          <el-form-item label="用户昵称" prop="name">
-            <el-input
-              v-model="dataForm.name"
-              placeholder="请输入"
-              clearable
-            ></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="8">
-          <el-form-item label="手机号" prop="tel">
-            <el-input
-              v-model="dataForm.tel"
-              placeholder="请输入"
-              clearable
-            ></el-input>
-          </el-form-item>
-        </el-col>
-        <div v-if="isOpen">
-          <!-- <el-row>
-          <el-col :span="6">
-          </el-col>
-        </el-row> -->
-        </div>
-        <el-col :span="8">
-          <el-form-item style="float: right; padding-right: 10px">
+      <el-form-item
+        label="用户昵称"
+        prop="name"
+        v-if="isOpen || formItemCount >= 1"
+      >
+        <el-input
+          style="width: 200px"
+          v-model="dataForm.name"
+          placeholder="请输入"
+          clearable
+        ></el-input>
+      </el-form-item>
+      <el-form-item
+        label="手机号"
+        prop="tel"
+        v-if="isOpen || formItemCount >= 2"
+      >
+        <el-input
+          style="width: 200px"
+          v-model="dataForm.tel"
+          placeholder="请输入"
+          clearable
+        ></el-input>
+      </el-form-item>
+
+      <div class="headerTool-search-btns">
+        <el-form-item>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            size="mini"
+            @click="queryPageWithGroupId"
+            >{{ $t("query") }}</el-button
+          >
+          <el-button
+            icon="el-icon-refresh"
+            size="mini"
+            @click="resetDataForm()"
+            >{{ $t("reset") }}</el-button
+          >
+          <el-button size="mini" plain @click="open" v-if="formItemCount > 3">
+            <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+            {{ isOpen ? "收起" : "展开" }}
+          </el-button>
+        </el-form-item>
+      </div>
+
+      <!-- 操作按钮 -->
+      <div class="headerTool-handle-btns">
+        <div class="headerTool--handle-btns-left">
+          <el-form-item>
             <el-button
+              plain
+              icon="el-icon-delete"
+              size="mini"
               v-if="dataListSelections.length !== 0"
               type="danger"
               @click="deleteSelect()"
               >批量移除</el-button
             >
+          </el-form-item>
+          <el-form-item>
             <el-button
-              style="margin-bottom: 10px"
-              type="primary"
+              size="mini"
+              plain
+              icon="el-icon-circle-plus-outline"
+              type="success"
               @click="addUser"
               >添加</el-button
             >
-            <el-button size="small" type="primary" @click="queryPageWithGroupId"
-              >查询</el-button
-            >
-            <el-button size="small" @click="resetDataForm()">重置</el-button>
-            <!-- <el-button 
-                  size="small" 
-                  type="primary"
-                  @click="open"
-              >
-                  {{ isOpen ? "收起" : "展开"}}<i style="margin-left:10px" :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
-              </el-button> -->
           </el-form-item>
-        </el-col>
-      </el-row>
+        </div>
+        <div class="headerTool--handle-btns-right">
+          <el-form-item>
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="刷新"
+              placement="top"
+            >
+              <el-button
+                size="small"
+                icon="el-icon-refresh"
+                circle
+                @click="queryPageWithGroupId"
+              ></el-button>
+            </el-tooltip>
+          </el-form-item>
+        </div>
+      </div>
     </el-form>
     <el-table
       v-loading="dataListLoading"
       :data="groupMens"
-      border
       fit
       @selection-change="dataListSelectionChangeHandle"
       style="width: 100%"
@@ -101,6 +139,7 @@
           <el-button
             type="text"
             size="small"
+            icon="el-icon-delete"
             @click="handleDelete(scope.$index, scope.row)"
             >移除</el-button
           >
@@ -108,6 +147,7 @@
       </el-table-column>
     </el-table>
     <el-pagination
+      background
       :current-groupMensPage="page"
       :groupMensPage-sizes="[10, 20, 50, 100]"
       :groupMensPage-size="limit"
@@ -127,34 +167,43 @@
         :inline="true"
         :model="userForm"
         size="small"
+        label-width="100px"
+        label-position="right"
         @keyup.enter.native="queryUserList()"
       >
         <el-form-item label="用户昵称">
-          <el-input v-model="userForm.name" placeholder="请输入"></el-input>
+          <el-input
+            style="width: 200px"
+            v-model="userForm.name"
+            placeholder="请输入"
+          ></el-input>
         </el-form-item>
         <el-form-item label="手机号">
-          <el-input v-model="userForm.tel" placeholder="请输入"></el-input>
+          <el-input
+            style="width: 200px"
+            v-model="userForm.tel"
+            placeholder="请输入"
+          ></el-input>
         </el-form-item>
 
         <el-form-item>
-          <el-button @click="queryUserList">查询</el-button>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            size="mini"
+            @click="queryUserList"
+            >查询</el-button
+          >
         </el-form-item>
         <el-form-item>
-          <el-button @click="reset">重置</el-button>
-        </el-form-item>
-        <!-- <el-form-item>
-          <el-button
-            v-if="dataListSelectionUsers.length !== 0"
-            :type="showBtn ? 'primary' : 'info'"
-            @click="deleteUserSelect()"
-            >批量删除</el-button
+          <el-button icon="el-icon-refresh" size="mini" @click="reset"
+            >重置</el-button
           >
-        </el-form-item> -->
+        </el-form-item>
       </el-form>
       <el-table
         v-loading="dataUserListLoading"
         :data="dataUserList"
-        border
         fit
         @selection-change="userListSelectionChangeHandle"
         style="width: 100%"
@@ -192,6 +241,7 @@
             <el-button
               type="text"
               size="small"
+              icon="el-icon-circle-plus-outline"
               @click="saveSelectUser(scope.$index, scope.row)"
               >添加</el-button
             >
@@ -199,6 +249,7 @@
         </el-table-column>
       </el-table>
       <el-pagination
+        background
         :current-page="userListPage"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="limit"
@@ -209,11 +260,15 @@
       >
       </el-pagination>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogUserFormVisible = false"
+        <el-button
+          size="mini"
+          icon="el-icon-close"
+          @click="dialogUserFormVisible = false"
           >取 消</el-button
         >
         <el-button
-          size="small"
+          size="mini"
+          icon="el-icon-check"
           :type="showBtn ? 'primary' : 'info'"
           @click="saveUser"
           >{{
@@ -390,7 +445,7 @@ export default {
       this.dataForm = {
         name: "",
         tel: "",
-      }
+      };
       this.$refs.dataForm.resetFields();
       this.queryPageWithGroupId();
     },

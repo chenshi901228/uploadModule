@@ -9,122 +9,161 @@
         :inline="true"
         :model="dataForm"
         ref="dataForm"
+        size="small"
         label-width="100px"
+        label-position="right"
         @keyup.enter.native="getDataList"
       >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="回放主题" prop="liveTheme">
-              <el-input
-                size="small"
-                v-model.trim="dataForm.liveTheme"
-                placeholder="请输入选择"
-                clearable
+        <el-form-item
+          label="回放主题"
+          prop="liveTheme"
+          v-if="isOpen || formItemCount >= 1"
+        >
+          <el-input
+            size="small"
+            style="width: 200px"
+            v-model.trim="dataForm.liveTheme"
+            placeholder="请输入选择"
+            clearable
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          label="主播"
+          prop="anchorUser"
+          v-if="isOpen || formItemCount >= 2"
+        >
+          <el-input
+            size="small"
+            style="width: 200px"
+            v-model.trim="dataForm.anchorUser"
+            placeholder="请输入姓名或手机号码"
+            clearable
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          label="视频显示"
+          prop="showMode"
+          v-if="isOpen || formItemCount >= 3"
+        >
+          <el-select
+            clearable
+            size="small"
+            style="width: 200px"
+            v-model="dataForm.showMode"
+            placeholder="请选择"
+          >
+            <el-option label="横屏" :value="1"></el-option>
+            <el-option label="竖屏" :value="0"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="投放人群"
+          prop="dynamicGroupName"
+          v-if="isOpen || formItemCount >= 4"
+        >
+          <el-select
+            size="small"
+            style="width: 200px"
+            v-model="dataForm.dynamicGroupName"
+            placeholder="请选择投放人群"
+            :loading="getDynamicGroupLoading"
+            @visible-change="getDynamicGroup"
+            clearable
+          >
+            <el-option
+              v-for="item in dynamicGroupOptions"
+              :key="item.id"
+              :label="item.name"
+              :value="item.name"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="回放状态"
+          prop="liveState"
+          v-if="isOpen || formItemCount >= 5"
+        >
+          <el-select
+            clearable
+            size="small"
+            style="width: 200px"
+            v-model="dataForm.liveState"
+            placeholder="请选择"
+          >
+            <el-option label="可回放" :value="1"></el-option>
+            <el-option label="已删除" :value="0"></el-option>
+            <el-option label="生成中" :value="2"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="显示状态"
+          prop="showState"
+          v-if="isOpen || formItemCount >= 6"
+        >
+          <el-select
+            clearable
+            size="small"
+            style="width: 200px"
+            v-model="dataForm.showState"
+            placeholder="请选择"
+          >
+            <el-option label="显示" :value="1"></el-option>
+            <el-option label="隐藏" :value="0"></el-option>
+          </el-select>
+        </el-form-item>
+
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button
+              type="primary"
+              icon="el-icon-search"
+              size="mini"
+              @click="getDataList"
+              >{{ $t("query") }}</el-button
+            >
+            <el-button
+              icon="el-icon-refresh"
+              size="mini"
+              @click="resetDataForm()"
+              >{{ $t("reset") }}</el-button
+            >
+            <el-button size="mini" plain @click="open">
+              <i
+                :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
+              ></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button>
+          </el-form-item>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left"></div>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="刷新"
+                placement="top"
               >
-              </el-input>
+                <el-button
+                  size="small"
+                  icon="el-icon-refresh"
+                  circle
+                  @click="getDataList"
+                ></el-button>
+              </el-tooltip>
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="主播" prop="anchorUser">
-              <el-input
-                size="small"
-                v-model.trim="dataForm.anchorUser"
-                placeholder="请输入姓名或手机号码"
-                clearable
-              >
-              </el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="视频显示" prop="showMode">
-              <el-select
-                clearable
-                size="small"
-                v-model="dataForm.showMode"
-                placeholder="请选择"
-              >
-                <el-option label="横屏" :value="1"></el-option>
-                <el-option label="竖屏" :value="0"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <div v-if="isOpen">
-            <el-row>
-              <el-col :span="8">
-                <el-form-item label="投放人群" prop="dynamicGroupName">
-                  <el-select
-                    size="small"
-                    v-model="dataForm.dynamicGroupName"
-                    placeholder="请选择投放人群"
-                    :loading="getDynamicGroupLoading"
-                    @visible-change="getDynamicGroup"
-                    clearable
-                  >
-                    <el-option
-                      v-for="item in dynamicGroupOptions"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="回放状态" prop="liveState">
-                  <el-select
-                    clearable
-                    size="small"
-                    v-model="dataForm.liveState"
-                    placeholder="请选择"
-                  >
-                    <el-option label="可回放" :value="1"></el-option>
-                    <el-option label="已删除" :value="0"></el-option>
-                    <el-option label="生成中" :value="2"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="显示状态" prop="showState">
-                  <el-select
-                    clearable
-                    size="small"
-                    v-model="dataForm.showState"
-                    placeholder="请选择"
-                  >
-                    <el-option label="显示" :value="1"></el-option>
-                    <el-option label="隐藏" :value="0"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
           </div>
-          <el-col :span="24">
-            <el-form-item style="float: right; padding-right: 10px">
-              <el-button size="small" type="info" @click="exportHandle">{{
-                $t("export")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="getDataList">{{
-                $t("query")
-              }}</el-button>
-              <el-button size="small" @click="resetDataForm()">{{
-                $t("reset")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="open">
-                {{ isOpen ? "收起" : "展开"
-                }}<i
-                  style="margin-left: 10px"
-                  :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
-                ></i>
-              </el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
+        </div>
       </el-form>
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        border
         @selection-change="dataListSelectionChangeHandle"
         :height="siteContentViewHeight"
         style="width: 100%"
@@ -208,19 +247,22 @@
         >
           <template slot-scope="{ row }">
             <el-button
+              icon="el-icon-download"
               type="text"
               v-if="row.liveState == 1"
-              @click="actionHandle('1',row)"
+              @click="actionHandle('1', row)"
               >下载视频</el-button
             >
             <el-button
+              icon="el-icon-chat-dot-square"
               style="margin-left: 10px"
               type="text"
               v-if="row.liveState == 1"
-              @click="actionHandle('2',row)"
+              @click="actionHandle('2', row)"
               >评论详情</el-button
             >
             <el-button
+              icon="el-icon-sort"
               style="margin-left: 10px"
               type="text"
               v-if="row.liveState == 1"
@@ -228,6 +270,7 @@
               >{{ row.showState ? "隐藏" : "显示" }}</el-button
             >
             <el-button
+              icon="el-icon-shopping-cart-2"
               style="margin-left: 10px"
               type="text"
               v-if="row.liveState != 0"
@@ -238,6 +281,7 @@
         </el-table-column>
       </el-table>
       <el-pagination
+        background
         :current-page="page"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="limit"
@@ -374,9 +418,12 @@ export default {
       });
     },
     // 添加商品
-    addProduct({id, anchorUserId}) {
-      this.$router.push({ name: "anchorManagement-productAdd", query: { playbackId: id, anchorId: anchorUserId} })
-    }
+    addProduct({ id, anchorUserId }) {
+      this.$router.push({
+        name: "anchorManagement-productAdd",
+        query: { playbackId: id, anchorId: anchorUserId },
+      });
+    },
   },
 };
 </script>

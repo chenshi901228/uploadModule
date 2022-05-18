@@ -8,40 +8,104 @@
         :inline="true"
         :model="dataForm"
         ref="dataForm"
+        size="small"
         label-width="100px"
+        label-position="right"
         @keyup.enter.native="getDataList()"
       >
-        <el-form-item label="封面图名称" prop="coverName">
+        <el-form-item
+          label="封面图名称"
+          prop="coverName"
+          v-if="isOpen || formItemCount >= 1"
+        >
           <el-input
             size="small"
             :clearable="true"
+            style="width: 200px"
             v-model="dataForm.coverName"
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item style="float: right; padding-right: 10px">
-          <el-button
-            size="small"
-            v-if="dataListSelections.length !== 0"
-            type="danger"
-            @click="deleteSelect()"
-            >批量删除</el-button
-          >
-          <el-button size="small" type="primary" @click="getDataList()">{{
-            $t("query")
-          }}</el-button>
-          <el-button size="small" @click="resetDataForm()">{{
-            $t("reset")
-          }}</el-button>
-        </el-form-item>
-        <el-form-item style="display: block; padding-left: 20px">
-          <el-button size="small" type="primary" @click="upImg">上传</el-button>
-        </el-form-item>
+
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button
+              type="primary"
+              icon="el-icon-search"
+              size="mini"
+              @click="getDataList"
+              >{{ $t("query") }}</el-button
+            >
+            <el-button
+              icon="el-icon-refresh"
+              size="mini"
+              @click="resetDataForm()"
+              >{{ $t("reset") }}</el-button
+            >
+            <el-button size="mini" plain @click="open" v-if="formItemCount > 3">
+              <i
+                :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
+              ></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button>
+          </el-form-item>
+        </div>
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
+              <el-button
+                plain
+                size="mini"
+                icon="el-icon-delete"
+                v-if="dataListSelections.length !== 0"
+                type="danger"
+                @click="deleteSelect()"
+                >批量删除</el-button
+              >
+            </el-form-item>
+            <el-form-item>
+              <el-button
+                plain
+                size="mini"
+                icon="el-icon-delete"
+                v-if="dataListSelections.length !== 0"
+                type="danger"
+                @click="deleteSelect()"
+                >批量删除</el-button
+              >
+              <el-button
+                size="mini"
+                icon="el-icon-upload2"
+                plain
+                type="success"
+                @click="upImg"
+                >上传</el-button
+              >
+            </el-form-item>
+          </div>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="刷新"
+                placement="top"
+              >
+                <el-button
+                  size="small"
+                  icon="el-icon-refresh"
+                  circle
+                  @click="getDataList"
+                ></el-button>
+              </el-tooltip>
+            </el-form-item>
+          </div>
+        </div>
       </el-form>
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        border
         :height="siteContentViewHeight"
         style="width: 100%"
         ref="table"
@@ -83,6 +147,7 @@
         <el-table-column label="操作" header-align="center" align="center">
           <template slot-scope="scope">
             <el-button
+              icon="el-icon-sort"
               v-if="scope.row.appointmentState !== 0"
               type="text"
               size="small"
@@ -93,6 +158,7 @@
               v-if="scope.row.appointmentState !== 0"
               type="text"
               size="small"
+              icon="el-icon-edit"
               @click="handle(scope.$index, scope.row)"
               >编辑</el-button
             >
@@ -100,6 +166,7 @@
               v-if="scope.row.appointmentState !== 0"
               type="text"
               size="small"
+              icon="el-icon-view"
               @click="showImg(scope.$index, scope.row)"
               >查看</el-button
             >
@@ -114,6 +181,7 @@
         </el-table-column>
       </el-table>
       <el-pagination
+        background
         :current-page="page"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="limit"
