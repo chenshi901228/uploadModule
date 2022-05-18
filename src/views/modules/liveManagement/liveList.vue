@@ -13,7 +13,7 @@
         label-width="100px"
         label-position="right"
         @keyup.enter.native="getDataList">
-          <el-form-item label="是否录制" prop="transcribeFlg">
+          <el-form-item v-if="isOpen || formItemCount >= 1" label="是否录制" prop="transcribeFlg">
             <el-select
               clearable
               v-model="dataForm.transcribeFlg"
@@ -24,7 +24,7 @@
               <el-option label="否" :value="0"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="直播间ID" prop="livingRoomId">
+          <el-form-item v-if="isOpen || formItemCount >= 2" label="直播间ID" prop="livingRoomId">
             <el-input
               v-model.trim="dataForm.livingRoomId"
               placeholder="请输入直播间ID"
@@ -33,7 +33,7 @@
             >
             </el-input>
           </el-form-item>
-          <el-form-item label="直播状态" prop="liveState">
+          <el-form-item v-if="isOpen || formItemCount >= 3" label="直播状态" prop="liveState">
             <el-select
               clearable
               v-model="dataForm.liveState"
@@ -45,7 +45,7 @@
               <el-option label="已禁播" :value="2"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-if="isOpen" label="显示状态" prop="showState">
+          <el-form-item v-if="isOpen || formItemCount >= 4" label="显示状态" prop="showState">
             <el-select
               clearable
               v-model="dataForm.showState"
@@ -56,7 +56,7 @@
               <el-option label="隐藏" :value="0"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-if="isOpen" label="直播主题" prop="liveTheme">
+          <el-form-item v-if="isOpen || formItemCount >= 5" label="直播主题" prop="liveTheme">
             <el-input
 
               v-model.trim="dataForm.liveTheme"
@@ -66,7 +66,7 @@
             >
             </el-input>
           </el-form-item>
-          <el-form-item v-if="isOpen" label="主播" prop="anchorUser">
+          <el-form-item v-if="isOpen || formItemCount >= 6" label="主播" prop="anchorUser">
             <el-input
 
               v-model.trim="dataForm.anchorUser"
@@ -76,7 +76,7 @@
             >
             </el-input>
           </el-form-item>
-          <el-form-item v-if="isOpen" label="结束时间" prop="endDate">
+          <el-form-item v-if="isOpen || formItemCount >= 7" label="结束时间" prop="endDate">
             <el-date-picker
 
               v-model="dataForm.endDate"
@@ -88,7 +88,7 @@
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item v-if="isOpen" label="投放人群" prop="dynamicGroupName">
+          <el-form-item v-if="isOpen || formItemCount >= 8" label="投放人群" prop="dynamicGroupName">
             <el-select
 
               v-model="dataForm.dynamicGroupName"

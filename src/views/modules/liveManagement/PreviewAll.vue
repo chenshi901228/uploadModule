@@ -13,7 +13,7 @@
         size="small"
         @keyup.enter.native="getDataList"
       >
-        <el-form-item label="直播主题" prop="liveTheme">
+        <el-form-item v-if="isOpen || formItemCount >= 1" label="直播主题" prop="liveTheme">
           <el-input
             style="width: 200px"
             :clearable="true"
@@ -21,7 +21,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item label="主播" prop="anchorUser">
+        <el-form-item v-if="isOpen || formItemCount >= 2" label="主播" prop="anchorUser">
           <el-input
             style="width: 200px"
             :clearable="true"
@@ -29,7 +29,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item label="预计开播时间" prop="startDate">
+        <el-form-item v-if="isOpen || formItemCount >= 3" label="预计开播时间" prop="startDate">
           <el-date-picker
             style="width: 200px"
             :clearable="true"
@@ -41,7 +41,7 @@
           >
           </el-date-picker>
         </el-form-item>
-        <el-form-item v-if="isOpen" label="实际开播时间" prop="factStartDate">
+        <el-form-item v-if="isOpen || formItemCount >= 5" label="实际开播时间" prop="factStartDate">
           <el-date-picker
             style="width: 200px"
             :clearable="true"
@@ -53,7 +53,7 @@
           >
           </el-date-picker>
         </el-form-item>
-        <el-form-item v-if="isOpen" label="投放人群" prop="dynamicGroupName">
+        <el-form-item v-if="isOpen || formItemCount >= 6" label="投放人群" prop="dynamicGroupName">
             <el-select
               style="width: 200px"
               v-model="dataForm.dynamicGroupName"
@@ -70,7 +70,7 @@
               </el-option>
             </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen" label="直播间ID" prop="livingRoomId">
+        <el-form-item v-if="isOpen || formItemCount >= 7" label="直播间ID" prop="livingRoomId">
           <el-input
             style="width: 200px"
             :clearable="true"
@@ -78,7 +78,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen" label="预约状态" prop="appointmentState">
+        <el-form-item v-if="isOpen || formItemCount >= 8" label="预约状态" prop="appointmentState">
           <el-select
             style="width: 200px"
             :clearable="true"
@@ -89,7 +89,7 @@
             <el-option label="预约中" value="1"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen" label="直播状态" prop="liveState">
+        <el-form-item v-if="isOpen || formItemCount >= 9" label="直播状态" prop="liveState">
           <el-select
             style="width: 200px"
             :clearable="true"
@@ -103,7 +103,7 @@
             <el-option label="已删除" value="4"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen" label="显示状态" prop="showState">
+        <el-form-item v-if="isOpen || formItemCount >= 10" label="显示状态" prop="showState">
           <el-select
             style="width: 200px"
             :clearable="true"
