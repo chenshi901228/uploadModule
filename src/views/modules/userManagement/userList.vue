@@ -6,100 +6,164 @@
         :inline="true"
         :model="dataForm"
         ref="dataForm"
+        size="small"
         label-width="100px"
+        label-position="right"
         @keyup.enter.native="getDataList()"
       >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="用户昵称" prop="nickName">
-              <el-input
-                size="small"
-                v-model="dataForm.nickName"
-                clearable
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="手机号码" prop="phone">
-              <el-input
-                size="small"
-                v-model="dataForm.phone"
-                clearable
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="是否认证" prop="legalizeFlg">
-              <el-select size="small" v-model="dataForm.legalizeFlg" clearable>
-                <el-option :value="0" label="未认证"></el-option>
-                <el-option :value="1" label="认证"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <div v-if="isOpen">
-            <el-row>
-              <el-col :span="8">
-                <el-form-item label="是否认证导师" prop="tutorFlg">
-                  <el-select size="small" v-model="dataForm.tutorFlg" clearable>
-                    <el-option :value="0" label="未认证"></el-option>
-                    <el-option :value="1" label="认证"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="邀请人" prop="inviteUserName">
-                  <el-input
-                    size="small"
-                    v-model="dataForm.inviteUserName"
-                    clearable
-                  ></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="邀请人号码" prop="invitePhone">
-                  <el-input
-                    size="small"
-                    v-model="dataForm.invitePhone"
-                    clearable
-                  ></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="状态" prop="status">
-                  <el-select size="small" v-model="dataForm.status" clearable>
-                    <el-option :value="1" label="正常"></el-option>
-                    <el-option :value="0" label="停用"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
-          <el-col :span="24">
-            <el-form-item style="float: right; padding-right: 10px">
-              <el-button size="small" type="danger" @click="forbidden()"
+        <el-form-item
+          label="用户昵称"
+          prop="nickName"
+          v-if="isOpen || formItemCount >= 1"
+        >
+          <el-input
+            style="width: 200px"
+            size="small"
+            v-model="dataForm.nickName"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="手机号码"
+          prop="phone"
+          v-if="isOpen || formItemCount >= 2"
+        >
+          <el-input
+            style="width: 200px"
+            size="small"
+            v-model="dataForm.phone"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="是否认证"
+          prop="legalizeFlg"
+          v-if="isOpen || formItemCount >= 3"
+        >
+          <el-select
+            style="width: 200px"
+            size="small"
+            v-model="dataForm.legalizeFlg"
+            clearable
+          >
+            <el-option :value="0" label="未认证"></el-option>
+            <el-option :value="1" label="认证"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="是否认证导师"
+          prop="tutorFlg"
+          v-if="isOpen || formItemCount >= 4"
+        >
+          <el-select
+            style="width: 200px"
+            size="small"
+            v-model="dataForm.tutorFlg"
+            clearable
+          >
+            <el-option :value="0" label="未认证"></el-option>
+            <el-option :value="1" label="认证"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="邀请人"
+          prop="inviteUserName"
+          v-if="isOpen || formItemCount >= 5"
+        >
+          <el-input
+            style="width: 200px"
+            size="small"
+            v-model="dataForm.inviteUserName"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="邀请人号码"
+          prop="invitePhone"
+          v-if="isOpen || formItemCount >= 6"
+        >
+          <el-input
+            style="width: 200px"
+            size="small"
+            v-model="dataForm.invitePhone"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="状态"
+          prop="status"
+          v-if="isOpen || formItemCount >= 7"
+        >
+          <el-select
+            style="width: 200px"
+            size="small"
+            v-model="dataForm.status"
+            clearable
+          >
+            <el-option :value="1" label="正常"></el-option>
+            <el-option :value="0" label="停用"></el-option>
+          </el-select>
+        </el-form-item>
+
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button
+              type="primary"
+              icon="el-icon-search"
+              size="mini"
+              @click="getDataList"
+              >{{ $t("query") }}</el-button
+            >
+            <el-button
+              icon="el-icon-refresh"
+              size="mini"
+              @click="resetDataForm()"
+              >{{ $t("reset") }}</el-button
+            >
+            <el-button size="mini" plain @click="open">
+              <i
+                :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
+              ></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button>
+          </el-form-item>
+        </div>
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
+              <el-button
+                size="mini"
+                plain
+                icon="el-icon-close"
+                type="danger"
+                @click="forbidden()"
                 >禁用</el-button
               >
-              <el-button size="small" type="primary" @click="getDataList()">{{
-                $t("query")
-              }}</el-button>
-              <el-button size="small" @click="resetDataForm()">{{
-                $t("reset")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="open">
-                {{ isOpen ? "收起" : "展开"
-                }}<i
-                  style="margin-left: 10px"
-                  :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
-                ></i>
-              </el-button>
             </el-form-item>
-          </el-col>
-        </el-row>
+          </div>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="刷新"
+                placement="top"
+              >
+                <el-button
+                  size="small"
+                  icon="el-icon-refresh"
+                  circle
+                  @click="getDataList"
+                ></el-button>
+              </el-tooltip>
+            </el-form-item>
+          </div>
+        </div>
       </el-form>
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        border
         @selection-change="dataListSelectionChangeHandle"
         :height="siteContentViewHeight"
         style="width: 100%"
@@ -120,7 +184,10 @@
         >
           <template slot-scope="scope">
             <img
-              :src="scope.row.avatarUrl || require('@/assets/img/default_avatar.png')"
+              :src="
+                scope.row.avatarUrl ||
+                require('@/assets/img/default_avatar.png')
+              "
               alt=""
               style="width: 60px; height: 60px"
             />
@@ -201,13 +268,18 @@
           fixed="right"
           header-align="center"
           align="center"
-          width="100"
+          width="120"
         >
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="openDetail(scope.row)"
+            <el-button
+              icon="el-icon-c-scale-to-original"
+              type="text"
+              size="small"
+              @click="openDetail(scope.row)"
               >详情</el-button
             >
             <el-button
+              icon="el-icon-close"
               type="text"
               size="small"
               v-if="!scope.row.delFlg"
@@ -218,6 +290,7 @@
         </el-table-column>
       </el-table>
       <el-pagination
+        background
         :current-page="page"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="limit"
@@ -250,8 +323,8 @@ export default {
         phone: "",
         legalizeFlg: null,
         tutorFlg: null,
-        inviteUserName:"",
-        invitePhone:"",
+        inviteUserName: "",
+        invitePhone: "",
         status: "",
       },
       dataList: [{ createDate: 1 }],
@@ -309,11 +382,15 @@ export default {
         }
       } else {
         //单个操作
-        this.$confirm(`确认[${row.status == 0 ? "解除" : "禁用"}]${row.nickName}?`, "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        })
+        this.$confirm(
+          `确认[${row.status == 0 ? "解除" : "禁用"}]${row.nickName}?`,
+          "提示",
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+          }
+        )
           .then(() => {
             this.forbiddenHandle(row.status == 0 ? 1 : 0, [row.id]);
           })

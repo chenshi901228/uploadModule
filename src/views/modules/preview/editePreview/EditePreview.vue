@@ -11,7 +11,11 @@
         class="demo-ruleForm"
       >
         <el-form-item label="直播主题" prop="liveTheme" required>
-          <el-input v-model="ruleForm.liveTheme"></el-input>
+          <el-input
+            v-model="ruleForm.liveTheme"
+            maxlength="60"
+            show-word-limit
+          ></el-input>
         </el-form-item>
         <el-form-item label="预计开播时间" prop="startDate">
           <el-date-picker
@@ -286,7 +290,7 @@ export default {
     },
     "ruleForm.liveIntroduce"(nv, ov) {
       if (nv.length > 2007) {
-        this.$message.warning("直播介绍字数不得超过300字！");
+        this.$message.warning("直播介绍字数不得超过2000字！");
       }
     },
   },
@@ -488,6 +492,7 @@ export default {
   }
   /deep/.el-input {
     width: 300px;
+    padding-right: 50px;
   }
   /deep/.img-item {
     .el-form-item__content {

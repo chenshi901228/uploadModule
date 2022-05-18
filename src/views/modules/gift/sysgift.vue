@@ -7,13 +7,21 @@
         :model="dataForm"
         ref="dataForm"
         size="small"
+        label-width="100px"
+        label-position="right"
         @keyup.enter.native="getDataList"
       >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="礼物名称" prop="name">
-              <el-input v-model.trim="dataForm.name" clearable placeholder="礼物名称"></el-input>
-              <!-- <el-select
+        <el-form-item
+          label="礼物名称"
+          prop="name"
+          v-if="isOpen || formItemCount >= 1"
+        >
+          <el-input
+            v-model.trim="dataForm.name"
+            clearable
+            placeholder="礼物名称"
+          ></el-input>
+          <!-- <el-select
                 style="width:100%"
                 v-model="dataForm.name"
                 filterable
@@ -30,58 +38,99 @@
                     :value="item.value">
                   </el-option>
               </el-select> -->
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="是否免费" prop="isFree">
-              <el-select
-                clearable
-                v-model="dataForm.isFree"
-                placeholder="请选择"
-              >
-                <el-option label="是" :value="1"></el-option>
-                <el-option label="否" :value="0"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="上架状态" prop="status">
-              <el-select
-                clearable
-                v-model="dataForm.status"
-                placeholder="请选择"
-              >
-                <el-option label="上架" :value="1"></el-option>
-                <el-option label="下架" :value="0"></el-option>
-                <el-option label="已删除" :value="-2"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item style="float: right; padding-right: 10px">
+        </el-form-item>
+        <el-form-item
+          label="是否免费"
+          prop="isFree"
+          v-if="isOpen || formItemCount >= 2"
+        >
+          <el-select clearable v-model="dataForm.isFree" placeholder="请选择">
+            <el-option label="是" :value="1"></el-option>
+            <el-option label="否" :value="0"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="上架状态"
+          prop="status"
+          v-if="isOpen || formItemCount >= 3"
+        >
+          <el-select clearable v-model="dataForm.status" placeholder="请选择">
+            <el-option label="上架" :value="1"></el-option>
+            <el-option label="下架" :value="0"></el-option>
+            <el-option label="已删除" :value="-2"></el-option>
+          </el-select>
+        </el-form-item>
+
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button
+              type="primary"
+              icon="el-icon-search"
+              size="mini"
+              @click="getDataList"
+              >{{ $t("query") }}</el-button
+            >
+            <el-button
+              icon="el-icon-refresh"
+              size="mini"
+              @click="resetDataForm()"
+              >{{ $t("reset") }}</el-button
+            >
+            <el-button size="mini" plain @click="open" v-if="formItemCount > 3">
+              <i
+                :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
+              ></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button>
+          </el-form-item>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
               <el-button
-                type="primary"
-                icon="el-icon-plus"
+                type="success"
+                plain
+                icon="el-icon-circle-plus-outline"
+                size="mini"
                 @click="addOrUpdateHandle()"
                 >{{ $t("add") }}</el-button
               >
-              <el-button size="small" type="info" @click="exportHandle()">{{
-                $t("export")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="getDataList">{{
-                $t("query")
-              }}</el-button>
-              <el-button size="small" @click="resetDataForm()">{{
-                $t("reset")
-              }}</el-button>
             </el-form-item>
-          </el-col>
-        </el-row>
+            <el-form-item>
+              <el-button
+                type="warning"
+                plain
+                icon="el-icon-download"
+                size="mini"
+                @click="exportHandle"
+                >{{ $t("export") }}</el-button
+              >
+            </el-form-item>
+          </div>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="刷新"
+                placement="top"
+              >
+                <el-button
+                  size="small"
+                  icon="el-icon-refresh"
+                  circle
+                  @click="getDataList"
+                ></el-button>
+              </el-tooltip>
+            </el-form-item>
+          </div>
+        </div>
       </el-form>
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        border
         @selection-change="dataListSelectionChangeHandle"
         :height="siteContentViewHeight"
         style="width: 100%"
@@ -203,11 +252,13 @@
             <el-button
               v-if="scope.row.delFlg === 0 && scope.row.status !== 1"
               type="text"
+              icon="el-icon-refresh-right"
               size="small"
               @click="addOrUpdateHandle(scope.row.id)"
               >{{ $t("update") }}</el-button
             >
             <el-button
+              icon="el-icon-top"
               v-if="scope.row.delFlg === 0 && scope.row.status !== 1"
               type="text"
               size="small"
@@ -215,6 +266,7 @@
               >上架</el-button
             >
             <el-button
+              icon="el-icon-bottom"
               v-if="scope.row.delFlg === 0 && scope.row.status === 1"
               type="text"
               size="small"
@@ -222,6 +274,7 @@
               >下架</el-button
             >
             <el-button
+              icon="el-icon-delete"
               v-if="scope.row.delFlg === 0 && scope.row.status !== 1"
               type="text"
               size="small"
@@ -232,6 +285,7 @@
         </el-table-column>
       </el-table>
       <el-pagination
+        background
         :current-page="page"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="limit"
@@ -273,7 +327,7 @@ export default {
         status: null,
       },
       loading: false, //礼物输入下拉选择loading
-      giftOptions: [] //礼物下拉选择内容
+      giftOptions: [], //礼物下拉选择内容
     };
   },
   watch: {},
@@ -283,34 +337,37 @@ export default {
   methods: {
     // 输入选择礼物
     getGiftInfo(s) {
-      if(s != ""){
-        this.loading = true
-        this.$http.get("/sys/anchor/info/getSysAnchorInfos/" + s).then(({ data: res }) => {
-          this.loading = false
-          if(res.code == 0) {
-            let arr = []
-            res.data.map(item => {
-              arr.push({
-                value: JSON.stringify({
+      if (s != "") {
+        this.loading = true;
+        this.$http
+          .get("/sys/anchor/info/getSysAnchorInfos/" + s)
+          .then(({ data: res }) => {
+            this.loading = false;
+            if (res.code == 0) {
+              let arr = [];
+              res.data.map((item) => {
+                arr.push({
+                  value: JSON.stringify({
                     anchorUser: item.username,
                     anchorTel: item.phone,
-                    anchorUserId: item.weixinUserId
-                }),
-                label: `主播：${item.username}  手机号：${item.phone}`
-              })
-            })
-            this.giftOptions = arr
-          }else {
-            this.giftOptions = []
-            this.$message.error(res.msg)
-          }
-        }).catch(err => {
-          this.loading = false
-          this.giftOptions = []
-          throw err
-        })
-      }else {
-        this.giftOptions = []
+                    anchorUserId: item.weixinUserId,
+                  }),
+                  label: `主播：${item.username}  手机号：${item.phone}`,
+                });
+              });
+              this.giftOptions = arr;
+            } else {
+              this.giftOptions = [];
+              this.$message.error(res.msg);
+            }
+          })
+          .catch((err) => {
+            this.loading = false;
+            this.giftOptions = [];
+            throw err;
+          });
+      } else {
+        this.giftOptions = [];
       }
     },
     // 修改状态
