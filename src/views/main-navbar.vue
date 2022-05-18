@@ -1,19 +1,20 @@
 <template>
   <nav class="aui-navbar" :class="`aui-navbar--${$store.state.navbarLayoutType}`">
-    <div class="aui-navbar__header">
+    <!-- <div class="aui-navbar__header">
       <h1 class="aui-navbar__brand" @click="$router.push({ name: 'home' })">
         <a class="aui-navbar__brand-lg" href="javascript:;">{{ $t('brand.lg') }}</a>
         <a class="aui-navbar__brand-mini" href="javascript:;">{{ $t('brand.mini') }}</a>
       </h1>
-    </div>
+    </div> -->
     <div class="aui-navbar__body">
       <el-menu class="aui-navbar__menu mr-auto" mode="horizontal">
         <el-menu-item index="1" @click="$store.state.sidebarFold = !$store.state.sidebarFold">
           <svg class="icon-svg aui-navbar__icon-menu aui-navbar__icon-menu--switch" aria-hidden="true"><use xlink:href="#icon-outdent"></use></svg>
         </el-menu-item>
-        <el-menu-item index="2" @click="refresh()">
-          <svg class="icon-svg aui-navbar__icon-menu aui-navbar__icon-menu--refresh" aria-hidden="true"><use xlink:href="#icon-sync"></use></svg>
+        <el-menu-item index="2">
+          <breadcrumb id="breadcrumb-container" class="breadcrumb-container"/>        
         </el-menu-item>
+        <!-- <breadcrumb id="breadcrumb-container" class="breadcrumb-container"/> -->
       </el-menu>
       <el-menu class="aui-navbar__menu" mode="horizontal">
         <el-menu-item index="1">
@@ -24,11 +25,11 @@
             </el-dropdown-menu>
           </el-dropdown>
         </el-menu-item>
-        <el-menu-item index="2">
+        <!-- <el-menu-item index="2">
           <a href="javascript:void(0);" target="_blank">
             <svg class="icon-svg aui-navbar__icon-menu" aria-hidden="true"><use xlink:href="#icon-earth"></use></svg>
           </a>
-        </el-menu-item>
+        </el-menu-item> -->
         <el-menu-item index="4" v-if="$hasPermission('sys:notice:all')">
           <el-badge :is-dot="messageTip">
             <a href="#"  @click="myNoticeRouter()"><i class="el-icon-bell"></i></a>
@@ -38,7 +39,7 @@
           <svg class="icon-svg aui-navbar__icon-menu" aria-hidden="true"><use xlink:href="#icon-fullscreen"></use></svg>
         </el-menu-item>
         <el-menu-item index="4" class="aui-navbar__avatar">
-          <el-dropdown placement="bottom" :show-timeout="0">
+          <el-dropdown placement="bottom" :show-timeout="0" trigger="click">
             <span class="el-dropdown-link">
               <img :src="$store.state.user.headUrl || require('@/assets/img/avatar.png')">
               <span>{{ $store.state.user.realName }}</span>
@@ -62,6 +63,7 @@ import { messages } from '@/i18n'
 import screenfull from 'screenfull'
 import UpdatePassword from './main-navbar-update-password'
 import { clearLoginInfo } from '@/utils'
+import Breadcrumb from '@/components/Breadcrumb'
 export default {
   inject: ['refresh'],
   data () {
@@ -72,7 +74,8 @@ export default {
     }
   },
   components: {
-    UpdatePassword
+    UpdatePassword,
+    Breadcrumb
   },
   created () {
     // 未读通知数

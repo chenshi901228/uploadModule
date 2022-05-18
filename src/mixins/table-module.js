@@ -27,7 +27,7 @@ export default {
             },
         },
         siteContentViewHeight() {
-            var height = this.documentClientHeight - this.otherViewHeight - ( 50 + 40 + 30 + 40 + 47 );
+            var height = this.documentClientHeight - this.otherViewHeight - ( 50 + 36 + 40 + 47 + 4 );
             return height;
         },
     },

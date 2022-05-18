@@ -148,7 +148,8 @@ function fnAddDynamicMenuRoutes (menuList = [], routes = []) {
       meta: {
         ...window.SITE_CONFIG['contentTabDefault'],
         menuId: menuList[i].id,
-        title: menuList[i].name
+        title: menuList[i].name,
+        parentName: menuList[i].parentName
       }
     }
     // eslint-disable-next-line

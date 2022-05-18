@@ -5,7 +5,7 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :append-to-body="true">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
+    <el-form size="smalk" :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
       <el-form-item :label="$t('updatePassword.username')">
         <span>{{ $store.state.user.name }}</span>
       </el-form-item>
@@ -20,8 +20,8 @@
       </el-form-item>
     </el-form>
     <template slot="footer">
-      <el-button @click="visible = false">{{ $t('cancel') }}</el-button>
-      <el-button type="primary" @click="dataFormSubmitHandle()">{{ $t('confirm') }}</el-button>
+      <el-button size="small" @click="visible = false">{{ $t('cancel') }}</el-button>
+      <el-button size="small" type="primary" @click="dataFormSubmitHandle()">{{ $t('confirm') }}</el-button>
     </template>
   </el-dialog>
 </template>

@@ -6,7 +6,7 @@
       <div class="aui-content__wrapper" :style="{ 'min-height': (documentClientHeight - 50) + 'px' }">
         <main-content v-if="!$store.state.contentIsNeedRefresh"/>
       </div>
-      <main-theme-tools />
+      <!-- <main-theme-tools /> -->
     </template>
   </div>
 </template>
