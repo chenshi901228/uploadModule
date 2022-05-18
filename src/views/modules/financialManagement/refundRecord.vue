@@ -7,117 +7,120 @@
         :model="dataForm"
         ref="salesRecord"
         label-width="100px"
+        size="small"
         @keyup.enter.native="getDataList()"
       >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="用户昵称" prop="userName">
-              <el-input
-                size="small"
-                v-model="dataForm.userName"
-                clearable
-              ></el-input>
+        <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="userName">
+          <el-input
+            style="width: 200px"
+            placeholder="用户昵称"
+            v-model="dataForm.userName"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
+          <el-input
+            style="width: 200px"
+            placeholder="手机号码"
+            v-model="dataForm.userPhone"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 3" label="商品名称" prop="productName">
+          <el-input
+            style="width: 200px"
+            placeholder="商品名称"
+            v-model="dataForm.productName"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 4" label="商品类型" prop="productType">
+          <el-select
+            style="width: 200px"
+            placeholder="商品类型"
+            v-model="dataForm.productType"
+            clearable
+          >
+            <el-option value="专业课" label="专业课"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 5" label="退款方式" prop="payType">
+          <el-select style="width: 200px" placeholder="退款方式" v-model="dataForm.payType" clearable>
+            <el-option value="微信" label="微信"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 6" label="关联订单编号" prop="weixinUserProductId">
+          <el-input
+            style="width: 200px"
+            placeholder="关联订单编号"
+            v-model="dataForm.weixinUserProductId"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 7" label="退款单号" prop="id">
+          <el-input
+            style="width: 200px"
+            placeholder="退款单号"
+            v-model="dataForm.id"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 8" label="退款状态" prop="refundStatus">
+          <el-select
+            style="width: 200px"
+            placeholder="退款状态"
+            v-model="dataForm.refundStatus"
+            clearable
+          >
+            <el-option :value="-2" label="待退款"></el-option>
+            <el-option :value="0" label="退款中"></el-option>
+            <el-option :value="1" label="退款成功"></el-option>
+            <el-option :value="-1" label="退款失败"></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- 搜索重置展开按钮 -->
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button 
+              type="primary" 
+              icon="el-icon-search" 
+              size="mini"
+              @click="getDataList">{{ $t("query") }}</el-button>
+            <el-button 
+              icon="el-icon-refresh" 
+              size="mini" 
+              @click="resetDataForm()">{{ $t("reset") }}</el-button>
+            <el-button size="mini" plain @click="open">
+              <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button>
+          </el-form-item>
+        </div>
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
+              <el-button 
+                type="warning"
+                plain
+                icon="el-icon-download" 
+                size="mini"
+                @click="exportHandle">{{ $t("export") }}</el-button>
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="手机号码" prop="userPhone">
-              <el-input
-                size="small"
-                v-model="dataForm.userPhone"
-                clearable
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="商品名称" prop="productName">
-              <el-input
-                size="small"
-                v-model="dataForm.productName"
-                clearable
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <div v-if="isOpen">
-            <el-row>
-              <el-col :span="8">
-                <el-form-item label="商品类型" prop="productType">
-                  <el-select
-                    size="small"
-                    v-model="dataForm.productType"
-                    clearable
-                  >
-                    <el-option value="专业课" label="专业课"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="退款方式" prop="payType">
-                  <el-select size="small" v-model="dataForm.payType" clearable>
-                    <el-option value="微信" label="微信"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="关联订单编号" prop="weixinUserProductId">
-                  <el-input
-                    size="small"
-                    v-model="dataForm.weixinUserProductId"
-                    clearable
-                  ></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="退款单号" prop="id">
-                  <el-input
-                    size="small"
-                    v-model="dataForm.id"
-                    clearable
-                  ></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="退款状态" prop="refundStatus">
-                  <el-select
-                    size="small"
-                    v-model="dataForm.refundStatus"
-                    clearable
-                  >
-                    <el-option :value="-2" label="待退款"></el-option>
-                    <el-option :value="0" label="退款中"></el-option>
-                    <el-option :value="1" label="退款成功"></el-option>
-                    <el-option :value="-1" label="退款失败"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
           </div>
-          <el-col :span="24">
-            <el-form-item style="float: right; padding-right: 10px">
-              <el-button type="info" size="small" @click="exportHandle()">{{
-                $t("export")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="getDataList()">{{
-                $t("query")
-              }}</el-button>
-              <el-button size="small" @click="resetDataForm()">{{
-                $t("reset")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="open">
-                {{ isOpen ? "收起" : "展开"
-                }}<i
-                  style="margin-left: 10px"
-                  :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
-                ></i>
-              </el-button>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                <el-button size="small" icon="el-icon-refresh" circle @click="getDataList"></el-button>
+              </el-tooltip>
             </el-form-item>
-          </el-col>
-        </el-row>
+          </div>
+        </div>
       </el-form>
 
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        border
         @selection-change="dataListSelectionChangeHandle"
         :height="siteContentViewHeight"
         style="width: 100%"
@@ -248,6 +251,7 @@
             <el-button
               type="text"
               size="small"
+              icon="el-icon-position"
               v-if="scope.row.refundStatus === -2"
               @click="updateApproveStatus(scope.row.id)"
               >确认退款</el-button
@@ -256,6 +260,7 @@
         </el-table-column>
       </el-table>
       <el-pagination
+        background
         :current-page="page"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="limit"
@@ -295,60 +300,15 @@ export default {
       },
       dataList: [{ createDate: 1 }],
       userId: "",
-
-      otherViewHeight: 0, //搜索栏高度
-      isOpen: false, //搜索栏展开/收起
     };
   },
   components: { Template },
-  computed: {
-    documentClientHeight: {
-      get() {
-        return this.$store.state.documentClientHeight;
-      },
-    },
-    siteContentViewHeight() {
-      var height =
-        this.documentClientHeight -
-        this.otherViewHeight -
-        (50 + 40 + 30 + 40 + 47);
-      return height;
-    },
-  },
-  watch: {
-    isOpen() {
-      this.setOtherViewHeight();
-    },
-  },
-  activated() {
-    this.setOtherViewHeight();
-    this.$nextTick(() => {
-      this.$refs.table.doLayout();
-    });
-  },
   mounted() {
     this.$bus.$on("change", () => {
       this.getDataList();
     });
   },
   methods: {
-    // 搜索栏高度设置
-    setOtherViewHeight() {
-      setTimeout(() => {
-        if (document.querySelector(".headerTool")) {
-          let h = document
-            .querySelector(".headerTool")
-            .getBoundingClientRect().height;
-          this.otherViewHeight = Math.ceil(h);
-        }
-      }, 150);
-    },
-    // 搜索栏收起/展开
-    open() {
-      this.isOpen = !this.isOpen;
-      this.resetDataForm();
-    },
-
     // 重置搜索条件
     resetDataForm() {
       this.dataForm = {
