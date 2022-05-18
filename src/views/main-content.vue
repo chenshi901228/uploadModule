@@ -2,31 +2,43 @@
   <main :class="['aui-content', { 'aui-content--tabs': $route.meta.isTab }]">
     <!-- tab展示内容 -->
     <template v-if="$route.meta.isTab">
-      <el-dropdown class="aui-content--tabs-tools">
+      <!-- <el-dropdown class="aui-content--tabs-tools">
         <i class="el-icon-arrow-down"></i>
         <el-dropdown-menu slot="dropdown" :show-timeout="0">
           <el-dropdown-item @click.native="tabRemoveHandle($store.state.contentTabsActiveName)">{{ $t('contentTabs.closeCurrent') }}</el-dropdown-item>
           <el-dropdown-item @click.native="tabsCloseOtherHandle()">{{ $t('contentTabs.closeOther') }}</el-dropdown-item>
           <el-dropdown-item @click.native="tabsCloseAllHandle()">{{ $t('contentTabs.closeAll') }}</el-dropdown-item>
         </el-dropdown-menu>
-      </el-dropdown>
-      <el-tabs v-model="$store.state.contentTabsActiveName" @tab-click="tabSelectedHandle" @tab-remove="tabRemoveHandle">
+      </el-dropdown> -->
+      <el-tabs 
+        v-model="$store.state.contentTabsActiveName" 
+        @tab-click="tabSelectedHandle" 
+        @contextmenu.prevent.native="openMenu($event)"
+        @tab-remove="tabRemoveHandle">
         <el-tab-pane
           v-for="item in $store.state.contentTabs"
           :key="item.name"
           :name="item.name"
-          :label="item.title"
+          :label="item.title == 'home' ? '首页' : item.title"
           :closable="item.name !== 'home'"
           :class="{ 'is-iframe': tabIsIframe(item.iframeURL) }">
-          <template v-if="item.name === 'home'">
+          <!-- <template v-if="item.name === 'home'">
             <svg slot="label" class="icon-svg aui-content--tabs-icon-nav" aria-hidden="true"><use xlink:href="#icon-home"></use></svg>
-          </template>
+          </template> -->
           <iframe v-if="tabIsIframe(item.iframeURL)" :src="item.iframeURL" width="100%" height="100%" frameborder="0" scrolling="yes"></iframe>
           <keep-alive v-else>
             <router-view v-if="item.name === $store.state.contentTabsActiveName" />
           </keep-alive>
         </el-tab-pane>
       </el-tabs>
+      <ul v-show="visible" :style="{left:left+'px',top:top+'px'}" class="contextmenu">
+        <li @click="refreshPage"><i class="el-icon-refresh-right"></i> 刷新页面</li>
+        <li @click="tabRemoveHandle($store.state.contentTabsActiveName)"><i class="el-icon-close"></i> {{ $t('contentTabs.closeCurrent') }}</li>
+        <li @click="tabsCloseOtherHandle()"><i class="el-icon-circle-close"></i> {{ $t('contentTabs.closeOther') }}</li>
+        <!-- <li v-if="!isFirstView()" @click="closeLeftTags"><i class="el-icon-back"></i> 关闭左侧</li>
+        <li v-if="!isLastView()" @click="closeRightTags"><i class="el-icon-right"></i> 关闭右侧</li> -->
+        <li @click="tabsCloseAllHandle()"><i class="el-icon-circle-close"></i> {{ $t('contentTabs.closeAll') }}</li>
+      </ul>
     </template>
     <!-- 其他方式, 展示内容 -->
     <template v-else>
@@ -40,8 +52,22 @@
 <script>
 import { isURL } from '@/utils/validate'
 export default {
+  inject: ['refresh'],
   data () {
     return {
+      visible: false,
+      top: 0,
+      left: 0,
+      selectedTag: {}
+    }
+  },
+  watch: {
+    visible(value) {
+      if (value) {
+        document.body.addEventListener('click', this.closeMenu)
+      } else {
+        document.body.removeEventListener('click', this.closeMenu)
+      }
     }
   },
   methods: {
@@ -90,7 +116,63 @@ export default {
     tabsCloseAllHandle () {
       this.$store.state.contentTabs = this.$store.state.contentTabs.filter(item => item.name === 'home')
       this.$router.push({ name: 'home' })
-    }
+    },
+    // 刷新页面
+    refreshPage() {
+      let tab = {}
+      tab["params"] = this.$route.params
+      tab["query"] = this.$route.query
+      tab["name"] = this.selectedTag
+      this.tabSelectedHandle(tab)
+    },
+    // tab标签右键操作
+    openMenu(e) {
+      e.preventDefault()
+      if(e.target.nodeName != "DIV" || !e.target.id.includes("tab-")) return 
+      const menuMinWidth = 105
+      const offsetLeft = this.$el.getBoundingClientRect().left // container margin left
+      const offsetWidth = this.$el.offsetWidth // container width
+      const maxLeft = offsetWidth - menuMinWidth // left boundary
+      const left = e.clientX - offsetLeft + 10 // 15: margin right
+
+      if (left > maxLeft) {
+        this.left = maxLeft
+      } else {
+        this.left = left
+      }
+
+      this.top = e.clientY - 50
+      this.visible = true
+      this.selectedTag = e.target.id.replace("tab-", "")
+      console.log(this.selectedTag)
+    },
+    // 关闭标签页
+    closeMenu() {
+      this.visible = false
+    },
   }
 }
 </script>
+<style lang="scss" scoped>
+.contextmenu {
+    margin: 0;
+    background: #fff;
+    z-index: 3000;
+    position: absolute;
+    list-style-type: none;
+    padding: 5px 0;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #333;
+    box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, .3);
+    li {
+      margin: 0;
+      padding: 7px 16px;
+      cursor: pointer;
+      &:hover {
+        background: #eee;
+      }
+    }
+  }
+</style>

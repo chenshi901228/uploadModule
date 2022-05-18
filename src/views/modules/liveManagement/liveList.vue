@@ -10,160 +10,146 @@
         :model="dataForm"
         ref="dataForm"
         label-width="100px"
-        @keyup.enter.native="getDataList"
-      >
-        <el-row>
-          <el-col :span="8">
+        label-position="left"
+        @keyup.enter.native="getDataList">
+          <div v-if="isOpen" class="headerTool-search">
             <el-form-item label="直播主题" prop="liveTheme">
               <el-input
                 size="small"
                 v-model.trim="dataForm.liveTheme"
                 placeholder="请输入选择"
                 clearable
+                style="width: 200px"
               >
               </el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
             <el-form-item label="主播" prop="anchorUser">
               <el-input
                 size="small"
                 v-model.trim="dataForm.anchorUser"
                 placeholder="请输入姓名或手机号码"
                 clearable
+                style="width: 200px"
               >
               </el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="开播时间" prop="startDate">
+            <el-form-item label="结束时间" prop="endDate">
               <el-date-picker
                 size="small"
-                v-model="dataForm.startDate"
+                v-model="dataForm.endDate"
                 type="datetime"
+                style="width: 200px"
                 format="yyyy-MM-dd HH:mm"
-                style="width: 194px"
                 value-format="yyyy-MM-dd HH:mm"
-                placeholder="请选择开播时间"
+                placeholder="请选择结束时间"
               >
               </el-date-picker>
             </el-form-item>
-          </el-col>
-          <div v-if="isOpen">
-            <el-row>
-              <el-col :span="8">
-                <el-form-item label="结束时间" prop="endDate">
-                  <el-date-picker
-                    size="small"
-                    v-model="dataForm.endDate"
-                    type="datetime"
-                    style="width: 194px"
-                    format="yyyy-MM-dd HH:mm"
-                    value-format="yyyy-MM-dd HH:mm"
-                    placeholder="请选择结束时间"
-                  >
-                  </el-date-picker>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="投放人群" prop="dynamicGroupName">
-                  <el-select
-                    size="small"
-                    v-model="dataForm.dynamicGroupName"
-                    placeholder="请选择投放人群"
-                    :loading="getDynamicGroupLoading"
-                    @visible-change="getDynamicGroup"
-                    clearable
-                  >
-                    <el-option
-                      v-for="item in dynamicGroupOptions"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.name"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="是否录制" prop="transcribeFlg">
-                  <el-select
-                    clearable
-                    size="small"
-                    v-model="dataForm.transcribeFlg"
-                    placeholder="请选择"
-                  >
-                    <el-option label="是" :value="1"></el-option>
-                    <el-option label="否" :value="0"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="直播间ID" prop="livingRoomId">
-                  <el-input
-                    size="small"
-                    v-model.trim="dataForm.livingRoomId"
-                    placeholder="请输入直播间ID"
-                    clearable
-                  >
-                  </el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="直播状态" prop="liveState">
-                  <el-select
-                    clearable
-                    size="small"
-                    v-model="dataForm.liveState"
-                    placeholder="请选择"
-                  >
-                    <el-option label="直播中" :value="1"></el-option>
-                    <el-option label="已下播" :value="0"></el-option>
-                    <el-option label="已禁播" :value="2"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="显示状态" prop="showState">
-                  <el-select
-                    clearable
-                    size="small"
-                    v-model="dataForm.showState"
-                    placeholder="请选择"
-                  >
-                    <el-option label="显示" :value="1"></el-option>
-                    <el-option label="隐藏" :value="0"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
-          </div>
-          <el-col :span="24">
-            <el-form-item style="float: right; padding-right: 10px">
-              <el-button size="small" type="info" @click="exportHandle">{{
-                $t("export")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="getDataList">{{
-                $t("query")
-              }}</el-button>
-              <el-button size="small" @click="resetDataForm()">{{
-                $t("reset")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="open">
-                {{ isOpen ? "收起" : "展开"
-                }}<i
-                  style="margin-left: 10px"
-                  :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
-                ></i>
-              </el-button>
+            <el-form-item label="投放人群" prop="dynamicGroupName">
+              <el-select
+                size="small"
+                v-model="dataForm.dynamicGroupName"
+                placeholder="请选择投放人群"
+                :loading="getDynamicGroupLoading"
+                @visible-change="getDynamicGroup"
+                clearable
+                style="width: 200px"
+              >
+                <el-option
+                  v-for="item in dynamicGroupOptions"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"
+                >
+                </el-option>
+              </el-select>
             </el-form-item>
-          </el-col>
-        </el-row>
+            <el-form-item label="是否录制" prop="transcribeFlg">
+              <el-select
+                clearable
+                size="small"
+                v-model="dataForm.transcribeFlg"
+                placeholder="请选择"
+                style="width: 200px"
+              >
+                <el-option label="是" :value="1"></el-option>
+                <el-option label="否" :value="0"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="直播间ID" prop="livingRoomId">
+              <el-input
+                size="small"
+                v-model.trim="dataForm.livingRoomId"
+                placeholder="请输入直播间ID"
+                clearable
+                style="width: 200px"
+              >
+              </el-input>
+            </el-form-item>
+            <el-form-item label="直播状态" prop="liveState">
+              <el-select
+                clearable
+                size="small"
+                v-model="dataForm.liveState"
+                placeholder="请选择"
+                style="width: 200px"
+              >
+                <el-option label="直播中" :value="1"></el-option>
+                <el-option label="已下播" :value="0"></el-option>
+                <el-option label="已禁播" :value="2"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="显示状态" prop="showState">
+              <el-select
+                clearable
+                size="small"
+                v-model="dataForm.showState"
+                placeholder="请选择"
+                style="width: 200px"
+              >
+                <el-option label="显示" :value="1"></el-option>
+                <el-option label="隐藏" :value="0"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-button 
+                type="primary" 
+                icon="el-icon-search" 
+                size="mini"
+                @click="getDataList">{{ $t("query") }}</el-button>
+              <el-button 
+                icon="el-icon-refresh" 
+                size="mini" 
+                @click="resetDataForm()">{{ $t("reset") }}</el-button>
+            </el-form-item>
+          </div>
+          <!-- 按钮 -->
+          <div class="headerTool-btns">
+            <div class="headerTool-btns-left">
+              <el-form-item>
+                <el-button 
+                  type="warning"
+                  plain
+                  icon="el-icon-download" 
+                  size="mini"
+                  @click="exportHandle">{{ $t("export") }}</el-button>
+              </el-form-item>
+            </div>
+            <div class="headerTool-btns-right">
+              <el-form-item>
+                <el-tooltip class="item" effect="dark" :content="isOpen ? '隐藏搜索' : '显示搜索'" placement="top">
+                  <el-button size="small" icon="el-icon-search" circle @click="open"></el-button>
+                </el-tooltip>
+                <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                  <el-button size="small" icon="el-icon-refresh" circle @click="getDataList"></el-button>
+                </el-tooltip>
+              </el-form-item>
+            </div>
+          </div>
       </el-form>
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        border
         @selection-change="dataListSelectionChangeHandle"
         :height="siteContentViewHeight"
         style="width: 100%"
@@ -260,6 +246,7 @@
         </el-table-column>
       </el-table>
       <el-pagination
+        background
         :current-page="page"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="limit"
