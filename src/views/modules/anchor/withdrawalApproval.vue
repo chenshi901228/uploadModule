@@ -362,8 +362,6 @@ export default {
       },
       dataList: [],
       userId: "",
-      otherViewHeight: 0, //搜索栏高度
-      isOpen: false, //搜索栏展开/收起
       dialogFormVisible: false,
       ruleForm: {
         desc: "",
@@ -373,53 +371,12 @@ export default {
     };
   },
   components: { Template },
-  computed: {
-    documentClientHeight: {
-      get() {
-        return this.$store.state.documentClientHeight;
-      },
-    },
-    siteContentViewHeight() {
-      var height =
-        this.documentClientHeight -
-        this.otherViewHeight -
-        (50 + 40 + 30 + 40 + 47);
-      return height;
-    },
-  },
-  watch: {
-    isOpen() {
-      this.setOtherViewHeight();
-    },
-  },
-  activated() {
-    this.setOtherViewHeight();
-    this.$nextTick(() => {
-      this.$refs.table.doLayout();
-    });
-  },
   mounted() {
     this.$bus.$on("change", () => {
       this.getDataList();
     });
   },
   methods: {
-    // 搜索栏高度设置
-    setOtherViewHeight() {
-      setTimeout(() => {
-        if (document.querySelector(".headerTool")) {
-          let h = document
-            .querySelector(".headerTool")
-            .getBoundingClientRect().height;
-          this.otherViewHeight = Math.ceil(h);
-        }
-      }, 150);
-    },
-    // 搜索栏收起/展开
-    open() {
-      this.isOpen = !this.isOpen;
-      this.resetDataForm();
-    },
     showDialog(id) {
       this.uuid = getUUID();
       this.id = id;

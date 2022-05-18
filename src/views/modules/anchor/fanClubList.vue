@@ -305,7 +305,6 @@ export default {
           aaa: 1,
         },
       ],
-      otherViewHeight: 65,
       mixinViewModuleOptions: {
         getDataListURL: "/sys/anchor/info/pageWithFans",
         getDataListIsPage: true,
@@ -401,18 +400,6 @@ export default {
     },
   },
   computed: {
-    documentClientHeight: {
-      get() {
-        return this.$store.state.documentClientHeight;
-      },
-    },
-    siteContentViewHeight() {
-      var height =
-        this.documentClientHeight -
-        this.otherViewHeight -
-        (50 + 40 + 30 + 40 + 47);
-      return height;
-    },
   },
   created() {},
   filters: {
