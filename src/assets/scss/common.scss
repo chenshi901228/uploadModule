@@ -763,7 +763,10 @@ img {
     color: #606266;
     font-weight: 700;
   }
-  .headerTool-btns {
+  .headerTool-search-btns {
+    display: inline-block;
+  }
+  .headerTool-handle-btns {
     display: flex;
     justify-content: space-between;
   }

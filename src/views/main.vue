@@ -55,6 +55,14 @@ export default {
         this.$store.commit("updateDocumentClientHeight", val);
       },
     },
+    documentClientWidth: {
+      get() {
+        return this.$store.state.documentClientWidth;
+      },
+      set(val) {
+        this.$store.commit("updateDocumentClientWidth", val);
+      },
+    },
   },
   created () {
     this.windowResizeHandle()
@@ -70,10 +78,12 @@ export default {
     // 窗口改变大小
     windowResizeHandle () {
       this.documentClientHeight = document.documentElement["clientHeight"];
+      this.documentClientWidth = document.documentElement["clientWidth"];
       this.$store.state.sidebarFold = document.documentElement['clientWidth'] <= 992 || false
       window.addEventListener('resize', debounce(() => {
         this.$store.state.sidebarFold = document.documentElement['clientWidth'] <= 992 || false
         this.documentClientHeight = document.documentElement["clientHeight"];
+        this.documentClientWidth = document.documentElement["clientWidth"];
       }, 150))
     },
     // 路由, 监听

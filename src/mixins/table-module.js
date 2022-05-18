@@ -17,7 +17,8 @@ export default {
             dataList: [], // 数据列表
             dataListSelections: [], // 数据列表，多选项
             otherViewHeight: 0,
-            isOpen: false
+            isOpen: false,
+            formItemCount: 3
         }
     },
     computed: {
@@ -26,18 +27,32 @@ export default {
                 return this.$store.state.documentClientHeight;
             },
         },
+        documentClientWidth: {
+            get() {
+                return this.$store.state.documentClientWidth;
+            },
+        },
         siteContentViewHeight() {
             var height = this.documentClientHeight - this.otherViewHeight - ( 50 + 36 + 40 + 47 + 4 );
             return height;
         },
+        sidebarFold: {
+            get() {
+                return this.$store.state.sidebarFold;
+            },
+        }
     },
     watch: {
         isOpen() {
             this.setOtherViewHeight()
+        },
+        sidebarFold(val) {
+            this.setHeaderSearchWidth(val)
         }
     },
     activated() {
         this.setOtherViewHeight()
+        this.setHeaderSearchWidth()
     },
     methods: {
         // 搜索栏高度设置
@@ -48,6 +63,10 @@ export default {
                     this.otherViewHeight = Math.ceil(h)
                 }
             },150)
+        },
+        setHeaderSearchWidth(val = false) {
+            let elFormWidth = this.documentClientWidth - (val ? 64 : 230) - 40
+            this.formItemCount = Math.floor(elFormWidth / 300) - 1
         },
         // 搜索栏收起/展开
         open() {
