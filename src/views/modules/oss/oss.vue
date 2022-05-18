@@ -3,19 +3,18 @@
     <div class="mod-oss__oss">
       <el-form class="headerTool" :inline="true" :model="dataForm">
         <el-form-item>
-          <el-button size="small" type="primary" @click="configHandle()">{{ $t('oss.config') }}</el-button>
+          <el-button size="mini" plain type="warning" icon="el-icon-edit" @click="configHandle()">{{ $t('oss.config') }}</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button size="small" type="primary" @click="uploadHandle()">{{ $t('oss.upload') }}</el-button>
+          <el-button size="mini" plain type="primary" icon="el-icon-plus" @click="uploadHandle()">{{ $t('oss.upload') }}</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button size="small" type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
+          <el-button size="mini" plain type="danger" icon="el-icon-delete" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
         </el-form-item>
       </el-form>
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        border
         @selection-change="dataListSelectionChangeHandle"
         @sort-change="dataListSortChangeHandle"
         :height="siteContentViewHeight"
@@ -26,7 +25,7 @@
         <el-table-column prop="createDate" :label="$t('oss.createDate')" sortable="custom" header-align="center" align="center" width="180"></el-table-column>
         <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">{{ $t('delete') }}</el-button>
+            <el-button type="text" size="mini" icon="el-icon-delete" @click="deleteHandle(scope.row.id)">{{ $t('delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>

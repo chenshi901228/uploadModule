@@ -3,14 +3,13 @@
     <div class="mod-sys__menu">
       <el-form class="headerTool" :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
         <el-form-item>
-          <el-button size="small" v-if="$hasPermission('sys:menu:save')" type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
+          <el-button size="mini" plain icon="el-icon-plus" v-if="$hasPermission('sys:menu:save')" type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
         </el-form-item>
       </el-form>
       <el-table 
         v-loading="dataListLoading" 
         :data="dataList" 
         row-key="id" 
-        border 
         :height="siteContentViewHeight"
         style="width: 100%;"
         ref="table"
@@ -32,8 +31,8 @@
         <el-table-column prop="permissions" :label="$t('menu.permissions')" header-align="center" align="center" width="150" :show-overflow-tooltip="true"></el-table-column>
         <el-table-column  :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
           <template slot-scope="scope">
-            <el-button v-if="$hasPermission('sys:menu:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">{{ $t('update') }}</el-button>
-            <el-button v-if="$hasPermission('sys:menu:delete')" type="text" size="small" @click="deleteHandle(scope.row.id)">{{ $t('delete') }}</el-button>
+            <el-button v-if="$hasPermission('sys:menu:update')" type="text" icon="el-icon-edit" size="mini" @click="addOrUpdateHandle(scope.row.id)">{{ $t('update') }}</el-button>
+            <el-button v-if="$hasPermission('sys:menu:delete')" type="text" icon="el-icon-delete" size="mini" @click="deleteHandle(scope.row.id)">{{ $t('delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
