@@ -29,6 +29,7 @@ export default {
       addOrUpdateVisible: false,   // 新增／更新，弹窗visible状态
       otherViewHeight: 0, //除表格外的元素高度
       isOpen: false, //是否展开搜索
+      formItemCount: 3, //搜索栏宽度能放的formItem个数
     }
     /* eslint-enable */
   },
@@ -42,6 +43,7 @@ export default {
       this.query()
     }
     this.setOtherViewHeight()
+    this.setHeaderSearchWidth()
     // 防止table刷新错位
     if(this.$refs.table) {
       this.$nextTick(()=>{
@@ -55,14 +57,27 @@ export default {
             return this.$store.state.documentClientHeight;
         },
     },
+    documentClientWidth: {
+      get() {
+          return this.$store.state.documentClientWidth;
+      },
+    },
     siteContentViewHeight() {
         var height = this.documentClientHeight - this.otherViewHeight - ( 50 + 40 + 30 + 40 + 47 );
         return height;
     },
+    sidebarFold: {
+        get() {
+            return this.$store.state.sidebarFold;
+        },
+    }
   },
   watch: {
       isOpen() {
-          this.setOtherViewHeight()
+        this.setOtherViewHeight()
+      },
+      sidebarFold(val) {
+        this.setHeaderSearchWidth(val)
       }
   },
   methods: {
@@ -73,6 +88,14 @@ export default {
               let h = document.querySelector(".headerTool").getBoundingClientRect().height
               this.otherViewHeight = Math.ceil(h)
           }
+      },150)
+    },
+    // 计算搜索栏宽度能放的formItem个数
+    setHeaderSearchWidth(val = false) {
+      setTimeout(() => {
+        let elFormWidth = this.documentClientWidth - (val ? 64 : 230) - 40
+        this.formItemCount = Math.floor(elFormWidth / 300) - 1
+        console.log(this.formItemCount)
       },150)
     },
     // 搜索栏收起/展开
