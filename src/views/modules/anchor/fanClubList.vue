@@ -132,6 +132,7 @@
         </el-table-column>
       </el-table>
       <el-pagination
+        background
         :current-page="page"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="limit"
@@ -277,6 +278,7 @@
           ></el-table-column>
         </el-table>
         <el-pagination
+          background
           :current-page="page_fans"
           :page-sizes="[10, 20, 50, 100]"
           :page-size="limit_fans"
