@@ -9,7 +9,6 @@
         :model="dataForm"
         ref="dataForm"
         label-width="100px"
-        label-position="right"
         size="small"
         @keyup.enter.native="getDataList"
       >

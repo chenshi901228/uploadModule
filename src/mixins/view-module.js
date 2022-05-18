@@ -63,7 +63,7 @@ export default {
       },
     },
     siteContentViewHeight() {
-        var height = this.documentClientHeight - this.otherViewHeight - ( 50 + 40 + 30 + 40 + 47 );
+        var height = this.documentClientHeight - this.otherViewHeight - ( 50 + 36 + 40 + 47 + 4 );
         return height;
     },
     sidebarFold: {
@@ -95,7 +95,6 @@ export default {
       setTimeout(() => {
         let elFormWidth = this.documentClientWidth - (val ? 64 : 230) - 40
         this.formItemCount = Math.floor(elFormWidth / 300) - 1
-        console.log(this.formItemCount)
       },150)
     },
     // 搜索栏收起/展开
