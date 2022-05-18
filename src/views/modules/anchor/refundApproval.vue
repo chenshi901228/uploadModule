@@ -6,92 +6,93 @@
         :inline="true"
         :model="dataForm"
         ref="refundApproval"
+        size="small"
         label-width="100px"
-        @keyup.enter.native="getDataList()"
+        @keyup.enter.native="getDataList"
       >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="用户昵称" prop="userName">
-              <el-input
-                size="small"
-                v-model="dataForm.userName"
-                clearable
-                placeholder="用户昵称"
-              ></el-input>
+        <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="userName">
+          <el-input
+            size="small"
+            v-model="dataForm.userName"
+            clearable
+            placeholder="用户昵称"
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
+          <el-input
+            size="small"
+            v-model="dataForm.userPhone"
+            clearable
+            placeholder="手机号码"
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 3" label="商品类型" prop="productType">
+          <el-input
+            size="small"
+            v-model="dataForm.productType"
+            clearable
+            placeholder="商品类型"
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 4" label="商品名称" prop="productName">
+          <el-input
+            size="small"
+            v-model="dataForm.productName"
+            clearable
+            placeholder="商品名称"
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 5" label="关联订单编号" prop="weixinUserProductId">
+          <el-input
+            size="small"
+            v-model="dataForm.weixinUserProductId"
+            clearable
+            placeholder="关联订单编号"
+          ></el-input>
+        </el-form-item>
+        <!-- 搜索重置展开按钮 -->
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button 
+              type="primary" 
+              icon="el-icon-search" 
+              size="mini"
+              @click="getDataList">{{ $t("query") }}</el-button>
+            <el-button 
+              icon="el-icon-refresh" 
+              size="mini" 
+              @click="resetDataForm()">{{ $t("reset") }}</el-button>
+            <el-button size="mini" plain @click="open">
+              <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button>
+          </el-form-item>
+        </div>
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
+              <el-button 
+                type="warning"
+                plain
+                icon="el-icon-download" 
+                size="mini"
+                @click="exportHandle">{{ $t("export") }}</el-button>
             </el-form-item>
-          </el-col>
-
-          <el-col :span="8">
-            <el-form-item label="手机号码" prop="userPhone">
-              <el-input
-                size="small"
-                v-model="dataForm.userPhone"
-                clearable
-                placeholder="手机号码"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="商品类型" prop="productType">
-              <el-input
-                size="small"
-                v-model="dataForm.productType"
-                clearable
-                placeholder="商品类型"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <div v-if="isOpen">
-            <el-row >
-              <el-col :span="8">
-                <el-form-item label="商品名称" prop="productName">
-                  <el-input
-                    size="small"
-                    v-model="dataForm.productName"
-                    clearable
-                    placeholder="商品名称"
-                  ></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="关联订单编号" prop="weixinUserProductId">
-                  <el-input
-                    size="small"
-                    v-model="dataForm.weixinUserProductId"
-                    clearable
-                    placeholder="关联订单编号"
-                  ></el-input>
-                </el-form-item>
-              </el-col>
-            </el-row>
           </div>
-          <el-col :span="24">
-            <el-form-item style="float: right; padding-right: 10px">
-              <el-button type="info" size="small" @click="exportHandle()">{{
-                $t("export")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="getDataList()">{{
-                $t("query")
-              }}</el-button>
-              <el-button size="small" @click="resetDataForm()">{{
-                $t("reset")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="open">
-                {{ isOpen ? "收起" : "展开"
-                }}<i
-                  style="margin-left: 10px"
-                  :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
-                ></i>
-              </el-button>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                <el-button size="small" icon="el-icon-refresh" circle @click="getDataList"></el-button>
+              </el-tooltip>
             </el-form-item>
-          </el-col>
-        </el-row>
+          </div>
+        </div>
       </el-form>
 
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        border
         @selection-change="dataListSelectionChangeHandle"
         :height="siteContentViewHeight"
         style="width: 100%"
@@ -262,6 +263,7 @@
             <el-button
               type="text"
               size="small"
+              icon="el-icon-edit-outline"
               v-if="scope.row.approveStatus === 0"
               @click="showDialog(scope.row.id)"
               >审批</el-button

@@ -6,90 +6,92 @@
         :inline="true"
         :model="dataForm"
         ref="shareRecord"
-        label-width="80px"
-        @keyup.enter.native="getDataList()"
+        size="small"
+        label-width="100px"
+        @keyup.enter.native="getDataList"
       >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="分享用户" prop="nickName">
-              <el-input
-                size="small"
-                v-model="dataForm.shareUserName"
-                clearable
-                placeholder="请输入"
-              ></el-input>
+        <el-form-item v-if="isOpen || formItemCount >= 1" label="分享用户" prop="nickName">
+          <el-input
+            size="small"
+            v-model="dataForm.shareUserName"
+            clearable
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="phone">
+          <el-input
+            size="small"
+            v-model="dataForm.shareUserTel"
+            clearable
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 3" label="分享类型" prop="delFlg">
+          <el-select
+            size="small"
+            v-model="dataForm.shareType"
+            clearable
+            placeholder="请选择"
+          >
+            <el-option :value="0" label="预告分享"></el-option>
+            <el-option :value="1" label="直播邀请"></el-option>
+            <el-option :value="2" label="视频分享"></el-option>
+            <el-option :value="3" label="其他分享"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 4" label="分享状态" prop="handlingStatus">
+          <el-select
+            size="small"
+            v-model="dataForm.shareState"
+            placeholder="请选择"
+            clearable
+          >
+            <el-option :value="1" label="成功"></el-option>
+            <el-option :value="0" label="失败"></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- 搜索重置展开按钮 -->
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button 
+              type="primary" 
+              icon="el-icon-search" 
+              size="mini"
+              @click="getDataList">{{ $t("query") }}</el-button>
+            <el-button 
+              icon="el-icon-refresh" 
+              size="mini" 
+              @click="resetDataForm()">{{ $t("reset") }}</el-button>
+            <el-button size="mini" plain @click="open">
+              <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button>
+          </el-form-item>
+        </div>
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
+              <el-button 
+                type="warning"
+                plain
+                icon="el-icon-download" 
+                size="mini"
+                @click="exportHandle">{{ $t("export") }}</el-button>
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="手机号码" prop="phone">
-              <el-input
-                size="small"
-                v-model="dataForm.shareUserTel"
-                clearable
-                placeholder="请输入"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-
-          <el-col :span="8">
-            <el-form-item label="分享类型" prop="delFlg">
-              <el-select
-                size="small"
-                v-model="dataForm.shareType"
-                clearable
-                placeholder="请选择"
-              >
-                <el-option :value="0" label="预告分享"></el-option>
-                <el-option :value="1" label="直播邀请"></el-option>
-                <el-option :value="2" label="视频分享"></el-option>
-                <el-option :value="3" label="其他分享"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <div v-if="isOpen">
-            <el-row>
-              <el-col :span="8">
-                <el-form-item label="分享状态" prop="handlingStatus">
-                  <el-select
-                    size="small"
-                    v-model="dataForm.shareState"
-                    placeholder="请选择"
-                    clearable
-                  >
-                    <el-option :value="1" label="成功"></el-option>
-                    <el-option :value="0" label="失败"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
           </div>
-          <el-col :span="24">
-            <el-form-item style="float: right; padding-right: 10px">
-              <el-button type="info" size="small" @click="exportHandle()">{{
-                $t("export")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="getDataList()">{{
-                $t("query")
-              }}</el-button>
-              <el-button size="small" @click="resetDataForm()">{{
-                $t("reset")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="open">
-                {{ isOpen ? "收起" : "展开"
-                }}<i
-                  style="margin-left: 10px"
-                  :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
-                ></i>
-              </el-button>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                <el-button size="small" icon="el-icon-refresh" circle @click="getDataList"></el-button>
+              </el-tooltip>
             </el-form-item>
-          </el-col>
-        </el-row>
+          </div>
+        </div>
       </el-form>
-
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        border
         @selection-change="dataListSelectionChangeHandle"
         :height="siteContentViewHeight"
         style="width: 100%"

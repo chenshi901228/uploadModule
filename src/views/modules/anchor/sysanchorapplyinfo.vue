@@ -6,94 +6,94 @@
         :inline="true"
         :model="dataForm"
         ref="dataForm"
-        label-width="70px"
-        @keyup.enter.native="getDataList()"
+        size="small"
+        label-width="100px"
+        @keyup.enter.native="getDataList"
       >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="真实姓名" prop="realName">
-              <el-input
-                size="small"
-                v-model="dataForm.realName"
-                clearable
-              ></el-input>
+        <el-form-item v-if="isOpen || formItemCount >= 1" label="真实姓名" prop="realName">
+          <el-input
+            size="small"
+            v-model="dataForm.realName"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 2" label="主播昵称" prop="username">
+          <el-input
+            size="small"
+            v-model="dataForm.username"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 3" label="手机号码" prop="phone">
+          <el-input
+            size="small"
+            v-model="dataForm.phone"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 4" label="身份证号" prop="idCard">
+          <el-input
+            size="small"
+            v-model="dataForm.idCard"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 5" label="性别" prop="gender">
+          <el-select size="small" v-model="dataForm.gender" clearable>
+            <el-option :value="0" label="男"></el-option>
+            <el-option :value="1" label="女"></el-option>
+            <el-option :value="2" label="保密"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 6" label="审批状态" prop="status">
+          <el-select size="small" v-model="dataForm.status" clearable>
+            <el-option :value="0" label="申请中"></el-option>
+            <el-option :value="1" label="同意"></el-option>
+            <el-option :value="-1" label="拒绝"></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- 搜索重置展开按钮 -->
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button 
+              type="primary" 
+              icon="el-icon-search" 
+              size="mini"
+              @click="getDataList">{{ $t("query") }}</el-button>
+            <el-button 
+              icon="el-icon-refresh" 
+              size="mini" 
+              @click="resetDataForm()">{{ $t("reset") }}</el-button>
+            <el-button size="mini" plain @click="open">
+              <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button>
+          </el-form-item>
+        </div>
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
+              <el-button 
+                type="warning"
+                plain
+                icon="el-icon-download" 
+                size="mini"
+                @click="exportHandle">{{ $t("export") }}</el-button>
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="主播昵称" prop="username">
-              <el-input
-                size="small"
-                v-model="dataForm.username"
-                clearable
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="手机号码" prop="phone">
-              <el-input
-                size="small"
-                v-model="dataForm.phone"
-                clearable
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <div v-if="isOpen">
-            <el-row>
-              <el-col :span="8">
-                <el-form-item label="身份证号" prop="idCard">
-                  <el-input
-                    size="small"
-                    v-model="dataForm.idCard"
-                    clearable
-                  ></el-input>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="性别" prop="gender">
-                  <el-select size="small" v-model="dataForm.gender" clearable>
-                    <el-option :value="0" label="男"></el-option>
-                    <el-option :value="1" label="女"></el-option>
-                    <el-option :value="2" label="保密"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="审批状态" prop="status">
-                  <el-select size="small" v-model="dataForm.status" clearable>
-                    <el-option :value="0" label="申请中"></el-option>
-                    <el-option :value="1" label="同意"></el-option>
-                    <el-option :value="-1" label="拒绝"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
           </div>
-          <el-col :span="24">
-            <el-form-item style="float: right; padding-right: 10px">
-              <el-button type="info" size="small" @click="exportHandle()">{{
-                $t("export")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="getDataList()">{{
-                $t("query")
-              }}</el-button>
-              <el-button size="small" @click="resetDataForm()">{{
-                $t("reset")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="open">
-                {{ isOpen ? "收起" : "展开"
-                }}<i
-                  style="margin-left: 10px"
-                  :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
-                ></i>
-              </el-button>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                <el-button size="small" icon="el-icon-refresh" circle @click="getDataList"></el-button>
+              </el-tooltip>
             </el-form-item>
-          </el-col>
-        </el-row>
+          </div>
+        </div>
       </el-form>
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        border
         @selection-change="dataListSelectionChangeHandle"
         :height="siteContentViewHeight"
         style="width: 100%"
@@ -286,7 +286,7 @@
           width="100"
         >
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="openDetail(scope.row)"
+            <el-button icon="el-icon-document" type="text" size="small" @click="openDetail(scope.row)"
               >详情</el-button
             >
           </template>

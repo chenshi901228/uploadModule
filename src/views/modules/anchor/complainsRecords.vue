@@ -6,100 +6,103 @@
         :inline="true"
         :model="dataForm"
         ref="complainsRecords"
-        @keyup.enter.native="getDataList()"
+        size="small"
+        label-width="100px"
+        @keyup.enter.native="getDataList"
       >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="用户昵称" prop="nickName">
-              <el-input
-                size="small"
-                v-model="dataForm.username"
-                clearable
-              ></el-input>
+        <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="nickName">
+          <el-input
+            size="small"
+            v-model="dataForm.username"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="phone">
+          <el-input
+            size="small"
+            v-model="dataForm.phone"
+            clearable
+          ></el-input>
+        </el-form-item>
+      
+        <el-form-item v-if="isOpen || formItemCount >= 3" label="投诉分类" prop="type">
+          <el-select size="small" v-model="dataForm.type" clearable>
+            <el-option :value="1" label="平台投诉"></el-option>
+            <el-option :value="2" label="直播间投诉"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 4" label="投诉标签" prop="tag">
+          <el-select size="small" v-model="dataForm.tag" clearable>
+            <el-option value="违法违禁" label="违法违禁"></el-option>
+            <el-option value="淫秽色情" label="淫秽色情"></el-option>
+            <el-option value="欺诈/售假" label="欺诈/售假"></el-option>
+            <el-option
+              value="未成年人相关"
+              label="未成年人相关"
+            ></el-option>
+            <el-option value="危险行为" label="危险行为"></el-option>
+            <el-option value="录像/盗播" label="录像/盗播"></el-option>
+            <el-option
+              value="引导线下转账"
+              label="引导线下转账"
+            ></el-option>
+            <el-option value="诱导刷礼" label="诱导刷礼"></el-option>
+            <el-option value="侮辱谩骂" label="侮辱谩骂"></el-option>
+            <el-option value="其他" label="其他"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 5" label="处理状态" prop="handlingStatus">
+          <el-select
+            size="small"
+            v-model="dataForm.handlingStatus"
+            clearable
+          >
+            <el-option :value="1" label="已处理"></el-option>
+            <el-option :value="0" label="未处理"></el-option>
+          </el-select>
+        </el-form-item>
+        <!-- 搜索重置展开按钮 -->
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button 
+              type="primary" 
+              icon="el-icon-search" 
+              size="mini"
+              @click="getDataList">{{ $t("query") }}</el-button>
+            <el-button 
+              icon="el-icon-refresh" 
+              size="mini" 
+              @click="resetDataForm()">{{ $t("reset") }}</el-button>
+            <el-button size="mini" plain @click="open">
+              <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button>
+          </el-form-item>
+        </div>
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
+              <el-button 
+                type="warning"
+                plain
+                icon="el-icon-download" 
+                size="mini"
+                @click="exportHandle">{{ $t("export") }}</el-button>
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="手机号码" prop="phone">
-              <el-input
-                size="small"
-                v-model="dataForm.phone"
-                clearable
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="投诉分类" prop="type">
-              <el-select size="small" v-model="dataForm.type" clearable>
-                <el-option :value="1" label="平台投诉"></el-option>
-                <el-option :value="2" label="直播间投诉"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <div v-if="isOpen">
-            <el-row>
-              <el-col :span="8">
-                <el-form-item label="投诉标签" prop="tag">
-                  <el-select size="small" v-model="dataForm.tag" clearable>
-                    <el-option value="违法违禁" label="违法违禁"></el-option>
-                    <el-option value="淫秽色情" label="淫秽色情"></el-option>
-                    <el-option value="欺诈/售假" label="欺诈/售假"></el-option>
-                    <el-option
-                      value="未成年人相关"
-                      label="未成年人相关"
-                    ></el-option>
-                    <el-option value="危险行为" label="危险行为"></el-option>
-                    <el-option value="录像/盗播" label="录像/盗播"></el-option>
-                    <el-option
-                      value="引导线下转账"
-                      label="引导线下转账"
-                    ></el-option>
-                    <el-option value="诱导刷礼" label="诱导刷礼"></el-option>
-                    <el-option value="侮辱谩骂" label="侮辱谩骂"></el-option>
-                    <el-option value="其他" label="其他"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="8">
-                <el-form-item label="处理状态" prop="handlingStatus">
-                  <el-select
-                    size="small"
-                    v-model="dataForm.handlingStatus"
-                    clearable
-                  >
-                    <el-option :value="1" label="已处理"></el-option>
-                    <el-option :value="0" label="未处理"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-            </el-row>
           </div>
-          <el-col :span="24">
-            <el-form-item style="float: right; padding-right: 10px">
-              <el-button type="info" size="small" @click="exportHandle()">{{
-                $t("export")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="getDataList()">{{
-                $t("query")
-              }}</el-button>
-              <el-button size="small" @click="resetDataForm()">{{
-                $t("reset")
-              }}</el-button>
-              <el-button size="small" type="primary" @click="open">
-                {{ isOpen ? "收起" : "展开"
-                }}<i
-                  style="margin-left: 10px"
-                  :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
-                ></i>
-              </el-button>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                <el-button size="small" icon="el-icon-refresh" circle @click="getDataList"></el-button>
+              </el-tooltip>
             </el-form-item>
-          </el-col>
-        </el-row>
+          </div>
+        </div>
       </el-form>
-
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        border
         @selection-change="dataListSelectionChangeHandle"
         :height="siteContentViewHeight"
         style="width: 100%"
@@ -221,7 +224,7 @@
           width="150"
         >
           <template slot-scope="scope">
-            <el-button type="text" size="small" @click="openDetail(scope.row)"
+            <el-button icon="el-icon-document" type="text" size="small" @click="openDetail(scope.row)"
               >详情</el-button
             >
           </template>
