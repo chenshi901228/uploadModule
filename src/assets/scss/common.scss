@@ -566,7 +566,7 @@ img {
     min-height: calc(#{$content--fill-height} - #{$content--card-header-height} - 2px);
   }
   &--tabs {
-    padding: $content--tabs-header-height 0 0;
+    padding: calc(#{$content--tabs-header-height} + 8px) 0 0;
   }
   &--tabs-tools {
     position: fixed;
@@ -613,11 +613,9 @@ img {
             display: none;
           }
           & > .el-tabs__item {
-            // height: $content--tabs-header-height;
-            height: 28px;
+            height: $content--tabs-header-height;
             padding: 0 15px;
-            // line-height: $content--tabs-header-height;
-            line-height: 28px;
+            line-height: $content--tabs-header-height;
             border: 0;
             color: $--color-text-regular;
             font-size: 12px;
@@ -683,12 +681,12 @@ img {
         z-index: 830;
       }
       > .el-tab-pane {
-        min-height: calc(#{$content--fill-height-tabs});
+        min-height: calc(#{$content--fill-height-tabs} - 10px);
         > .aui-card--fill > .el-card__body {
-          min-height: calc(#{$content--fill-height-tabs} - 2px);
+          min-height: calc(#{$content--fill-height-tabs} - 10px);
         }
         > .aui-card--fill > .el-card__header + .el-card__body {
-          min-height: calc(#{$content--fill-height-tabs} - #{$content--card-header-height} - 2px);
+          min-height: calc(#{$content--fill-height-tabs} - #{$content--card-header-height} - 10px);
         }
         &.is-iframe {
           height: calc(#{$content--fill-height-tabs} + #{$content--padding * 2});

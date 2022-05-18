@@ -15,7 +15,7 @@ $sidebar--menu-item-height: 48px;
 $content--padding: 0px; 
 $content--background-color: #f1f4f5;
 $content--card-header-height: 60px;
-$content--tabs-header-height: 38px;
+$content--tabs-header-height: 28px;
 // Content, 填充整屏高度(非tabs状态) = 整屏高度 - 导航条高度 - aui-content上下内边距高度
 $content--fill-height: calc(100vh - #{$navbar--height} - #{$content--padding * 2});
 // Content, 填充整屏高度(是tabs状态) = 整屏高度 - 导航条高度 - tabs组件header高度 - tabs组件content上下内边距高度

@@ -63,7 +63,7 @@ export default {
       },
     },
     siteContentViewHeight() {
-        var height = this.documentClientHeight - this.otherViewHeight - ( 50 + 36 + 40 + 47 + 4 );
+        var height = this.documentClientHeight - this.otherViewHeight - ( 50 + 36 + 40 + 47 + 2 );
         return height;
     },
     sidebarFold: {
