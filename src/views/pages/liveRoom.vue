@@ -2248,6 +2248,12 @@ p {
               .live_theme {
                 color: #fff;
                 font-size: 20px;
+                height: 100%;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+                width: 60%;
+                word-break: break-all;
               }
               .online_info {
                 display: flex;
