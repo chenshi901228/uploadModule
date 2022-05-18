@@ -18,7 +18,7 @@ export default {
             dataListSelections: [], // 数据列表，多选项
             otherViewHeight: 0,
             isOpen: false,
-            formItemCount: 3
+            formItemCount: 3, //搜索栏宽度能放的formItem个数
         }
     },
     computed: {
@@ -64,9 +64,12 @@ export default {
                 }
             },150)
         },
+        // 计算搜索栏宽度能放的formItem个数
         setHeaderSearchWidth(val = false) {
-            let elFormWidth = this.documentClientWidth - (val ? 64 : 230) - 40
-            this.formItemCount = Math.floor(elFormWidth / 300) - 1
+            setTimeout(() => {
+                let elFormWidth = this.documentClientWidth - (val ? 64 : 230) - 40
+                this.formItemCount = Math.floor(elFormWidth / 300) - 1
+            },150)
         },
         // 搜索栏收起/展开
         open() {
