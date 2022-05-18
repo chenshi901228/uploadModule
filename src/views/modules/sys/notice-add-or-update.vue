@@ -1,6 +1,6 @@
 <template>
-  <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('add') : $t('update')" :close-on-click-modal="false" :close-on-press-escape="false">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" :label-width="$i18n.locale === 'en-US' ? '120px' : '80px'">
+  <el-dialog top="20px" :visible.sync="visible" :title="!dataForm.id ? $t('add') : $t('update')" :close-on-click-modal="false" :close-on-press-escape="false">
+    <el-form size="small" :model="dataForm" :rules="dataRule" ref="dataForm" :label-width="$i18n.locale === 'en-US' ? '120px' : '80px'">
       <el-form-item :label="$t('notice.type')" prop="type">
           <ren-radio-group v-model="dataForm.type" dict-type="notice_type"></ren-radio-group>
       </el-form-item>
@@ -38,9 +38,9 @@
       </el-form-item>
     </el-form>
     <template slot="footer">
-      <el-button @click="visible = false">{{ $t('cancel') }}</el-button>
-      <el-button type="danger" @click="dataFormSubmitHandle(0)">{{ $t('notice.draft') }}</el-button>
-      <el-button type="primary" @click="dataFormSubmitHandle(1)">{{ $t('notice.release') }}</el-button>
+      <el-button size="small" @click="visible = false">{{ $t('cancel') }}</el-button>
+      <el-button size="small" type="danger" @click="dataFormSubmitHandle(0)">{{ $t('notice.draft') }}</el-button>
+      <el-button size="small" type="primary" @click="dataFormSubmitHandle(1)">{{ $t('notice.release') }}</el-button>
     </template>
   </el-dialog>
 </template>

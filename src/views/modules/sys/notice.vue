@@ -6,37 +6,63 @@
         :inline="true"
         :model="dataForm"
         ref="dataForm"
+        size="small"
+        label-width="100px"
         @keyup.enter.native="getDataList"
       >
-        <el-row>
-          <el-col :span="12">
-            <el-form-item :label="$t('notice.type')" prop="type">
-              <ren-select v-model="dataForm.type" dict-type="notice_type" :placeholder="$t('notice.type')"></ren-select>
+        <el-form-item :label="$t('notice.type')" prop="type">
+          <ren-select v-model="dataForm.type" dict-type="notice_type" :placeholder="$t('notice.type')"></ren-select>
+        </el-form-item>
+        <!-- 搜索重置展开按钮 -->
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button 
+              type="primary" 
+              icon="el-icon-search" 
+              size="mini"
+              @click="getDataList">{{ $t("query") }}</el-button>
+            <el-button 
+              icon="el-icon-refresh" 
+              size="mini" 
+              @click="resetDataForm()">{{ $t("reset") }}</el-button>
+            <!-- <el-button size="mini" plain @click="open">
+              <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button> -->
+          </el-form-item>
+        </div>
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
+              <el-button 
+                size="mini"
+                plain 
+                icon="el-icon-plus"
+                v-if="$hasPermission('sys:dict:save')" 
+                type="primary" 
+                @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
+              <el-button 
+                size="mini"
+                plain 
+                icon="el-icon-delete"
+                v-if="$hasPermission('sys:dict:delete')" 
+                type="danger" 
+                @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
             </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item style="float:right; padding-right:10px">          
-              <el-button size="small" v-if="$hasPermission('sys:dict:save')" type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
-              <el-button size="small" v-if="$hasPermission('sys:dict:delete')" type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
-              <el-button size="small" type="primary" @click="getDataList">{{ $t("query") }}</el-button>
-              <el-button size="small" @click="resetDataForm()">{{ $t("reset") }}</el-button>
-              <!-- <el-button 
-                  size="small" 
-                  type="primary"
-                  @click="open"
-              >
-                  {{ isOpen ? "收起" : "展开"}}<i style="margin-left:10px" :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
-              </el-button> -->
+          </div>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                <el-button size="small" icon="el-icon-refresh" circle @click="getDataList"></el-button>
+              </el-tooltip>
             </el-form-item>
-          </el-col>
-        </el-row>
-        <div v-if="isOpen">
+          </div>
         </div>
       </el-form>
       <el-table 
         v-loading="dataListLoading" 
         :data="dataList" 
-        border 
         @selection-change="dataListSelectionChangeHandle" 
         :height="siteContentViewHeight"
         style="width: 100%;"
@@ -58,13 +84,14 @@
         </el-table-column>
         <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="150">
           <template slot-scope="scope">
-            <el-button v-if="scope.row.status === 0" type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">{{ $t('update') }}</el-button>
-            <el-button v-if="scope.row.status === 1" type="text" size="small" @click="viewHandle(scope.row)">{{ $t('notice.view') }}</el-button>
-            <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">{{ $t('delete') }}</el-button>
+            <el-button icon="el-icon-edit" v-if="scope.row.status === 0" type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">{{ $t('update') }}</el-button>
+            <el-button icon="el-icon-document" v-if="scope.row.status === 1" type="text" size="small" @click="viewHandle(scope.row)">{{ $t('notice.view') }}</el-button>
+            <el-button icon="el-icon-delete" type="text" size="small" @click="deleteHandle(scope.row.id)">{{ $t('delete') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
+        background
         :current-page="page"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="limit"

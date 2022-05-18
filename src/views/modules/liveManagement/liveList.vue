@@ -11,7 +11,6 @@
         ref="dataForm"
         size="small"
         label-width="100px"
-        label-position="right"
         @keyup.enter.native="getDataList">
           <el-form-item v-if="isOpen || formItemCount >= 1" label="是否录制" prop="transcribeFlg">
             <el-select
