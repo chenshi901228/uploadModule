@@ -123,6 +123,7 @@ export default {
       tab["params"] = this.$route.params
       tab["query"] = this.$route.query
       tab["name"] = this.selectedTag
+      if(this.$route.name == this.selectedTag) return this.refresh()
       this.tabSelectedHandle(tab)
     },
     // tab标签右键操作
@@ -144,7 +145,6 @@ export default {
       this.top = e.clientY - 50
       this.visible = true
       this.selectedTag = e.target.id.replace("tab-", "")
-      console.log(this.selectedTag)
     },
     // 关闭标签页
     closeMenu() {
