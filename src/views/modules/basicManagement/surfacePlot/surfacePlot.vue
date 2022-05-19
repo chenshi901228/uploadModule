@@ -42,7 +42,7 @@
               @click="resetDataForm()"
               >{{ $t("reset") }}</el-button
             >
-            <el-button size="mini" plain @click="open" v-if="formItemCount > 3">
+            <el-button size="mini" plain @click="open">
               <i
                 :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
               ></i>
@@ -76,7 +76,7 @@
               >
               <el-button
                 size="mini"
-                icon="el-icon-upload2"
+                icon="el-icon-plus"
                 plain
                 type="success"
                 @click="upImg"
@@ -205,15 +205,15 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirm('ruleForm')">确 定</el-button>
+        <el-button size="small" @click="dialogFormVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="confirm('ruleForm')">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
       <span>确认{{ showStatus === 0 ? "显示" : "隐藏" }}吗？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmShowState">确 定</el-button>
+        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="confirmShowState">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -250,8 +250,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="upImgDialog = false">取 消</el-button>
-        <el-button type="primary" @click="upImgMethod">确 定</el-button>
+        <el-button size="small" @click="upImgDialog = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="upImgMethod">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -276,7 +276,7 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="showImgDialog = false">取 消</el-button>
+        <el-button size="small" @click="showImgDialog = false">取 消</el-button>
       </span>
     </el-dialog>
 
@@ -336,8 +336,8 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="editeImgDialog = false">取 消</el-button>
-        <el-button type="primary" @click="editeImgMethod">确 定</el-button>
+        <el-button size="small" @click="editeImgDialog = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="editeImgMethod">确 定</el-button>
       </span>
     </el-dialog>
   </el-card>

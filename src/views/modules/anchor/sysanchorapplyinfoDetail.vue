@@ -18,13 +18,13 @@
        <span style="width:100px;text-align:right;margin:0 10px">主播昵称：</span> {{ diaForm.username }}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">真实姓名：</span> {{ diaForm.username }}
+       <span style="width:100px;text-align:right;margin:0 10px">真实姓名：</span> {{ diaForm.realName || '' }}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
        <span style="width:100px;text-align:right;margin:0 10px">手机号码：</span> {{ diaForm.phone }}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">身份证号：</span> {{ diaForm.username }}
+       <span style="width:100px;text-align:right;margin:0 10px">身份证号：</span> {{ diaForm.idCard || '' }}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
        <span style="width:100px;text-align:right;margin:0 10px">性别：</span> {{

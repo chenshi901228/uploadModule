@@ -52,7 +52,7 @@
             @click="resetDataForm()"
             >{{ $t("reset") }}</el-button
           >
-          <el-button size="mini" plain @click="open" v-if="formItemCount > 3">
+          <el-button size="mini" plain @click="open">
             <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
             {{ isOpen ? "收起" : "展开" }}
           </el-button>
@@ -77,7 +77,7 @@
             <el-button
               size="mini"
               plain
-              icon="el-icon-circle-plus-outline"
+              icon="el-icon-plus"
               type="success"
               @click="addUser"
               >添加</el-button
@@ -241,7 +241,7 @@
             <el-button
               type="text"
               size="small"
-              icon="el-icon-circle-plus-outline"
+              icon="el-icon-plus"
               @click="saveSelectUser(scope.$index, scope.row)"
               >添加</el-button
             >
@@ -262,13 +262,11 @@
       <div slot="footer" class="dialog-footer">
         <el-button
           size="mini"
-          icon="el-icon-close"
           @click="dialogUserFormVisible = false"
           >取 消</el-button
         >
         <el-button
           size="mini"
-          icon="el-icon-check"
           :type="showBtn ? 'primary' : 'info'"
           @click="saveUser"
           >{{
@@ -281,8 +279,8 @@
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
       <span>确认要移除吗？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmShowState">确 定</el-button>
+        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="confirmShowState">确 定</el-button>
       </span>
     </el-dialog>
   </el-card>

@@ -57,7 +57,7 @@
             @click="resetDataForm()"
             >{{ $t("reset") }}</el-button
           >
-          <el-button size="mini" plain @click="open" v-if="formItemCount > 3">
+          <el-button size="mini" plain @click="open">
             <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
             {{ isOpen ? "收起" : "展开" }}
           </el-button>
@@ -82,7 +82,7 @@
             <el-button
               size="mini"
               plain
-              icon="el-icon-circle-plus-outline"
+              icon="el-icon-plus"
               type="success"
               @click="dialogFormVisible = true"
               >添加</el-button
@@ -285,8 +285,8 @@
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
       <span>确认{{ showState === 0 ? "显示" : "隐藏" }}吗？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmShowState">确 定</el-button>
+        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="confirmShowState">确 定</el-button>
       </span>
     </el-dialog>
   </el-card>

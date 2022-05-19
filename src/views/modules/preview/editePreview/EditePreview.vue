@@ -168,8 +168,8 @@
           >
         </el-form-item>
         <el-form-item>
-          <el-button @click="cancel()">取消</el-button>
-          <el-button type="primary" @click="submitForm('ruleForm')"
+          <el-button size="small" @click="cancel()">取消</el-button>
+          <el-button size="small" type="primary" @click="submitForm('ruleForm')"
             >确定</el-button
           >
           <!-- <el-button @click="resetForm('ruleForm')">重置</el-button> -->

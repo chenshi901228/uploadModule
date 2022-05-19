@@ -93,13 +93,21 @@
           label-width="100px"
         >
           <el-form-item label="支付方式" v-if="diaTbas === 1" prop="payType">
-            <el-select style="width: 180px" v-model="diaSearchForm.payType" clearable>
+            <el-select
+              style="width: 180px"
+              v-model="diaSearchForm.payType"
+              clearable
+            >
               <el-option :value="1" label="微信"></el-option>
               <el-option :value="2" label="支付宝"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="充值来源" v-if="diaTbas === 1" prop="paySource">
-            <el-select style="width: 180px" v-model="diaSearchForm.paySource" clearable>
+            <el-select
+              style="width: 180px"
+              v-model="diaSearchForm.paySource"
+              clearable
+            >
               <el-option :value="1" label="小程序端"></el-option>
               <el-option :value="2" label="大于众学"></el-option>
             </el-select>
@@ -128,21 +136,33 @@
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="主播昵称" v-if="diaTbas === 4 || diaTbas === 5" prop="anchorName">
+          <el-form-item
+            label="主播昵称"
+            v-if="diaTbas === 4 || diaTbas === 5"
+            prop="anchorName"
+          >
             <el-input
               style="width: 180px"
               v-model="diaSearchForm.anchorName"
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="手机号码" v-if="diaTbas === 4 || diaTbas === 5" prop="phone">
+          <el-form-item
+            label="手机号码"
+            v-if="diaTbas === 4 || diaTbas === 5"
+            prop="phone"
+          >
             <el-input
               style="width: 180px"
               v-model="diaSearchForm.phone"
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="商品名称" v-if="diaTbas === 3" prop="productName">
+          <el-form-item
+            label="商品名称"
+            v-if="diaTbas === 3"
+            prop="productName"
+          >
             <el-input
               style="width: 180px"
               v-model="diaSearchForm.productName"
@@ -155,12 +175,20 @@
             </el-select>
           </el-form-item>
           <el-form-item label="是否免费" v-if="diaTbas === 3" prop="isFree">
-            <el-select style="width: 180px" v-model="diaSearchForm.isFree" clearable>
+            <el-select
+              style="width: 180px"
+              v-model="diaSearchForm.isFree"
+              clearable
+            >
               <el-option :value="0" label="否"></el-option>
               <el-option :value="1" label="是"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="关联商品编号" v-if="diaTbas === 3" prop="productId">
+          <el-form-item
+            label="关联商品编号"
+            v-if="diaTbas === 3"
+            prop="productId"
+          >
             <el-input
               style="width: 180px"
               v-model="diaSearchForm.productId"
@@ -168,16 +196,26 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="使用状态" v-if="diaTbas === 3" prop="useStatus">
-            <el-select style="width: 180px" v-model="diaSearchForm.useStatus" clearable>
+            <el-select
+              style="width: 180px"
+              v-model="diaSearchForm.useStatus"
+              clearable
+            >
               <el-option :value="0" label="未使用"></el-option>
               <el-option :value="1" label="已使用"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item v-if="diaTbas !== 6">
-            <el-button type="primary" size="mini" icon="el-icon-search" @click="queryPost_dia()">{{
-              $t("query")
-            }}</el-button>
-            <el-button size="mini" icon="el-icon-refresh" @click="mainReset">重置</el-button>
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-search"
+              @click="queryPost_dia()"
+              >{{ $t("query") }}</el-button
+            >
+            <el-button size="mini" icon="el-icon-refresh" @click="mainReset"
+              >重置</el-button
+            >
           </el-form-item>
         </el-form>
         <el-table
@@ -255,7 +293,7 @@
                       ? "直播邀请"
                       : scope.row.shareType === 2
                       ? "视频分享"
-                      :'其他分享'
+                      : "其他分享"
                   }}
                 </div>
               </template>
@@ -271,11 +309,7 @@
             >
               <template slot-scope="scope">
                 <div>
-                  {{
-                    scope.row.isFree === 0
-                      ? "否"
-                      : "是"
-                  }}
+                  {{ scope.row.isFree === 0 ? "否" : "是" }}
                 </div>
               </template>
             </el-table-column>
@@ -290,11 +324,7 @@
             >
               <template slot-scope="scope">
                 <div>
-                  {{
-                    scope.row.useStatus === 0
-                      ? "未使用"
-                      : "已使用"
-                  }}
+                  {{ scope.row.useStatus === 0 ? "未使用" : "已使用" }}
                 </div>
               </template>
             </el-table-column>
@@ -307,7 +337,11 @@
               v-else-if="prop === 'productImage'"
             >
               <template slot-scope="scope">
-                <img :src="scope.row.productImage" style="width: 75px; height: 50px;" alt="">
+                <img
+                  :src="scope.row.productImage"
+                  style="width: 75px; height: 50px"
+                  alt=""
+                />
               </template>
             </el-table-column>
             <el-table-column
@@ -321,11 +355,7 @@
             >
               <template slot-scope="scope">
                 <div>
-                  {{
-                    scope.row.shareState === 0
-                      ? "失败"
-                      : '成功'
-                  }}
+                  {{ scope.row.shareState === 0 ? "失败" : "成功" }}
                 </div>
               </template>
             </el-table-column>
@@ -347,7 +377,7 @@
                       ? "进入直播"
                       : scope.row.successEvent === 2
                       ? "预约直播"
-                      : '观看视频'
+                      : "观看视频"
                   }}
                 </div>
               </template>
@@ -444,11 +474,11 @@ export default {
         title: "",
         anchorName: "",
         phone: "",
-        useStatus:"",
-        productName:"",
-        productId:"",
-        productType:"",
-        isFree:"",
+        useStatus: "",
+        productName: "",
+        productId: "",
+        productType: "",
+        isFree: "",
       };
       this.diaDataList = [];
       this.total_dia = 0;
@@ -557,11 +587,11 @@ export default {
             limit: this.limit_dia,
             page: this.page_dia,
             weixinUserId: this.userId,
-            useStatus:this.diaSearchForm.useStatus,
-            productName:this.diaSearchForm.productName,
-            productId:this.diaSearchForm.productId,
-            productType:this.diaSearchForm.productType,
-            isFree:this.diaSearchForm.isFree,
+            useStatus: this.diaSearchForm.useStatus,
+            productName: this.diaSearchForm.productName,
+            productId: this.diaSearchForm.productId,
+            productType: this.diaSearchForm.productType,
+            isFree: this.diaSearchForm.isFree,
           };
           url = "/sys/management/user/product/userOrderWithDetailPage";
           break;
@@ -617,8 +647,8 @@ export default {
 
     // 主页搜索重置
     mainReset() {
-      this.$refs.searchForm.resetFields()
-      this.queryPost_dia()
+      this.$refs.searchForm.resetFields();
+      this.queryPost_dia();
     },
 
     // 重置搜索条件
@@ -686,15 +716,15 @@ export default {
   cursor: pointer;
   line-height: 45px;
   background: inherit;
-  background-color: rgba(242, 242, 242, 1);
+  background-color: rgba(236, 245, 255, 1);
   border: none;
-  border-radius: 0px;
+  border-radius: 3px;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
   box-shadow: none;
 }
 .is-active {
-  background-color: rgba(107, 107, 107, 1);
+  background-color: rgba(64, 158, 255, 1);
   color: #fff;
 }
 </style>

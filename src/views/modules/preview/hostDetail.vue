@@ -4,7 +4,7 @@
       <div class="diaBoxLeft">
         <div class="diaBoxLeft_title">
           <span>主播信息</span
-          ><el-button type="primary" size="mini" @click="editeUserInfo"
+          ><el-button plain type="primary" size="mini" @click="editeUserInfo"
             >编辑</el-button
           >
         </div>
@@ -22,12 +22,14 @@
               <div>是否指导师：{{ diaForm.nickName }}</div> -->
           <div>真实姓名：{{ diaForm.realName }}</div>
           <div>身份证号：{{ diaForm.idCard }}</div>
-          <div style="word-break: break-all;">主播简介：{{ diaForm.introduce }}</div>
+          <div style="word-break: break-all">
+            主播简介：{{ diaForm.introduce }}
+          </div>
         </div>
 
         <div class="diaBoxLeft_title">
           <span>银行信息</span
-          ><el-button type="primary" size="mini" @click="editeUserBank"
+          ><el-button plain type="primary" size="mini" @click="editeUserBank"
             >编辑</el-button
           >
         </div>
@@ -40,15 +42,13 @@
         </div>
         <div class="diaBoxLeft_title">
           <span>账户信息</span
-          ><el-button type="primary" size="mini" @click="editeUserMoney"
+          ><el-button plain type="primary" size="mini" @click="editeUserMoney"
             >提现</el-button
           >
         </div>
         <div class="diaBoxLeft_mes">
           <div>
-            累计收益：￥{{
-              diaForm.priceIncome ? diaForm.priceIncome : 0
-            }}元
+            累计收益：￥{{ diaForm.priceIncome ? diaForm.priceIncome : 0 }}元
           </div>
           <div>已提现金额：￥{{ diaForm.anchorWithdraw || 0 }}元</div>
           <div>可提现金额：￥{{ diaForm.anchorBalance || 0 }}元</div>
@@ -126,7 +126,11 @@
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="银行账户" v-if="diaTbas === 2" prop="bankAccount">
+          <el-form-item
+            label="银行账户"
+            v-if="diaTbas === 2"
+            prop="bankAccount"
+          >
             <el-input
               size="small"
               v-model="diaSearchForm.bankAccount"
@@ -144,7 +148,11 @@
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="审批状态" v-if="diaTbas === 2" prop="approveStatus">
+          <el-form-item
+            label="审批状态"
+            v-if="diaTbas === 2"
+            prop="approveStatus"
+          >
             <el-select
               size="small"
               v-model="diaSearchForm.approveStatus"
@@ -162,10 +170,18 @@
               <el-option :value="-1" label="支付失败"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="用户昵称" v-if="diaTbas === 3 || diaTbas === 4" prop="userName">
+          <el-form-item
+            label="用户昵称"
+            v-if="diaTbas === 3 || diaTbas === 4"
+            prop="userName"
+          >
             <el-input v-model="diaSearchForm.userName" clearable></el-input>
           </el-form-item>
-          <el-form-item label="商品名称" v-if="diaTbas === 5" prop="productName">
+          <el-form-item
+            label="商品名称"
+            v-if="diaTbas === 5"
+            prop="productName"
+          >
             <el-input v-model="diaSearchForm.productName" clearable></el-input>
           </el-form-item>
           <el-form-item
@@ -177,7 +193,12 @@
           </el-form-item>
           <el-form-item label="等级" v-if="diaTbas === 4" prop="level">
             <el-select size="small" v-model="diaSearchForm.level" clearable>
-              <el-option v-for="item in 10" :key="item" :value="(item - 1) + ''" :label="(item - 1) + ''"></el-option>
+              <el-option
+                v-for="item in 10"
+                :key="item"
+                :value="item - 1 + ''"
+                :label="item - 1 + ''"
+              ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="粉丝团身份" v-if="diaTbas === 4" prop="userType">
@@ -196,7 +217,11 @@
           <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
             <el-input v-model="diaSearchForm.anchorName" clearable></el-input>
           </el-form-item>
-          <el-form-item label="商品类型" v-if="diaTbas === 5" prop="productType">
+          <el-form-item
+            label="商品类型"
+            v-if="diaTbas === 5"
+            prop="productType"
+          >
             <el-select v-model="diaSearchForm.productType" clearable>
               <el-option value="专业课" label="专业课"></el-option>
             </el-select>
@@ -225,12 +250,13 @@
               icon="el-icon-plus"
               >上架商品</el-button
             >
-            <el-button 
-              size="mini" 
-              icon="el-icon-user" 
-              v-if="diaTbas === 4" 
+            <el-button
+              size="mini"
+              icon="el-icon-user"
+              v-if="diaTbas === 4"
               plain
-              @click="fansGroup" type="primary"
+              @click="fansGroup"
+              type="primary"
               >群组</el-button
             >
             <el-button
@@ -251,8 +277,16 @@
               icon="el-icon-plus"
               >添加主播</el-button
             >
-            <el-button size="mini" icon="el-icon-search" type="primary" @click="queryPost_dia()">{{ $t("query") }}</el-button>
-            <el-button size="mini" icon="el-icon-refresh" @click="mainReset">重置</el-button>
+            <el-button
+              size="mini"
+              icon="el-icon-search"
+              type="primary"
+              @click="queryPost_dia()"
+              >{{ $t("query") }}</el-button
+            >
+            <el-button size="mini" icon="el-icon-refresh" @click="mainReset"
+              >重置</el-button
+            >
           </el-form-item>
         </el-form>
         <el-table
@@ -526,8 +560,10 @@
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
       <span>确认删除吗？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmDel">确 定</el-button>
+        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="confirmDel"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
     <!-- 商品上架列表弹框 -->
@@ -538,65 +574,97 @@
       top="20px"
     >
       <el-form
-        size="small"
         :inline="true"
         :model="productForm"
         @keyup.enter.native="queryUserList()"
+        size="small"
         label-width="100px"
+        label-position="right"
       >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="商品名称">
-              <el-input
-                v-model="productForm.productName"
-                placeholder="请输入"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="商品类型">
-              <el-select v-model="productForm.productType" clearable>
-                <el-option value="专业课" label="专业课"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="是否免费">
-              <el-select v-model="productForm.isFree" clearable>
-                <el-option :value="0" label="否"></el-option>
-                <el-option :value="1" label="是"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="关联产品编号">
-              <el-input
-                v-model="productForm.id"
-                placeholder="请输入"
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item style="float: right">
+        <el-form-item label="商品名称">
+          <el-input
+            style="width: 200px"
+            v-model="productForm.productName"
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="商品类型">
+          <el-select
+            style="width: 200px"
+            v-model="productForm.productType"
+            clearable
+          >
+            <el-option value="专业课" label="专业课"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否免费">
+          <el-select
+            style="width: 200px"
+            v-model="productForm.isFree"
+            clearable
+          >
+            <el-option :value="0" label="否"></el-option>
+            <el-option :value="1" label="是"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="关联产品编号">
+          <el-input
+            style="width: 200px"
+            v-model="productForm.id"
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button
+              type="primary"
+              icon="el-icon-search"
+              size="mini"
+              @click="queryUserList"
+              >查询</el-button
+            >
+            <el-button
+              icon="el-icon-refresh"
+              size="mini"
+              @click="reset('productForm')"
+              >重置</el-button
+            >
+          </el-form-item>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
               <el-button
-                size="small"
-                type="primary"
+                plain
+                size="mini"
+                icon="el-icon-delete"
+                v-if="dataListSelections.length !== 0"
+                type="danger"
+                @click="deleteSelect()"
+                >批量删除</el-button
+              >
+            </el-form-item>
+
+            <el-form-item>
+              <el-button
+                type="success"
+                plain
+                icon="el-icon-plus"
+                size="mini"
                 v-if="dataListSelectionUsers.length !== 0"
                 @click="deleteUserSelect()"
                 >批量上架</el-button
               >
-              <el-button size="small" type="primary" @click="queryUserList"
-                >查询</el-button
-              >
-              <el-button size="small" @click="reset('productForm')">重置</el-button>
             </el-form-item>
-          </el-col>
-        </el-row>
+          </div>
+        </div>
       </el-form>
       <el-table
         v-loading="dataUserListLoading"
         :data="dataUserList"
-        border
         fit
         @selection-change="userListSelectionChangeHandle"
         style="width: 100%"
@@ -718,8 +786,9 @@
         >
           <template slot-scope="scope">
             <el-button
+              icon="el-icon-goods"
               size="mini"
-              type="primary"
+              type="text"
               @click="handleDeleteUser(scope.$index, scope.row)"
               >上架</el-button
             >
@@ -740,49 +809,65 @@
         :model="recommendForm"
         @keyup.enter.native="getRecommendList()"
         label-width="100px"
+        label-position="right"
       >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="主播昵称" prop="anchorName">
-              <el-input
-                v-model="recommendForm.anchorName"
-                placeholder="请输入"
-                clearable
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="手机号码" prop="anchorPhone">
-              <el-input
-                v-model="recommendForm.anchorPhone"
-                placeholder="请输入"
-                clearable
-              ></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item style="float: right">
+        <el-form-item label="主播昵称" prop="anchorName">
+          <el-input
+            style="width: 200px"
+            v-model="recommendForm.anchorName"
+            placeholder="请输入"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="手机号码" prop="anchorPhone">
+          <el-input
+            style="width: 200px"
+            v-model="recommendForm.anchorPhone"
+            placeholder="请输入"
+            clearable
+          ></el-input>
+        </el-form-item>
+
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button
+              type="primary"
+              icon="el-icon-search"
+              size="mini"
+              @click="getRecommendList"
+              >查询</el-button
+            >
+            <el-button
+              icon="el-icon-refresh"
+              size="mini"
+              @click="reset('recommendForm')"
+              >重置</el-button
+            >
+          </el-form-item>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
               <el-button
-                size="small"
+                type="success"
+                plain
+                icon="el-icon-plus"
+                size="mini"
                 v-if="
                   recommendListSelections.length !== 0 && dialogRecommendVisible
                 "
-                type="danger"
                 @click="addRecommend()"
                 >批量添加</el-button
               >
-              <el-button size="small" type="primary" @click="getRecommendList"
-                >查询</el-button
-              >
-              <el-button size="small" @click="reset('recommendForm')">重置</el-button>
             </el-form-item>
-          </el-col>
-        </el-row>
+          </div>
+        </div>
       </el-form>
       <el-table
         v-loading="dataUserListLoading"
         :data="recommendList"
-        border
         fit
         @selection-change="recommendSelectionChangeHandle"
         style="width: 100%"
@@ -862,8 +947,9 @@
         >
           <template slot-scope="scope">
             <el-button
+              icon="el-icon-plus"
               size="mini"
-              type="primary"
+              type="text"
               @click="addRecommend(scope.row.recommendAnchorId)"
               >添加</el-button
             >
@@ -924,8 +1010,12 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible_editBank = false">取 消</el-button>
-        <el-button type="primary" @click="subimtEditBank">确 定</el-button>
+        <el-button size="small" @click="dialogVisible_editBank = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="subimtEditBank"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
     <!-- 提现 -->
@@ -1558,8 +1648,8 @@ export default {
     },
     // 主页搜索重置
     mainReset() {
-      this.$refs.searchForm.resetFields()
-      this.queryPost_dia()
+      this.$refs.searchForm.resetFields();
+      this.queryPost_dia();
     },
     // 分页, 每页条数
     pageSizeChangeHandle_dia(val) {
@@ -1789,20 +1879,20 @@ export default {
 
     //重置
     reset(name) {
-      if(name == "productForm") {
+      if (name == "productForm") {
         this.productForm = {
           productName: "",
           productType: "",
           isFree: "",
           id: "",
-        }
-        this.queryUserList()
-      }else if(name == "recommendForm") {
+        };
+        this.queryUserList();
+      } else if (name == "recommendForm") {
         this.recommendForm = {
           anchorName: "",
           anchorPhone: "",
-        }
-        this.getRecommendList()
+        };
+        this.getRecommendList();
       }
     },
     //上架商品
@@ -2249,15 +2339,15 @@ export default {
   cursor: pointer;
   line-height: 45px;
   background: inherit;
-  background-color: rgba(242, 242, 242, 1);
+  background-color: rgba(236, 245, 255, 1);
   border: none;
-  border-radius: 0px;
+  border-radius: 3px;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
   box-shadow: none;
 }
 .is-active {
-  background-color: rgba(107, 107, 107, 1);
+  background-color: rgba(64, 158, 255, 1);
   color: #fff;
 }
 /deep/.frontCoverImg {
