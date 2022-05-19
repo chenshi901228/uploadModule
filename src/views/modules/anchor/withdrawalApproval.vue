@@ -319,6 +319,7 @@
         ref="ruleForm"
         label-width="100px"
         class="demo-ruleForm"
+        size="small"
       >
         <el-form-item label="备注" prop="desc">
           <el-input
@@ -329,8 +330,8 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="updateApproveStatus(-1)">驳 回</el-button>
-        <el-button type="primary" @click="updateApproveStatus(1)"
+        <el-button size="small" @click="updateApproveStatus(-1)">驳 回</el-button>
+        <el-button size="small" type="primary" @click="updateApproveStatus(1)"
           >通 过</el-button
         >
       </div>
