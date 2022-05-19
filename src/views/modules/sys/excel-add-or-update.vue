@@ -1,6 +1,6 @@
 <template>
-  <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('add') : $t('update')" :close-on-click-modal="false" :close-on-press-escape="false">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" :label-width="$i18n.locale === 'en-US' ? '120px' : '80px'">
+  <el-dialog width="45%" :visible.sync="visible" :title="!dataForm.id ? $t('add') : $t('update')" :close-on-click-modal="false" :close-on-press-escape="false">
+    <el-form size="small" :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" :label-width="$i18n.locale === 'en-US' ? '120px' : '80px'">
       <el-form-item :label="$t('excel.realName')" prop="realName">
         <el-input v-model="dataForm.realName"></el-input>
       </el-form-item>
@@ -18,8 +18,8 @@
       </el-form-item>
     </el-form>
     <template slot="footer">
-      <el-button @click="visible = false">{{ $t('cancel') }}</el-button>
-      <el-button type="primary" @click="dataFormSubmitHandle()">{{ $t('confirm') }}</el-button>
+      <el-button size="small" @click="visible = false">{{ $t('cancel') }}</el-button>
+      <el-button size="small" type="primary" @click="dataFormSubmitHandle()">{{ $t('confirm') }}</el-button>
     </template>
   </el-dialog>
 </template>

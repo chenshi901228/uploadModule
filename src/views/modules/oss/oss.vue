@@ -1,7 +1,7 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-oss__oss">
-      <el-form class="headerTool" :inline="true" :model="dataForm">
+      <el-form  class="headerTool" :inline="true" :model="dataForm">
         <el-form-item>
           <el-button size="mini" plain type="warning" icon="el-icon-edit" @click="configHandle()">{{ $t('oss.config') }}</el-button>
         </el-form-item>

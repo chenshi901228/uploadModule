@@ -65,8 +65,8 @@
           v-if="isOpen || formItemCount >= 3"
         >
           <el-select
-            clearable
             style="width: 200px"
+            clearable
             v-model="dataForm.isFree"
             placeholder="请选择"
           >
@@ -121,7 +121,7 @@
                 size="mini"
                 type="success"
                 plain
-                icon="el-icon-circle-plus-outline"
+                icon="el-icon-plus"
                 @click="upGoods()"
                 >批量上架</el-button
               >

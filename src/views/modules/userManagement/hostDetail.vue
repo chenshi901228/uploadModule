@@ -29,9 +29,7 @@
         <div class="diaBoxLeft_title">账户信息</div>
         <div class="diaBoxLeft_mes">
           <div>
-            累计收益：￥{{
-              diaForm.priceIncome ? diaForm.priceIncome : 0
-            }}元
+            累计收益：￥{{ diaForm.priceIncome ? diaForm.priceIncome : 0 }}元
           </div>
           <div>已提现金额：￥{{ diaForm.anchorWithdraw || 0 }}元</div>
           <div>可提现金额：￥{{ diaForm.anchorBalance || 0 }}元</div>
@@ -84,7 +82,7 @@
         </div>
         <el-form
           :inline="true"
-          :style="{ margin: '20px'}"
+          :style="{ margin: '20px' }"
           :model="diaSearchForm"
           size="small"
           ref="searchForm"
@@ -92,7 +90,11 @@
           @keyup.enter.native="queryPost_dia()"
         >
           <el-form-item label="收益类型" v-if="diaTbas === 1" prop="type">
-            <el-select style="width: 180px" v-model="diaSearchForm.type" clearable>
+            <el-select
+              style="width: 180px"
+              v-model="diaSearchForm.type"
+              clearable
+            >
               <el-option :value="1" label="直播间礼物"></el-option>
               <el-option :value="2" label="粉丝团"></el-option>
               <el-option :value="3" label="课程返利"></el-option>
@@ -105,10 +107,15 @@
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
-              value-format="yyyy-MM-dd HH:mm:ss">
+              value-format="yyyy-MM-dd HH:mm:ss"
+            >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="银行账户" v-if="diaTbas === 2" prop="bankAccount">
+          <el-form-item
+            label="银行账户"
+            v-if="diaTbas === 2"
+            prop="bankAccount"
+          >
             <el-input
               style="width: 180px"
               v-model="diaSearchForm.bankAccount"
@@ -122,31 +129,52 @@
               range-separator="至"
               start-placeholder="开始日期"
               end-placeholder="结束日期"
-              value-format="yyyy-MM-dd HH:mm:ss">
+              value-format="yyyy-MM-dd HH:mm:ss"
+            >
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="审批状态" v-if="diaTbas === 2" prop="approveStatus">
-            <el-select style="width: 180px" v-model="diaSearchForm.approveStatus" clearable>
+          <el-form-item
+            label="审批状态"
+            v-if="diaTbas === 2"
+            prop="approveStatus"
+          >
+            <el-select
+              style="width: 180px"
+              v-model="diaSearchForm.approveStatus"
+              clearable
+            >
               <el-option :value="0" label="审批中"></el-option>
               <el-option :value="1" label="已通过"></el-option>
               <el-option :value="-1" label="未通过"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="支付状态" v-if="diaTbas === 2" prop="payStatus">
-            <el-select style="width: 180px" v-model="diaSearchForm.payStatus" clearable>
+            <el-select
+              style="width: 180px"
+              v-model="diaSearchForm.payStatus"
+              clearable
+            >
               <el-option :value="0" label="未支付"></el-option>
               <el-option :value="1" label="已支付"></el-option>
               <el-option :value="-1" label="支付失败"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="用户昵称" v-if="diaTbas === 3 || diaTbas === 4" prop="userName">
+          <el-form-item
+            label="用户昵称"
+            v-if="diaTbas === 3 || diaTbas === 4"
+            prop="userName"
+          >
             <el-input
               style="width: 180px"
               v-model="diaSearchForm.userName"
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="商品名称" v-if="diaTbas === 5" prop="productName">
+          <el-form-item
+            label="商品名称"
+            v-if="diaTbas === 5"
+            prop="productName"
+          >
             <el-input
               style="width: 180px"
               v-model="diaSearchForm.productName"
@@ -165,12 +193,25 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="等级" v-if="diaTbas === 4" prop="level">
-            <el-select style="width: 180px" v-model="diaSearchForm.level" clearable>
-              <el-option v-for="item in 10" :key="item" :value="(item - 1) + ''" :label="(item - 1) + ''"></el-option>
+            <el-select
+              style="width: 180px"
+              v-model="diaSearchForm.level"
+              clearable
+            >
+              <el-option
+                v-for="item in 10"
+                :key="item"
+                :value="item - 1 + ''"
+                :label="item - 1 + ''"
+              ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="粉丝团身份" v-if="diaTbas === 4" prop="userType">
-            <el-select style="width: 180px" v-model="diaSearchForm.userType" clearable>
+            <el-select
+              style="width: 180px"
+              v-model="diaSearchForm.userType"
+              clearable
+            >
               <el-option :value="0" label="普通会员"></el-option>
               <el-option :value="1" label="会长"></el-option>
               <el-option :value="2" label="副会长"></el-option>
@@ -183,7 +224,11 @@
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="商品类型" v-if="diaTbas === 5" prop="productType">
+          <el-form-item
+            label="商品类型"
+            v-if="diaTbas === 5"
+            prop="productType"
+          >
             <el-select
               style="width: 180px"
               v-model="diaSearchForm.productType"
@@ -193,7 +238,11 @@
             </el-select>
           </el-form-item>
           <el-form-item label="是否免费" v-if="diaTbas === 5" prop="isFree">
-            <el-select style="width: 180px" v-model="diaSearchForm.isFree" clearable>
+            <el-select
+              style="width: 180px"
+              v-model="diaSearchForm.isFree"
+              clearable
+            >
               <el-option :value="0" label="否"></el-option>
               <el-option :value="1" label="是"></el-option>
             </el-select>
@@ -219,10 +268,16 @@
               icon="el-icon-user"
               >群组</el-button
             >
-            <el-button icon="el-icon-search" type="primary" size="mini" @click="queryPost_dia()">{{
-              $t("query")
-            }}</el-button>
-            <el-button icon="el-icon-refresh" size="mini" @click="mainReset">重置</el-button>
+            <el-button
+              icon="el-icon-search"
+              type="primary"
+              size="mini"
+              @click="queryPost_dia()"
+              >{{ $t("query") }}</el-button
+            >
+            <el-button icon="el-icon-refresh" size="mini" @click="mainReset"
+              >重置</el-button
+            >
           </el-form-item>
         </el-form>
         <el-table
@@ -286,7 +341,13 @@
             >
               <template slot-scope="scope">
                 <div>
-                  {{ scope.row.type === 1 ? "直播间礼物":scope.row.type===2?"粉丝团":"课程返利" }}
+                  {{
+                    scope.row.type === 1
+                      ? "直播间礼物"
+                      : scope.row.type === 2
+                      ? "粉丝团"
+                      : "课程返利"
+                  }}
                 </div>
               </template>
             </el-table-column>
@@ -300,7 +361,13 @@
             >
               <template slot-scope="scope">
                 <div>
-                  {{ scope.row.approveStatus === 0 ? "审批中":scope.row.approveStatus === 1 ?"已通过":"未通过" }}
+                  {{
+                    scope.row.approveStatus === 0
+                      ? "审批中"
+                      : scope.row.approveStatus === 1
+                      ? "已通过"
+                      : "未通过"
+                  }}
                 </div>
               </template>
             </el-table-column>
@@ -314,7 +381,17 @@
             >
               <template slot-scope="scope">
                 <div>
-                  {{ scope.row.confirmStatus === 0 ? "待打款":scope.row.confirmStatus ===1&&scope.row.payStatus===0?'到账中':scope.row.confirmStatus ===1&&scope.row.payStatus===1?'已到账':"到账失败" }}
+                  {{
+                    scope.row.confirmStatus === 0
+                      ? "待打款"
+                      : scope.row.confirmStatus === 1 &&
+                        scope.row.payStatus === 0
+                      ? "到账中"
+                      : scope.row.confirmStatus === 1 &&
+                        scope.row.payStatus === 1
+                      ? "已到账"
+                      : "到账失败"
+                  }}
                 </div>
               </template>
             </el-table-column>
@@ -446,7 +523,9 @@
       <span>确认删除吗？</span>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="confirmDel">确 定</el-button>
+        <el-button size="small" type="primary" @click="confirmDel"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
 
@@ -665,11 +744,11 @@ export default {
         productName: "",
         productType: "",
         isFree: "",
-        type:"",
-        bankAccount:"",
-        approveStatus:"",
-        payStatus:"",
-        date:"",
+        type: "",
+        bankAccount: "",
+        approveStatus: "",
+        payStatus: "",
+        date: "",
       },
       productForm: {
         productName: "",
@@ -725,7 +804,7 @@ export default {
           vm.diaForm = {
             ...vm.diaForm,
             priceIncome: res.data.priceIncome,
-            anchorWithdraw:res.data.anchorWithdraw,
+            anchorWithdraw: res.data.anchorWithdraw,
             anchorBalance: res.data.anchorBalance,
           };
         })
@@ -734,8 +813,11 @@ export default {
     });
   },
   methods: {
-    fansGroup(){
-      this.$router.push({name:'userManagement-fansGroup-index',query:{anchorId:this.userId}})
+    fansGroup() {
+      this.$router.push({
+        name: "userManagement-fansGroup-index",
+        query: { anchorId: this.userId },
+      });
     },
     // 多选
     dataListSelectionChangeHandle(val) {
@@ -765,11 +847,11 @@ export default {
               productName: "",
               productType: "",
               isFree: "",
-              type:"",
-              bankAccount:"",
-              approveStatus:"",
-              payStatus:"",
-              date:"",
+              type: "",
+              bankAccount: "",
+              approveStatus: "",
+              payStatus: "",
+              date: "",
             };
             this.page_dia = 1; // 当前页码
             this.diaDataList = [];
@@ -797,11 +879,11 @@ export default {
         productName: "",
         productType: "",
         isFree: "",
-        type:"",
-        bankAccount:"",
-        approveStatus:"",
-        payStatus:"",
-        date:"",
+        type: "",
+        bankAccount: "",
+        approveStatus: "",
+        payStatus: "",
+        date: "",
       };
       this.diaDataList = [];
       this.total_dia = 0;
@@ -885,8 +967,8 @@ export default {
             page: this.page_dia,
             anchorId: this.userId,
             type: this.diaSearchForm.type,
-            startDate:this.diaSearchForm.date[0],
-            endDate:this.diaSearchForm.date[1]
+            startDate: this.diaSearchForm.date[0],
+            endDate: this.diaSearchForm.date[1],
           };
           url = "/sys/anchorGain/page";
           break;
@@ -895,11 +977,11 @@ export default {
             limit: this.limit_dia,
             page: this.page_dia,
             anchorId: this.userId,
-            bankAccount:this.diaSearchForm.bankAccount,
-            approveStatus:this.diaSearchForm.approveStatus,
-            payStatus:this.diaSearchForm.payStatus,
-            startDate:this.diaSearchForm.date[0],
-            endDate:this.diaSearchForm.date[1]
+            bankAccount: this.diaSearchForm.bankAccount,
+            approveStatus: this.diaSearchForm.approveStatus,
+            payStatus: this.diaSearchForm.payStatus,
+            startDate: this.diaSearchForm.date[0],
+            endDate: this.diaSearchForm.date[1],
           };
           url = "/sys/anchorWithdraw/page";
           break;
@@ -972,8 +1054,8 @@ export default {
 
     // 主页搜索重置
     mainReset() {
-      this.$refs.searchForm.resetFields()
-      this.queryPost_dia()
+      this.$refs.searchForm.resetFields();
+      this.queryPost_dia();
     },
     // 分页, 每页条数
     pageSizeChangeHandle_dia(val) {
@@ -1199,15 +1281,15 @@ export default {
   cursor: pointer;
   line-height: 45px;
   background: inherit;
-  background-color: rgba(242, 242, 242, 1);
+  background-color: rgba(236, 245, 255, 1);
   border: none;
-  border-radius: 0px;
+  border-radius: 3px;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
   box-shadow: none;
 }
 .is-active {
-  background-color: rgba(107, 107, 107, 1);
+  background-color: rgba(64, 158, 255, 1);
   color: #fff;
 }
 /deep/.frontCoverImg {

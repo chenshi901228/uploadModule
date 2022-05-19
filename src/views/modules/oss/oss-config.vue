@@ -1,6 +1,6 @@
 <template>
   <el-dialog :visible.sync="visible" :title="$t('oss.config')" :close-on-click-modal="false" :close-on-press-escape="false">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
+    <el-form size="small" :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
       <el-form-item :label="$t('oss.type')" size="mini">
         <el-radio-group v-model="dataForm.type">
           <el-radio :label="1">{{ $t('oss.type1') }}</el-radio>
@@ -117,8 +117,8 @@
       </template>
     </el-form>
     <template slot="footer">
-      <el-button @click="visible = false">{{ $t('cancel') }}</el-button>
-      <el-button type="primary" @click="dataFormSubmitHandle()">{{ $t('confirm') }}</el-button>
+      <el-button size="small" @click="visible = false">{{ $t('cancel') }}</el-button>
+      <el-button size="small" type="primary" @click="dataFormSubmitHandle()">{{ $t('confirm') }}</el-button>
     </template>
   </el-dialog>
 </template>

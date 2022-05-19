@@ -1,6 +1,6 @@
 <template>
-  <el-dialog :visible.sync="visible" :title="!dataForm.id ? $t('add') : $t('update')" :close-on-click-modal="false" :close-on-press-escape="false">
-    <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
+  <el-dialog width="45%" :visible.sync="visible" :title="!dataForm.id ? $t('add') : $t('update')" :close-on-click-modal="false" :close-on-press-escape="false">
+    <el-form :model="dataForm" size="small" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
       <el-form-item prop="username" :label="$t('user.username')">
         <el-input v-model="dataForm.username" :placeholder="$t('user.username')"></el-input>
       </el-form-item>
@@ -34,7 +34,7 @@
           <el-option v-for="role in roleList" :key="role.id" :label="role.name" :value="role.id"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item prop="postIdList" :label="$t('user.postIdList')" class="role-list">
+      <el-form-item prop="postIdList" size="small" :label="$t('user.postIdList')" class="role-list">
         <el-select v-model="dataForm.postIdList" multiple :placeholder="$t('user.postIdList')">
           <el-option v-for="post in postList" :key="post.id" :label="post.postName" :value="post.id"></el-option>
         </el-select>
@@ -47,8 +47,8 @@
       </el-form-item>
     </el-form>
     <template slot="footer">
-      <el-button @click="visible = false">{{ $t('cancel') }}</el-button>
-      <el-button type="primary" @click="dataFormSubmitHandle()">{{ $t('confirm') }}</el-button>
+      <el-button @click="visible = false" size="small">{{ $t('cancel') }}</el-button>
+      <el-button type="primary" size="small" @click="dataFormSubmitHandle()">{{ $t('confirm') }}</el-button>
     </template>
   </el-dialog>
 </template>

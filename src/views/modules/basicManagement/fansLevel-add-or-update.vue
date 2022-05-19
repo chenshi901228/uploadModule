@@ -29,8 +29,8 @@
           maxlength="10"
           v-model="dataForm.level"
           placeholder="等级"
-          :disabled="dataForm.id"
-          :oninput="(dataForm.level = dataForm.level.replace(/[^0-9.]/g, ''))"
+          :disabled="dataForm.id.length !== 0 ? true : false"
+          :oninput="(dataForm.level = dataForm.level.toString().replace(/[^0-9.]/g, ''))"
         ></el-input>
       </el-form-item>
       <el-form-item label="等级名称" prop="levelName">
@@ -38,7 +38,7 @@
           maxlength="6"
           v-model="dataForm.levelName"
           placeholder="等级名称"
-          :disabled="dataForm.id"
+          :disabled="dataForm.id.length !== 0 ? true : false"
         ></el-input>
       </el-form-item>
       <el-form-item label="亲密值要求" prop="intimacyNum">
@@ -46,7 +46,7 @@
           maxlength="10"
           v-model="dataForm.intimacyNum"
           placeholder="亲密值要求"
-          :disabled="dataForm.id"
+          :disabled="dataForm.id.length !== 0 ? true : false"
           :oninput="(dataForm.intimacyNum = dataForm.intimacyNum.replace(/[^0-9.]/g, ''))"
         ></el-input>
 
@@ -62,8 +62,8 @@
       </el-form-item>
     </el-form>
     <template slot="footer">
-      <el-button @click="visible = false">{{ $t("cancel") }}</el-button>
-      <el-button type="primary" @click="dataFormSubmitHandle('dataForm')">{{
+      <el-button size="small" @click="visible = false">{{ $t("cancel") }}</el-button>
+      <el-button size="small" type="primary" @click="dataFormSubmitHandle('dataForm')">{{
         $t("confirm")
       }}</el-button>
     </template>
