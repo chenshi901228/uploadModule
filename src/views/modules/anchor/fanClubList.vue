@@ -156,10 +156,10 @@
             :model="dataForm_fans"
             @keyup.enter.native="queryPost_fans()"
             ref="dataForm_fans"
+            size="small"
           >
             <el-form-item label="用户昵称" prop="userName">
               <el-input
-                size="small"
                 v-model="dataForm_fans.userName"
                 placeholder="用户昵称"
                 clearable
@@ -167,7 +167,6 @@
             </el-form-item>
             <el-form-item label="手机号码" prop="phone">
               <el-input
-                size="small"
                 v-model="dataForm_fans.phone"
                 placeholder="手机号码"
                 clearable
@@ -175,7 +174,6 @@
             </el-form-item>
             <el-form-item label="用户等级" prop="level">
               <el-select
-                size="small"
                 v-model="dataForm_fans.level"
                 clearable
               >
@@ -184,7 +182,6 @@
             </el-form-item>
             <el-form-item label="粉丝团身份" prop="userType">
               <el-select
-                size="small"
                 v-model="dataForm_fans.userType"
                 clearable
               >
@@ -195,13 +192,13 @@
             </el-form-item>
             <el-form-item>
               <el-button
-                size="small"
+                size="mini"
                 type="primary"
                 @click="queryPost_fans()"
                 >{{ $t("query") }}</el-button
               >
               <el-button
-                size="small"
+                size="mini"
                 @click="queryPost_fans_reset"
                 >重置</el-button
               >
