@@ -38,7 +38,7 @@
                 </el-option>
               </el-select> -->
           <el-input
-            size="small"
+            style="width: 200px"
             v-model.trim="dataForm.productName"
             placeholder="请输入商品名称"
             clearable
@@ -50,20 +50,13 @@
           prop="productType"
           v-if="isOpen || formItemCount >= 2"
         >
-          <!-- <el-input
-                                size="small"
-                                v-model.trim="dataForm.productType"
-                                placeholder="请输入"
-                                clearable
-                            >
-                            </el-input> -->
-          <el-select
-            clearable
-            size="small"
-            v-model="dataForm.productType"
-            placeholder="请选择"
-          >
-            <el-option label="专业课" value="专业课"></el-option>
+          <el-select 
+            @visible-change="getProductType" 
+            style="width: 200px" 
+            v-model="dataForm.productType" 
+            placeholder="商品类型"
+            clearable>
+              <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType" :label="item.productType"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
@@ -73,7 +66,7 @@
         >
           <el-select
             clearable
-            size="small"
+            style="width: 200px"
             v-model="dataForm.isFree"
             placeholder="请选择"
           >
@@ -87,7 +80,7 @@
           v-if="isOpen || formItemCount >= 4"
         >
           <el-input
-            size="small"
+            style="width: 200px"
             v-model.trim="dataForm.id"
             placeholder="请输入"
             clearable
@@ -222,19 +215,22 @@
           fixed="right"
           header-align="center"
           align="center"
-          width="100"
+          width="120"
         >
           <template slot-scope="{ row }">
-            <el-button type="text" size="small" @click="upGoods(row.id)"
-              >上架</el-button
-            >
+            <el-button 
+              type="text" 
+              size="small" 
+              icon="el-icon-plus"
+              @click="upGoods(row.id)"
+              >上架</el-button>
             <el-button
               style="margin-left: 10px"
               type="text"
               size="small"
-              @click="emdit(row)"
-              >编辑</el-button
-            >
+              icon="el-icon-edit"
+              @click="edit(row)"
+              >编辑</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -293,6 +289,7 @@ export default {
       ],
       loading: false, //搜索loading
       goodsNameOptions: [], //商品名称下拉选项
+      productTypeOptions: [] //商品类型下拉选项
     };
   },
   activated() {
@@ -334,6 +331,21 @@ export default {
       } else {
         this.goodsNameOptions = [];
       }
+    },
+    // 下拉获取商品类型
+    getProductType(type) {
+      if(!type) return
+      this.$http.get("/sys/course/searchProductType").then(({data: res}) => {
+        if(res.code == 0) {
+          this.productTypeOptions = res.data
+        }else {
+          this.productTypeOptions = []
+          return this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        this.productTypeOptions = []
+        this.$message.error(JSON.stringify(err))
+      })
     },
     upGoodsHandle(data) {
       this.$http
@@ -387,7 +399,7 @@ export default {
       }
     },
     // 编辑
-    emdit(row) {
+    edit(row) {
       this.$refs.goodsAddOrUpdate.init(row);
     },
   },

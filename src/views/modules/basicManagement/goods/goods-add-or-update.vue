@@ -84,7 +84,7 @@
 export default {
   data() {
     const blurText1 = async (rule, value, callback) => {
-      if (!Number(value) || Number(value) < 0) {
+      if (Number(value) != 0 && (!Number(value) || Number(value) < 0)) {
         callback(new Error("请输入0或正数"));
       }
     };

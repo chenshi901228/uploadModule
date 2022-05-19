@@ -260,7 +260,9 @@
           align="center"
         >
           <template slot-scope="scope">
-            <div>{{ scope.row.liveState ? "未直播" : "直播中" }}</div>
+            <el-tag size="small" :type="!scope.row.liveState ? 'success' : 'danger'">{{
+              scope.row.liveState ? "否" : "是"
+            }}</el-tag>
           </template>
         </el-table-column>
 
@@ -367,7 +369,7 @@ export default {
         idCard: "",
         gender: "",
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
     };
   },
   components: { Template },

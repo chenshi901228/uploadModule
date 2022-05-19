@@ -137,6 +137,7 @@
                 plain
                 icon="el-icon-close"
                 type="danger"
+                :disabled="!dataListSelections.length"
                 @click="forbidden()"
                 >禁用</el-button
               >
@@ -327,7 +328,7 @@ export default {
         invitePhone: "",
         status: "",
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
       userId: "",
     };
   },

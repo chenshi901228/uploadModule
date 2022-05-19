@@ -51,20 +51,13 @@
           prop="productType"
           v-if="isOpen || formItemCount >= 2"
         >
-          <!-- <el-input
-                size="small"
-                v-model.trim="dataForm.productType"
-                placeholder="请输入"
-                clearable
-              >
-              </el-input> -->
-          <el-select
-            clearable
-            size="small"
-            v-model="dataForm.productType"
-            placeholder="请选择"
-          >
-            <el-option label="专业课" value="专业课"></el-option>
+          <el-select 
+            @visible-change="getProductType" 
+            style="width: 200px" 
+            v-model="dataForm.productType" 
+            placeholder="商品类型"
+            clearable>
+              <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType" :label="item.productType"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
@@ -287,6 +280,7 @@ export default {
       ],
       loading: false, //搜索loading
       goodsNameOptions: [], //商品名称下拉选项
+      productTypeOptions: [] //商品类型下拉选项
     };
   },
   created() {
@@ -331,6 +325,21 @@ export default {
       } else {
         this.goodsNameOptions = [];
       }
+    },
+    // 下拉获取商品类型
+    getProductType(type) {
+      if(!type) return
+      this.$http.get("/sys/course/searchProductType").then(({data: res}) => {
+        if(res.code == 0) {
+          this.productTypeOptions = res.data
+        }else {
+          this.productTypeOptions = []
+          return this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        this.productTypeOptions = []
+        this.$message.error(JSON.stringify(err))
+      })
     },
     // 商品上架
     upGoods() {

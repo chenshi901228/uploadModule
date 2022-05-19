@@ -12,7 +12,6 @@
       >
         <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="userName">
           <el-input
-            size="small"
             v-model="dataForm.userName"
             clearable
             placeholder="用户昵称"
@@ -20,23 +19,23 @@
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
           <el-input
-            size="small"
             v-model="dataForm.userPhone"
             clearable
             placeholder="手机号码"
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 3" label="商品类型" prop="productType">
-          <el-input
-            size="small"
-            v-model="dataForm.productType"
-            clearable
+          <el-select 
+            @visible-change="getProductType" 
+            style="width: 200px" 
+            v-model="dataForm.productType" 
             placeholder="商品类型"
-          ></el-input>
+            clearable>
+              <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType" :label="item.productType"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 4" label="商品名称" prop="productName">
           <el-input
-            size="small"
             v-model="dataForm.productName"
             clearable
             placeholder="商品名称"
@@ -44,7 +43,6 @@
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 5" label="关联订单编号" prop="weixinUserProductId">
           <el-input
-            size="small"
             v-model="dataForm.weixinUserProductId"
             clearable
             placeholder="关联订单编号"
@@ -337,6 +335,7 @@ export default {
       ruleForm: {
         desc: "",
       },
+      productTypeOptions: [] //商品类型下拉选项
     };
   },
   components: { Template },
@@ -359,6 +358,21 @@ export default {
       };
       this.$refs.refundApproval.resetFields();
       this.getDataList();
+    },
+    // 下拉获取商品类型
+    getProductType(type) {
+      if(!type) return
+      this.$http.get("/sys/course/searchProductType").then(({data: res}) => {
+        if(res.code == 0) {
+          this.productTypeOptions = res.data
+        }else {
+          this.productTypeOptions = []
+          return this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        this.productTypeOptions = []
+        this.$message.error(JSON.stringify(err))
+      })
     },
 
     // 审核
