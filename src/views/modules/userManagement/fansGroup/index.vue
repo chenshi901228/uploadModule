@@ -289,82 +289,83 @@
           <el-button size="mini" icon="el-icon-search" type="primary" @click="getHasJoinFansUserList">查询</el-button>
           <el-button size="mini" icon="el-icon-refresh" @click="reset('hasJoinFansUserList')">重置</el-button>
         </el-form-item>
-        <el-table
-          v-loading="hasJoinUserListLoading"
-          :data="hasJoinFansUserList"
-          fit
-          style="width: 100%"
-          max-height="500"
-        >
-          <template v-for="(label, prop) in hasJoinColumns">
-            <el-table-column
-              :prop="prop"
-              :label="label"
-              :key="prop"
-              header-align="center"
-              align="center"
-              v-if="prop === 'avatarUrl'"
-            >
-              <template slot-scope="scope">
-                <img
-                  :src="scope.row.avatarUrl || require('@/assets/img/default_avatar.png')"
-                  alt=""
-                  style="width: 60px; height: 60px; object-fit: cover;"
-                />
-              </template>
-            </el-table-column>
-            <el-table-column
-              :prop="prop"
-              :label="label"
-              :key="prop"
-              header-align="center"
-              align="center"
-              v-else-if="prop === 'userType'"
-            >
-              <template slot-scope="scope">
-                <span>{{scope.row.userType==0?'普通用户':scope.row.userType==1?'会长':'副会长'}}</span>
-              </template>
-            </el-table-column>
-            <el-table-column
-              :prop="prop"
-              :label="label"
-              :key="prop"
-              header-align="center"
-              align="center"
-              show-overflow-tooltip
-              v-else
-            >
-            </el-table-column>
-          </template>
-          <!-- <el-table-column
-            width="200"
-            label="操作"
-            fixed="right"
+      </el-form>
+      <span style="font-weight: 700">当前所在组：{{currentGroupName}}</span>
+      <el-table
+        v-loading="hasJoinUserListLoading"
+        :data="hasJoinFansUserList"
+        fit
+        style="width: 100%"
+        max-height="500"
+      >
+        <template v-for="(label, prop) in hasJoinColumns">
+          <el-table-column
+            :prop="prop"
+            :label="label"
+            :key="prop"
             header-align="center"
             align="center"
+            v-if="prop === 'avatarUrl'"
           >
             <template slot-scope="scope">
-              <el-button
-                size="mini"
-                type="primary"
-                @click="removeUserJoinGroup(scope.$index, scope.row)"
-                >移除</el-button
-              >
+              <img
+                :src="scope.row.avatarUrl || require('@/assets/img/default_avatar.png')"
+                alt=""
+                style="width: 60px; height: 60px; object-fit: cover;"
+              />
             </template>
-          </el-table-column> -->
-        </el-table>
-        <el-pagination
-            background
-            :current-page="hasJoinFansUserForm.page"
-            :page-sizes="[10, 20, 50, 100]"
-            :page-size="hasJoinFansUserForm.limit"
-            :total="hasJoinFansUserTotal"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="hasJoinFansPageSizeChange"
-            @current-change="hasJoinFansCurrentChange"
+          </el-table-column>
+          <el-table-column
+            :prop="prop"
+            :label="label"
+            :key="prop"
+            header-align="center"
+            align="center"
+            v-else-if="prop === 'userType'"
           >
-        </el-pagination>
-      </el-form>
+            <template slot-scope="scope">
+              <span>{{scope.row.userType==0?'普通用户':scope.row.userType==1?'会长':'副会长'}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column
+            :prop="prop"
+            :label="label"
+            :key="prop"
+            header-align="center"
+            align="center"
+            show-overflow-tooltip
+            v-else
+          >
+          </el-table-column>
+        </template>
+        <!-- <el-table-column
+          width="200"
+          label="操作"
+          fixed="right"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              type="primary"
+              @click="removeUserJoinGroup(scope.$index, scope.row)"
+              >移除</el-button
+            >
+          </template>
+        </el-table-column> -->
+      </el-table>
+      <el-pagination
+          background
+          :current-page="hasJoinFansUserForm.page"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="hasJoinFansUserForm.limit"
+          :total="hasJoinFansUserTotal"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="hasJoinFansPageSizeChange"
+          @current-change="hasJoinFansCurrentChange"
+        >
+      </el-pagination>
     </el-dialog>
   </el-card>
 </template>
@@ -442,7 +443,8 @@ export default {
         userType:"粉丝团身份",
         createDate:"入群时间",
       },
-      fansLevelsOptions: [] //粉丝等级options
+      fansLevelsOptions: [], //粉丝等级options
+      currentGroupName: "" //当前查看的群组
     }
   },
   created(){
@@ -557,6 +559,7 @@ export default {
     //查看成员
     handleLookUser(i, row){
       this.groupId = row.id
+      this.currentGroupName = row.groupName
       this.dialogVisibleLookUser = true
       this.getHasJoinFansUserList()
     },
