@@ -38,6 +38,7 @@
                 </el-option>
               </el-select> -->
           <el-input
+            style="width: 200px"
             size="small"
             v-model.trim="dataForm.productName"
             placeholder="请输入商品名称"
@@ -58,6 +59,7 @@
                             >
                             </el-input> -->
           <el-select
+            style="width: 200px"
             clearable
             size="small"
             v-model="dataForm.productType"
@@ -72,6 +74,7 @@
           v-if="isOpen || formItemCount >= 3"
         >
           <el-select
+            style="width: 200px"
             clearable
             size="small"
             v-model="dataForm.isFree"
@@ -87,6 +90,7 @@
           v-if="isOpen || formItemCount >= 4"
         >
           <el-input
+            style="width: 200px"
             size="small"
             v-model.trim="dataForm.id"
             placeholder="请输入"
@@ -225,7 +229,11 @@
           width="120"
         >
           <template slot-scope="{ row }">
-            <el-button type="text" icon="el-icon-plus" size="small" @click="upGoods(row.id)"
+            <el-button
+              type="text"
+              icon="el-icon-plus"
+              size="small"
+              @click="upGoods(row.id)"
               >上架</el-button
             >
             <el-button

@@ -17,6 +17,7 @@
           v-if="isOpen || formItemCount >= 1"
         >
           <el-input
+          style="width: 200px"
             v-model.trim="dataForm.name"
             clearable
             placeholder="礼物名称"
@@ -44,7 +45,7 @@
           prop="isFree"
           v-if="isOpen || formItemCount >= 2"
         >
-          <el-select clearable v-model="dataForm.isFree" placeholder="请选择">
+          <el-select style="width: 200px" clearable v-model="dataForm.isFree" placeholder="请选择">
             <el-option label="是" :value="1"></el-option>
             <el-option label="否" :value="0"></el-option>
           </el-select>
@@ -54,7 +55,7 @@
           prop="status"
           v-if="isOpen || formItemCount >= 3"
         >
-          <el-select clearable v-model="dataForm.status" placeholder="请选择">
+          <el-select style="width: 200px" clearable v-model="dataForm.status" placeholder="请选择">
             <el-option label="上架" :value="1"></el-option>
             <el-option label="下架" :value="0"></el-option>
             <el-option label="已删除" :value="-2"></el-option>
