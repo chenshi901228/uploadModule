@@ -161,6 +161,9 @@ img {
 .el-button--text {
   color: $--color-primary;
 }
+.el-button--text:focus, .el-button--text:hover {
+  color: $--color-primary;
+}
 
 // 主题工具
 .aui-theme-tools {

@@ -88,10 +88,11 @@
           :model="diaSearchForm"
           size="small"
           ref="searchForm"
+          label-width="100px"
           @keyup.enter.native="queryPost_dia()"
         >
           <el-form-item label="收益类型" v-if="diaTbas === 1" prop="type">
-            <el-select size="small" v-model="diaSearchForm.type" clearable>
+            <el-select style="width: 180px" v-model="diaSearchForm.type" clearable>
               <el-option :value="1" label="直播间礼物"></el-option>
               <el-option :value="2" label="粉丝团"></el-option>
               <el-option :value="3" label="课程返利"></el-option>
@@ -109,7 +110,7 @@
           </el-form-item>
           <el-form-item label="银行账户" v-if="diaTbas === 2" prop="bankAccount">
             <el-input
-              size="small"
+              style="width: 180px"
               v-model="diaSearchForm.bankAccount"
               clearable
             ></el-input>
@@ -125,14 +126,14 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item label="审批状态" v-if="diaTbas === 2" prop="approveStatus">
-            <el-select size="small" v-model="diaSearchForm.approveStatus" clearable>
+            <el-select style="width: 180px" v-model="diaSearchForm.approveStatus" clearable>
               <el-option :value="0" label="审批中"></el-option>
               <el-option :value="1" label="已通过"></el-option>
               <el-option :value="-1" label="未通过"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="支付状态" v-if="diaTbas === 2" prop="payStatus">
-            <el-select size="small" v-model="diaSearchForm.payStatus" clearable>
+            <el-select style="width: 180px" v-model="diaSearchForm.payStatus" clearable>
               <el-option :value="0" label="未支付"></el-option>
               <el-option :value="1" label="已支付"></el-option>
               <el-option :value="-1" label="支付失败"></el-option>
@@ -140,14 +141,14 @@
           </el-form-item>
           <el-form-item label="用户昵称" v-if="diaTbas === 3 || diaTbas === 4" prop="userName">
             <el-input
-              size="small"
+              style="width: 180px"
               v-model="diaSearchForm.userName"
               clearable
             ></el-input>
           </el-form-item>
           <el-form-item label="商品名称" v-if="diaTbas === 5" prop="productName">
             <el-input
-              size="small"
+              style="width: 180px"
               v-model="diaSearchForm.productName"
               clearable
             ></el-input>
@@ -158,18 +159,18 @@
             prop="phone"
           >
             <el-input
-              size="small"
+              style="width: 180px"
               v-model="diaSearchForm.phone"
               clearable
             ></el-input>
           </el-form-item>
           <el-form-item label="等级" v-if="diaTbas === 4" prop="level">
-            <el-select size="small" v-model="diaSearchForm.level" clearable>
+            <el-select style="width: 180px" v-model="diaSearchForm.level" clearable>
               <el-option v-for="item in 10" :key="item" :value="(item - 1) + ''" :label="(item - 1) + ''"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="粉丝团身份" v-if="diaTbas === 4" prop="userType">
-            <el-select size="small" v-model="diaSearchForm.userType" clearable>
+            <el-select style="width: 180px" v-model="diaSearchForm.userType" clearable>
               <el-option :value="0" label="普通会员"></el-option>
               <el-option :value="1" label="会长"></el-option>
               <el-option :value="2" label="副会长"></el-option>
@@ -177,14 +178,14 @@
           </el-form-item>
           <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
             <el-input
-              size="small"
+              style="width: 180px"
               v-model="diaSearchForm.anchorName"
               clearable
             ></el-input>
           </el-form-item>
           <el-form-item label="商品类型" v-if="diaTbas === 5" prop="productType">
             <el-select
-              size="small"
+              style="width: 180px"
               v-model="diaSearchForm.productType"
               clearable
             >
@@ -192,7 +193,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="是否免费" v-if="diaTbas === 5" prop="isFree">
-            <el-select size="small" v-model="diaSearchForm.isFree" clearable>
+            <el-select style="width: 180px" v-model="diaSearchForm.isFree" clearable>
               <el-option :value="0" label="否"></el-option>
               <el-option :value="1" label="是"></el-option>
             </el-select>
@@ -211,23 +212,23 @@
               >批量下架</el-button
             > -->
             <el-button
-              size="small"
+              size="mini"
               v-if="diaTbas === 4"
               @click="fansGroup"
               type="primary"
+              icon="el-icon-user"
               >群组</el-button
             >
-            <el-button type="primary" size="small" @click="queryPost_dia()">{{
+            <el-button icon="el-icon-search" type="primary" size="mini" @click="queryPost_dia()">{{
               $t("query")
             }}</el-button>
-            <el-button size="small" @click="mainReset">重置</el-button>
+            <el-button icon="el-icon-refresh" size="mini" @click="mainReset">重置</el-button>
           </el-form-item>
         </el-form>
         <el-table
           :data="diaDataList"
-          border
           style="width: 100%"
-          height="calc(calc(100vh - 340px) - 2px)"
+          height="calc(calc(100vh - 50px - 36px - 30px - 45px - 90px - 47px) - 2px)"
           @selection-change="dataListSelectionChangeHandle"
         >
           <!-- <el-table-column
@@ -429,6 +430,7 @@
           </el-table-column> -->
         </el-table>
         <el-pagination
+          background
           :current-page="page_dia"
           :page-sizes="[10, 20, 50, 100]"
           :page-size="limit_dia"
@@ -443,8 +445,8 @@
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
       <span>确认删除吗？</span>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmDel">确 定</el-button>
+        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="confirmDel">确 定</el-button>
       </span>
     </el-dialog>
 
@@ -1151,7 +1153,7 @@ export default {
 
 <style lang="scss" scoped>
 .diaBox {
-  height: calc(calc(100vh - 50px - 66px) - 2px);
+  height: calc(calc(100vh - 50px - 36px) - 2px);
   position: relative;
   background: #fff;
 }

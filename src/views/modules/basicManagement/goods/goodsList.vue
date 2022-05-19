@@ -138,7 +138,7 @@
                 size="mini"
                 type="success"
                 plain
-                icon="el-icon-circle-plus-outline"
+                icon="el-icon-plus"
                 @click="upGoods"
                 >商品上架</el-button
               >

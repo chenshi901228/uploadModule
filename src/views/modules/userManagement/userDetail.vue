@@ -90,22 +90,23 @@
           @keyup.enter.native="queryPost_dia()"
           size="small"
           ref="searchForm"
+          label-width="100px"
         >
           <el-form-item label="支付方式" v-if="diaTbas === 1" prop="payType">
-            <el-select size="small" v-model="diaSearchForm.payType" clearable>
+            <el-select style="width: 180px" v-model="diaSearchForm.payType" clearable>
               <el-option :value="1" label="微信"></el-option>
               <el-option :value="2" label="支付宝"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="充值来源" v-if="diaTbas === 1" prop="paySource">
-            <el-select size="small" v-model="diaSearchForm.paySource" clearable>
+            <el-select style="width: 180px" v-model="diaSearchForm.paySource" clearable>
               <el-option :value="1" label="小程序端"></el-option>
               <el-option :value="2" label="大于众学"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="礼物名称" v-if="diaTbas === 2" prop="name">
             <el-input
-              size="small"
+              style="width: 180px"
               v-model="diaSearchForm.name"
               clearable
             ></el-input>
@@ -122,70 +123,69 @@
             prop="title"
           >
             <el-input
-              size="small"
+              style="width: 180px"
               v-model="diaSearchForm.title"
               clearable
             ></el-input>
           </el-form-item>
           <el-form-item label="主播昵称" v-if="diaTbas === 4 || diaTbas === 5" prop="anchorName">
             <el-input
-              size="small"
+              style="width: 180px"
               v-model="diaSearchForm.anchorName"
               clearable
             ></el-input>
           </el-form-item>
           <el-form-item label="手机号码" v-if="diaTbas === 4 || diaTbas === 5" prop="phone">
             <el-input
-              size="small"
+              style="width: 180px"
               v-model="diaSearchForm.phone"
               clearable
             ></el-input>
           </el-form-item>
           <el-form-item label="商品名称" v-if="diaTbas === 3" prop="productName">
             <el-input
-              size="small"
+              style="width: 180px"
               v-model="diaSearchForm.productName"
               clearable
             ></el-input>
           </el-form-item>
           <el-form-item label="商品类型" v-if="diaTbas === 3" prop="productType">
             <el-input
-              size="small"
+              style="width: 180px"
               v-model="diaSearchForm.productType"
               clearable
             ></el-input>
           </el-form-item>
           <el-form-item label="是否免费" v-if="diaTbas === 3" prop="isFree">
-            <el-select size="small" v-model="diaSearchForm.isFree" clearable>
+            <el-select style="width: 180px" v-model="diaSearchForm.isFree" clearable>
               <el-option :value="0" label="否"></el-option>
               <el-option :value="1" label="是"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="关联商品编号" v-if="diaTbas === 3" prop="productId">
             <el-input
-              size="small"
+              style="width: 180px"
               v-model="diaSearchForm.productId"
               clearable
             ></el-input>
           </el-form-item>
           <el-form-item label="使用状态" v-if="diaTbas === 3" prop="useStatus">
-            <el-select size="small" v-model="diaSearchForm.useStatus" clearable>
+            <el-select style="width: 180px" v-model="diaSearchForm.useStatus" clearable>
               <el-option :value="0" label="未使用"></el-option>
               <el-option :value="1" label="已使用"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item v-if="diaTbas !== 6">
-            <el-button type="primary" size="small" @click="queryPost_dia()">{{
+            <el-button type="primary" size="mini" icon="el-icon-search" @click="queryPost_dia()">{{
               $t("query")
             }}</el-button>
-            <el-button @click="mainReset">重置</el-button>
+            <el-button size="mini" icon="el-icon-refresh" @click="mainReset">重置</el-button>
           </el-form-item>
         </el-form>
         <el-table
           :data="diaDataList"
-          border
           style="width: 100%"
-          height="calc(calc(100vh - 340px) - 2px)"
+          height="calc(calc(100vh - 50px - 36px - 30px - 45px - 90px - 47px) - 2px)"
         >
           <template v-for="(label, prop) in diaTableTitle">
             <el-table-column
@@ -367,6 +367,7 @@
           </template>
         </el-table>
         <el-pagination
+          background
           :current-page="page_dia"
           :page-sizes="[10, 20, 50, 100]"
           :page-size="limit_dia"
@@ -644,7 +645,7 @@ export default {
 
 <style lang="scss" scoped>
 .diaBox {
-  height: calc(calc(100vh - 50px - 66px) - 2px);
+  height: calc(calc(100vh - 50px - 36px) - 2px);
   position: relative;
   background: #fff;
 }

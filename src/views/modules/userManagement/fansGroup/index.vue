@@ -2,39 +2,67 @@
   <el-card shadow="never" class="aui-card--fill">
     <div class="fans_group">
       <el-form
+        class="headerTool"
         size="small"
         :inline="true"
         :model="groupNameForm"
         @keyup.enter.native="getfansGroupList()"
         label-width="100px"
       >
-        <el-row type="flex">
-          <el-col :span="24">
-            <el-form-item label="群组名称">
-              <el-input
-                v-model="groupNameForm.groupName"
-                placeholder="请输入"
-              ></el-input>
-            </el-form-item>
+        <el-form-item label="群组名称">
+          <el-input
+            clearable
+            style="width: 200px"
+            v-model="groupNameForm.groupName"
+            placeholder="群组名称"
+          ></el-input>
+        </el-form-item>
+        <!-- 搜索重置展开按钮 -->
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button 
+              type="primary" 
+              icon="el-icon-search" 
+              size="mini"
+              @click="getfansGroupList">{{ $t("query") }}</el-button>
+            <el-button 
+              icon="el-icon-refresh" 
+              size="mini" 
+              @click="reset('main')">{{ $t("reset") }}</el-button>
+            <!-- <el-button size="mini" plain @click="open">
+              <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button> -->
+          </el-form-item>
+        </div>
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button size="small" type="primary" @click="getfansGroupList">查询</el-button>
-              <el-button size="small" @click="reset">重置</el-button>
+              <el-button 
+                size="mini" 
+                type="primary" 
+                plain
+                icon="el-icon-plus"
+                @click="dialogVisibleGroup=true" 
+                style="marginBottom:10px;">创建群组</el-button>
             </el-form-item>
-          </el-col>
-        </el-row>
+          </div>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                <el-button size="small" icon="el-icon-refresh" circle @click="getfansGroupList"></el-button>
+              </el-tooltip>
+            </el-form-item>
+          </div>
+        </div>
       </el-form>
-      <!-- <el-row>
-        <el-col>
-          <el-button size="small" type="primary" @click="dialogVisibleGroup=true" style="marginBottom:10px;">创建群组</el-button>
-        </el-col>
-      </el-row> -->
       <el-table
         v-loading="dataUserListLoading"
         :data="fansGroupList"
-        border
         fit
         style="width: 100%"
-        max-height="500"
+        :height="siteContentViewHeight"
       >
         <template v-for="(label, prop) in diaTableTitle">
           <el-table-column
@@ -62,7 +90,8 @@
             > -->
             <el-button
               size="mini"
-              type="primary"
+              type="text"
+              icon="el-icon-view"
               @click="handleLookUser(scope.$index, scope.row)"
               >查看成员</el-button
             >
@@ -70,6 +99,7 @@
         </el-table-column>
       </el-table>
       <el-pagination
+          background
           :current-page="groupNameForm.page"
           :page-sizes="[10, 20, 50, 100]"
           :page-size="groupNameForm.limit"
@@ -91,8 +121,8 @@
           <el-input v-model="createGroup.groupName"></el-input>
         </el-form-item>
         <el-form-item style="textAlign:right;">
-          <el-button @click="dialogVisibleGroup = false">取 消</el-button>
-          <el-button type="primary" @click="confirmCreateGroup">确 定</el-button>
+          <el-button size="small" @click="dialogVisibleGroup = false">取 消</el-button>
+          <el-button size="small" type="primary" @click="confirmCreateGroup">确 定</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -237,42 +267,31 @@
         @keyup.enter.native="getHasJoinFansUserList()"
         label-width="100px"
       >
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="用户昵称">
-              <el-input v-model="hasJoinFansUserForm.nickName" placeholder="请输入"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="手机号码">
-              <el-input v-model="hasJoinFansUserForm.phone" placeholder="请输入"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="等级">
-              <el-input v-model="hasJoinFansUserForm.level" placeholder="请输入"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="粉丝团身份">
-              <el-select v-model="hasJoinFansUserForm.userType" placeholder="请选择" clearable>
-                <el-option :value="0" label="普通用户"></el-option>
-                <el-option :value="1" label="会长"></el-option>
-                <el-option :value="2" label="副会长"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="24">
-            <el-form-item style="float: right;">
-              <el-button size="small" type="primary" @click="getHasJoinFansUserList">查询</el-button>
-              <el-button size="small" @click="reset">重置</el-button>
-            </el-form-item>
-          </el-col>
-        </el-row>
+        <el-form-item label="用户昵称">
+          <el-input style="width: 200px" v-model="hasJoinFansUserForm.nickName" placeholder="请输入"></el-input>
+        </el-form-item>
+        <el-form-item label="手机号码">
+          <el-input style="width: 200px" v-model="hasJoinFansUserForm.phone" placeholder="请输入"></el-input>
+        </el-form-item>
+        <el-form-item label="等级">
+          <el-select @visible-change="getFansLevels" style="width: 200px" v-model="hasJoinFansUserForm.level" clearable>
+            <el-option v-for="item in fansLevelsOptions" :key="item" :value="item" :label="item"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="粉丝团身份">
+          <el-select style="width: 200px" v-model="hasJoinFansUserForm.userType" placeholder="请选择" clearable>
+            <el-option :value="0" label="普通用户"></el-option>
+            <el-option :value="1" label="会长"></el-option>
+            <el-option :value="2" label="副会长"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button size="mini" icon="el-icon-search" type="primary" @click="getHasJoinFansUserList">查询</el-button>
+          <el-button size="mini" icon="el-icon-refresh" @click="reset('hasJoinFansUserList')">重置</el-button>
+        </el-form-item>
         <el-table
           v-loading="hasJoinUserListLoading"
           :data="hasJoinFansUserList"
-          border
           fit
           style="width: 100%"
           max-height="500"
@@ -335,6 +354,7 @@
           </el-table-column> -->
         </el-table>
         <el-pagination
+            background
             :current-page="hasJoinFansUserForm.page"
             :page-sizes="[10, 20, 50, 100]"
             :page-size="hasJoinFansUserForm.limit"
@@ -350,7 +370,9 @@
 </template>
 
 <script>
+import mixinTableModule from "@/mixins/table-module";
 export default {
+  mixins: [mixinTableModule],
   data(){
     return{
       dialogVisibleGroup:false,//创建群组弹窗
@@ -361,7 +383,7 @@ export default {
       hasJoinUserListLoading:false,
       dataListSelectionUsers:[],
       groupNameForm:{
-        userType:'',
+        groupName:'',
         limit:10,
         page:1,
         anchorId:this.$route.query.anchorId,
@@ -420,6 +442,7 @@ export default {
         userType:"粉丝团身份",
         createDate:"入群时间",
       },
+      fansLevelsOptions: [] //粉丝等级options
     }
   },
   created(){
@@ -496,8 +519,23 @@ export default {
         }
       });
     },
+    // 获取粉丝等级
+    getFansLevels(type) {
+      if(!type) return
+      this.$http.get("/sys/sysfanslevel/getLevelList").then(({data: res}) => {
+        if(res.code == 0) {
+          this.fansLevelsOptions = res.data
+        }else {
+          this.fansLevelsOptions = []
+          return this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        this.fansLevelsOptions = []
+        this.$message.error(JSON.stringify(err))
+      })
+    },
     //重置
-    reset(){
+    reset(formName){
       this.groupNameForm.groupName = ''
       this.hasJoinFansUserForm.nickName = ''
       this.hasJoinFansUserForm.phone = ''
@@ -507,6 +545,8 @@ export default {
       this.noJoinFansUserForm.phone = ''
       this.noJoinFansUserForm.level = ''
       this.noJoinFansUserForm.userType = ''
+      if(formName == "hasJoinFansUserList") this.getHasJoinFansUserList()
+      if(formName == "main") this.getfansGroupList()
     },
     //添加成员
     handleAddUser(i, row){
@@ -524,7 +564,7 @@ export default {
     getHasJoinFansUserList(){
       this.hasJoinFansUserForm.groupId = this.groupId
       this.$http.get('/sys/weixinfansgroup/getPeople',{params:this.hasJoinFansUserForm}).then(({data:res})=>{
-        console.log(res)
+        // console.log(res)
         if (res.code !== 0) {
           this.hasJoinFansUserList = [];
           this.hasJoinFansUserTotal = 0;
@@ -538,7 +578,7 @@ export default {
     //未加群的粉丝
     getNoJoinFansUserList(){
       this.$http.get('/sys/weixinfansgroup/getAnchorFans',{params:this.noJoinFansUserForm}).then(({data:res})=>{
-        console.log(res)
+        // console.log(res)
         if (res.code !== 0) {
           this.noJoinFansUserList = [];
           this.noJoinFansUserTotal = 0;

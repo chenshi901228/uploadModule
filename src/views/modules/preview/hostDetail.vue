@@ -1,6 +1,5 @@
 <template>
   <div>
-    <div class="diaBoxLeft_title">主播详情</div>
     <div class="diaBox">
       <div class="diaBoxLeft">
         <div class="diaBoxLeft_title">
@@ -107,6 +106,7 @@
           @keyup.enter.native="queryPost_dia()"
           size="small"
           ref="searchForm"
+          label-width="100px"
         >
           <el-form-item label="收益类型" v-if="diaTbas === 1" prop="type">
             <el-select size="small" v-model="diaSearchForm.type" clearable>
@@ -209,42 +209,57 @@
           </el-form-item>
           <el-form-item>
             <el-button
+              size="mini"
               v-if="diaTbas === 5 && dataListSelections.length !== 0"
               type="danger"
+              plain
               @click="deleteSelect()"
               >批量下架</el-button
             >
             <el-button
+              size="mini"
               v-if="diaTbas === 5"
               @click="updateProduct"
               type="primary"
+              plain
+              icon="el-icon-plus"
               >上架商品</el-button
             >
-            <el-button v-if="diaTbas === 4" @click="fansGroup" type="primary"
+            <el-button 
+              size="mini" 
+              icon="el-icon-user" 
+              v-if="diaTbas === 4" 
+              plain
+              @click="fansGroup" type="primary"
               >群组</el-button
             >
             <el-button
+              size="mini"
               v-if="diaTbas === 6 && dataListSelections.length !== 0"
               @click="deleteRecommend()"
               type="danger"
+              plain
+              icon="el-icon-delete"
               >批量取消</el-button
             >
             <el-button
+              size="mini"
               v-if="diaTbas === 6"
               @click="addRecommendShow"
               type="primary"
+              plain
+              icon="el-icon-plus"
               >添加主播</el-button
             >
-            <el-button type="primary" @click="queryPost_dia()">{{ $t("query") }}</el-button>
-            <el-button @click="mainReset">重置</el-button>
+            <el-button size="mini" icon="el-icon-search" type="primary" @click="queryPost_dia()">{{ $t("query") }}</el-button>
+            <el-button size="mini" icon="el-icon-refresh" @click="mainReset">重置</el-button>
           </el-form-item>
         </el-form>
         <el-table
           :data="diaDataList"
           v-loading="dataListLoading"
-          border
           style="width: 100%"
-          height="calc(calc(100vh - 380px) - 2px)"
+          height="calc(calc(100vh - 50px - 36px - 30px - 45px - 90px - 47px) - 2px)"
           @selection-change="dataListSelectionChangeHandle"
           ref="dataTable"
         >
@@ -464,6 +479,7 @@
                 v-if="diaTbas === 2"
                 type="text"
                 size="small"
+                icon="el-icon-view"
                 @click="previewInvoiceImg(scope.row)"
                 >查看发票</el-button
               >
@@ -471,6 +487,7 @@
                 v-if="diaTbas === 2 && scope.row.approveStatus == 0"
                 type="text"
                 size="small"
+                icon="el-icon-upload2"
                 @click="updateInvoiceImg(scope.row)"
                 >重新上传</el-button
               >
@@ -478,6 +495,7 @@
                 v-if="diaTbas === 5"
                 type="text"
                 size="small"
+                icon="el-icon-delete"
                 @click="downProduct(scope.row.id)"
                 >下架</el-button
               >
@@ -485,6 +503,7 @@
                 v-if="diaTbas === 6"
                 type="text"
                 size="small"
+                icon="el-icon-delete"
                 @click="deleteRecommend(scope.row.id)"
                 >取消推荐</el-button
               >
@@ -492,6 +511,7 @@
           </el-table-column>
         </el-table>
         <el-pagination
+          background
           :current-page="page_dia"
           :page-sizes="[10, 20, 50, 100]"
           :page-size="limit_dia"
@@ -2180,7 +2200,7 @@ export default {
 
 <style lang="scss" scoped>
 .diaBox {
-  height: calc(calc(100vh - 50px - 38px - 66px) - 2px);
+  height: calc(calc(100vh - 50px - 36px) - 2px);
   position: relative;
   background: #fff;
 }
