@@ -58,11 +58,5 @@ export default {
   components: {
     AddOrUpdate
   },
-  computed: {
-    siteContentViewHeight() {
-        var height = this.documentClientHeight - this.otherViewHeight - ( 50 + 40 + 30 + 47 );
-        return height;
-    },
-  },
 }
 </script>

@@ -58,8 +58,8 @@ export default {
       visible: false,
       top: 0,
       left: 0,
-      selectedTag: "",
-      currentTab: ""
+      selectedTag: "", //右键选中的tab
+      currentTab: "" //当前tab
     }
   },
   watch: {
@@ -118,19 +118,28 @@ export default {
         return item.name === 'home' || item.name === this.selectedTag
       })
       if(this.$store.state.contentTabs.length == 1) { //只剩首页则跳转到首页
+        this.currentTab = 'home'
+        if(this.$store.state.contentTabsActiveName == 'home') return
         this.$router.push({ name: 'home' })
       }else {
-        let tab = this.$store.state.contentTabs[this.$store.state.contentTabs.length - 1]
+        let tab = this.$store.state.contentTabs.filter(item => {
+          return item.name === this.selectedTag
+        })[0]
+        // 如果是不是当前tab，跳转
+        if(tab.name == this.$store.state.contentTabsActiveName) return
         this.$router.push({
           name: /^iframe_.+/.test(tab.name) ? 'iframe' : tab.name,
           params: { ...tab.params },
           query: { ...tab.query }
         })
+        this.currentTab = tab.name
       }
     },
     // tabs, 关闭全部
     tabsCloseAllHandle () {
       this.$store.state.contentTabs = this.$store.state.contentTabs.filter(item => item.name === 'home')
+      this.currentTab = 'home'
+      if(this.$store.state.contentTabsActiveName == 'home') return
       this.$router.push({ name: 'home' })
     },
     // 刷新页面

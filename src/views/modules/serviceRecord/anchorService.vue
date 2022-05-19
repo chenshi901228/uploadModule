@@ -42,7 +42,7 @@ export default {
             },
         },
         siteContentViewHeight() {
-            var height = this.documentClientHeight - ( 50 + 38 + 30 + 40 + 2 );
+            var height = this.documentClientHeight - ( 50 + 38 + 40 + 2 );
             return height;
         },
         filterConversationList() {
