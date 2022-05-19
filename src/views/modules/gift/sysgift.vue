@@ -76,7 +76,7 @@
               @click="resetDataForm()"
               >{{ $t("reset") }}</el-button
             >
-            <el-button size="mini" plain @click="open" v-if="formItemCount > 3">
+            <el-button size="mini" plain @click="open">
               <i
                 :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
               ></i>

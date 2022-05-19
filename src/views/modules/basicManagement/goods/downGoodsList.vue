@@ -128,7 +128,7 @@
                 size="mini"
                 type="success"
                 plain
-                icon="el-icon-circle-plus-outline"
+                icon="el-icon-plus"
                 @click="upGoods()"
                 >批量上架</el-button
               >
@@ -222,16 +222,17 @@
           fixed="right"
           header-align="center"
           align="center"
-          width="100"
+          width="120"
         >
           <template slot-scope="{ row }">
-            <el-button type="text" size="small" @click="upGoods(row.id)"
+            <el-button type="text" icon="el-icon-plus" size="small" @click="upGoods(row.id)"
               >上架</el-button
             >
             <el-button
               style="margin-left: 10px"
               type="text"
               size="small"
+              icon="el-icon-edit"
               @click="emdit(row)"
               >编辑</el-button
             >

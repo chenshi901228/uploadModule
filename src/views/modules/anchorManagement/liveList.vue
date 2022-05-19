@@ -176,7 +176,7 @@
               <el-button
                 type="success"
                 plain
-                icon="el-icon-circle-plus-outline"
+                icon="el-icon-plus"
                 size="mini"
                 @click="newLive"
                 >创建直播</el-button
