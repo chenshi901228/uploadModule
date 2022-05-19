@@ -11,8 +11,8 @@
             style="margin: 0px 85px 10px"
           ></el-avatar>
           <div>用户昵称：{{ diaForm.nickName }}</div>
-          <!-- <div>是否认证：{{ diaForm.nickName }}</div>
-              <div>是否指导师：{{ diaForm.nickName }}</div> -->
+          <div>是否认证：{{ diaForm.legalizeFlg===1?'是':'否' }}</div>
+          <div>是否指导师：{{ diaForm.tutorFlg===1?'是':'否' }}</div>
           <div>邀请注册：{{ diaForm.inviteUserName }}</div>
           <div>TA邀请人：{{ diaForm.createBy }}</div>
           <div>注册时间：{{ diaForm.createDate }}</div>
@@ -169,16 +169,10 @@
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item
-            label="商品类型"
-            v-if="diaTbas === 3"
-            prop="productType"
-          >
-            <el-input
-              style="width: 180px"
-              v-model="diaSearchForm.productType"
-              clearable
-            ></el-input>
+          <el-form-item label="商品类型" v-if="diaTbas === 3" prop="productType">
+            <el-select style="width: 180px" clearable v-model="diaSearchForm.productType">
+              <el-option value="专业课" label="专业课"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="是否免费" v-if="diaTbas === 3" prop="isFree">
             <el-select

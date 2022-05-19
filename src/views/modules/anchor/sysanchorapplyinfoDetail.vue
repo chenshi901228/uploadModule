@@ -32,7 +32,7 @@
         }}
       </div>
         <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">主播介绍：</span> {{ diaForm.introduce }}
+       <span style="width:100px;text-align:right;margin:0 10px">主播介绍：</span> <span style="word-break: break-all;max-width:800px;">{{ diaForm.introduce }}</span>
       </div>
       <!-- <div style="display: flex; margin: 20px 0 10px">主播介绍：</div>
       <div style="display: flex; margin: 0 20px">{{ diaForm.introduce }}</div> -->
