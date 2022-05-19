@@ -322,6 +322,7 @@
               :on-exceed="handleExceed2"
               :limit="1"
               ref="upload2"
+              :class="editeImgForm.img.length !== 0 ? 'hide_box' : ''"
             >
               <i class="el-icon-plus"></i>
             </el-upload>
