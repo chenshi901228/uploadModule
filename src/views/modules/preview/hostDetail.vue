@@ -196,13 +196,8 @@
             <el-input placeholder="手机号码" style="width: 180px" v-model="diaSearchForm.phone" clearable></el-input>
           </el-form-item>
           <el-form-item label="等级" v-if="diaTbas === 4" prop="level">
-            <el-select placeholder="等级" style="width: 180px" v-model="diaSearchForm.level" clearable>
-              <el-option
-                v-for="item in 10"
-                :key="item"
-                :value="item - 1 + ''"
-                :label="item - 1 + ''"
-              ></el-option>
+            <el-select @visible-change="getFansLevels" style="width: 180px" v-model="diaSearchForm.level" clearable>
+              <el-option v-for="item in fansLevelsOptions" :key="item" :value="item" :label="item"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="粉丝团身份" v-if="diaTbas === 4" prop="userType">
@@ -1303,7 +1298,8 @@ export default {
       restaurants: [],
       state: "",
       timeout: null,
-      productTypeOptions: [] //商品类型下拉选项
+      productTypeOptions: [], //商品类型下拉选项
+      fansLevelsOptions: [], //粉丝等级options
     };
   },
   computed: {
@@ -1661,6 +1657,21 @@ export default {
         }
       }).catch(err => {
         this.productTypeOptions = []
+        this.$message.error(JSON.stringify(err))
+      })
+    },
+    // 获取粉丝等级
+    getFansLevels(type) {
+      if(!type) return
+      this.$http.get("/sys/sysfanslevel/getLevelList").then(({data: res}) => {
+        if(res.code == 0) {
+          this.fansLevelsOptions = res.data
+        }else {
+          this.fansLevelsOptions = []
+          return this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        this.fansLevelsOptions = []
         this.$message.error(JSON.stringify(err))
       })
     },

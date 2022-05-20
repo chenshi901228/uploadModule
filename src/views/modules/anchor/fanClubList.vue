@@ -187,6 +187,7 @@
           >
             <el-form-item label="用户昵称" prop="userName">
               <el-input
+                style="width: 200px"
                 v-model="dataForm_fans.userName"
                 placeholder="用户昵称"
                 clearable
@@ -194,21 +195,20 @@
             </el-form-item>
             <el-form-item label="手机号码" prop="phone">
               <el-input
+                style="width: 200px"
                 v-model="dataForm_fans.phone"
                 placeholder="手机号码"
                 clearable
               ></el-input>
             </el-form-item>
             <el-form-item label="用户等级" prop="level">
-              <el-select
-                v-model="dataForm_fans.level"
-                clearable
-              >
-                <el-option v-for="item in 11" :key="item" :value="(item - 1) + ''" :label="(item - 1) + ''"></el-option>
+              <el-select @visible-change="getFansLevels" style="width: 200px" v-model="dataForm_fans.level" clearable>
+                <el-option v-for="item in fansLevelsOptions" :key="item" :value="item" :label="item"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="粉丝团身份" prop="userType">
               <el-select
+                style="width: 200px"
                 v-model="dataForm_fans.userType"
                 clearable
               >
@@ -357,6 +357,7 @@ export default {
       page_fans: 1, // 当前页码
       limit_fans: 10, // 每页数
       total_fans: 0,
+      fansLevelsOptions: [], //粉丝等级options
     };
   },
   components: {},
@@ -405,6 +406,21 @@ export default {
         .catch(() => {
           this.loading_fans = false
         });
+    },
+    // 获取粉丝等级
+    getFansLevels(type) {
+      if(!type) return
+      this.$http.get("/sys/sysfanslevel/getLevelList").then(({data: res}) => {
+        if(res.code == 0) {
+          this.fansLevelsOptions = res.data
+        }else {
+          this.fansLevelsOptions = []
+          return this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        this.fansLevelsOptions = []
+        this.$message.error(JSON.stringify(err))
+      })
     },
     // 粉丝团成员列表重置
     queryPost_fans_reset() {

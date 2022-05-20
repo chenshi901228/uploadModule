@@ -243,10 +243,11 @@
           fixed="right"
           header-align="center"
           align="center"
-          min-width="260"
+          width="200"
         >
           <template slot-scope="{ row }">
             <el-button
+              size="small"
               icon="el-icon-download"
               type="text"
               v-if="row.liveState == 1"
@@ -254,6 +255,7 @@
               >下载视频</el-button
             >
             <el-button
+              size="small"
               icon="el-icon-chat-dot-square"
               style="margin-left: 10px"
               type="text"
@@ -262,6 +264,7 @@
               >评论详情</el-button
             >
             <el-button
+              size="small"
               icon="el-icon-sort"
               style="margin-left: 10px"
               type="text"
@@ -270,6 +273,7 @@
               >{{ row.showState ? "隐藏" : "显示" }}</el-button
             >
             <el-button
+              size="small"
               icon="el-icon-shopping-cart-2"
               style="margin-left: 10px"
               type="text"
