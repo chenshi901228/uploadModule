@@ -278,7 +278,7 @@
         <p style="text-align: center">{{ uploadSuccessMsg }}</p>
       </div>
       <div slot="footer" class="dialog-footer">
-        <!-- <el-button @click="closeUploadDialog">关闭</el-button> -->
+        <el-button size="small" @click="dialogInputVisible = false">关闭</el-button>
       </div>
     </el-dialog>
 
@@ -286,7 +286,9 @@
       <span>确认{{ showState === 0 ? "显示" : "隐藏" }}吗？</span>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="confirmShowState">确 定</el-button>
+        <el-button size="small" type="primary" @click="confirmShowState"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
   </el-card>
@@ -331,7 +333,15 @@ export default {
       uploadSuccessMsg: "",
     };
   },
-  watch: {},
+  watch: {
+    dialogInputVisible(n, o) {
+      if (!n) {
+        this.percent = 0;
+        this.uploadXlx = "";
+        this.uploadSuccessMsg = "";
+      }
+    },
+  },
   created() {
     this.queryDynamicGroup();
   },
