@@ -775,3 +775,8 @@ img {
     margin-bottom: 10px;
   }
 }
+
+.el-table__body .el-table__cell > .cell:empty::before {
+  content: "-";
+  color: #606266;
+}
