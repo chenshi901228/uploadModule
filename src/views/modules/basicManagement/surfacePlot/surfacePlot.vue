@@ -238,9 +238,6 @@
           >
             <i class="el-icon-plus"></i>
           </el-upload>
-          <el-dialog :visible.sync="dialogImageVisible">
-            <img width="100%" :src="dialogImageUrl" alt="" />
-          </el-dialog>
         </el-form-item>
         <el-form-item>
           <div>图片大小不得小于630px*347px</div>
@@ -253,6 +250,9 @@
         <el-button size="small" @click="upImgDialog = false">取 消</el-button>
         <el-button size="small" type="primary" @click="upImgMethod">确 定</el-button>
       </span>
+    </el-dialog>
+    <el-dialog :visible.sync="dialogImageVisible">
+      <img width="100%" :src="dialogImageUrl" alt="" />
     </el-dialog>
 
     <el-dialog title="查看封面图" :visible.sync="showImgDialog" width="30%">
@@ -298,19 +298,19 @@
               :preview-src-list="editeSrcList"
             >
             </el-image>
-            <img
-              @click="remove"
-              style="
-                position: absolute;
-                right: 5px;
-                top: 5px;
-                width: 10px;
-                height: 10px;
-                cursor: pointer;
-              "
-              src="@/assets/img/close.png"
-              alt=""
-            />
+            <el-tooltip effect="dark" content="删除" placement="top">
+              <i
+                class="el-icon-close"
+                @click="remove"
+                style="
+                  position: absolute;
+                  right: 5px;
+                  top: 5px;
+                  font-size: 12px;
+                  color: #fff;
+                  cursor: pointer;
+                "></i>
+            </el-tooltip>
           </div>
           <div v-if="editeUrl.length === 0">
             <el-upload
@@ -326,9 +326,6 @@
             >
               <i class="el-icon-plus"></i>
             </el-upload>
-            <el-dialog :visible.sync="dialogEditeImageVisible">
-              <img width="100%" :src="dialogEditeImageUrl" alt="" />
-            </el-dialog>
           </div>
           <span>点击可看大图</span>
         </el-form-item>
@@ -340,6 +337,9 @@
         <el-button size="small" @click="editeImgDialog = false">取 消</el-button>
         <el-button size="small" type="primary" @click="editeImgMethod">确 定</el-button>
       </span>
+    </el-dialog>
+    <el-dialog :visible.sync="dialogEditeImageVisible">
+      <img width="100%" :src="dialogEditeImageUrl" alt="" />
     </el-dialog>
   </el-card>
 </template>
@@ -470,9 +470,18 @@ export default {
       }
     },
     remove() {
-      this.editeUrl = "";
-      this.editeImgForm.img = "";
-      this.editeSrcList = [];
+      this.$confirm("确认删除图片", "提示", {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.editeUrl = "";
+        this.editeImgForm.img = "";
+        this.editeSrcList = [];
+        this.$message.success("删除成功")
+      }).catch(() => {
+        this.$message.info("取消删除")
+      })
     },
     handleRemove2(file, fileList) {
       this.editeImgForm.img = "";
