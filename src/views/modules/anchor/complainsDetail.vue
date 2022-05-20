@@ -31,7 +31,7 @@
           :rows="6"
           maxlength="200"
           show-word-limit
-          :disabled="diaForm.handlingStatus"
+          :disabled="diaForm.handlingStatus == 1 ? true : false"
         ></el-input>
       </div>
     </div>

@@ -132,7 +132,7 @@
             <el-form-item>
               <el-button
                 size="mini"
-                type="success"
+                type="primary"
                 plain
                 icon="el-icon-plus"
                 @click="upGoods"

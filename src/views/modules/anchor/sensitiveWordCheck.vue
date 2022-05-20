@@ -12,24 +12,31 @@
       >
         <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="nickName">
           <el-input
-            size="small"
+            style="width: 200px"
+            placeholder="用户昵称"
             v-model="dataForm.nickName"
             clearable
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="phone">
           <el-input
-            size="small"
+            style="width: 200px"
+            placeholder="手机号码"
             v-model="dataForm.phone"
             clearable
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 3" label="待审核内容" prop="delFlg">
-          <el-input size="small" v-model="dataForm.content" clearable />
+          <el-input 
+            style="width: 200px"
+            placeholder="待审核内容" 
+            v-model="dataForm.content" 
+            clearable />
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 4" label="审核状态" prop="checkStatus">
           <el-select
-            size="small"
+            style="width: 200px"
+            placeholder="审核状态"
             v-model="dataForm.checkStatus"
             clearable
           >

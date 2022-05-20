@@ -18,7 +18,7 @@
         >
           <el-input
             style="width: 200px"
-            size="small"
+            placeholder="用户昵称"
             v-model="dataForm.nickName"
             clearable
           ></el-input>
@@ -30,7 +30,7 @@
         >
           <el-input
             style="width: 200px"
-            size="small"
+            placeholder="手机号码"
             v-model="dataForm.phone"
             clearable
           ></el-input>
@@ -42,7 +42,7 @@
         >
           <el-select
             style="width: 200px"
-            size="small"
+            placeholder="是否认证"
             v-model="dataForm.legalizeFlg"
             clearable
           >
@@ -57,7 +57,7 @@
         >
           <el-select
             style="width: 200px"
-            size="small"
+            placeholder="是否认证导师"
             v-model="dataForm.tutorFlg"
             clearable
           >
@@ -72,7 +72,7 @@
         >
           <el-input
             style="width: 200px"
-            size="small"
+            placeholder="邀请人"
             v-model="dataForm.inviteUserName"
             clearable
           ></el-input>
@@ -84,7 +84,7 @@
         >
           <el-input
             style="width: 200px"
-            size="small"
+            placeholder="邀请人号码"
             v-model="dataForm.invitePhone"
             clearable
           ></el-input>
@@ -96,7 +96,7 @@
         >
           <el-select
             style="width: 200px"
-            size="small"
+            placeholder="状态"
             v-model="dataForm.status"
             clearable
           >

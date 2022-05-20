@@ -119,7 +119,7 @@
               <el-button
                 :disabled="!dataListSelections.length"
                 size="mini"
-                type="success"
+                type="primary"
                 plain
                 icon="el-icon-plus"
                 @click="upGoods()"

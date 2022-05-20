@@ -16,15 +16,16 @@
           prop="level"
           v-if="isOpen || formItemCount >= 1"
         >
-          <el-input style="width: 200px" clearable v-model="dataForm.level">
-          </el-input>
+          <el-select placeholder="等级" @visible-change="getFansLevels" style="width: 200px" v-model="dataForm.level" clearable>
+            <el-option v-for="item in fansLevelsOptions" :key="item" :value="item" :label="item"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item
           label="等级名称"
           prop="levelName"
           v-if="isOpen || formItemCount >= 2"
         >
-          <el-input style="width: 200px" clearable v-model="dataForm.levelName">
+          <el-input placeholder="等级名称" style="width: 200px" clearable v-model="dataForm.levelName">
           </el-input>
         </el-form-item>
         <div class="headerTool-search-btns">
@@ -56,7 +57,7 @@
           <div class="headerTool--handle-btns-left">
             <el-form-item>
               <el-button
-                type="success"
+                type="primary"
                 plain
                 icon="el-icon-plus"
                 size="mini"
@@ -205,12 +206,29 @@ export default {
       },
       loading: false, //礼物输入下拉选择loading
       giftOptions: [], //礼物下拉选择内容
+      fansLevelsOptions: [], //粉丝等级options
     };
   },
   watch: {},
   components: {
     AddOrUpdate,
   },
-  methods: {},
+  methods: {
+    // 获取粉丝等级
+    getFansLevels(type) {
+      if(!type) return
+      this.$http.get("/sys/sysfanslevel/getLevelList").then(({data: res}) => {
+        if(res.code == 0) {
+          this.fansLevelsOptions = res.data
+        }else {
+          this.fansLevelsOptions = []
+          return this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        this.fansLevelsOptions = []
+        this.$message.error(JSON.stringify(err))
+      })
+    },
+  },
 };
 </script>

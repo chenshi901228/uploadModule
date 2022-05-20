@@ -12,41 +12,53 @@
       >
         <el-form-item v-if="isOpen || formItemCount >= 1" label="主播昵称" prop="username">
           <el-input
-            size="small"
+            style="width: 200px"
+            placeholder="主播昵称"
             v-model="dataForm.username"
             clearable
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 2" label="真实姓名" prop="realName">
           <el-input
-            size="small"
+            style="width: 200px"
+            placeholder="真实姓名"
             v-model="dataForm.realName"
             clearable
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 3" label="手机号码" prop="phone">
           <el-input
-            size="small"
+            style="width: 200px"
+            placeholder="手机号码"
             v-model="dataForm.phone"
             clearable
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 4" label="身份证号" prop="idCard">
           <el-input
-            size="small"
+            style="width: 200px"
+            placeholder="身份证号"
             v-model="dataForm.idCard"
             clearable
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 5" label="性别" prop="gender">
-          <el-select size="small" v-model="dataForm.gender" clearable>
+          <el-select 
+            style="width: 200px"
+            placeholder="性别" 
+            v-model="dataForm.gender" 
+            clearable>
             <el-option :value="0" label="男"></el-option>
             <el-option :value="1" label="女"></el-option>
             <el-option :value="2" label="保密"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 6" label="审批状态" prop="status">
-          <el-select size="small" v-model="dataForm.status" clearable>
+          <el-select 
+            style="width: 200px"
+            placeholder="审批状态" 
+            v-model="dataForm.status" 
+            clearable>
             <el-option :value="0" label="申请中"></el-option>
             <el-option :value="1" label="同意"></el-option>
             <el-option :value="-1" label="拒绝"></el-option>
