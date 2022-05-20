@@ -83,7 +83,7 @@
               size="mini"
               plain
               icon="el-icon-plus"
-              type="success"
+              type="primary"
               @click="dialogFormVisible = true"
               >添加</el-button
             >

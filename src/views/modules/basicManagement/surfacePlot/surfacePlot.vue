@@ -78,7 +78,7 @@
                 size="mini"
                 icon="el-icon-plus"
                 plain
-                type="success"
+                type="primary"
                 @click="upImg"
                 >上传</el-button
               >

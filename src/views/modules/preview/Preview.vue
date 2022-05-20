@@ -207,7 +207,7 @@
 
             <el-form-item>
               <el-button
-                type="success"
+                type="primary"
                 plain
                 icon="el-icon-plus"
                 size="mini"
