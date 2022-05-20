@@ -109,7 +109,7 @@
           label-width="100px"
         >
           <el-form-item label="收益类型" v-if="diaTbas === 1" prop="type">
-            <el-select size="small" v-model="diaSearchForm.type" clearable>
+            <el-select placeholder="收益类型" style="width: 180px" v-model="diaSearchForm.type" clearable>
               <el-option :value="1" label="直播间礼物"></el-option>
               <el-option :value="2" label="粉丝团"></el-option>
               <el-option :value="3" label="课程返利"></el-option>
@@ -117,6 +117,7 @@
           </el-form-item>
           <el-form-item label="结算时间" v-if="diaTbas === 1" prop="date">
             <el-date-picker
+              placeholder="结算时间"
               v-model="diaSearchForm.date"
               type="datetimerange"
               range-separator="至"
@@ -132,13 +133,15 @@
             prop="bankAccount"
           >
             <el-input
-              size="small"
+              style="width: 180px"
+              placeholder="银行账户"
               v-model="diaSearchForm.bankAccount"
               clearable
             ></el-input>
           </el-form-item>
           <el-form-item label="提现时间" v-if="diaTbas === 2" prop="date">
             <el-date-picker
+              placeholder="提现时间"
               v-model="diaSearchForm.date"
               type="datetimerange"
               range-separator="至"
@@ -154,7 +157,8 @@
             prop="approveStatus"
           >
             <el-select
-              size="small"
+              placeholder="审批状态"
+              style="width: 180px"
               v-model="diaSearchForm.approveStatus"
               clearable
             >
@@ -164,7 +168,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="支付状态" v-if="diaTbas === 2" prop="payStatus">
-            <el-select size="small" v-model="diaSearchForm.payStatus" clearable>
+            <el-select placeholder="支付状态" style="width: 180px" v-model="diaSearchForm.payStatus" clearable>
               <el-option :value="0" label="未支付"></el-option>
               <el-option :value="1" label="已支付"></el-option>
               <el-option :value="-1" label="支付失败"></el-option>
@@ -175,24 +179,24 @@
             v-if="diaTbas === 3 || diaTbas === 4"
             prop="userName"
           >
-            <el-input v-model="diaSearchForm.userName" clearable></el-input>
+            <el-input placeholder="用户昵称" style="width: 180px" v-model="diaSearchForm.userName" clearable></el-input>
           </el-form-item>
           <el-form-item
             label="商品名称"
             v-if="diaTbas === 5"
             prop="productName"
           >
-            <el-input v-model="diaSearchForm.productName" clearable></el-input>
+            <el-input placeholder="商品名称" style="width: 180px" v-model="diaSearchForm.productName" clearable></el-input>
           </el-form-item>
           <el-form-item
             label="手机号码"
             v-if="diaTbas === 3 || diaTbas === 4 || diaTbas === 6"
             prop="phone"
           >
-            <el-input v-model="diaSearchForm.phone" clearable></el-input>
+            <el-input placeholder="手机号码" style="width: 180px" v-model="diaSearchForm.phone" clearable></el-input>
           </el-form-item>
           <el-form-item label="等级" v-if="diaTbas === 4" prop="level">
-            <el-select size="small" v-model="diaSearchForm.level" clearable>
+            <el-select placeholder="等级" style="width: 180px" v-model="diaSearchForm.level" clearable>
               <el-option
                 v-for="item in 10"
                 :key="item"
@@ -202,32 +206,37 @@
             </el-select>
           </el-form-item>
           <el-form-item label="粉丝团身份" v-if="diaTbas === 4" prop="userType">
-            <el-select v-model="diaSearchForm.userType" clearable>
+            <el-select placeholder="粉丝团身份" style="width: 180px" v-model="diaSearchForm.userType" clearable>
               <el-option :value="0" label="普通会员"></el-option>
               <el-option :value="1" label="会长"></el-option>
               <el-option :value="2" label="副会长"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="状态" v-if="diaTbas === 4" prop="delFlg">
-            <el-select v-model="diaSearchForm.delFlg" clearable>
+            <el-select placeholder="状态" style="width: 180px" v-model="diaSearchForm.delFlg" clearable>
               <el-option :value="0" label="正常"></el-option>
               <el-option :value="1" label="取消关注"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
-            <el-input v-model="diaSearchForm.anchorName" clearable></el-input>
+            <el-input placeholder="主播昵称" style="width: 180px" v-model="diaSearchForm.anchorName" clearable></el-input>
           </el-form-item>
           <el-form-item
             label="商品类型"
             v-if="diaTbas === 5"
             prop="productType"
           >
-            <el-select v-model="diaSearchForm.productType" clearable>
-              <el-option value="专业课" label="专业课"></el-option>
+            <el-select 
+              @visible-change="getProductType" 
+              style="width: 180px" 
+              v-model="diaSearchForm.productType" 
+              placeholder="商品类型"
+              clearable>
+                <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType" :label="item.productType"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="是否免费" v-if="diaTbas === 5" prop="isFree">
-            <el-select v-model="diaSearchForm.isFree" clearable>
+            <el-select placeholder="是否免费" style="width: 180px" v-model="diaSearchForm.isFree" clearable>
               <el-option :value="0" label="否"></el-option>
               <el-option :value="1" label="是"></el-option>
             </el-select>
@@ -579,7 +588,6 @@
         @keyup.enter.native="queryUserList()"
         size="small"
         label-width="100px"
-        label-position="right"
       >
         <el-form-item label="商品名称">
           <el-input
@@ -589,12 +597,13 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="商品类型">
-          <el-select
-            style="width: 200px"
-            v-model="productForm.productType"
-            clearable
-          >
-            <el-option value="专业课" label="专业课"></el-option>
+          <el-select 
+            @visible-change="getProductType" 
+            style="width: 200px" 
+            v-model="productForm.productType" 
+            placeholder="商品类型"
+            clearable>
+              <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType" :label="item.productType"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="是否免费">
@@ -614,24 +623,21 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-
-        <div class="headerTool-search-btns">
-          <el-form-item>
-            <el-button
-              type="primary"
-              icon="el-icon-search"
-              size="mini"
-              @click="queryUserList"
-              >查询</el-button
-            >
-            <el-button
-              icon="el-icon-refresh"
-              size="mini"
-              @click="reset('productForm')"
-              >重置</el-button
-            >
-          </el-form-item>
-        </div>
+        <el-form-item>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            size="mini"
+            @click="queryUserList"
+            >查询</el-button
+          >
+          <el-button
+            icon="el-icon-refresh"
+            size="mini"
+            @click="reset('productForm')"
+            >重置</el-button
+          >
+        </el-form-item>
 
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
@@ -809,7 +815,6 @@
         :model="recommendForm"
         @keyup.enter.native="getRecommendList()"
         label-width="100px"
-        label-position="right"
       >
         <el-form-item label="主播昵称" prop="anchorName">
           <el-input
@@ -827,24 +832,21 @@
             clearable
           ></el-input>
         </el-form-item>
-
-        <div class="headerTool-search-btns">
-          <el-form-item>
-            <el-button
-              type="primary"
-              icon="el-icon-search"
-              size="mini"
-              @click="getRecommendList"
-              >查询</el-button
-            >
-            <el-button
-              icon="el-icon-refresh"
-              size="mini"
-              @click="reset('recommendForm')"
-              >重置</el-button
-            >
-          </el-form-item>
-        </div>
+        <el-form-item>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            size="mini"
+            @click="getRecommendList"
+            >查询</el-button
+          >
+          <el-button
+            icon="el-icon-refresh"
+            size="mini"
+            @click="reset('recommendForm')"
+            >重置</el-button
+          >
+        </el-form-item>
 
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
@@ -1301,6 +1303,7 @@ export default {
       restaurants: [],
       state: "",
       timeout: null,
+      productTypeOptions: [] //商品类型下拉选项
     };
   },
   computed: {
@@ -1645,6 +1648,21 @@ export default {
         .catch(() => {
           this.dataListLoading = false;
         });
+    },
+    // 下拉获取商品类型
+    getProductType(type) {
+      if(!type) return
+      this.$http.get("/sys/course/searchProductType").then(({data: res}) => {
+        if(res.code == 0) {
+          this.productTypeOptions = res.data
+        }else {
+          this.productTypeOptions = []
+          return this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        this.productTypeOptions = []
+        this.$message.error(JSON.stringify(err))
+      })
     },
     // 主页搜索重置
     mainReset() {

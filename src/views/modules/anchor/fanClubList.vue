@@ -12,7 +12,7 @@
       >
         <el-form-item v-if="isOpen || formItemCount >= 1" label="粉丝团名称" prop="title">
           <el-input
-            size="small"
+            style="width: 200px"
             v-model="dataForm.title"
             placeholder="粉丝团名称"
             clearable
@@ -20,7 +20,7 @@
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 2" label="主播昵称" prop="username">
           <el-input
-            size="small"
+            style="width: 200px"
             v-model="dataForm.username"
             placeholder="主播昵称"
             clearable
@@ -28,7 +28,7 @@
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 3" label="手机号码" prop="phone">
           <el-input
-            size="small"
+            style="width: 200px"
             v-model="dataForm.phone"
             placeholder="手机号码"
             clearable
@@ -36,9 +36,10 @@
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 4" label="状态" prop="disabledFlg">
           <el-select
-            size="small"
+            style="width: 200px"
             v-model="dataForm.disabledFlg"
             clearable
+            placeholder="状态"
           >
             <el-option value="1" label="禁用"></el-option>
             <el-option value="0" label="正常"></el-option>
@@ -62,6 +63,26 @@
             </el-button>
           </el-form-item>
         </div>
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <!-- <el-form-item>
+              <el-button 
+                type="warning"
+                plain
+                icon="el-icon-download" 
+                size="mini"
+                @click="exportHandle">{{ $t("export") }}</el-button>
+            </el-form-item> -->
+          </div>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                <el-button size="small" icon="el-icon-refresh" circle @click="getDataList"></el-button>
+              </el-tooltip>
+            </el-form-item>
+          </div>
+        </div>
       </el-form>
       <el-table
         v-loading="dataListLoading"
@@ -76,6 +97,7 @@
           label="粉丝团名称"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="username"
@@ -83,12 +105,14 @@
           header-align="center"
           align="center"
           width="180"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="phone"
           label="手机号码"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -96,12 +120,14 @@
           label="粉丝团成员"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="disabledFlg"
           label="状态"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <div>{{ scope.row.delFlg ? "禁用" : "正常" }}</div>
@@ -112,6 +138,7 @@
           label="创建时间"
           header-align="center"
           align="center"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           :label="$t('handle')"

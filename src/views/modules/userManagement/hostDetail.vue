@@ -91,6 +91,7 @@
         >
           <el-form-item label="收益类型" v-if="diaTbas === 1" prop="type">
             <el-select
+              placeholder="收益类型"
               style="width: 180px"
               v-model="diaSearchForm.type"
               clearable
@@ -102,6 +103,7 @@
           </el-form-item>
           <el-form-item label="结算时间" v-if="diaTbas === 1" prop="date">
             <el-date-picker
+              placeholder="结算时间"
               v-model="diaSearchForm.date"
               type="datetimerange"
               range-separator="至"
@@ -117,6 +119,7 @@
             prop="bankAccount"
           >
             <el-input
+              placeholder="银行账户"
               style="width: 180px"
               v-model="diaSearchForm.bankAccount"
               clearable
@@ -124,6 +127,7 @@
           </el-form-item>
           <el-form-item label="提现时间" v-if="diaTbas === 2" prop="date">
             <el-date-picker
+              placeholder="提现时间"
               v-model="diaSearchForm.date"
               type="datetimerange"
               range-separator="至"
@@ -139,6 +143,7 @@
             prop="approveStatus"
           >
             <el-select
+              placeholder="审批状态"
               style="width: 180px"
               v-model="diaSearchForm.approveStatus"
               clearable
@@ -150,6 +155,7 @@
           </el-form-item>
           <el-form-item label="支付状态" v-if="diaTbas === 2" prop="payStatus">
             <el-select
+              placeholder="支付状态"
               style="width: 180px"
               v-model="diaSearchForm.payStatus"
               clearable
@@ -165,6 +171,7 @@
             prop="userName"
           >
             <el-input
+              placeholder="用户昵称"
               style="width: 180px"
               v-model="diaSearchForm.userName"
               clearable
@@ -176,6 +183,7 @@
             prop="productName"
           >
             <el-input
+              placeholder="商品名称"
               style="width: 180px"
               v-model="diaSearchForm.productName"
               clearable
@@ -187,6 +195,7 @@
             prop="phone"
           >
             <el-input
+              placeholder="手机号码"
               style="width: 180px"
               v-model="diaSearchForm.phone"
               clearable
@@ -194,6 +203,7 @@
           </el-form-item>
           <el-form-item label="等级" v-if="diaTbas === 4" prop="level">
             <el-select
+              placeholder="等级"
               style="width: 180px"
               v-model="diaSearchForm.level"
               clearable
@@ -208,6 +218,7 @@
           </el-form-item>
           <el-form-item label="粉丝团身份" v-if="diaTbas === 4" prop="userType">
             <el-select
+              placeholder="粉丝团身份"
               style="width: 180px"
               v-model="diaSearchForm.userType"
               clearable
@@ -219,6 +230,7 @@
           </el-form-item>
           <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
             <el-input
+              placeholder="主播昵称"
               style="width: 180px"
               v-model="diaSearchForm.anchorName"
               clearable
@@ -229,16 +241,18 @@
             v-if="diaTbas === 5"
             prop="productType"
           >
-            <el-select
-              style="width: 180px"
-              v-model="diaSearchForm.productType"
-              clearable
-            >
-              <el-option value="专业课" label="专业课"></el-option>
+            <el-select 
+              @visible-change="getProductType" 
+              style="width: 180px" 
+              v-model="diaSearchForm.productType" 
+              placeholder="商品类型"
+              clearable>
+                <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType" :label="item.productType"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="是否免费" v-if="diaTbas === 5" prop="isFree">
             <el-select
+              placeholder="是否免费"
               style="width: 180px"
               v-model="diaSearchForm.isFree"
               clearable
@@ -776,6 +790,7 @@ export default {
       dataUserListTotal: 0,
       dataListSelectionUsers: [],
       dialogUserFormVisible: false,
+      productTypeOptions: [] //商品类型下拉选项
     };
   },
 
@@ -1050,6 +1065,21 @@ export default {
           this.total_dia = res.data.total;
         })
         .catch(() => {});
+    },
+    // 下拉获取商品类型
+    getProductType(type) {
+      if(!type) return
+      this.$http.get("/sys/course/searchProductType").then(({data: res}) => {
+        if(res.code == 0) {
+          this.productTypeOptions = res.data
+        }else {
+          this.productTypeOptions = []
+          return this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        this.productTypeOptions = []
+        this.$message.error(JSON.stringify(err))
+      })
     },
 
     // 主页搜索重置

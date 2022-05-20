@@ -8,7 +8,6 @@
         ref="dataForm"
         size="small"
         label-width="100px"
-        label-position="right"
         @keyup.enter.native="getDataList()"
       >
         <el-form-item
@@ -17,7 +16,7 @@
           v-if="isOpen || formItemCount >= 1"
         >
           <el-input
-            size="small"
+            placeholder="主播昵称"
             v-model="dataForm.anchorName"
             clearable
             style="width: 200px"
@@ -30,7 +29,7 @@
         >
           <el-input
             style="width: 200px"
-            size="small"
+            placeholder="真实姓名"
             v-model="dataForm.realName"
             clearable
           ></el-input>
@@ -42,7 +41,7 @@
         >
           <el-input
             style="width: 200px"
-            size="small"
+            placeholder="手机号码"
             v-model="dataForm.phone"
             clearable
           ></el-input>
@@ -54,7 +53,7 @@
         >
           <el-input
             style="width: 200px"
-            size="small"
+            placeholder="身份证号"
             v-model="dataForm.idCard"
             clearable
           ></el-input>
@@ -66,7 +65,7 @@
         >
           <el-select
             style="width: 200px"
-            size="small"
+            placeholder="性别"
             v-model="dataForm.gender"
             clearable
           >
@@ -82,7 +81,7 @@
         >
           <el-select
             style="width: 200px"
-            size="small"
+            placeholder="状态"
             v-model="dataForm.disabledFlg"
             clearable
           >
