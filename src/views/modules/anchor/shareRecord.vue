@@ -12,7 +12,7 @@
       >
         <el-form-item v-if="isOpen || formItemCount >= 1" label="分享用户" prop="nickName">
           <el-input
-            size="small"
+            style="width: 200px"
             v-model="dataForm.shareUserName"
             clearable
             placeholder="请输入"
@@ -20,7 +20,7 @@
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="phone">
           <el-input
-            size="small"
+            style="width: 200px"
             v-model="dataForm.shareUserTel"
             clearable
             placeholder="请输入"
@@ -28,7 +28,7 @@
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 3" label="分享类型" prop="delFlg">
           <el-select
-            size="small"
+            style="width: 200px"
             v-model="dataForm.shareType"
             clearable
             placeholder="请选择"
@@ -41,7 +41,7 @@
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 4" label="分享状态" prop="handlingStatus">
           <el-select
-            size="small"
+            style="width: 200px"
             v-model="dataForm.shareState"
             placeholder="请选择"
             clearable

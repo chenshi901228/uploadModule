@@ -12,27 +12,37 @@
       >
         <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="nickName">
           <el-input
-            size="small"
+            style="width: 200px"
+            placeholder="用户昵称"
             v-model="dataForm.username"
             clearable
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="phone">
           <el-input
-            size="small"
+            style="width: 200px"
+            placeholder="手机号码"
             v-model="dataForm.phone"
             clearable
           ></el-input>
         </el-form-item>
       
         <el-form-item v-if="isOpen || formItemCount >= 3" label="投诉分类" prop="type">
-          <el-select size="small" v-model="dataForm.type" clearable>
+          <el-select 
+            style="width: 200px"
+            placeholder="投诉分类" 
+            v-model="dataForm.type" 
+            clearable>
             <el-option :value="1" label="平台投诉"></el-option>
             <el-option :value="2" label="直播间投诉"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 4" label="投诉标签" prop="tag">
-          <el-select size="small" v-model="dataForm.tag" clearable>
+          <el-select 
+            style="width: 200px"
+            placeholder="投诉标签" 
+            v-model="dataForm.tag" 
+            clearable>
             <el-option value="违法违禁" label="违法违禁"></el-option>
             <el-option value="淫秽色情" label="淫秽色情"></el-option>
             <el-option value="欺诈/售假" label="欺诈/售假"></el-option>
@@ -53,7 +63,8 @@
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 5" label="处理状态" prop="handlingStatus">
           <el-select
-            size="small"
+            style="width: 200px"
+            placeholder="处理状态"
             v-model="dataForm.handlingStatus"
             clearable
           >

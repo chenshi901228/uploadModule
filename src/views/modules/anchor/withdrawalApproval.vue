@@ -12,35 +12,40 @@
       >
         <el-form-item v-if="isOpen || formItemCount >= 1" label="主播昵称" prop="anchorName">
           <el-input
-            size="small"
+            style="width: 200px"
+            placeholder="主播昵称"
             v-model="dataForm.anchorName"
             clearable
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 2" label="真实姓名" prop="realName">
           <el-input
-            size="small"
+            style="width: 200px"
+            placeholder="真实姓名"
             v-model="dataForm.realName"
             clearable
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 3" label="手机号码" prop="phone">
           <el-input
-            size="small"
+            style="width: 200px"
+            placeholder="手机号码"
             v-model="dataForm.phone"
             clearable
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 4" label="身份证" prop="idCard">
           <el-input
-            size="small"
+            style="width: 200px"
+            placeholder="身份证"
             v-model="dataForm.idCard"
             clearable
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 5" label="审批状态" prop="approveStatus">
           <el-select
-            size="small"
+            style="width: 200px"
+            placeholder="审批状态"
             v-model="dataForm.approveStatus"
             clearable
           >

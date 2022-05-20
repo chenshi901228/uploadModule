@@ -12,6 +12,7 @@
       >
         <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="userName">
           <el-input
+            style="width: 200px"
             v-model="dataForm.userName"
             clearable
             placeholder="用户昵称"
@@ -19,6 +20,7 @@
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
           <el-input
+            style="width: 200px"
             v-model="dataForm.userPhone"
             clearable
             placeholder="手机号码"
@@ -36,6 +38,7 @@
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 4" label="商品名称" prop="productName">
           <el-input
+            style="width: 200px"
             v-model="dataForm.productName"
             clearable
             placeholder="商品名称"
@@ -43,6 +46,7 @@
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 5" label="关联订单编号" prop="weixinUserProductId">
           <el-input
+            style="width: 200px"
             v-model="dataForm.weixinUserProductId"
             clearable
             placeholder="关联订单编号"

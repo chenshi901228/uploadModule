@@ -95,6 +95,7 @@
           <el-form-item label="支付方式" v-if="diaTbas === 1" prop="payType">
             <el-select
               style="width: 180px"
+              placeholder="支付方式"
               v-model="diaSearchForm.payType"
               clearable
             >
@@ -105,6 +106,7 @@
           <el-form-item label="充值来源" v-if="diaTbas === 1" prop="paySource">
             <el-select
               style="width: 180px"
+              placeholder="充值来源"
               v-model="diaSearchForm.paySource"
               clearable
             >
@@ -115,12 +117,13 @@
           <el-form-item label="礼物名称" v-if="diaTbas === 2" prop="name">
             <el-input
               style="width: 180px"
+              placeholder="礼物名称"
               v-model="diaSearchForm.name"
               clearable
             ></el-input>
           </el-form-item>
           <el-form-item label="消费来源" v-if="diaTbas === 2" prop="paySource">
-            <el-select size="small" v-model="diaSearchForm.paySource" clearable>
+            <el-select style="width: 180px" placeholder="消费来源" v-model="diaSearchForm.paySource" clearable>
               <el-option :value="1" label="小程序端"></el-option>
               <el-option :value="2" label="大于众学"></el-option>
             </el-select>
@@ -132,6 +135,7 @@
           >
             <el-input
               style="width: 180px"
+              placeholder="粉丝团名称"
               v-model="diaSearchForm.title"
               clearable
             ></el-input>
@@ -143,6 +147,7 @@
           >
             <el-input
               style="width: 180px"
+              placeholder="主播昵称"
               v-model="diaSearchForm.anchorName"
               clearable
             ></el-input>
@@ -154,6 +159,7 @@
           >
             <el-input
               style="width: 180px"
+              placeholder="手机号码"
               v-model="diaSearchForm.phone"
               clearable
             ></el-input>
@@ -165,18 +171,25 @@
           >
             <el-input
               style="width: 180px"
+              placeholder="商品名称"
               v-model="diaSearchForm.productName"
               clearable
             ></el-input>
           </el-form-item>
           <el-form-item label="商品类型" v-if="diaTbas === 3" prop="productType">
-            <el-select style="width: 180px" clearable v-model="diaSearchForm.productType">
-              <el-option value="专业课" label="专业课"></el-option>
+            <el-select 
+              @visible-change="getProductType" 
+              style="width: 180px" 
+              v-model="diaSearchForm.productType" 
+              placeholder="商品类型"
+              clearable>
+                <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType" :label="item.productType"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="是否免费" v-if="diaTbas === 3" prop="isFree">
             <el-select
               style="width: 180px"
+              placeholder="是否免费"
               v-model="diaSearchForm.isFree"
               clearable
             >
@@ -191,6 +204,7 @@
           >
             <el-input
               style="width: 180px"
+              placeholder="关联商品编号"
               v-model="diaSearchForm.productId"
               clearable
             ></el-input>
@@ -198,6 +212,7 @@
           <el-form-item label="使用状态" v-if="diaTbas === 3" prop="useStatus">
             <el-select
               style="width: 180px"
+              placeholder="使用状态"
               v-model="diaSearchForm.useStatus"
               clearable
             >
@@ -437,6 +452,7 @@ export default {
       page_dia: 1, // 当前页码
       limit_dia: 10, // 每页数
       total_dia: 0,
+      productTypeOptions: [] //商品类型下拉选项
     };
   },
 
@@ -643,6 +659,21 @@ export default {
           this.total_dia = res.data.total;
         })
         .catch(() => {});
+    },
+    // 下拉获取商品类型
+    getProductType(type) {
+      if(!type) return
+      this.$http.get("/sys/course/searchProductType").then(({data: res}) => {
+        if(res.code == 0) {
+          this.productTypeOptions = res.data
+        }else {
+          this.productTypeOptions = []
+          return this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        this.productTypeOptions = []
+        this.$message.error(JSON.stringify(err))
+      })
     },
 
     // 主页搜索重置
