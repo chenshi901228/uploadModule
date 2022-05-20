@@ -13,18 +13,16 @@
       <el-tabs 
         v-model="$store.state.contentTabsActiveName" 
         @tab-click="tabSelectedHandle" 
-        @contextmenu.prevent.native="openMenu($event)"
         @tab-remove="tabRemoveHandle">
         <el-tab-pane
           v-for="item in $store.state.contentTabs"
           :key="item.name"
           :name="item.name"
-          :label="item.title == 'home' ? '首页' : item.title"
           :closable="item.name !== 'home'"
           :class="{ 'is-iframe': tabIsIframe(item.iframeURL) }">
-          <!-- <template v-if="item.name === 'home'">
-            <svg slot="label" class="icon-svg aui-content--tabs-icon-nav" aria-hidden="true"><use xlink:href="#icon-home"></use></svg>
-          </template> -->
+          <template>
+            <span @contextmenu.prevent="openMenu($event)" slot="label" :data-tabname="item.name">{{item.title == 'home' ? '首页' : item.title}}</span>
+          </template>
           <iframe v-if="tabIsIframe(item.iframeURL)" :src="item.iframeURL" width="100%" height="100%" frameborder="0" scrolling="yes"></iframe>
           <keep-alive v-else>
             <router-view v-if="item.name === $store.state.contentTabsActiveName" />
@@ -155,7 +153,6 @@ export default {
     // tab标签右键操作
     openMenu(e) {
       e.preventDefault()
-      if(e.target.nodeName != "DIV" || !e.target.id.includes("tab-")) return 
       const menuMinWidth = 105
       const offsetLeft = this.$el.getBoundingClientRect().left // container margin left
       const offsetWidth = this.$el.offsetWidth // container width
@@ -170,7 +167,7 @@ export default {
 
       this.top = e.clientY - 50
       this.visible = true
-      this.selectedTag = e.target.id.replace("tab-", "")
+      this.selectedTag = e.target.dataset.tabname
     },
     // 关闭标签页
     closeMenu() {
