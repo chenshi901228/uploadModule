@@ -174,7 +174,7 @@
           <div class="headerTool--handle-btns-left">
             <el-form-item>
               <el-button
-                type="success"
+                type="primary"
                 plain
                 icon="el-icon-plus"
                 size="mini"
@@ -412,27 +412,38 @@ export default {
     },
     // 创建直播
     newLive() {
-      this.$prompt("直播主题", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        inputValidator: (value) => {
-          if (!value) return "请输入直播主题";
-          if (value.length > 20) "直播主题最多不能超过20字符";
-        },
-      })
-        .then(({ value }) => {
-          let t = this.$router.resolve({
-            name: "liveRoom",
-            query: { liveTheme: value },
-          });
-          window.open(t.href, "_blank");
-        })
-        .catch(() => {
+      this.$http.get('/sys/mixedflow/getLiving').then(res=>{//获取直播状态
+        if(res.data.data){
           this.$message({
-            type: "info",
-            message: "取消输入",
-          });
-        });
+            type:"warning",
+            message:"当前正在直播中！"
+          })
+          return          
+        }else{
+          this.$prompt("直播主题", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            inputValidator: (value) => {
+              if (!value) return "请输入直播主题";
+              if (value.length > 20) "直播主题最多不能超过20字符";
+            },
+          })
+            .then(({ value }) => {
+              let t = this.$router.resolve({
+                name: "liveRoom",
+                query: { liveTheme: value },
+              });
+              window.open(t.href, "_blank");
+            })
+            .catch(() => {
+              this.$message({
+                type: "info",
+                message: "取消输入",
+              });
+            });
+        }
+      })
+      
     },
     // 下播
     closeLiveHandle(id) {
