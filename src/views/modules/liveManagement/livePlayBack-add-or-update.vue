@@ -233,7 +233,8 @@ export default {
                     params.frontCoverUrl = this.frontCoverList[0].url
                     params.relationLiveUrl = this.relationLiveList[0].url
                     params.videoSize = this.relationLiveList[0].size
-                    // params.liveDuration = await getVideoDuration(this.relationLiveList[0].url)
+                    let liveDuration = await getVideoDuration(this.relationLiveList[0].url)
+                    params.liveDuration = (liveDuration / 60).toFixed(2)
 
                     // 投放人群处理
                     if(this.dataForm.dynamicGroupIds) {
@@ -241,10 +242,6 @@ export default {
                     }else{
                         delete params.dynamicGroupIds
                     }
-
-
-                    // console.log(params)
-                    // return
                     this.submitLoading = true
                     this.$http.post("/sys/livePlayback/save", {...params, ...o}).then(({ data: res }) => {
                         if(res.code == 0){

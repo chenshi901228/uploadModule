@@ -176,26 +176,27 @@ export function getVideoDuration(url) {
       let audio = new Audio(downloadFileUrl(url))
       audio.muted = true
       audio.addEventListener("loadedmetadata", () => {
-        resolve(parseInt((audio.duration * 1000).toString(), 10))
+        resolve(audio.duration || 0)
       })
       audio.muted = false
     })
   }
   if(type == "flv") {
-    let video = document.createElement("video")
-    let flvPlayer
-    if(flvJs.isSupported()) {
-      flvPlayer = flvJs.createPlayer({
-        type: 'flv',
-        url: downloadFileUrl(url)
-      });
-      flvPlayer.attachMediaElement(video);
-      flvPlayer.load();
-      console.log(flvPlayer)
-      let res = flvPlayer.duration
-      video.remove()
-      console.log(res)
-      return "11111"
-    }
+    return new Promise((resolve, reject) => {
+      let video = document.createElement("video")
+      let flvPlayer
+      if(flvJs.isSupported()) {
+        flvPlayer = flvJs.createPlayer({
+          type: 'flv',
+          url: downloadFileUrl(url)
+        });
+        flvPlayer.attachMediaElement(video);
+        flvPlayer.load();
+        flvPlayer.on(flvJs.Events.MEDIA_INFO, (e)=>{
+          resolve(e.duration / 1000 || 0)
+          video.remove()
+        })
+      }
+    })
   }
 }
