@@ -117,12 +117,10 @@ export default {
       })
         .then(() => {
           this.$http
-            .get("sys/sensitiveWordCheck/updateCheckStatus", {
-              params: {
+            .post("sys/sensitiveWordCheck/updateCheckStatus", {
                 id: this.diaForm.id,
                 status: type,
                 remark: this.diaForm.remark,
-              },
             })
             .then(({ data: res }) => {
               if (res.code !== 0) {
