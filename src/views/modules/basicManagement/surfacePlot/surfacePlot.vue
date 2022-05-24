@@ -3,49 +3,20 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-live__liveList">
-      <el-form
-        class="headerTool"
-        :inline="true"
-        :model="dataForm"
-        ref="dataForm"
-        size="small"
-        label-width="100px"
-        label-position="right"
-        @keyup.enter.native="getDataList()"
-      >
-        <el-form-item
-          label="封面图名称"
-          prop="coverName"
-          v-if="isOpen || formItemCount >= 1"
-        >
-          <el-input
-            size="small"
-            :clearable="true"
-            style="width: 200px"
-            v-model="dataForm.coverName"
-            placeholder="请输入"
-          ></el-input>
+      <el-form class="headerTool" :inline="true" :model="dataForm" ref="dataForm" size="small" label-width="100px"
+        label-position="right" @keyup.enter.native="getDataList()">
+        <el-form-item label="封面图名称" prop="coverName" v-if="isOpen || formItemCount >= 1">
+          <el-input size="small" :clearable="true" style="width: 200px" v-model="dataForm.coverName" placeholder="请输入">
+          </el-input>
         </el-form-item>
 
         <div class="headerTool-search-btns">
           <el-form-item>
-            <el-button
-              type="primary"
-              icon="el-icon-search"
-              size="mini"
-              @click="getDataList"
-              >{{ $t("query") }}</el-button
-            >
-            <el-button
-              icon="el-icon-refresh"
-              size="mini"
-              @click="resetDataForm()"
-              >{{ $t("reset") }}</el-button
-            >
+            <el-button type="primary" icon="el-icon-search" size="mini" @click="getDataList">{{ $t("query") }}
+            </el-button>
+            <el-button icon="el-icon-refresh" size="mini" @click="resetDataForm()">{{ $t("reset") }}</el-button>
             <el-button size="mini" plain @click="open">
-              <i
-                :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
-              ></i>
+              <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
               {{ isOpen ? "收起" : "展开" }}
             </el-button>
           </el-form-item>
@@ -54,62 +25,26 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button
-                plain
-                size="mini"
-                icon="el-icon-delete"
-                v-if="dataListSelections.length !== 0"
-                type="danger"
-                @click="deleteSelect()"
-                >批量删除</el-button
-              >
+              <el-button plain size="mini" icon="el-icon-delete" v-if="dataListSelections.length !== 0" type="danger"
+                @click="deleteSelect()">批量删除</el-button>
             </el-form-item>
             <el-form-item>
-              <el-button
-                plain
-                size="mini"
-                icon="el-icon-delete"
-                v-if="dataListSelections.length !== 0"
-                type="danger"
-                @click="deleteSelect()"
-                >批量删除</el-button
-              >
-              <el-button
-                size="mini"
-                icon="el-icon-plus"
-                plain
-                type="primary"
-                @click="upImg"
-                >上传</el-button
-              >
+              <el-button plain size="mini" icon="el-icon-delete" v-if="dataListSelections.length !== 0" type="danger"
+                @click="deleteSelect()">批量删除</el-button>
+              <el-button size="mini" icon="el-icon-plus" plain type="primary" @click="upImg">上传</el-button>
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
             <el-form-item>
-              <el-tooltip
-                class="item"
-                effect="dark"
-                content="刷新"
-                placement="top"
-              >
-                <el-button
-                  size="small"
-                  icon="el-icon-refresh"
-                  circle
-                  @click="getDataList"
-                ></el-button>
+              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                <el-button size="small" icon="el-icon-refresh" circle @click="getDataList"></el-button>
               </el-tooltip>
             </el-form-item>
           </div>
         </div>
       </el-form>
-      <el-table
-        v-loading="dataListLoading"
-        :data="dataList"
-        :height="siteContentViewHeight"
-        style="width: 100%"
-        ref="table"
-      >
+      <el-table v-loading="dataListLoading" :data="dataList" :height="siteContentViewHeight" style="width: 100%"
+        ref="table">
         <!-- @selection-change="dataListSelectionChangeHandle" -->
         <!-- <el-table-column
           type="selection"
@@ -118,20 +53,11 @@
           width="50"
           fixed="left"
         ></el-table-column> -->
-        <el-table-column
-          width="150"
-          label="直播封面图"
-          prop="coverUrl"
-          align="center"
-        >
+        <el-table-column width="150" label="直播封面图" prop="coverUrl" align="center">
           <template slot-scope="{ row }">
             <div>
-              <img
-                style="width: 80px; height: '80px'"
-                class="frontCoverImg"
-                :src="row.coverUrl || 'https://picsum.photos/400/300?random=1'"
-                alt=""
-              />
+              <img style="width: 80px; height: '80px'" class="frontCoverImg"
+                :src="row.coverUrl || 'https://picsum.photos/400/300?random=1'" alt="" />
             </div>
           </template>
         </el-table-column>
@@ -146,30 +72,12 @@
         </el-table-column>
         <el-table-column label="操作" header-align="center" align="center">
           <template slot-scope="scope">
-            <el-button
-              icon="el-icon-sort"
-              v-if="scope.row.appointmentState !== 0"
-              type="text"
-              size="small"
-              @click="showThis(scope.$index, scope.row)"
-              >{{ scope.row.showStatus === 0 ? "显示" : "隐藏" }}</el-button
-            >
-            <el-button
-              v-if="scope.row.appointmentState !== 0"
-              type="text"
-              size="small"
-              icon="el-icon-edit"
-              @click="handle(scope.$index, scope.row)"
-              >编辑</el-button
-            >
-            <el-button
-              v-if="scope.row.appointmentState !== 0"
-              type="text"
-              size="small"
-              icon="el-icon-view"
-              @click="showImg(scope.$index, scope.row)"
-              >查看</el-button
-            >
+            <el-button icon="el-icon-sort" v-if="scope.row.appointmentState !== 0" type="text" size="small"
+              @click="showThis(scope.$index, scope.row)">{{ scope.row.showStatus === 0 ? "显示" : "隐藏" }}</el-button>
+            <el-button v-if="scope.row.appointmentState !== 0" type="text" size="small" icon="el-icon-edit"
+              @click="handle(scope.$index, scope.row)">编辑</el-button>
+            <el-button v-if="scope.row.appointmentState !== 0" type="text" size="small" icon="el-icon-view"
+              @click="showImg(scope.$index, scope.row)">查看</el-button>
             <!-- <el-button
               v-if="scope.row.appointmentState !== 0"
               type="text"
@@ -180,26 +88,13 @@
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
-        background
-        :current-page="page"
-        :page-sizes="[10, 20, 50, 100]"
-        :page-size="limit"
-        :total="total"
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="pageSizeChangeHandle"
-        @current-change="pageCurrentChangeHandle"
-      >
+      <el-pagination background :current-page="page" :page-sizes="[10, 20, 50, 100]" :page-size="limit" :total="total"
+        layout="total, sizes, prev, pager, next, jumper" @size-change="pageSizeChangeHandle"
+        @current-change="pageCurrentChangeHandle">
       </el-pagination>
     </div>
     <el-dialog title="删除" :visible.sync="dialogFormVisible">
-      <el-form
-        :model="ruleForm"
-        :rules="rules"
-        ref="ruleForm"
-        label-width="100px"
-        class="demo-ruleForm"
-      >
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="备注" prop="desc">
           <el-input type="textarea" v-model="ruleForm.desc"></el-input>
         </el-form-item>
@@ -218,24 +113,11 @@
     </el-dialog>
 
     <el-dialog title="上传封面图" :visible.sync="upImgDialog" width="30%">
-      <el-form
-        :model="imgForm"
-        ref="imgForm"
-        label-width="100px"
-        class="demo-ruleForm"
-      >
+      <el-form :model="imgForm" ref="imgForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="上传" prop="img" required>
-          <el-upload
-            :action="uploadUrl"
-            list-type="picture-card"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove"
-            :on-success="handleSuccess"
-            :on-exceed="handleExceed1"
-            :limit="1"
-            ref="upload"
-            :class="imgForm.img.length !== 0 ? 'hide_box' : ''"
-          >
+          <el-upload :action="uploadUrl" list-type="picture-card" :on-preview="handlePictureCardPreview"
+            :on-remove="handleRemove" :on-success="handleSuccess" :on-exceed="handleExceed1" :limit="1" ref="upload"
+            :class="imgForm.img.length !== 0 ? 'hide_box' : ''">
             <i class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
@@ -256,18 +138,9 @@
     </el-dialog>
 
     <el-dialog title="查看封面图" :visible.sync="showImgDialog" width="30%">
-      <el-form
-        :model="bigImgForm"
-        ref="imgForm"
-        label-width="100px"
-        class="demo-ruleForm"
-      >
+      <el-form :model="bigImgForm" ref="imgForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="上传" prop="img">
-          <el-image
-            style="width: 146px; height: 146px"
-            :src="bigUrl"
-            :preview-src-list="srcList"
-          >
+          <el-image style="width: 146px; height: 146px" :src="bigUrl" :preview-src-list="srcList">
           </el-image>
           <span>点击可看大图</span>
         </el-form-item>
@@ -281,28 +154,14 @@
     </el-dialog>
 
     <el-dialog title="编辑封面图" :visible.sync="editeImgDialog" width="30%">
-      <el-form
-        :model="editeImgForm"
-        ref="imgForm"
-        label-width="100px"
-        class="demo-ruleForm"
-      >
+      <el-form :model="editeImgForm" ref="imgForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="上传" prop="img">
-          <div
-            v-if="editeUrl.length !== 0"
-            style="position: relative; display: inline-block"
-          >
-            <el-image
-              style="width: 146px; height: 146px; margin-right: 0"
-              :src="editeUrl"
-              :preview-src-list="editeSrcList"
-            >
+          <div v-if="editeUrl.length !== 0" style="position: relative; display: inline-block">
+            <el-image style="width: 146px; height: 146px; margin-right: 0" :src="editeUrl"
+              :preview-src-list="editeSrcList">
             </el-image>
             <el-tooltip effect="dark" content="删除" placement="top">
-              <i
-                class="el-icon-close"
-                @click="remove"
-                style="
+              <i class="el-icon-close" @click="remove" style="
                   position: absolute;
                   right: 5px;
                   top: 5px;
@@ -313,17 +172,9 @@
             </el-tooltip>
           </div>
           <div v-if="editeUrl.length === 0">
-            <el-upload
-              :action="uploadUrl"
-              list-type="picture-card"
-              :on-preview="handlePictureCardPreview2"
-              :on-remove="handleRemove2"
-              :on-success="handleSuccess2"
-              :on-exceed="handleExceed2"
-              :limit="1"
-              ref="upload2"
-              :class="editeImgForm.img.length !== 0 ? 'hide_box' : ''"
-            >
+            <el-upload :action="uploadUrl" list-type="picture-card" :on-preview="handlePictureCardPreview2"
+              :on-remove="handleRemove2" :on-success="handleSuccess2" :on-exceed="handleExceed2" :limit="1"
+              ref="upload2" :class="editeImgForm.img.length !== 0 ? 'hide_box' : ''">
               <i class="el-icon-plus"></i>
             </el-upload>
           </div>
@@ -422,9 +273,8 @@ export default {
     },
   },
   created() {
-    this.uploadUrl = `${
-      window.SITE_CONFIG["apiURL"]
-    }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
+    this.uploadUrl = `${window.SITE_CONFIG["apiURL"]
+      }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
   },
   activated() {
     this.query();
@@ -593,10 +443,13 @@ export default {
     //确认隐藏显示
     confirmShowState() {
       this.$http
-        .get(
-          `/sys/livecoverpicture/updateShowStatus?id=${this.id}&showStatus=${
+        .post(
+          `/sys/livecoverpicture/updateShowStatus`, {
+          id: this.id,
+          showStatus:
             this.showStatus === 1 ? "0" : "1"
-          }`
+
+        }
         )
         .then(({ data: res }) => {
           if (res.code !== 0) {
@@ -705,9 +558,11 @@ export default {
 
 /deep/.el-dialog {
   display: flex;
-  display: -ms-flex; /* 兼容IE */
+  display: -ms-flex;
+  /* 兼容IE */
   flex-direction: column;
-  -ms-flex-direction: column; /* 兼容IE */
+  -ms-flex-direction: column;
+  /* 兼容IE */
   margin: 0 !important;
   position: absolute;
   top: 50%;
@@ -716,17 +571,21 @@ export default {
   max-height: calc(100% - 30px);
   max-width: calc(100% - 30px);
 }
+
 /deep/.el-dialog .el-dialog__body {
-  padding: 20px; /*这个不重要*/
+  padding: 20px;
+  /*这个不重要*/
   max-height: 75vh;
   flex: 1;
-  -ms-flex: 1 1 auto; /* 兼容IE */
+  -ms-flex: 1 1 auto;
+  /* 兼容IE */
   overflow-y: auto;
   overflow-x: hidden;
 }
 
 /deep/.el-dialog__wrapper {
-  overflow: hidden; /*隐藏ie和edge中遮罩的滚动条*/
+  overflow: hidden;
+  /*隐藏ie和edge中遮罩的滚动条*/
 }
 
 /deep/.hide_box .el-upload--picture-card {
