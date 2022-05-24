@@ -259,8 +259,8 @@
           align="center"
         >
           <template slot-scope="scope">
-            <el-tag size="small" :type="!scope.row.liveState ? 'success' : 'danger'">{{
-              scope.row.liveState ? "否" : "是"
+            <el-tag size="small" :type="scope.row.liveState ? 'success' : 'danger'">{{
+              !scope.row.liveState ? "否" : "是"
             }}</el-tag>
           </template>
         </el-table-column>
@@ -406,7 +406,7 @@ export default {
     // 禁用，解除用户
     forbidden(row) {
       if (row) {
-        if (row.liveState == 0 && row.disabledFlg != 1)
+        if (row.liveState == 1 && row.disabledFlg != 1)
           return this.$message.error("主播正在直播，无法禁用此账号");
         this.$confirm(
           `确认[${row.disabledFlg == 1 ? "解除" : "禁用"}]${row.username}?`,
