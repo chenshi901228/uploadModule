@@ -414,6 +414,9 @@ img {
       }
     }
     .el-menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       &:focus,
       &:hover {
         .aui-navbar__icon-menu {
@@ -504,8 +507,14 @@ img {
   box-shadow: 1px 0 2px 0 rgba(0, 0, 0, .05);
   overflow: hidden;
   transition: width .3s;
+  .aui-navbar__brand a {
+    color: #000;
+  }
   &--dark {
     background-color: $sidebar--background-color-dark;
+    .aui-navbar__brand a {
+      color: #fff;
+    }
     .aui-sidebar__menu,
     > .el-menu--popup {
       background-color: $sidebar--background-color-dark;

@@ -47,6 +47,7 @@
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="updatePasswordHandle()">{{ $t('updatePassword.title') }}</el-dropdown-item>
+              <el-dropdown-item v-if="$store.state.user.realName == '小黑不简单'" @click.native="setting">主题设置</el-dropdown-item>
               <el-dropdown-item @click.native="logoutHandle()">{{ $t('logout') }}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -128,6 +129,9 @@ export default {
           this.$router.push({ name: 'login' })
         }).catch(() => {})
       }).catch(() => {})
+    },
+    setting() {
+      this.$store.state.tool = !this.$store.state.tool
     }
   }
 }

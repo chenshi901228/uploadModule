@@ -13,7 +13,6 @@
       >
         <el-form-item :label="$t('user.username')" prop="username">
           <el-input
-            size="small"
             v-model="dataForm.username"
             :placeholder="$t('user.username')"
             clearable
@@ -56,14 +55,6 @@
           <div class="headerTool--handle-btns-left">
             <el-form-item>
               <el-button
-                type="warning"
-                plain
-                icon="el-icon-download"
-                v-if="$hasPermission('sys:user:export')"
-                size="mini"
-                @click="exportHandle"
-              >{{ $t("export") }}</el-button>
-              <el-button
                 size="mini"
                 v-if="$hasPermission('sys:dict:save')"
                 icon="el-icon-plus"
@@ -72,6 +63,14 @@
                 @click="addOrUpdateHandle()"
                 >{{ $t("add") }}</el-button
               >
+              <el-button
+                type="warning"
+                plain
+                icon="el-icon-download"
+                v-if="$hasPermission('sys:user:export')"
+                size="mini"
+                @click="exportHandle"
+              >{{ $t("export") }}</el-button>
               <el-button
                 size="mini"
                 v-if="$hasPermission('sys:dict:delete')"

@@ -1,34 +1,34 @@
 <template>
-  <div class="aui-theme-tools" :class="{ 'aui-theme-tools--open': isOpen }">
-    <div class="aui-theme-tools__toggle" @click="isOpen = !isOpen">
-      <svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-setting"></use></svg>
-    </div>
-    <div class="aui-theme-tools__content">
-      <div class="aui-theme-tools__item">
-        <h3>Navbar</h3>
-        <el-checkbox v-model="$store.state.navbarLayoutType" true-label="colorful">colorful 鲜艳</el-checkbox>
+  <el-drawer
+    title="设置"
+    :visible.sync="$store.state.tool"
+    direction="rtl"
+    size="25%">
+      <div class="aui-theme-tools__content">
+        <div class="aui-theme-tools__item">
+          <h3>Navbar</h3>
+          <el-checkbox v-model="$store.state.navbarLayoutType" true-label="colorful">colorful 鲜艳</el-checkbox>
+        </div>
+        <div class="aui-theme-tools__item">
+          <h3>Sidebar</h3>
+          <el-checkbox v-model="$store.state.sidebarLayoutSkin" true-label="dark">dark 黑色</el-checkbox>
+        </div>
+        <div class="aui-theme-tools__item">
+          <h3>Theme</h3>
+          <el-radio-group v-model="themeColor" @change="themeColorChangeHandle">
+            <el-radio v-for="item in themeList" :key="item.name" :label="item.name">{{ `${item.name} ${item.desc}` }}</el-radio>
+          </el-radio-group>
+        </div>
       </div>
-      <div class="aui-theme-tools__item">
-        <h3>Sidebar</h3>
-        <el-checkbox v-model="$store.state.sidebarLayoutSkin" true-label="dark">dark 黑色</el-checkbox>
-      </div>
-      <div class="aui-theme-tools__item">
-        <h3>Theme</h3>
-        <el-radio-group v-model="themeColor" @change="themeColorChangeHandle">
-          <el-radio v-for="item in themeList" :key="item.name" :label="item.name">{{ `${item.name} ${item.desc}` }}</el-radio>
-        </el-radio-group>
-      </div>
-    </div>
-  </div>
+  </el-drawer>
 </template>
 
 <script>
 export default {
   data () {
     return {
-      isOpen: false,
       themeList: require('@/element-ui/config.js'),
-      themeColor: 'turquoise'
+      themeColor: 'default'
     }
   },
   methods: {
