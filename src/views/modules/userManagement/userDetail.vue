@@ -11,8 +11,8 @@
             style="margin: 0px 85px 10px"
           ></el-avatar>
           <div>用户昵称：{{ diaForm.nickName }}</div>
-          <div>是否认证：{{ diaForm.legalizeFlg===1?'是':'否' }}</div>
-          <div>是否指导师：{{ diaForm.tutorFlg===1?'是':'否' }}</div>
+          <div>是否认证：{{ diaForm.legalizeFlg === 1 ? "是" : "否" }}</div>
+          <div>是否指导师：{{ diaForm.tutorFlg === 1 ? "是" : "否" }}</div>
           <div>邀请注册：{{ diaForm.inviteUserName }}</div>
           <div>TA邀请人：{{ diaForm.createBy }}</div>
           <div>注册时间：{{ diaForm.createDate }}</div>
@@ -123,7 +123,12 @@
             ></el-input>
           </el-form-item>
           <el-form-item label="消费来源" v-if="diaTbas === 2" prop="paySource">
-            <el-select style="width: 180px" placeholder="消费来源" v-model="diaSearchForm.paySource" clearable>
+            <el-select
+              style="width: 180px"
+              placeholder="消费来源"
+              v-model="diaSearchForm.paySource"
+              clearable
+            >
               <el-option :value="1" label="小程序端"></el-option>
               <el-option :value="2" label="大于众学"></el-option>
             </el-select>
@@ -176,14 +181,24 @@
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="商品类型" v-if="diaTbas === 3" prop="productType">
-            <el-select 
-              @visible-change="getProductType" 
-              style="width: 180px" 
-              v-model="diaSearchForm.productType" 
+          <el-form-item
+            label="商品类型"
+            v-if="diaTbas === 3"
+            prop="productType"
+          >
+            <el-select
+              @visible-change="getProductType"
+              style="width: 180px"
+              v-model="diaSearchForm.productType"
               placeholder="商品类型"
-              clearable>
-                <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType" :label="item.productType"></el-option>
+              clearable
+            >
+              <el-option
+                v-for="item in productTypeOptions"
+                :key="item.productType"
+                :value="item.productType"
+                :label="item.productType"
+              ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="是否免费" v-if="diaTbas === 3" prop="isFree">
@@ -452,7 +467,7 @@ export default {
       page_dia: 1, // 当前页码
       limit_dia: 10, // 每页数
       total_dia: 0,
-      productTypeOptions: [] //商品类型下拉选项
+      productTypeOptions: [], //商品类型下拉选项
     };
   },
 
@@ -472,7 +487,7 @@ export default {
           vm.diaForm = {
             ...res.data,
             ...JSON.parse(window.localStorage.getItem("userDetailData")),
-            // priceConsumption:res.data.priceConsumption,
+            priceConsumption: res.data.priceRecharge + res.data.shoppingConsumption,
             // priceConsumption:res.data.priceConsumption,
           };
         })
@@ -662,18 +677,21 @@ export default {
     },
     // 下拉获取商品类型
     getProductType(type) {
-      if(!type) return
-      this.$http.get("/sys/course/searchProductType").then(({data: res}) => {
-        if(res.code == 0) {
-          this.productTypeOptions = res.data
-        }else {
-          this.productTypeOptions = []
-          return this.$message.error(res.msg)
-        }
-      }).catch(err => {
-        this.productTypeOptions = []
-        this.$message.error(JSON.stringify(err))
-      })
+      if (!type) return;
+      this.$http
+        .get("/sys/course/searchProductType")
+        .then(({ data: res }) => {
+          if (res.code == 0) {
+            this.productTypeOptions = res.data;
+          } else {
+            this.productTypeOptions = [];
+            return this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          this.productTypeOptions = [];
+          this.$message.error(JSON.stringify(err));
+        });
     },
 
     // 主页搜索重置

@@ -163,7 +163,7 @@
         >
           <template slot-scope="scope">
             <div>
-              {{ scope.row.payType === 1 ? "微信" : "支付宝" }}
+              {{ scope.row.payType === 1 ? "大豆" : "支付宝" }}
             </div>
           </template>
         </el-table-column>

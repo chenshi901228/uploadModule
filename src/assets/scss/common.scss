@@ -154,16 +154,31 @@ img {
   }
 }
 
-.el-button--primary {
-  border-color: $--color-primary;
-  background-color: $--color-primary;
-}
-.el-button--text {
-  color: $--color-primary;
-}
-.el-button--text:focus, .el-button--text:hover {
-  color: $--color-primary;
-}
+// .el-button--primary {
+//   border-color: $--color-primary;
+//   background-color: $--color-primary;
+// }
+// .el-button--primary:focus, .el-button--primary:hover {
+//   background: $--color-primary-light-4;
+//   border-color: $--color-primary-light-4;
+//   color: #FFF;
+// }
+// .el-button--primary.is-plain {
+//   border-color: $--color-primary-light-6;
+//   background-color: $--color-primary-light-8;
+//   color: $--color-primary;
+// }
+// .el-button--primary.is-plain:focus, .el-button--primary.is-plain:hover {
+//   background: $--color-primary;
+//   border-color: $--color-primary;
+//   color: #FFF;
+// }
+// .el-button--text {
+//   color: $--color-primary;
+// }
+// .el-button--text:focus, .el-button--text:hover {
+//   color: $--color-primary-light-4;
+// }
 
 // 主题工具
 .aui-theme-tools {
@@ -399,6 +414,9 @@ img {
       }
     }
     .el-menu-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       &:focus,
       &:hover {
         .aui-navbar__icon-menu {
@@ -489,8 +507,14 @@ img {
   box-shadow: 1px 0 2px 0 rgba(0, 0, 0, .05);
   overflow: hidden;
   transition: width .3s;
+  .aui-navbar__brand a {
+    color: #000;
+  }
   &--dark {
     background-color: $sidebar--background-color-dark;
+    .aui-navbar__brand a {
+      color: #fff;
+    }
     .aui-sidebar__menu,
     > .el-menu--popup {
       background-color: $sidebar--background-color-dark;
@@ -775,7 +799,7 @@ img {
     margin-bottom: 10px;
   }
 }
-
+// 表格空数据用-代替
 .el-table__body .el-table__cell > .cell:empty::before {
   content: "-";
   color: #606266;
