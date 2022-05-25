@@ -291,6 +291,7 @@
           label="主播"
           prop="anchorUser"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -418,6 +419,7 @@
           label="直播间ID"
           prop="livingRoomId"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.livingRoomId || "--" }}</span>
