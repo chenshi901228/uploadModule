@@ -291,6 +291,7 @@
           label="主播"
           prop="anchorUser"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -418,6 +419,7 @@
           label="直播间ID"
           prop="livingRoomId"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.livingRoomId || "--" }}</span>
@@ -614,14 +616,24 @@ export default {
     },
     //创建直播
     createRoom(index, row) {
-      const routeData = this.$router.resolve({
-        name: "liveRoom",
-        query: {
-          liveTheme: row.liveTheme,
-          livePreviewId: row.id,
-        },
-      });
-      window.open(routeData.href, "_blank");
+      this.$http.get('/sys/mixedflow/getLiving').then(res=>{//获取直播状态
+        if(res.data.data){
+          this.$message({
+            type:"warning",
+            message:"当前正在直播中！"
+          })
+          return          
+        }else{
+          const routeData = this.$router.resolve({
+            name: "liveRoom",
+            query: {
+              liveTheme: row.liveTheme,
+              livePreviewId: row.id,
+            },
+          });
+          window.open(routeData.href, "_blank");
+        }
+      })
     },
     //显示与隐藏
     showThis(index, row) {
