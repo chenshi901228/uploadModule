@@ -803,9 +803,7 @@ export default {
         .catch(() => {});
       vm.$http
         .get(
-          `/sys/manage/userDetail/${
-            JSON.parse(window.localStorage.getItem("userDetailData")).id
-          }`
+          `/sys/manage/userDetail/${vm.userId}`
         )
         .then(({ data: res }) => {
           if (res.code !== 0) {

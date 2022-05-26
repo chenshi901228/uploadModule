@@ -15,47 +15,181 @@
         </div>
         <div class="aui-theme-tools__item">
           <h3>Theme</h3>
-          <el-radio-group v-model="themeColor" @change="themeColorChangeHandle">
+          <!-- <el-radio-group v-model="themeColor" @change="themeColorChangeHandle">
             <el-radio v-for="item in themeList" :key="item.name" :label="item.name">{{ `${item.name} ${item.desc}` }}</el-radio>
-          </el-radio-group>
+          </el-radio-group> -->
+        <el-color-picker
+          v-model="theme"
+          :predefine="['#409EFF', '#1890ff', '#304156','#212121','#11a983', '#13c2c2', '#6959CD', '#f5222d']"
+          class="theme-picker"
+          popper-class="theme-picker-dropdown"
+        />
         </div>
       </div>
   </el-drawer>
 </template>
 
 <script>
+const version = require('element-ui/package.json').version // element-ui version from node_modules
+const ORIGINAL_THEME = '#409EFF' // default color
 export default {
   data () {
     return {
       themeList: require('@/element-ui/config.js'),
-      themeColor: 'default'
+      themeColor: 'default',
+      chalk: '', // content of theme-chalk css
+      theme: '',
+      defaultTheme: "#409EFF"
+    }
+  },
+  watch: {
+    defaultTheme: {
+      handler: function(val, oldVal) {
+        this.theme = val
+      },
+      immediate: true
+    },
+    async theme(val) {
+      await this.setTheme(val)
+    }
+  },
+  created() {
+    if(this.defaultTheme !== ORIGINAL_THEME) {
+      this.setTheme(this.defaultTheme)
     }
   },
   methods: {
-    themeColorChangeHandle (val) {
-      var styleList = [
-        {
-          id: 'J_elementTheme',
-          url: `${process.env.BASE_URL}element-theme/${val}/index.css?t=${new Date().getTime()}`
-        },
-        {
-          id: 'J_auiTheme',
-          url: `${process.env.BASE_URL}element-theme/${val}/aui.css?t=${new Date().getTime()}`
+    async setTheme(val) {
+      const oldVal = this.chalk ? this.theme : ORIGINAL_THEME
+      if (typeof val !== 'string') return
+      const themeCluster = this.getThemeCluster(val.replace('#', ''))
+      const originalCluster = this.getThemeCluster(oldVal.replace('#', ''))
+      const getHandler = (variable, id) => {
+        return () => {
+          const originalCluster = this.getThemeCluster(ORIGINAL_THEME.replace('#', ''))
+          const newStyle = this.updateStyle(this[variable], originalCluster, themeCluster)
+
+          let styleTag = document.getElementById(id)
+          if (!styleTag) {
+            styleTag = document.createElement('style')
+            styleTag.setAttribute('id', id)
+            document.head.appendChild(styleTag)
+          }
+          styleTag.innerText = newStyle
         }
-      ]
-      for (var i = 0; i < styleList.length; i++) {
-        var el = document.querySelector(`#${styleList[i].id}`)
-        if (el) {
-          el.href = styleList[i].url
-          continue
-        }
-        el = document.createElement('link')
-        el.id = styleList[i].id
-        el.href = styleList[i].url
-        el.rel = 'stylesheet'
-        document.querySelector('head').appendChild(el)
       }
-    }
+
+      if (!this.chalk) {
+        const url = `https://unpkg.com/element-ui@${version}/lib/theme-chalk/index.css`
+        await this.getCSSString(url, 'chalk')
+      }
+
+      const chalkHandler = getHandler('chalk', 'chalk-style')
+
+      chalkHandler()
+
+      const styles = [].slice.call(document.querySelectorAll('style'))
+        .filter(style => {
+          const text = style.innerText
+          return new RegExp(oldVal, 'i').test(text) && !/Chalk Variables/.test(text)
+        })
+      styles.forEach(style => {
+        const { innerText } = style
+        if (typeof innerText !== 'string') return
+        style.innerText = this.updateStyle(innerText, originalCluster, themeCluster)
+      })
+    },
+
+    updateStyle(style, oldCluster, newCluster) {
+      let newStyle = style
+      oldCluster.forEach((color, index) => {
+        newStyle = newStyle.replace(new RegExp(color, 'ig'), newCluster[index])
+      })
+      return newStyle
+    },
+
+    getCSSString(url, variable) {
+      return new Promise(resolve => {
+        const xhr = new XMLHttpRequest()
+        xhr.onreadystatechange = () => {
+          if (xhr.readyState === 4 && xhr.status === 200) {
+            this[variable] = xhr.responseText.replace(/@font-face{[^}]+}/, '')
+            resolve()
+          }
+        }
+        xhr.open('GET', url)
+        xhr.send()
+      })
+    },
+
+    getThemeCluster(theme) {
+      const tintColor = (color, tint) => {
+        let red = parseInt(color.slice(0, 2), 16)
+        let green = parseInt(color.slice(2, 4), 16)
+        let blue = parseInt(color.slice(4, 6), 16)
+
+        if (tint === 0) { // when primary color is in its rgb space
+          return [red, green, blue].join(',')
+        } else {
+          red += Math.round(tint * (255 - red))
+          green += Math.round(tint * (255 - green))
+          blue += Math.round(tint * (255 - blue))
+
+          red = red.toString(16)
+          green = green.toString(16)
+          blue = blue.toString(16)
+
+          return `#${red}${green}${blue}`
+        }
+      }
+
+      const shadeColor = (color, shade) => {
+        let red = parseInt(color.slice(0, 2), 16)
+        let green = parseInt(color.slice(2, 4), 16)
+        let blue = parseInt(color.slice(4, 6), 16)
+
+        red = Math.round((1 - shade) * red)
+        green = Math.round((1 - shade) * green)
+        blue = Math.round((1 - shade) * blue)
+
+        red = red.toString(16)
+        green = green.toString(16)
+        blue = blue.toString(16)
+
+        return `#${red}${green}${blue}`
+      }
+
+      const clusters = [theme]
+      for (let i = 0; i <= 9; i++) {
+        clusters.push(tintColor(theme, Number((i / 10).toFixed(2))))
+      }
+      clusters.push(shadeColor(theme, 0.1))
+      return clusters
+    },
+    // themeColorChangeHandle (val) {
+    //   var styleList = [
+    //     {
+    //       id: 'J_elementTheme',
+    //       url: `${process.env.BASE_URL}element-theme/${val}/index.css?t=${new Date().getTime()}`
+    //     },
+    //     {
+    //       id: 'J_auiTheme',
+    //       url: `${process.env.BASE_URL}element-theme/${val}/aui.css?t=${new Date().getTime()}`
+    //     }
+    //   ]
+    //   for (var i = 0; i < styleList.length; i++) {
+    //     var el = document.querySelector(`#${styleList[i].id}`)
+    //     if (el) {
+    //       el.href = styleList[i].url
+    //       continue
+    //     }
+    //     el = document.createElement('link')
+    //     el.id = styleList[i].id
+    //     el.href = styleList[i].url
+    //     el.rel = 'stylesheet'
+    //     document.querySelector('head').appendChild(el)
+    //   }
+    // }
   }
 }
 </script>
