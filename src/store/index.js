@@ -33,7 +33,8 @@ export default new Vuex.Store({
         'title': 'home'
       }
     ],
-    contentTabsActiveName: 'home'
+    contentTabsActiveName: 'home', //当前tab标签页
+    theme: "#E6A23C" //主题颜色
   },
   modules: {
     user
@@ -52,6 +53,10 @@ export default new Vuex.Store({
     // 更新窗口宽度
     updateDocumentClientWidth(state, width) {
       state.documentClientWidth = width
+    },
+    // 更新主题颜色
+    updateTheme(state, color) {
+      state.theme = color
     },
   }
 })

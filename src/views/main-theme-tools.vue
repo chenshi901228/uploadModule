@@ -4,7 +4,7 @@
     :visible.sync="$store.state.tool"
     direction="rtl"
     size="25%">
-      <div class="aui-theme-tools__content">
+      <div class="aui-theme-tools">
         <div class="aui-theme-tools__item">
           <h3>Navbar</h3>
           <el-checkbox v-model="$store.state.navbarLayoutType" true-label="colorful">colorful 鲜艳</el-checkbox>
@@ -15,15 +15,15 @@
         </div>
         <div class="aui-theme-tools__item">
           <h3>Theme</h3>
-          <!-- <el-radio-group v-model="themeColor" @change="themeColorChangeHandle">
-            <el-radio v-for="item in themeList" :key="item.name" :label="item.name">{{ `${item.name} ${item.desc}` }}</el-radio>
-          </el-radio-group> -->
-        <el-color-picker
-          v-model="theme"
-          :predefine="['#409EFF', '#1890ff', '#304156','#212121','#11a983', '#13c2c2', '#6959CD', '#f5222d']"
-          class="theme-picker"
-          popper-class="theme-picker-dropdown"
-        />
+          <div class="colorPick">
+            <span>主题颜色</span>
+            <el-color-picker
+              v-model="theme"
+              :predefine="['#409EFF', '#1890ff', '#304156','#212121','#11a983', '#13c2c2', '#6959CD', '#f5222d']"
+              class="theme-picker"
+              popper-class="theme-picker-dropdown"
+            />
+          </div>
         </div>
       </div>
   </el-drawer>
@@ -35,30 +35,29 @@ const ORIGINAL_THEME = '#409EFF' // default color
 export default {
   data () {
     return {
-      themeList: require('@/element-ui/config.js'),
-      themeColor: 'default',
       chalk: '', // content of theme-chalk css
-      theme: '',
-      defaultTheme: "#409EFF"
     }
   },
   watch: {
-    defaultTheme: {
-      handler: function(val, oldVal) {
-        this.theme = val
-      },
-      immediate: true
-    },
     async theme(val) {
       await this.setTheme(val)
     }
   },
-  created() {
-    if(this.defaultTheme !== ORIGINAL_THEME) {
-      this.setTheme(this.defaultTheme)
+  computed: {
+    theme: {
+      get() {
+        return this.$store.state.theme
+      },
+      set(val) {
+        this.$store.commit("updateTheme", val)
+      }
     }
   },
+  mounted() {
+    this.setTheme(this.theme)
+  },
   methods: {
+    // 主题设置
     async setTheme(val) {
       const oldVal = this.chalk ? this.theme : ORIGINAL_THEME
       if (typeof val !== 'string') return
@@ -166,30 +165,6 @@ export default {
       clusters.push(shadeColor(theme, 0.1))
       return clusters
     },
-    // themeColorChangeHandle (val) {
-    //   var styleList = [
-    //     {
-    //       id: 'J_elementTheme',
-    //       url: `${process.env.BASE_URL}element-theme/${val}/index.css?t=${new Date().getTime()}`
-    //     },
-    //     {
-    //       id: 'J_auiTheme',
-    //       url: `${process.env.BASE_URL}element-theme/${val}/aui.css?t=${new Date().getTime()}`
-    //     }
-    //   ]
-    //   for (var i = 0; i < styleList.length; i++) {
-    //     var el = document.querySelector(`#${styleList[i].id}`)
-    //     if (el) {
-    //       el.href = styleList[i].url
-    //       continue
-    //     }
-    //     el = document.createElement('link')
-    //     el.id = styleList[i].id
-    //     el.href = styleList[i].url
-    //     el.rel = 'stylesheet'
-    //     document.querySelector('head').appendChild(el)
-    //   }
-    // }
   }
 }
 </script>
