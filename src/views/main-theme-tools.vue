@@ -57,6 +57,13 @@ export default {
     this.setTheme(this.theme)
   },
   methods: {
+    // 在最外层容器设置主题颜色
+    setThemeColorToBody(val) {
+      this.$nextTick(() => {
+        let el = document.querySelector(".aui-wrapper")
+        if(el) el.style.setProperty("--themeColor", val)
+      })
+    },
     // 主题设置
     async setTheme(val) {
       const oldVal = this.chalk ? this.theme : ORIGINAL_THEME
@@ -97,6 +104,7 @@ export default {
         if (typeof innerText !== 'string') return
         style.innerText = this.updateStyle(innerText, originalCluster, themeCluster)
       })
+      this.setThemeColorToBody(val)
     },
 
     updateStyle(style, oldCluster, newCluster) {

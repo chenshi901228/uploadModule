@@ -45,9 +45,6 @@ export default {
   },
   watch: {
     $route: 'routeHandle',
-    theme(val) {
-      this.setThemeColorToBody(val)
-    }
   },
   computed: {
     documentClientHeight: {
@@ -66,14 +63,6 @@ export default {
         this.$store.commit("updateDocumentClientWidth", val);
       },
     },
-    theme: {
-      get() {
-        return this.$store.state.theme;
-      }
-    }
-  },
-  mounted() {
-    this.setThemeColorToBody(this.theme)
   },
   created () {
     this.windowResizeHandle()
@@ -86,13 +75,6 @@ export default {
     })
   },
   methods: {
-    // 在最外层容器设置主题颜色
-    setThemeColorToBody(val) {
-      this.$nextTick(() => {
-        let el = document.querySelector(".aui-wrapper")
-        if(el) el.style.setProperty("--themeColor", val)
-      })
-    },
     // 窗口改变大小
     windowResizeHandle () {
       this.documentClientHeight = document.documentElement["clientHeight"];
