@@ -2,197 +2,235 @@
 
 <template>
   <el-card shadow="never" class="aui-card--fill">
-    <el-form
-      class="headerTool"
-      :inline="true"
-      :model="dataForm"
-      ref="dataForm"
-      size="small"
-      label-width="100px"
-      label-position="right"
-      @keyup.enter.native="queryDynamicGroup"
-    >
-      <el-form-item
-        label="动态组"
-        prop="name"
-        v-if="isOpen || formItemCount >= 1"
-      >
-        <el-input
-          size="small"
-          clearable
-          style="width: 200px"
-          v-model="dataForm.name"
-          placeholder="请输入"
-        ></el-input>
-      </el-form-item>
-      <el-form-item
-        label="显示状态"
-        prop="showState"
-        v-if="isOpen || formItemCount >= 2"
-      >
-        <el-select
-          size="small"
-          style="width: 200px"
-          :clearable="true"
-          v-model="dataForm.showState"
-          placeholder="显示状态"
+    <div class="content-box">
+      <div class="left-box">
+        <el-form
+          :inline="true"
+          :model="userForm"
+          label-width="100%"
+          @keyup.enter.native="loadName"
         >
-          <el-option label="显示" value="1"></el-option>
-          <el-option label="隐藏" value="0"></el-option>
-        </el-select>
-      </el-form-item>
-
-      <div class="headerTool-search-btns">
-        <el-form-item>
-          <el-button
-            type="primary"
-            icon="el-icon-search"
-            size="mini"
-            @click="queryDynamicGroup"
-            >{{ $t("query") }}</el-button
+          <el-form-item>
+            <el-input
+              style="width: 100%"
+              v-model="groupMensName"
+              placeholder="请输入动态组名称"
+              clearable
+            ></el-input>
+          </el-form-item>
+        </el-form>
+        <div>
+          <el-button @click="dialogFormVisible = true" plain type="primary"
+            >动态组 +</el-button
           >
-          <el-button
-            icon="el-icon-refresh"
-            size="mini"
-            @click="resetDataForm()"
-            >{{ $t("reset") }}</el-button
+        </div>
+        <div style="width: 100%; height: 100%">
+          <div
+            v-for="(item, index) in groupGroups"
+            :key="index"
+            style="
+              width: 100%;
+              height: 40px;
+              margin-top: 5px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding-left: 5px;
+            "
+            :class="item.id === chooseGroupId ? 'text-isActive' : ''"
+            @click="chooseMens(item.id)"
           >
-          <el-button size="mini" plain @click="open">
-            <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
-            {{ isOpen ? "收起" : "展开" }}
-          </el-button>
-        </el-form-item>
+            <span>{{ item.name }}</span>
+            <div style="margin-right: 5px; cursor: pointer">
+              <i
+                @click.stop="edite(index, item)"
+                style="margin-right: 5px; cursor: pointer"
+                class="el-icon-edit-outline"
+              ></i>
+              <i
+                @click.stop="changeShowState(index, item)"
+                class="el-icon-delete"
+              ></i>
+            </div>
+          </div>
+          <div>
+            <el-button @click="load" plain type="warning">{{
+              loadMoreText
+            }}</el-button>
+          </div>
+        </div>
       </div>
 
-      <!-- 操作按钮 -->
-      <div class="headerTool-handle-btns">
-        <div class="headerTool--handle-btns-left">
-          <el-form-item>
-            <el-button
-              plain
-              icon="el-icon-delete"
-              size="mini"
-              v-if="dataListSelections.length !== 0"
-              type="danger"
-              @click="deleteSelect()"
-              >批量删除</el-button
-            >
+      <div class="right-box">
+        <el-form
+          class="headerTool"
+          :inline="true"
+          :model="dataForm"
+          ref="dataForm"
+          size="small"
+          label-width="100px"
+          label-position="right"
+          @keyup.enter.native="queryPageWithGroupId(chooseGroupId)"
+        >
+          <el-form-item
+            label="用户昵称"
+            prop="name"
+            v-if="isOpen || formItemCount >= 1"
+          >
+            <el-input
+              style="width: 200px"
+              v-model="dataForm.name"
+              placeholder="请输入"
+              clearable
+            ></el-input>
           </el-form-item>
-          <el-form-item>
-            <el-button
-              size="mini"
-              plain
-              icon="el-icon-plus"
-              type="primary"
-              @click="dialogFormVisible = true"
-              >添加</el-button
-            >
+          <el-form-item
+            label="手机号"
+            prop="tel"
+            v-if="isOpen || formItemCount >= 2"
+          >
+            <el-input
+              style="width: 200px"
+              v-model="dataForm.tel"
+              placeholder="请输入"
+              clearable
+            ></el-input>
           </el-form-item>
-        </div>
-        <div class="headerTool--handle-btns-right">
-          <el-form-item>
-            <el-tooltip
-              class="item"
-              effect="dark"
-              content="刷新"
-              placement="top"
-            >
+
+          <div class="headerTool-search-btns">
+            <el-form-item>
               <el-button
-                size="small"
+                type="primary"
+                icon="el-icon-search"
+                size="mini"
+                @click="queryPageWithGroupId(chooseGroupId)"
+                >{{ $t("query") }}</el-button
+              >
+              <el-button
                 icon="el-icon-refresh"
-                circle
-                @click="queryDynamicGroup"
-              ></el-button>
-            </el-tooltip>
-          </el-form-item>
-        </div>
+                size="mini"
+                @click="resetDataForm()"
+                >{{ $t("reset") }}</el-button
+              >
+              <el-button size="mini" plain @click="open">
+                <i
+                  :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
+                ></i>
+                {{ isOpen ? "收起" : "展开" }}
+              </el-button>
+            </el-form-item>
+          </div>
+
+          <!-- 操作按钮 -->
+          <div class="headerTool-handle-btns">
+            <div class="headerTool--handle-btns-left">
+              <el-form-item>
+                <el-button
+                  plain
+                  icon="el-icon-delete"
+                  size="mini"
+                  v-if="dataListSelections.length !== 0"
+                  type="danger"
+                  @click="deleteSelect()"
+                  >批量移除</el-button
+                >
+              </el-form-item>
+              <el-form-item>
+                <el-button
+                  size="mini"
+                  plain
+                  icon="el-icon-sort-down"
+                  type="primary"
+                  @click="importXlx"
+                  >导入</el-button
+                >
+              </el-form-item>
+              <el-form-item>
+                <el-button
+                  size="mini"
+                  plain
+                  icon="el-icon-plus"
+                  type="primary"
+                  @click="addUser"
+                  >新增</el-button
+                >
+              </el-form-item>
+            </div>
+            <div class="headerTool--handle-btns-right">
+              <el-form-item>
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="刷新"
+                  placement="top"
+                >
+                  <el-button
+                    size="small"
+                    icon="el-icon-refresh"
+                    circle
+                    @click="queryPageWithGroupId(chooseGroupId)"
+                  ></el-button>
+                </el-tooltip>
+              </el-form-item>
+            </div>
+          </div>
+        </el-form>
+        <el-table
+          v-loading="loadingGroup"
+          :data="groupMens"
+          fit
+          @selection-change="dataListSelectionChangeHandle"
+          style="width: 100%"
+          :height="siteContentViewHeight"
+        >
+          <el-table-column
+            type="selection"
+            header-align="center"
+            align="center"
+            width="50"
+            fixed="left"
+            :height="siteContentViewHeight"
+          ></el-table-column>
+          <el-table-column label="用户昵称" prop="name" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.name || "--" }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="手机号码" prop="phone" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.phone || "--" }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="创建时间" prop="createDate" align="center">
+            <template slot-scope="scope">
+              <span>{{ scope.row.createDate || "--" }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column label="操作" header-align="center" align="center">
+            <template slot-scope="scope">
+              <el-button
+                type="text"
+                size="small"
+                icon="el-icon-delete"
+                @click="handleDelete(scope.$index, scope.row)"
+                >移除</el-button
+              >
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination
+          background
+          :current-groupMensPage="page"
+          :groupMensPage-sizes="[10, 20, 50, 100]"
+          :groupMensPage-size="limit"
+          :total="groupMensTotal"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="pageSizeChangeHandle"
+          @current-change="pageCurrentChangeHandle"
+        >
+        </el-pagination>
       </div>
-    </el-form>
-    <el-table
-      v-loading="loadingGroup"
-      :data="groupMens"
-      fit
-      @selection-change="dataListSelectionChangeHandle"
-      style="width: 100%"
-      :height="siteContentViewHeight"
-      ref="table"
-    >
-      <el-table-column
-        type="selection"
-        header-align="center"
-        align="center"
-        width="50"
-        fixed="left"
-      ></el-table-column>
-      <el-table-column label="动态组" prop="name" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.name || "--" }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="显示状态" prop="showState" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.showState === 1 ? "显示" : "隐藏" || "--" }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建人" prop="createBy" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.createBy || "--" }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="创建时间" prop="createDate" align="center">
-        <template slot-scope="scope">
-          <span>{{ scope.row.createDate || "--" }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column
-        width="120"
-        label="操作"
-        header-align="center"
-        align="center"
-      >
-        <template slot-scope="scope">
-          <el-button
-            icon="el-icon-sort-down"
-            @click="importXlx(scope.$index, scope.row)"
-            type="text"
-            size="small"
-            >导入</el-button
-          >
-          <el-button
-            @click="edite(scope.$index, scope.row)"
-            type="text"
-            size="small"
-            icon="el-icon-edit"
-            >编辑</el-button
-          >
-          <el-button
-            icon="el-icon-sort"
-            @click="changeShowState(scope.$index, scope.row)"
-            type="text"
-            size="small"
-            >{{ scope.row.showState === 1 ? "隐藏" : "显示" }}</el-button
-          >
-          <el-button
-            icon="el-icon-view"
-            @click="toDetail(scope.$index, scope.row)"
-            type="text"
-            size="small"
-            >查看人员</el-button
-          >
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-pagination
-      background
-      :current-page="groupMensPage"
-      :page-sizes="[10, 20, 50, 100]"
-      :page-size="groupMensLimit"
-      :total="groupMensTotal"
-      layout="total, sizes, prev, pager, next, jumper"
-      @size-change="pageSizeChangeHandle"
-      @current-change="pageCurrentChangeHandle"
-    >
-    </el-pagination>
+    </div>
 
     <el-dialog title="添加动态组" :visible.sync="dialogFormVisible" width="600">
       <el-form :model="groupForm">
@@ -278,12 +316,143 @@
         <p style="text-align: center">{{ uploadSuccessMsg }}</p>
       </div>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogInputVisible = false">关闭</el-button>
+        <el-button size="small" @click="dialogInputVisible = false"
+          >关闭</el-button
+        >
+      </div>
+    </el-dialog>
+
+    <el-dialog title="提示" :visible.sync="dialogDeleteVisible" width="30%">
+      <span>确认删除该动态组吗？</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="dialogDeleteVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="confirmDelte"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      title="添加用户"
+      :visible.sync="dialogUserFormVisible"
+      top="20px"
+      width="70%"
+    >
+      <el-form
+        :inline="true"
+        :model="userForm"
+        size="small"
+        label-width="100px"
+        label-position="right"
+        @keyup.enter.native="queryUserList()"
+      >
+        <el-form-item label="用户昵称">
+          <el-input
+            style="width: 200px"
+            v-model="userForm.name"
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="手机号">
+          <el-input
+            style="width: 200px"
+            v-model="userForm.tel"
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+
+        <el-form-item>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            size="mini"
+            @click="queryUserList"
+            >查询</el-button
+          >
+        </el-form-item>
+        <el-form-item>
+          <el-button icon="el-icon-refresh" size="mini" @click="reset"
+            >重置</el-button
+          >
+        </el-form-item>
+      </el-form>
+      <el-table
+        v-loading="dataUserListLoading"
+        :data="dataUserList"
+        fit
+        @selection-change="userListSelectionChangeHandle"
+        style="width: 100%"
+        max-height="500"
+      >
+        <el-table-column
+          type="selection"
+          header-align="center"
+          align="center"
+          width="50"
+          fixed="left"
+        ></el-table-column>
+        <el-table-column label="用户昵称" prop="name" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.name || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="手机号码" prop="phone" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.phone || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="加入状态" prop="joinFlag" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.joinFlag === 0 ? "未加入" : "已加入" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="创建时间" prop="createDate" align="center">
+          <template slot-scope="scope">
+            <span>{{ scope.row.createDate || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" header-align="center" align="center">
+          <template slot-scope="scope" v-if="scope.row.joinFlag !== 1">
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-plus"
+              @click="saveSelectUser(scope.$index, scope.row)"
+              >添加</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        background
+        :current-page="userListPage"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="limit"
+        :total="dataUserListTotal"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="pageSizeChangeUserHandle"
+        @current-change="pageCurrentChangeUserHandle"
+      >
+      </el-pagination>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="dialogUserFormVisible = false"
+          >取 消</el-button
+        >
+        <el-button
+          size="mini"
+          :type="showBtn ? 'primary' : 'info'"
+          @click="saveUser"
+          >{{
+            dataListSelectionUsers.length > 1 ? "批量添加" : "添加"
+          }}</el-button
+        >
       </div>
     </el-dialog>
 
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
-      <span>确认{{ showState === 0 ? "显示" : "隐藏" }}吗？</span>
+      <span>确认要移除吗？</span>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
         <el-button size="small" type="primary" @click="confirmShowState"
@@ -301,10 +470,6 @@ export default {
   mixins: [mixinTableModule],
   data() {
     return {
-      dataForm: {
-        name: "",
-        showState: "",
-      },
       editeGroupForm: {
         name: "",
       },
@@ -316,14 +481,13 @@ export default {
       groupForm: {
         name: "",
       },
-      groupMens: [],
+      groupGroups: [],
       groupMensPage: 1,
       groupMensLimit: 10,
       groupMensTotal: 0,
       sysGroupId: "",
       fileList: [],
       dialogInputVisible: false,
-      groupId: "",
       showState: 0,
       id: "",
       dialogVisible: false,
@@ -331,6 +495,34 @@ export default {
       percent: 0,
       uploadXlx: "",
       uploadSuccessMsg: "",
+      chooseGroupId: "",
+      dataForm: {
+        name: "",
+        tel: "",
+      },
+      dataListSelections: [], // 数据列表，多选项
+      loadingGroup: false,
+      groupMens: [],
+      page: 1,
+      limit: 10,
+      groupMensTotal: 0,
+      userForm: {
+        name: "",
+        tel: "",
+      },
+      dialogUserFormVisible: false,
+      dataUserListLoading: false,
+      dataUserList: [],
+      userListPage: 1, // 当前页码
+      userListLimit: 10, // 每页数
+      dataListSelectionUsers: [],
+      dataUserListTotal: 0,
+      dialogVisible: false,
+      ids: [],
+      showBtn: true,
+      dialogDeleteVisible: false,
+      groupMensName: "",
+      loadMoreText: "加载更多",
     };
   },
   watch: {
@@ -341,12 +533,51 @@ export default {
         this.uploadSuccessMsg = "";
       }
     },
+    dialogUserFormVisible(n, o) {
+      if (n) {
+        this.reset();
+      }
+    },
   },
   created() {
     this.queryDynamicGroup();
   },
   activated() {},
   methods: {
+    loadName() {
+      this.groupMensPage = 1;
+      this.groupGroups = [];
+      this.loadMoreText = "加载更多";
+      this.load();
+    },
+    //分页获取动态组
+    load() {
+      this.groupMensPage++;
+      this.$http
+        .get("/sys/dynamicGroup/page", {
+          params: {
+            page: this.groupMensPage,
+            limit: this.groupMensLimit,
+            name: this.groupMensName,
+          },
+        })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            this.groupGroups = [];
+            this.groupMensTotal = 0;
+            return this.$message.error(res.msg);
+          }
+          this.groupMensTotal = res.data.total;
+          if (this.groupGroups.length >= this.groupMensTotal) {
+            this.loadMoreText = "已加载全部";
+            return;
+          }
+          this.groupGroups.push(...res.data.list);
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
     changeValueNum() {
       if (this.groupForm.name.length >= 20) {
         this.$message.warning("最大字数为20字！");
@@ -355,22 +586,25 @@ export default {
       }
     },
     changeShowState(i, row) {
-      this.dialogVisible = true;
+      this.dialogDeleteVisible = true;
       this.id = row.id;
       this.showState = row.showState;
     },
-    //确认隐藏显示
-    confirmShowState() {
+    //确认删除动态组
+    confirmDelte() {
+      let ids = [];
+      ids.push(this.id);
       this.$http
-        .put("/sys/dynamicGroup/showOrHide", {
-          id: this.id,
-          showState: this.showState === 1 ? 0 : 1,
-        })
+        .delete("/sys/dynamicGroup", { data: ids })
         .then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg);
           } else {
-            this.dialogVisible = false;
+            this.$message.success("删除成功!");
+            this.dialogDeleteVisible = false;
+            this.groupMensPage = 1;
+            this.groupGroups = [];
+            this.loadMoreText = "加载更多";
             this.queryDynamicGroup();
           }
         })
@@ -380,24 +614,19 @@ export default {
     },
     edite(i, row) {
       this.dialogEditeFormVisible = true;
-      this.groupId = row.id;
-      this.showState = row.showState;
       this.editeGroupForm.name = row.name;
-    },
-    toDetail(i, row) {
-      this.groupId = row.id;
-      this.$router.push({
-        path: "/basicManagement-dynamicGroups-DynamicMens",
-      });
-      window.localStorage.setItem("groupId", this.groupId);
     },
     dowloadXlx() {
       window.open(
         "https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/gruopUserImport.xlsx"
       );
     },
-    importXlx(i, row) {
-      this.sysGroupId = row.id;
+    importXlx() {
+      this.groupGroups.forEach((v) => {
+        if (v.id === this.chooseGroupId) {
+          this.sysGroupId = v.id;
+        }
+      });
       this.dialogInputVisible = true;
       this.uploadUrl = `${
         window.SITE_CONFIG["apiURL"]
@@ -467,45 +696,26 @@ export default {
     onChange(file, fileList) {
       // console.log(file, fileList)
     },
-    // closeUploadDialog() {
-    //   this.percent = 0;
-    //   this.fileList = [];
-    //   this.queryDynamicGroup();
-    //   this.dialogInputVisible = false;
-    // },
     //动态组人员
     queryDynamicGroup() {
-      this.loadingGroup = true;
-
-      let dataObj = {};
-
-      for (const key in this.dataForm) {
-        if (this.dataForm[key] && this.dataForm[key].length !== 0) {
-          dataObj[key] = this.dataForm[key];
-        }
-      }
-      if (this.dataForm.showState) {
-        dataObj.showState = Number(this.dataForm.showState);
-      }
-
       this.$http
         .get("/sys/dynamicGroup/page", {
           params: {
             page: this.groupMensPage,
             limit: this.groupMensLimit,
-            ...dataObj,
+            name: this.groupMensName,
           },
         })
         .then(({ data: res }) => {
           if (res.code !== 0) {
-            this.groupMens = [];
+            this.groupGroups = [];
             this.groupMensTotal = 0;
-            this.loadingGroup = false;
             return this.$message.error(res.msg);
           }
-          this.groupMens = res.data.list;
+          this.groupGroups.push(...res.data.list);
           this.groupMensTotal = res.data.total;
-          this.loadingGroup = false;
+          this.chooseGroupId = this.groupGroups[0].id;
+          this.queryPageWithGroupId(this.chooseGroupId);
         })
         .catch((err) => {
           throw err;
@@ -529,6 +739,8 @@ export default {
     // 重置搜索条件
     resetDataForm(formName = "dataForm") {
       this.$refs[formName].resetFields();
+      this.this.groupMensPage = 1;
+      this.groupGroups = [];
       this.queryDynamicGroup();
     },
     //添加动态组
@@ -549,7 +761,7 @@ export default {
           this.$message.success("添加成功!");
           this.dialogFormVisible = false;
           this.groupMensPage = 1;
-          this.groupMens = [];
+          this.groupGroups = [];
           this.queryDynamicGroup();
           this.groupForm.name = "";
         })
@@ -562,7 +774,7 @@ export default {
       this.$http
         .put("/sys/dynamicGroup/update", {
           name: this.editeGroupForm.name,
-          id: this.groupId,
+          id: this.chooseGroupId,
           showState: this.showState,
         })
         .then(({ data: res }) => {
@@ -580,6 +792,236 @@ export default {
           throw err;
         });
     },
+    addUser() {
+      // this.queryUserList();
+      this.dialogUserFormVisible = true;
+    },
+    //获取未加入用户组
+    queryUserList() {
+      this.dataUserListLoading = true;
+
+      this.$http
+        .get("/sys/dynamicGroupUser/pageWithGroupIdNotJoin", {
+          params: {
+            page: this.userListPage,
+            limit: this.userListLimit,
+            name: this.userForm.name,
+            phone: this.userForm.tel,
+            groupId: this.chooseGroupId,
+          },
+        })
+        .then(({ data: res }) => {
+          this.dataUserListLoading = false;
+          if (res.code !== 0) {
+            this.dataUserList = [];
+            this.dataUserListTotal = 0;
+            return this.$message.error(res.msg);
+          }
+          this.dataUserList = res.data.list;
+          this.dataUserListTotal = res.data.total;
+        })
+        .catch((err) => {
+          this.dataUserListLoading = false;
+          throw err;
+        });
+    },
+    //添加
+    saveSelectUser(index, row) {
+      this.dataListSelectionUsers.push(row);
+      this.$http
+        .post("/sys/dynamicGroupUser", {
+          weixinUserId: this.dataListSelectionUsers[0].id,
+          sysGroupId: this.chooseGroupId,
+        })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            this.dialogUserFormVisible = false;
+            return this.$message.error(res.msg);
+          }
+          this.$message.success("添加成功!");
+          this.dialogUserFormVisible = false;
+          this.dataListSelectionUsers = [];
+          this.queryPageWithGroupId(this.chooseGroupId);
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
+    // 分页, 每页条数
+    pageSizeChangeUserHandle(val) {
+      this.userListPage = 1;
+      this.userListLimit = val;
+      this.queryUserList();
+    },
+    // 分页, 当前页
+    pageCurrentChangeUserHandle(val) {
+      this.userListPage = val;
+      this.queryUserList();
+    },
+    resetDataForm() {
+      this.dataForm = {
+        name: "",
+        tel: "",
+      };
+      this.$refs.dataForm.resetFields();
+      this.queryPageWithGroupId(this.chooseGroupId);
+    },
+    //重置
+    reset() {
+      this.userForm = {
+        name: "",
+        tel: "",
+      };
+      this.queryUserList();
+    },
+    //添加用户
+    saveUser() {
+      if (this.dataListSelectionUsers.length === 0) {
+        this.$message({
+          message: "未选择用户！",
+          type: "warning",
+          duration: 1000,
+        });
+        this.dialogUserFormVisible = false;
+        return;
+      } else if (this.dataListSelectionUsers.length === 1) {
+        if (!this.showBtn) {
+          this.$message.warning("不可添加已加入成员！");
+        } else {
+          this.$http
+            .post("/sys/dynamicGroupUser", {
+              weixinUserId: this.dataListSelectionUsers[0].id,
+              sysGroupId: this.chooseGroupId,
+            })
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                this.dialogUserFormVisible = false;
+                return this.$message.error(res.msg);
+              }
+              this.$message.success("添加成功!");
+              this.dialogUserFormVisible = false;
+              this.dataListSelectionUsers = [];
+              this.queryPageWithGroupId(this.chooseGroupId);
+            })
+            .catch((err) => {
+              throw err;
+            });
+        }
+      } else if (this.dataListSelectionUsers.length > 1) {
+        if (!this.showBtn) {
+          this.$message.warning("不可添加已加入成员！");
+        } else {
+          let list = [];
+          this.dataListSelectionUsers.forEach((v) => {
+            list.push({
+              weixinUserId: v.id,
+              sysGroupId: this.chooseGroupId,
+            });
+          });
+          this.$http
+            .post("/sys/dynamicGroupUser/addBatch", list)
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                this.dialogUserFormVisible = false;
+                return this.$message.error(res.msg);
+              }
+              this.$message.success("添加成功!");
+              this.dialogUserFormVisible = false;
+              this.dataListSelectionUsers = [];
+              this.queryPageWithGroupId(this.chooseGroupId);
+            })
+            .catch((err) => {
+              throw err;
+            });
+        }
+      }
+    },
+    confirmShowState() {
+      this.$http
+        .delete("/sys/dynamicGroupUser", { data: this.ids })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          this.$message.success("删除成功!");
+          this.ids = [];
+          this.dialogVisible = false;
+          this.queryPageWithGroupId(this.chooseGroupId);
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
+    //批量选择
+    userListSelectionChangeHandle(val) {
+      this.dataListSelectionUsers = val;
+      this.showBtn = this.dataListSelectionUsers.every((v) => {
+        return v.joinFlag === 0;
+      });
+    },
+    // 多选
+    dataListSelectionChangeHandle(val) {
+      this.dataListSelections = val;
+      console.log(this.dataListSelections);
+    },
+    //删除
+    handleDelete(index, row) {
+      this.ids.push(row.id);
+      this.dialogVisible = true;
+    },
+    //动态组人员
+    queryPageWithGroupId(id) {
+      this.loadingGroup = true;
+
+      this.$http
+        .get("/sys/dynamicGroupUser/pageWithGroupId", {
+          params: {
+            page: this.page,
+            limit: this.limit,
+            name: this.dataForm.name,
+            phone: this.dataForm.tel,
+            groupId: id,
+          },
+        })
+        .then(({ data: res }) => {
+          this.loadingGroup = false;
+          if (res.code !== 0) {
+            this.groupMens = [];
+            this.groupMensTotal = 0;
+            return this.$message.error(res.msg);
+          }
+          this.groupMens = res.data.list;
+          this.groupMensTotal = res.data.total;
+        })
+        .catch((err) => {
+          this.loadingGroup = false;
+          throw err;
+        });
+    },
+    // 分页, 每页条数
+    pageSizeChangeHandle(val) {
+      this.page = 1;
+      this.limit = val;
+      this.queryPageWithGroupId(this.chooseGroupId);
+    },
+    // 分页, 当前页
+    pageCurrentChangeHandle(val) {
+      this.page = val;
+      this.queryPageWithGroupId(this.chooseGroupId);
+    },
+    //批量删除
+    deleteSelect() {
+      console.log(this.dataListSelections);
+      this.dataListSelections.forEach((v) => {
+        this.ids.push(v.id);
+      });
+      this.dialogVisible = true;
+    },
+    //选择动态组
+    chooseMens(id) {
+      this.chooseGroupId = id;
+      this.queryPageWithGroupId(this.chooseGroupId);
+    },
   },
 };
 </script>
@@ -590,33 +1032,41 @@ export default {
     height: 80px;
   }
 }
-.diaBox {
-  height: calc(calc(100vh - 50px - 38px - 66px) - 2px);
-  position: relative;
-  background: #fff;
-}
-.diaBoxLeft {
+/deep/.content-box {
   display: flex;
-  align-items: center;
-  flex-direction: column;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 300px;
-  bottom: 0;
-  overflow: auto;
+  justify-content: space-between;
   padding: 10px;
-  border: 5px solid #f5f7fa;
-}
-.diaBoxRight {
-  position: absolute;
-  top: 0;
-  right: 0;
-  left: 300px;
-  bottom: 0;
-  overflow: auto;
-  padding: 10px;
-  border: 5px solid #f5f7fa;
+  background: #f6f7f9;
+  height: calc(calc(100vh - 50px - 36px) - 2px);
+  overflow-x: scroll;
+
+  .left-box {
+    flex: 2;
+    margin-right: 10px;
+    background: #fff;
+    height: 100%;
+    overflow-y: scroll;
+    .el-button {
+      width: 100%;
+    }
+    .text-isActive {
+      border-left: 5px solid #409eff;
+    }
+    .el-form-item__content {
+      display: block;
+      margin-right: 0px;
+      margin-bottom: 0px;
+    }
+    .el-form-item {
+      display: block;
+      margin-right: 0px;
+      margin-bottom: 0px;
+    }
+  }
+  .right-box {
+    flex: 6;
+    background: #fff;
+  }
 }
 /deep/.el-dialog__body {
   display: flex;
