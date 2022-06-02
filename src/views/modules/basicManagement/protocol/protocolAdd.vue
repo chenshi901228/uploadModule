@@ -214,8 +214,7 @@ export default {
             })
         },
         // 上传之前
-        async uploadBeforeUploadHandle (file) {
-            
+        uploadBeforeUploadHandle (file) {
             if(this.uploadType == "mp4" && file.type !== 'video/mp4') {
                 this.$message.error(this.$t('upload.tip', { 'format': 'mp4' }))
                 return false
@@ -232,8 +231,9 @@ export default {
             }
             // 获取图片宽高
             if(file.type != 'video/mp4') {
-                let d = await getImageWH(file) 
-                console.log(d)
+                getImageWH(file).then(res => {
+                    console.log(res)
+                }) 
             }
             this.uploading = this.$loading({
                 lock: true,
