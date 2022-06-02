@@ -227,32 +227,34 @@ export default {
         },
         // 上传之前
         uploadBeforeUploadHandle (file) {
-            if(this.uploadType == "mp4" && file.type !== 'video/mp4') {
-                this.$message.error(this.$t('upload.tip', { 'format': 'mp4' }))
-                return false
-            }
-            if (this.uploadType == "image" && file.type !== 'image/jpg' && file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/gif') {
-                this.$message.error(this.$t('upload.tip', { 'format': 'jpg、png、gif' }))
-                return false
-            }
-
-            // 视频上传大小限制
-            if(file.type == 'video/mp4' && file.size / 1024 / 1024 >= this.videoUploadSize) {
-                this.$message.error(`上传视频不能超过${this.videoUploadSize}M`)
-                return false
-            }
-
-            // 获取图片宽高
-            if(file.type != 'video/mp4') {
-                getImageWH(file).then(res => {
-                    console.log(res)
-                }) 
-            }
-            this.uploading = this.$loading({
-                lock: true,
-                text: '附件上传中',
-                spinner: 'el-icon-loading',
-                background: 'rgba(0, 0, 0, 0.7)'
+            return new Promise(async (resolve, reject) => {
+                if(this.uploadType == "mp4" && file.type !== 'video/mp4') {
+                    this.$message.error(this.$t('upload.tip', { 'format': 'mp4' }))
+                    return reject()
+                }
+                if (this.uploadType == "image" && file.type !== 'image/jpg' && file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/gif') {
+                    this.$message.error(this.$t('upload.tip', { 'format': 'jpg、png、gif' }))
+                    return reject()
+                }
+    
+                // 视频上传大小限制
+                if(file.type == 'video/mp4' && file.size / 1024 / 1024 > this.videoUploadSize) {
+                    this.$message.error(`上传视频不能超过${this.videoUploadSize}M`)
+                    return reject()
+                }
+                // 获取图片宽高
+                if(file.type != 'video/mp4') {
+                    let d = await getImageWH(file)
+                    console.log(d)
+                    // return reject()
+                }
+                this.uploading = this.$loading({
+                    lock: true,
+                    text: '附件上传中',
+                    spinner: 'el-icon-loading',
+                    background: 'rgba(0, 0, 0, 0.7)'
+                })
+                resolve()
             })
         },
         // 上传成功
