@@ -246,14 +246,14 @@
           width="200"
         >
           <template slot-scope="{ row }">
-            <el-button
+            <!-- <el-button
               size="small"
               icon="el-icon-download"
               type="text"
               v-if="row.liveState == 1"
               @click="actionHandle('1', row)"
               >下载视频</el-button
-            >
+            > -->
             <el-button
               size="small"
               icon="el-icon-chat-dot-square"

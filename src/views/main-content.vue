@@ -57,7 +57,6 @@ export default {
       top: 0,
       left: 0,
       selectedTag: "", //右键选中的tab
-      currentTab: "" //当前tab
     }
   },
   watch: {
@@ -69,9 +68,6 @@ export default {
       }
     }
   },
-  mounted() {
-    this.currentTab = this.$store.state.contentTabsActiveName
-  },
   methods: {
     // tabs, 是否通过iframe展示
     tabIsIframe (url) {
@@ -79,7 +75,6 @@ export default {
     },
     // tabs, 选中tab
     tabSelectedHandle (tab) {
-      this.currentTab = tab.name
       tab = this.$store.state.contentTabs.filter(item => item.name === tab.name)[0]
       if (tab) {
         this.$router.push({
@@ -115,7 +110,6 @@ export default {
         return item.name === 'home' || item.name === this.selectedTag
       })
       if(this.$store.state.contentTabs.length == 1) { //只剩首页则跳转到首页
-        this.currentTab = 'home'
         if(this.$store.state.contentTabsActiveName == 'home') return
         this.$router.push({ name: 'home' })
       }else {
@@ -129,13 +123,11 @@ export default {
           params: { ...tab.params },
           query: { ...tab.query }
         })
-        this.currentTab = tab.name
       }
     },
     // tabs, 关闭全部
     tabsCloseAllHandle () {
       this.$store.state.contentTabs = this.$store.state.contentTabs.filter(item => item.name === 'home')
-      this.currentTab = 'home'
       if(this.$store.state.contentTabsActiveName == 'home') return
       this.$router.push({ name: 'home' })
     },

@@ -72,7 +72,7 @@
                         ref="relationLiveUpload"
                         @uploadSuccess="relationLiveUploadSuccess" 
                         @uploadRemove="relationLiveUploadRemove"
-                        :fileType="['mp4','flv']"
+                        :fileType="['mp4']"
                         :fileList="relationLiveList"></custom-upload>
                 </el-form-item>
             </el-form>

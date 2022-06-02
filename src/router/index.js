@@ -5,6 +5,12 @@ import { isURL } from '@/utils/validate'
 
 Vue.use(Router)
 
+// 跳转重复路由报错处理
+const originalPush = Router.prototype.push
+Router.prototype.push = function push(location) {
+    return originalPush.call(this, location).catch(err => err)
+}
+
 // 页面路由(独立页面)
 export const pageRoutes = [
   {

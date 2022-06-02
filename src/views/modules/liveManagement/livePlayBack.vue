@@ -211,14 +211,14 @@
           width="200"
         >
           <template slot-scope="{ row }">
-            <el-button
+            <!-- <el-button
               type="text"
               size="small"
               icon="el-icon-download"
               v-if="row.liveState == 1"
               @click="actionHandle('1',row)"
               >下载视频</el-button
-            >
+            > -->
             <el-button
               size="small"
               style="margin-left: 10px"

@@ -396,6 +396,9 @@ img {
       z-index: 2;
       &__content {
         line-height: 16px;
+        &.is-fixed {
+          transform: translateX(100%) translateY(100%) !important;
+        }
       }
     }
   }
