@@ -151,6 +151,7 @@
                 @blur="sortId = ''"
                 :id="'input' + row.id"
                 @keyup.enter.native="userSelect"
+                type="number"
               ></el-input>
               <span v-else>
                 {{ row.num || "--" }}
@@ -699,5 +700,12 @@ export default {
   .el-input {
     width: 100px;
   }
+}
+/deep/input::-webkit-outer-spin-button,
+/deep/input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+}
+/deep/input[type="number"] {
+  -moz-appearance: textfield !important;
 }
 </style>
