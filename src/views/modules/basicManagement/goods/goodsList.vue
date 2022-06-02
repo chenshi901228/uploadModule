@@ -40,7 +40,6 @@
               </el-select> -->
           <el-input
             style="width: 200px"
-            size="small"
             v-model.trim="dataForm.productName"
             placeholder="请输入商品名称"
             clearable
@@ -69,7 +68,6 @@
           <el-select
             style="width: 200px"
             clearable
-            size="small"
             v-model="dataForm.isFree"
             placeholder="请选择"
           >
@@ -84,7 +82,6 @@
         >
           <el-input
             style="width: 200px"
-            size="small"
             v-model.trim="dataForm.id"
             placeholder="请输入"
             clearable

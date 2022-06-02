@@ -333,7 +333,7 @@ img {
     position: relative;
     display: flex;
     flex: 1;
-    background-color: #fff;
+    background-color: #fff !important;
     overflow: hidden;
   }
   &__menu {

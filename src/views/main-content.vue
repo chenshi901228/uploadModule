@@ -79,7 +79,6 @@ export default {
     },
     // tabs, 选中tab
     tabSelectedHandle (tab) {
-      if(this.currentTab == tab.name) return
       this.currentTab = tab.name
       tab = this.$store.state.contentTabs.filter(item => item.name === tab.name)[0]
       if (tab) {

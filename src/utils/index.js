@@ -136,6 +136,29 @@ export function httpParams(obj) {
   }
   return sizestr;
 } 
+/**
+ * @description: 获取图片的宽高
+ * @param: file file对象 
+ * 
+ */
+export function getImageWH(file) {
+  return new Promise((resolve, reject) => {
+    let reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = e => {
+        const img = e.target.result;
+        const image = new Image()
+        image.src = img
+        
+        image.onload = _ => {
+          resolve({width: image.width, height: image.height})
+        }
+        image.onerror = _ => {
+          reject(_)
+        }
+    }
+  })
+}
 
 /**
  * 附件下载
