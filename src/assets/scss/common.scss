@@ -97,6 +97,9 @@ img {
   .el-table th {
     color: #515a6e;
     // background-color: #f8f8f9;
+    &.el-table__cell {
+      background-color: #f8f8f9;
+    }
   }
   .el-pagination {
     margin-top: 15px;
