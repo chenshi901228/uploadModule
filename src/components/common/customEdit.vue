@@ -21,6 +21,8 @@
 import Cookies from "js-cookie";
 import { getImageWH } from "@/utils/index";
 import "@wangeditor/editor/dist/css/style.css";
+// 获取工具栏配置--DomEditor.getToolbar(editor)
+import { DomEditor } from '@wangeditor/editor'
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
 export default {
     components: {
@@ -310,7 +312,7 @@ export default {
             editor: null,
             html: "<p><br></p>",
             toolbarConfig: {
-                excludeKeys: ["fullScreen"], //去掉全屏
+                excludeKeys: ["fullScreen", "blockquote", "emotion", "insertLink", "insertTable", "codeBlock", "todo"], //去掉不需要的功能
             },
             editorConfig: {
                 placeholder: "请输入内容",
