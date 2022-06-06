@@ -73,7 +73,6 @@
                     prop="introduce">
                         <custom-edit
                             ref="customEdit" 
-                            :initHtml="dataForm.introduce"
                             @editChange="editChange"></custom-edit>
                 </el-form-item>
                 <el-form-item>

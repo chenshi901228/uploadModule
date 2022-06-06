@@ -1,14 +1,14 @@
 <!-- 自定义编辑器组件 -->
 <template>
-    <div style="width: 1000px; border: 1px solid #ccc">
+    <div :style="{...mainStyle}">
         <Toolbar
-            style="width: 100%; border-bottom: 1px solid #ccc"
+            :style="{width: '100%', borderBottom: '1px solid #ccc', ...toolStyle}"
             :editor="editor"
             :defaultConfig="toolbarConfig"
             :mode="mode"
         />
         <Editor
-            style="width: 100%; height: 400px; overflow-y: hidden"
+            :style="{width: '100%', overflowY: 'hidden', ...editorStyle}"
             v-model="html"
             :defaultConfig="editorConfig"
             :mode="mode"
@@ -26,6 +26,34 @@ export default {
     components: {
         Editor,
         Toolbar,
+    },
+    props: {
+        // 外层容器style
+        mainStyle: {
+            type: Object,
+            default: () => {
+                return {
+                    width: "1000px",
+                    border: "1px solid #ccc"
+                }
+            }
+        },
+        // 工具栏style
+        toolStyle: {
+            type: Object,
+            default: () => {
+                return {}
+            }
+        },
+        // 编辑区域style
+        editorStyle: {
+            type: Object,
+            default: () => {
+                return {
+                    height: "400px"
+                }
+            }
+        },
     },
     data() {
         const _this = this;
