@@ -44,5 +44,6 @@ module.exports = {
         languages: ['javascript', 'typescript', 'sql', 'java']
       })
     ]
-  }
+  },
+  runtimeCompiler: true
 }
