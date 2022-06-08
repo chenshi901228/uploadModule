@@ -124,7 +124,8 @@
                             style="width:100px"
                             @blur="editHandle"
                             v-if="editId == row.id && item.prop == 'clickNum'" 
-                            v-model="editData.clickNum">
+                            v-model="editData.clickNum"
+                            clearable>
                         </el-input>
                         <!-- <span v-else-if="item.prop == 'clickNum'">
                             {{row[item.prop]}}<i style="margin-left: 10px" class="el-icon-edit"></i>

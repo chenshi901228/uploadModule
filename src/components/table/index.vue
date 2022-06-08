@@ -89,34 +89,42 @@ export default {
     },
   },
   props: {
+    // 加载loading
     dataListLoading: {
       type: Boolean,
       default: false,
     },
+    // 是否可选
     isSelection: {
       type: Boolean,
       default: false,
     },
+    // table高度
     height: {
       type: Number,
       default: 300,
     },
+    // 分页-当前页
     page: {
       type: Number,
       default: 1,
     },
+    // 分页-每页数
     limit: {
       type: Number,
       default: 10,
     },
+    // 分页-总条数
     total: {
       type: Number,
       default: 0,
     },
+    // data数据列表
     dataList: {
       type: Array,
       default: () => [],
     },
+    // table选项配置
     tableItem: {
       type: Array,
       default: () => [],
