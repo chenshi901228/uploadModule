@@ -105,6 +105,7 @@
                 @selection-change="dataListSelectionChangeHandle"
                 :height="siteContentViewHeight"
                 style="width: 100%"
+                @cell-dblclick="cellDblclick"
             >
                 <el-table-column
                     header-align="center"
@@ -116,8 +117,24 @@
                     :width="item.width || 120"
                     show-overflow-tooltip
                 >
-                    <!-- <template slot-scope="{ row }">
-                    </template> -->
+                    <template slot-scope="{ row }">
+                        <el-input 
+                            ref="editRef"
+                            size="small"
+                            style="width:100px"
+                            @blur="editHandle"
+                            v-if="editId == row.id && item.prop == 'clickNum'" 
+                            v-model="editData.clickNum"
+                            clearable>
+                        </el-input>
+                        <!-- <span v-else-if="item.prop == 'clickNum'">
+                            {{row[item.prop]}}<i style="margin-left: 10px" class="el-icon-edit"></i>
+                        </span> -->
+                        <span v-else-if="item.prop == 'type'">
+                            {{row[item.prop] == 0 ? "预告" : row[item.prop] == 1 ? "直播" : row[item.prop] == 2 ? "视频" : "主播"}}
+                        </span>
+                        <span v-else>{{row[item.prop]}}</span>
+                    </template>
                 </el-table-column>
                 <el-table-column
                     :label="$t('handle')"
@@ -140,6 +157,7 @@
                             type="text"
                             size="small"
                             icon="el-icon-sort-up"
+                            v-if="row.num != '1'"
                             @click="upOrDownHandle(row, 1)">上移</el-button>
                     </template>
                 </el-table-column>
@@ -172,6 +190,8 @@ export default {
                 name: "",
                 title: "",
             },
+            editId: "",
+            editData: null,
 
             tableItem: [
                 { prop: "num", label: "序号" },
@@ -196,6 +216,9 @@ export default {
     activated() {
         this.query();
     },
+    destroyed() {
+        this.clearEdit()
+    },
     methods: {
         //   新增
         add() {
@@ -212,7 +235,7 @@ export default {
                         if(res.code != 0) return this.$message.error(res.msg)
                         this.$message.success("移除配置成功")
                         this.query()
-                    }).catch(err => this.$message.error(JSON.stringify(err)))
+                    }).catch(err => this.$message.error(JSON.stringify(err.message)))
                 })
                 .catch(() => {
                     this.$message.info("已取消删除");
@@ -229,12 +252,64 @@ export default {
                         if(res.code != 0) return this.$message.error(res.msg)
                         this.$message.success("修改配置成功")
                         this.query()
-                    }).catch(err => this.$message.error(JSON.stringify(err)))
+                    }).catch(err => this.$message.error(JSON.stringify(err.message)))
                 })
                 .catch(() => {
                     this.$message.info("已取消修改");
                 });
         },
+        // 单元格双击
+        cellDblclick(row, column, cell, event) {
+            if(column.property == "clickNum") { //双击点击量
+                //if有编辑中的保存 
+                if(this.editId) return this.editHandle()
+
+                this.editId = row.id 
+                this.editData = JSON.parse(JSON.stringify(row))
+                this.$nextTick(() => { //获取输入框焦点
+                    this.$refs.editRef[0].focus()
+                })
+            }
+        },
+        // 保存修改
+        editHandle() {
+            let t = this.editData.clickNum
+            if(!/^[0-9]\d*$/.test(t)) { //如果输入的格式不正确
+                this.clearEdit()
+                return this.$message.error("点击量为正整数，请重新输入")
+            }
+            this.editData.clickNum = parseInt(t) //去掉前面的0
+            this.$confirm("是否保存修改", "提示", {
+                confirmButtonText: "确定",
+                cancelButtonText: "取消",
+                type: "warning",
+                closeOnClickModal: false,
+
+            }).then(() => {
+                let o = {
+                    id: this.editData.id,
+                    clickNum: this.editData.clickNum
+                }
+                this.$http.put("/sys/hotSearchConfiguration/clickNumUpdate", o).then(({data:res}) => {
+                    if(res.code != 0) {
+                        this.$refs.editRef[0].focus()
+                        return this.$message.error(res.msg)
+                    }
+                    this.$message.success("修改成功")
+                    this.query()
+                    setTimeout(() => this.clearEdit(), 500)
+                    
+                }).catch(err => {
+                    this.$refs.editRef[0].focus()
+                    this.$message.error(JSON.stringify(err.message))
+                })
+            }).catch(() => this.clearEdit())
+        },
+        // 清空编辑
+        clearEdit() {
+            this.editId = null
+            this.editData = null
+        }
 
     },
 };

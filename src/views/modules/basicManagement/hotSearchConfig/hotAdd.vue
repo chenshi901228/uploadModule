@@ -65,7 +65,10 @@
                             :limit="limit"
                             :total="total"
                             :dataList="dataList"
-                            :tableItem="tableItem"></custom-table>
+                            :tableItem="tableItem"
+                            @pageSizeChangeHandle="pageSizeChangeHandle"
+                            @pageCurrentChangeHandle="pageCurrentChangeHandle"
+                            @dataListSelectionChangeHandle="dataListSelectionChangeHandle"></custom-table>
                 </el-tab-pane>
             </el-tabs>
             
@@ -241,7 +244,7 @@ export default {
                         if(res.code != 0) return this.$message.error(res.msg)
                         this.$message.success("新增配置成功")
                         this.query()
-                    }).catch(err => this.$message.error(JSON.stringify(err)))
+                    }).catch(err => this.$message.error(JSON.stringify(err.message)))
                 })
                 .catch(() => {
                     this.$message.info("已取消删除");
@@ -250,6 +253,10 @@ export default {
         // tab切换
         handleClick() {
             this.dataList = []
+            this.page = 1
+            this.limit = 10
+            this.total = 0
+            this.dataListSelections = []
             this.calcCurrentTab()
             this.getDataList()
         }
