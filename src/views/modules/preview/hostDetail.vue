@@ -109,7 +109,12 @@
           label-width="100px"
         >
           <el-form-item label="收益类型" v-if="diaTbas === 1" prop="type">
-            <el-select placeholder="收益类型" style="width: 180px" v-model="diaSearchForm.type" clearable>
+            <el-select
+              placeholder="收益类型"
+              style="width: 180px"
+              v-model="diaSearchForm.type"
+              clearable
+            >
               <el-option :value="1" label="直播间礼物"></el-option>
               <el-option :value="2" label="粉丝团"></el-option>
               <el-option :value="3" label="课程返利"></el-option>
@@ -168,7 +173,12 @@
             </el-select>
           </el-form-item>
           <el-form-item label="支付状态" v-if="diaTbas === 2" prop="payStatus">
-            <el-select placeholder="支付状态" style="width: 180px" v-model="diaSearchForm.payStatus" clearable>
+            <el-select
+              placeholder="支付状态"
+              style="width: 180px"
+              v-model="diaSearchForm.payStatus"
+              clearable
+            >
               <el-option :value="0" label="未支付"></el-option>
               <el-option :value="1" label="已支付"></el-option>
               <el-option :value="-1" label="支付失败"></el-option>
@@ -179,59 +189,110 @@
             v-if="diaTbas === 3 || diaTbas === 4"
             prop="userName"
           >
-            <el-input placeholder="用户昵称" style="width: 180px" v-model="diaSearchForm.userName" clearable></el-input>
+            <el-input
+              placeholder="用户昵称"
+              style="width: 180px"
+              v-model="diaSearchForm.userName"
+              clearable
+            ></el-input>
           </el-form-item>
           <el-form-item
             label="商品名称"
             v-if="diaTbas === 5"
             prop="productName"
           >
-            <el-input placeholder="商品名称" style="width: 180px" v-model="diaSearchForm.productName" clearable></el-input>
+            <el-input
+              placeholder="商品名称"
+              style="width: 180px"
+              v-model="diaSearchForm.productName"
+              clearable
+            ></el-input>
           </el-form-item>
           <el-form-item
             label="手机号码"
             v-if="diaTbas === 3 || diaTbas === 4 || diaTbas === 6"
             prop="phone"
           >
-            <el-input placeholder="手机号码" style="width: 180px" v-model="diaSearchForm.phone" clearable></el-input>
+            <el-input
+              placeholder="手机号码"
+              style="width: 180px"
+              v-model="diaSearchForm.phone"
+              clearable
+            ></el-input>
           </el-form-item>
           <el-form-item label="等级" v-if="diaTbas === 4" prop="level">
-            <el-select @visible-change="getFansLevels" style="width: 180px" v-model="diaSearchForm.level" clearable>
-              <el-option v-for="item in fansLevelsOptions" :key="item" :value="item" :label="item"></el-option>
+            <el-select
+              @visible-change="getFansLevels"
+              style="width: 180px"
+              v-model="diaSearchForm.level"
+              clearable
+            >
+              <el-option
+                v-for="item in fansLevelsOptions"
+                :key="item"
+                :value="item"
+                :label="item"
+              ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="粉丝团身份" v-if="diaTbas === 4" prop="userType">
-            <el-select placeholder="粉丝团身份" style="width: 180px" v-model="diaSearchForm.userType" clearable>
+            <el-select
+              placeholder="粉丝团身份"
+              style="width: 180px"
+              v-model="diaSearchForm.userType"
+              clearable
+            >
               <el-option :value="0" label="普通会员"></el-option>
               <el-option :value="1" label="会长"></el-option>
               <el-option :value="2" label="副会长"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="状态" v-if="diaTbas === 4" prop="delFlg">
-            <el-select placeholder="状态" style="width: 180px" v-model="diaSearchForm.delFlg" clearable>
+            <el-select
+              placeholder="状态"
+              style="width: 180px"
+              v-model="diaSearchForm.delFlg"
+              clearable
+            >
               <el-option :value="0" label="正常"></el-option>
               <el-option :value="1" label="取消关注"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
-            <el-input placeholder="主播昵称" style="width: 180px" v-model="diaSearchForm.anchorName" clearable></el-input>
+            <el-input
+              placeholder="主播昵称"
+              style="width: 180px"
+              v-model="diaSearchForm.anchorName"
+              clearable
+            ></el-input>
           </el-form-item>
           <el-form-item
             label="商品类型"
             v-if="diaTbas === 5"
             prop="productType"
           >
-            <el-select 
-              @visible-change="getProductType" 
-              style="width: 180px" 
-              v-model="diaSearchForm.productType" 
+            <el-select
+              @visible-change="getProductType"
+              style="width: 180px"
+              v-model="diaSearchForm.productType"
               placeholder="商品类型"
-              clearable>
-                <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType" :label="item.productType"></el-option>
+              clearable
+            >
+              <el-option
+                v-for="item in productTypeOptions"
+                :key="item.productType"
+                :value="item.productType"
+                :label="item.productType"
+              ></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="是否免费" v-if="diaTbas === 5" prop="isFree">
-            <el-select placeholder="是否免费" style="width: 180px" v-model="diaSearchForm.isFree" clearable>
+            <el-select
+              placeholder="是否免费"
+              style="width: 180px"
+              v-model="diaSearchForm.isFree"
+              clearable
+            >
               <el-option :value="0" label="否"></el-option>
               <el-option :value="1" label="是"></el-option>
             </el-select>
@@ -465,13 +526,21 @@
             >
               <template slot-scope="scope">
                 <div>
-                  {{
-                    scope.row.userType === 1
-                      ? "会长"
-                      : scope.row.userType === 2
-                      ? "副会长"
-                      : "普通会员"
-                  }}
+                  {{ scope.row.userType === 1 ? "助手" : "普通会员" }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :prop="prop"
+              :label="label"
+              :key="prop"
+              header-align="center"
+              align="center"
+              v-else-if="prop === 'level'"
+            >
+              <template slot-scope="scope">
+                <div>
+                  {{ "V" + scope.row.level }}
                 </div>
               </template>
             </el-table-column>
@@ -510,7 +579,9 @@
             fixed="right"
             header-align="center"
             align="center"
-            v-if="diaTbas === 2 || diaTbas === 5 || diaTbas === 6"
+            v-if="
+              diaTbas === 2 || diaTbas === 5 || diaTbas === 6 || diaTbas === 4
+            "
           >
             <template slot-scope="scope">
               <el-button
@@ -544,6 +615,20 @@
                 icon="el-icon-delete"
                 @click="deleteRecommend(scope.row.id)"
                 >取消推荐</el-button
+              >
+              <el-button
+                v-if="diaTbas === 4"
+                type="text"
+                size="small"
+                :icon="
+                  scope.row.userType === 1
+                    ? 'el-icon-delete'
+                    : 'el-icon-plus'
+                "
+                @click="changePower(scope.row)"
+                >{{
+                  scope.row.userType === 1 ? "取消身份" : "授予身份"
+                }}</el-button
               >
             </template>
           </el-table-column>
@@ -592,13 +677,19 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="商品类型">
-          <el-select 
-            @visible-change="getProductType" 
-            style="width: 200px" 
-            v-model="productForm.productType" 
+          <el-select
+            @visible-change="getProductType"
+            style="width: 200px"
+            v-model="productForm.productType"
             placeholder="商品类型"
-            clearable>
-              <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType" :label="item.productType"></el-option>
+            clearable
+          >
+            <el-option
+              v-for="item in productTypeOptions"
+              :key="item.productType"
+              :value="item.productType"
+              :label="item.productType"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="是否免费">
@@ -1169,6 +1260,31 @@
         >
       </span>
     </el-dialog>
+    <!-- 改变身份 -->
+    <el-dialog
+      :title="userType === 0 ? '授予身份' : '取消身份'"
+      :visible.sync="changePowerVisible"
+      class="change-dialog"
+    >
+      <el-form
+        v-if="userType === 0"
+        :model="powerform"
+        ref="powerform"
+        :rules="dataRule"
+      >
+        <el-form-item label="粉丝团身份" label-width="120px" prop="power">
+          <el-select v-model="powerform.power" placeholder="请选择">
+            <el-option label="普通用户" :value="0"></el-option>
+            <el-option label="助手" :value="1"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div v-else-if="userType === 1">确定取消粉丝团助手身份？</div>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="changePowerVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmChangePower">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -1300,6 +1416,15 @@ export default {
       timeout: null,
       productTypeOptions: [], //商品类型下拉选项
       fansLevelsOptions: [], //粉丝等级options
+      changePowerVisible: false,
+      powerform: {},
+      userType: 0,
+      changeUserTypeData: {},
+      dataRule: {
+        power: [
+          { required: true, message: "请选择授权身份", trigger: "change" },
+        ],
+      },
     };
   },
   computed: {
@@ -1340,6 +1465,47 @@ export default {
   },
 
   methods: {
+    //改变身份
+    changePower(row) {
+      this.userType = row.userType;
+      this.changePowerVisible = true;
+      this.changeUserTypeData = row;
+    },
+    //确认改变身份
+    confirmChangePower() {
+      let flag = false;
+      let data = {};
+      data.id = this.changeUserTypeData.id;
+      data.weixinUserId = this.changeUserTypeData.weixinUserId;
+      if (this.userType === 0) {
+        this.$refs.powerform.validate((valid) => {
+          if (valid) {
+            data.userType = this.powerform.power;
+            flag = true;
+          }
+        });
+      } else if (this.userType === 1) {
+        data.userType = 0;
+        flag = true;
+      }
+      if (flag) {
+        this.$http
+          .post("/sys/manage/weixinUser/anchor/fans/setUserType", data)
+          .then(({ data: res }) => {
+            if (res.code == 0) {
+              this.$message.success("修改成功");
+              this.changePowerVisible = false;
+              this.powerform.power = ""
+              this.queryPost_dia();
+            } else {
+              this.$message.error(res.msg);
+            }
+          })
+          .catch((err) => {
+            throw err;
+          });
+      }
+    },
     querySearchAsync(queryString, cb) {
       var restaurants = this.restaurants;
       var results = queryString
@@ -1647,33 +1813,39 @@ export default {
     },
     // 下拉获取商品类型
     getProductType(type) {
-      if(!type) return
-      this.$http.get("/sys/course/searchProductType").then(({data: res}) => {
-        if(res.code == 0) {
-          this.productTypeOptions = res.data
-        }else {
-          this.productTypeOptions = []
-          return this.$message.error(res.msg)
-        }
-      }).catch(err => {
-        this.productTypeOptions = []
-        this.$message.error(JSON.stringify(err))
-      })
+      if (!type) return;
+      this.$http
+        .get("/sys/course/searchProductType")
+        .then(({ data: res }) => {
+          if (res.code == 0) {
+            this.productTypeOptions = res.data;
+          } else {
+            this.productTypeOptions = [];
+            return this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          this.productTypeOptions = [];
+          this.$message.error(JSON.stringify(err));
+        });
     },
     // 获取粉丝等级
     getFansLevels(type) {
-      if(!type) return
-      this.$http.get("/sys/sysfanslevel/getLevelList").then(({data: res}) => {
-        if(res.code == 0) {
-          this.fansLevelsOptions = res.data
-        }else {
-          this.fansLevelsOptions = []
-          return this.$message.error(res.msg)
-        }
-      }).catch(err => {
-        this.fansLevelsOptions = []
-        this.$message.error(JSON.stringify(err))
-      })
+      if (!type) return;
+      this.$http
+        .get("/sys/sysfanslevel/getLevelList")
+        .then(({ data: res }) => {
+          if (res.code == 0) {
+            this.fansLevelsOptions = res.data;
+          } else {
+            this.fansLevelsOptions = [];
+            return this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          this.fansLevelsOptions = [];
+          this.$message.error(JSON.stringify(err));
+        });
     },
     // 主页搜索重置
     mainReset() {
