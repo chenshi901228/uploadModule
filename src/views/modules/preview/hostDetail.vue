@@ -1679,7 +1679,6 @@ export default {
             phone: "手机号码",
             level: "用户等级",
             userType: "粉丝团身份",
-            groupName: "所在群组",
             createDate: "入团时间",
             delFlg: "状态",
           };
