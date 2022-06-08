@@ -25,6 +25,7 @@
         >
         </el-input-number>
       </el-form-item>
+      <div>结算比例范围：0%~99%</div>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button :disabled="submitLoading" size="small" @click="visible = false"
@@ -50,7 +51,7 @@ export default {
       submitLoading: false,
       dataRule: {
         proportion: [
-          { required: true, message: "请输入销售价格", trigger: "change" },
+          { required: true, message: "请输入结算比例", trigger: "change" },
         ],
       },
     };
@@ -69,20 +70,20 @@ export default {
     submit() {
       this.$refs.dataForm.validate((valid) => {
         if (valid) {
-            return
           let params = {};
           params = JSON.parse(JSON.stringify(this.dataForm));
+          params.anchorIdList = []
+          params.anchorIdList.push(params.anchorId)
           this.submitLoading = true;
           this.$http
-            .put("/sys/course", {
-              id: params.id,
-              price: params.price,
-              proportion: params.proportion,
-              buyers: params.buyers,
+            .post("/sys/productProportion/updateProportionWithAnchor", {
+              anchorIdList: params.anchorIdList,
+              productId: params.productId,
+              proportion: params.proportion
             })
             .then(({ data: res }) => {
               if (res.code == 0) {
-                this.$message.success("修改商品成功");
+                this.$message.success("修改结算比例成功");
                 this.submitLoading = false;
                 this.cancel();
                 this.visible = false;

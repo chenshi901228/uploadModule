@@ -120,22 +120,22 @@
               <el-form-item>
                 <el-button
                   :disabled="!dataListSelections.length"
-                  type="danger"
-                  size="mini"
-                  icon="el-icon-delete"
-                  @click="downGoods()"
-                  >批量下架</el-button
-                >
-              </el-form-item>
-              <el-form-item>
-                <el-button
-                  :disabled="!dataListSelections.length"
                   size="mini"
                   type="primary"
                   plain
                   icon="el-icon-plus"
                   @click="upGoods()"
-                  >批量上架</el-button
+                  >商品上架</el-button
+                >
+              </el-form-item>
+              <el-form-item>
+                <el-button
+                  :disabled="!dataListSelections.length"
+                  type="danger"
+                  size="mini"
+                  icon="el-icon-delete"
+                  @click="downGoods()"
+                  >下架</el-button
                 >
               </el-form-item>
             </div>
@@ -479,7 +479,7 @@ export default {
     // 主播结算比例
     settlementRatio(row) {
       this.$router.push({ name: "basicManagement-goods-settlementRatio", query: {
-        id: row.id,
+        productId: row.id,
         productName: row.productName
       } })
     }
