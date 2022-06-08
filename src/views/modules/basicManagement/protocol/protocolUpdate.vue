@@ -141,7 +141,7 @@ export default {
                 if(res.code != 0) return this.$message.error(res.msg)
                 this.dataForm = res.data
                 this.$refs.customEdit.setHTML(res.data.introduce)
-            }).catch(err => this.$message.error(JSON.stringify(err)))
+            }).catch(err => this.$message.error(JSON.stringify(err.message)))
         },
         // 编辑器内容变化
         editChange(html) {
@@ -176,7 +176,7 @@ export default {
                         this.closeCurrentTab()
                     }).catch(err => {
                         this.submitLoading = false
-                        this.$message.error(JSON.stringify(err))
+                        this.$message.error(JSON.stringify(err.message))
                     })
                 }
             })

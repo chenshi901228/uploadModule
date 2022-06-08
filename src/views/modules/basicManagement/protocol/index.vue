@@ -201,7 +201,7 @@ export default {
                         if(res.code != 0) return this.$message.error(res.msg)
                         this.$message.success("删除协议成功")
                         this.query()
-                    }).catch(err => this.$message.error(JSON.stringify(err)))
+                    }).catch(err => this.$message.error(JSON.stringify(err.message)))
                 })
                 .catch(() => {
                     this.$message.info("已取消删除");

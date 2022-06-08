@@ -124,15 +124,14 @@ export default {
   },
   data() {
     return {
-      template: `
-            <span>标签</span>
-        `,
     };
   },
   computed: {
-    items() {
+    // tableItem选项
+    items() { 
       return this.tableItem.filter((item) => !item.action);
     },
+    // 操作---action:true
     action() {
       return this.tableItem.filter((item) => item.action);
     },

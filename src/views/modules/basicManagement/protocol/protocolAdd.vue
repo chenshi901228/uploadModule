@@ -162,7 +162,7 @@ export default {
                         this.closeCurrentTab()
                     }).catch(err => {
                         this.submitLoading = false
-                        this.$message.error(JSON.stringify(err))
+                        this.$message.error(JSON.stringify(err.message))
                     })
                 }
             })
