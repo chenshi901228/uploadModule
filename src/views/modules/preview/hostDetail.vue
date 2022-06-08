@@ -1274,7 +1274,6 @@
       >
         <el-form-item label="粉丝团身份" label-width="120px" prop="power">
           <el-select v-model="powerform.power" placeholder="请选择">
-            <el-option label="普通用户" :value="0"></el-option>
             <el-option label="助手" :value="1"></el-option>
           </el-select>
         </el-form-item>
@@ -2617,6 +2616,12 @@ export default {
     &:hover {
       border: 1px solid #999;
     }
+  }
+}
+
+/deep/.change-dialog{
+  .el-dialog{
+    width: 30%;
   }
 }
 </style>
