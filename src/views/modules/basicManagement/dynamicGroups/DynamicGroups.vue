@@ -314,6 +314,13 @@
       <div v-else-if="percent === 3">
         <p>文件{{ uploadXlx }}已上传完毕，导入数据完成</p>
         <p style="text-align: center">{{ uploadSuccessMsg }}</p>
+        <p
+          v-if="uploadFlag"
+          @click="dowloadFalseXlx"
+          style="text-align: center; cursor: pointer; color: #66b1ff"
+        >
+          点击下载导入失败文件
+        </p>
       </div>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogInputVisible = false"
@@ -523,6 +530,8 @@ export default {
       dialogDeleteVisible: false,
       groupMensName: "",
       loadMoreText: "加载更多",
+      uploadFlag: false,
+      dowloadFalseUrl: "",
     };
   },
   watch: {
@@ -531,6 +540,7 @@ export default {
         this.percent = 0;
         this.uploadXlx = "";
         this.uploadSuccessMsg = "";
+        this.queryPageWithGroupId(this.chooseGroupId);
       }
     },
     dialogUserFormVisible(n, o) {
@@ -616,6 +626,9 @@ export default {
       this.dialogEditeFormVisible = true;
       this.editeGroupForm.name = row.name;
     },
+    dowloadFalseXlx() {
+      window.open(this.dowloadFalseUrl);
+    },
     dowloadXlx() {
       window.open(
         "https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/gruopUserImport.xlsx"
@@ -656,16 +669,19 @@ export default {
       }
     },
     handleSuccess(response, file, fileList) {
-      if (response.code === 0) {
+      if (
+        response.code === 0 &&
+        response?.data?.UploadDTO?.data?.url &&
+        response?.data?.UploadDTO?.data?.url.length !== 0
+      ) {
         this.percent = 3;
-        // this.$message({
-        //   message: `导入数据总数为${response.data.total}个,成功${
-        //     response.data.successNum
-        //   }个,失败${response.data.total - response.data.successNum}个`,
-        //   type: "success",
-        //   duration: 2000,
-        // });
         this.uploadSuccessMsg = `上传${response.data.total}条数据,导入${response.data.successNum}个`;
+        this.uploadFlag = true;
+        this.dowloadFalseUrl = response?.data?.UploadDTO?.data?.url;
+      } else if (response.code === 0 && !response?.data?.UploadDTO?.data?.url) {
+        this.percent = 3;
+        this.uploadSuccessMsg = `上传${response.data.total}条数据,导入${response.data.successNum}个`;
+        this.uploadFlag = false;
       }
     },
     beforeUploadFile(file) {
