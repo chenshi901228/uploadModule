@@ -653,25 +653,39 @@ export default {
     },
     //创建直播
     createRoom(index, row) {
-      this.$http.get("/sys/mixedflow/getLiving").then((res) => {
-        //获取直播状态
-        if (res.data.data) {
-          this.$message({
-            type: "warning",
-            message: "当前正在直播中！",
-          });
-          return;
-        } else {
-          const routeData = this.$router.resolve({
-            name: "liveRoom",
-            query: {
-              liveTheme: row.liveTheme,
-              livePreviewId: row.id,
-            },
-          });
-          window.open(routeData.href, "_blank");
-        }
-      });
+      // this.$http.get("/sys/mixedflow/getLiving").then((res) => {
+      //   //获取直播状态
+      //   if (res.data.data) {
+      //     this.$message({
+      //       type: "warning",
+      //       message: "当前正在直播中！",
+      //     });
+      //     return;
+      //   } else {
+      // const routeData = this.$router.resolve({
+      //   name: "liveRoom",
+      //   query: {
+      //     liveTheme: row.liveTheme,
+      //     livePreviewId: row.id,
+      //   },
+      // });
+      // window.open(routeData.href, "_blank");
+      this.$http
+        .post("/sys/livePreview/createLiveInPreview", {
+          id: row.id,
+        })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          } else {
+            this.$message.success("创建直播成功！请在直播列表中查看");
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
+      //   }
+      // });
     },
     //显示与隐藏
     showThis(index, row) {
