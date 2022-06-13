@@ -77,7 +77,7 @@
             <i slot="default" class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
-        <el-form-item label="选择投放人群" prop="dynamicGroupIds">
+        <el-form-item label="助手" prop="dynamicGroupIds">
           <el-select
             v-model="ruleForm.dynamicGroupIds"
             filterable
@@ -164,7 +164,42 @@
             >{{ TiLength }}/2000</span
           >
         </el-form-item>
-        <el-form-item>
+        <el-form-item label="添加商品" prop="goodIds">
+          <el-select
+            v-model="ruleForm.goodIds"
+            filterable
+            multiple
+            placeholder="请选择"
+            :clearable="true"
+          >
+            <el-option
+              v-for="(item, index) in options"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="添加主播" prop="anchorIds">
+          <el-select
+            v-model="ruleForm.anchorIds"
+            filterable
+            multiple
+            placeholder="请选择"
+            :clearable="true"
+          >
+            <el-option
+              v-for="(item, index) in options"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+         <el-form-item>
           <el-button type="primary" size="small" @click="submitForm('ruleForm')"
             >立即创建</el-button
           >
@@ -223,6 +258,8 @@ export default {
         frontCoverUrl: "",
         dynamicGroupIds: [],
         liveIntroduce: "",
+        goodIds: [],
+        anchorIds: [],
       },
       dialogImageUrl: "",
       dialogVisible: false,

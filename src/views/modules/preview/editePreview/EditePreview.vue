@@ -167,10 +167,44 @@
             >{{ TiLength }}/2000</span
           >
         </el-form-item>
-        <el-form-item>
-          <el-button size="small" @click="cancel()">取消</el-button>
-          <el-button size="small" type="primary" @click="submitForm('ruleForm')"
-            >确定</el-button
+        <el-form-item label="添加商品" prop="goodIds">
+          <el-select
+            v-model="ruleForm.goodIds"
+            filterable
+            multiple
+            placeholder="请选择"
+            :clearable="true"
+          >
+            <el-option
+              v-for="(item, index) in options"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="添加主播" prop="anchorIds">
+          <el-select
+            v-model="ruleForm.anchorIds"
+            filterable
+            multiple
+            placeholder="请选择"
+            :clearable="true"
+          >
+            <el-option
+              v-for="(item, index) in options"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+         <el-form-item>
+          <el-button type="primary" size="small" @click="submitForm('ruleForm')"
+            >立即创建</el-button
           >
           <!-- <el-button @click="resetForm('ruleForm')">重置</el-button> -->
         </el-form-item>
@@ -228,6 +262,8 @@ export default {
         frontCoverUrl: "",
         dynamicGroupIds: [],
         liveIntroduce: "",
+        goodIds: [],
+        anchorIds: [],
       },
       dialogImageUrl: "",
       dialogVisible: false,
