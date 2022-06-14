@@ -21,7 +21,7 @@
             placeholder="请输入"
             style="width: 200px"
             clearable
-            v-model="dataForm.productName"
+            v-model="dataForm.username"
           />
         </el-form-item>
         <el-form-item
@@ -33,7 +33,7 @@
             placeholder="请输入"
             style="width: 200px"
             clearable
-            v-model="dataForm.productName"
+            v-model="dataForm.phone"
           />
         </el-form-item>
         <el-form-item
@@ -44,7 +44,7 @@
           <el-select
             placeholder="请选择"
             style="width: 200px"
-            v-model="dataForm.level"
+            v-model="dataForm.state"
             clearable
           >
             <el-option :value="1" label="已添加"></el-option>
@@ -60,11 +60,8 @@
               @click="getDataList"
               >{{ $t("query") }}</el-button
             >
-            <el-button
-              icon="el-icon-refresh"
-              size="mini"
-              @click="resetDataForm()"
-              >{{ $t("reset") }}</el-button
+            <el-button icon="el-icon-refresh" size="mini" @click="resetDataForm"
+              >重置</el-button
             >
             <el-button size="mini" plain @click="open">
               <i
@@ -100,17 +97,10 @@
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        @selection-change="dataListSelectionChangeHandle"
         :height="siteContentViewHeight"
         style="width: 100%"
         ref="table"
       >
-        <el-table-column
-          type="selection"
-          header-align="center"
-          align="center"
-          width="50"
-        ></el-table-column>
         <el-table-column type="index" label="序号" width="50" align="center">
         </el-table-column>
         <el-table-column
@@ -119,36 +109,47 @@
           header-align="center"
           align="center"
         >
+          <template slot-scope="{ row }">
+            <div>
+              <img
+                style="width: 80px; height: '80px'"
+                class="frontCoverImg"
+                :src="row.avatarUrl || 'https://picsum.photos/400/300?random=1'"
+                alt=""
+              />
+            </div>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="levelName"
+          prop="username"
           label="主播昵称"
           header-align="center"
           align="center"
         >
         </el-table-column>
         <el-table-column
-          prop="intimacyNum"
+          prop="phone"
           label="手机号码"
           header-align="center"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="delFlg"
+          prop="updateDate"
           label="推荐时间"
           header-align="center"
           align="center"
         >
-          <template slot-scope="scope">
-            {{ scope.row.delFlg ? "删除" : "正常" }}
-          </template>
         </el-table-column>
         <el-table-column
-          prop="intimacyNum"
+          prop="state"
           label="添加状态"
           header-align="center"
           align="center"
-        ></el-table-column>
+        >
+          <template slot-scope="scope">
+            {{ scope.row.state === "0" ? "未添加" : "已添加" }}
+          </template></el-table-column
+        >
         <el-table-column
           :label="$t('handle')"
           fixed="right"
@@ -165,6 +166,14 @@
               >删除</el-button
             >
             <el-button
+              icon="el-icon-delete"
+              type="text"
+              size="small"
+              @click="addAnchor(scope.row)"
+              >添加</el-button
+            >
+            <el-button
+              v-if="scope.row.state === '1'"
               icon="el-icon-upload2"
               type="text"
               size="small"
@@ -193,10 +202,12 @@
       ></add-or-update>
     </div>
 
-    <el-dialog title="提醒" :visible.sync="dialogVisible" width="30%">
+    <el-dialog title="提醒" :visible.sync="dialogDeleteVisible" width="30%">
       <span>确定删除该主播推荐</span>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+        <el-button size="small" @click="dialogDeleteVisible = false"
+          >取 消</el-button
+        >
         <el-button size="small" type="primary" @click="confirmDelete"
           >确 定</el-button
         >
@@ -222,21 +233,22 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/sysfanslevel/page",
+        getDataListURL: "/sys/sysRecommendedAnchor/page",
         getDataListIsPage: true,
         exportURL: "/sys/sysfanslevel/export",
         deleteURL: "/sys/sysfanslevel",
         deleteIsBatch: true,
       },
       dataForm: {
-        name: "",
-        isFree: null,
-        status: null,
+        liveId: this.$route.query.liveId,
       },
       loading: false, //礼物输入下拉选择loading
       giftOptions: [], //礼物下拉选择内容
       fansLevelsOptions: [], //粉丝等级options
-      dialogVisible:false
+      dialogVisible: false,
+      dialogDeleteVisible: false,
+      id: "",
+      ids: [],
     };
   },
   watch: {},
@@ -245,33 +257,91 @@ export default {
     //批量添加
     addProduct() {},
     //删除
-    deleteSelect(row) {},
+    deleteSelect(row) {
+      this.ids.push(row.id);
+      this.dialogDeleteVisible = true;
+    },
     //置顶
-    toTop(row) {},
-    //添加
-    add(row) {},
-    //确认删除
-    confirmDelete() {},
-    //确认置顶
-    confirmCargo() {},
-    // 获取粉丝等级
-    getFansLevels(type) {
-      if (!type) return;
+    toTop(row) {
+      this.id = row.id;
+      this.dialogVisible = true;
+    },
+    //添加主播
+    addAnchor(row) {
       this.$http
-        .get("/sys/sysfanslevel/getLevelList")
+        .post("/sys/sysRecommendedAnchor", {
+          liveId: this.$route.query.liveId,
+          anchorId: row.anchorId,
+        })
         .then(({ data: res }) => {
-          if (res.code == 0) {
-            this.fansLevelsOptions = res.data;
-          } else {
-            this.fansLevelsOptions = [];
+          if (res.code !== 0) {
             return this.$message.error(res.msg);
+          } else {
+            this.$message.success("添加成功！");
+            this.query();
           }
         })
         .catch((err) => {
-          this.fansLevelsOptions = [];
-          this.$message.error(JSON.stringify(err));
+          throw err;
         });
+    },
+    //确认删除
+    confirmDelete() {
+      this.$http
+        .delete(`/sys/sysRecommendedAnchor`, {
+          data: this.ids,
+        })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          } else {
+            this.ids = [];
+            this.dialogDeleteVisible = false;
+            this.$message.success("删除成功！");
+            this.query();
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
+    //确认置顶
+    confirmCargo() {
+      this.$http
+        .put("/sys/sysRecommendedAnchor", {
+          id: this.id,
+        })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          } else {
+            this.$message.success("置顶成功！");
+            this.dialogVisible = false;
+            this.query();
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
+    //重置
+    resetDataForm() {
+      this.dataForm = {
+        username: "",
+        phone: "",
+        state: "",
+        liveId: this.$route.query.liveId,
+      };
+      this.query()
     },
   },
 };
 </script>
+<style scoped lang="scss">
+.mod-live__liveList {
+  .frontCoverImg {
+    width: 100%;
+    height: 80px;
+  }
+}
+</style>
