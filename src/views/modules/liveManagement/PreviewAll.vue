@@ -174,7 +174,7 @@
         ></el-table-column>
         <el-table-column
           width="150"
-          label="封面图"
+          label="直播宣传图"
           prop="frontCoverUrl"
           align="center"
         >
@@ -384,7 +384,27 @@
               @click="showThis(scope.$index, scope.row)"
               >{{ scope.row.showState === 0 ? "显示" : "隐藏" }}</el-button
             >
-            <!-- <el-button size="mini">禁播</el-button> -->
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-goods"
+              @click="addProduct(scope.row)"
+              >带货商品</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-user"
+              @click="addAnchor(scope.row)"
+              >推荐主播</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-user-solid"
+              @click="assistant(scope.row)"
+              >助手</el-button
+            >
             <el-button
               v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1"
               type="text"
@@ -482,6 +502,27 @@ export default {
     this.getDynamicGroupList();
   },
   methods: {
+    //带货商品
+    addProduct(row) {
+      this.$router.push({
+        path: "/preview-cargoGoods-CargoGoods",
+      });
+    },
+    //推荐主播
+    addAnchor(row) {
+      this.$router.push({
+        path: "/preview-recommendAnchor-RecommendAnchor",
+        query:{
+          liveId:row.id
+        }
+      });
+    },
+    //助手
+    assistant(row) {
+      this.$router.push({
+        path: "/preview-assistant-Assistant",
+      });
+    },
     query() {
       this.dataListLoading = true;
       let dataObj = {};
