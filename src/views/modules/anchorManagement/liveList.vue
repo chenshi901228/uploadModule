@@ -525,6 +525,7 @@ export default {
     addAnchor(row) {
       this.$router.push({
         path: "/preview-recommendAnchor-RecommendAnchor",
+        query: { liveId: row.id }
       });
     },
     //助手

@@ -163,13 +163,15 @@
               type="text"
               size="small"
               @click="deleteSelect(scope.row)"
+              v-if="scope.row.state === '1'"
               >删除</el-button
             >
             <el-button
-              icon="el-icon-delete"
+              icon="el-icon-plus"
               type="text"
               size="small"
               @click="addAnchor(scope.row)"
+              v-if="scope.row.state === '0'"
               >添加</el-button
             >
             <el-button
@@ -292,16 +294,18 @@ export default {
           data: this.ids,
         })
         .then(({ data: res }) => {
+          this.ids = [];
+          this.dialogDeleteVisible = false;
           if (res.code !== 0) {
             return this.$message.error(res.msg);
           } else {
-            this.ids = [];
-            this.dialogDeleteVisible = false;
             this.$message.success("删除成功！");
             this.query();
           }
         })
         .catch((err) => {
+          this.ids = [];
+          this.dialogDeleteVisible = false;
           throw err;
         });
     },
