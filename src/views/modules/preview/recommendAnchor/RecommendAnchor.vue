@@ -238,9 +238,11 @@ export default {
         exportURL: "/sys/sysfanslevel/export",
         deleteURL: "/sys/sysfanslevel",
         deleteIsBatch: true,
+        createdIsNeed: false,
+        activatedIsNeed: false,
       },
       dataForm: {
-        liveId: this.$route.query.liveId,
+        liveId: "",
       },
       loading: false, //礼物输入下拉选择loading
       giftOptions: [], //礼物下拉选择内容
@@ -251,8 +253,12 @@ export default {
       ids: [],
     };
   },
-  watch: {},
-  components: {},
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.dataForm.liveId = vm.$route.query.liveId
+      vm.query()
+    });
+  },
   methods: {
     //批量添加
     addProduct() {},
@@ -270,7 +276,7 @@ export default {
     addAnchor(row) {
       this.$http
         .post("/sys/sysRecommendedAnchor", {
-          liveId: this.$route.query.liveId,
+          liveId: this.dataForm.liveId,
           anchorId: row.anchorId,
         })
         .then(({ data: res }) => {
@@ -332,7 +338,7 @@ export default {
         state: "",
         liveId: this.$route.query.liveId,
       };
-      this.query()
+      this.query();
     },
   },
 };

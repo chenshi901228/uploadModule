@@ -182,24 +182,15 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item label="添加主播" prop="anchorIds">
-          <el-select
-            v-model="ruleForm.anchorIds"
-            filterable
-            multiple
-            placeholder="请选择"
-            :clearable="true"
-          >
-            <el-option
-              v-for="(item, index) in options"
-              :key="index"
-              :label="item.name"
-              :value="item.id"
-            >
-            </el-option>
-          </el-select>
+        <el-form-item label="添加主播" prop="anchors">
+          <el-input
+            @click.native="goToAddAnchor"
+            v-model="ruleForm.anchors"
+            readonly
+            clearable
+          ></el-input>
         </el-form-item>
-         <el-form-item>
+        <el-form-item>
           <el-button type="primary" size="small" @click="submitForm('ruleForm')"
             >立即创建</el-button
           >
@@ -207,6 +198,140 @@
         </el-form-item>
       </el-form>
     </div>
+
+    <!-- 添加推荐主播弹窗 -->
+    <el-dialog
+      title="推荐主播"
+      :visible.sync="dialogAnchorFormVisible"
+      width="70%"
+      top="20px"
+    >
+      <el-form
+        :inline="true"
+        :model="addAnchorForm"
+        @keyup.enter.native="queryAnchorList()"
+        size="small"
+        label-width="100px"
+      >
+        <el-form-item label="商品名称">
+          <el-input
+            style="width: 200px"
+            v-model="addAnchorForm.username"
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="商品类型">
+          <el-input
+            style="width: 200px"
+            v-model="addAnchorForm.phone"
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            size="mini"
+            @click="queryAnchorList"
+            >查询</el-button
+          >
+          <el-button icon="el-icon-refresh" size="mini" @click="reset"
+            >重置</el-button
+          >
+        </el-form-item>
+
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left"></div>
+        </div>
+      </el-form>
+      <el-table
+        v-loading="dataListLoading"
+        :data="dataList"
+        style="width: 100%"
+        ref="table"
+        fit
+        max-height="500"
+      >
+        <el-table-column type="index" label="序号" width="50" align="center">
+        </el-table-column>
+        <el-table-column
+          prop="level"
+          label="主播头像"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <div>
+              <img
+                style="width: 80px; height: '80px'"
+                class="frontCoverImg"
+                :src="row.avatarUrl || 'https://picsum.photos/400/300?random=1'"
+                alt=""
+              />
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="username"
+          label="主播昵称"
+          header-align="center"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="phone"
+          label="手机号码"
+          header-align="center"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="updateDate"
+          label="推荐时间"
+          header-align="center"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="state"
+          label="添加状态"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.state === "1" ? "已添加" : "未添加" }}
+          </template></el-table-column
+        >
+        <el-table-column
+          label="操作"
+          fixed="right"
+          header-align="center"
+          align="center"
+          width="150"
+        >
+          <template slot-scope="scope">
+            <el-button
+              icon="el-icon-plus"
+              type="text"
+              size="small"
+              @click="addAnchor(scope.row)"
+              >添加</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        background
+        :current-page="anchorPage"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="anchorLimit"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="pageSizeChangeHandle"
+        @current-change="pageCurrentChangeHandle"
+      >
+      </el-pagination>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -258,8 +383,6 @@ export default {
         frontCoverUrl: "",
         dynamicGroupIds: [],
         liveIntroduce: "",
-        goodIds: [],
-        anchorIds: [],
       },
       dialogImageUrl: "",
       dialogVisible: false,
@@ -311,6 +434,15 @@ export default {
       },
       options: [],
       TiLength: 0,
+      dataListLoading: false,
+      dialogAnchorFormVisible: false,
+      anchorPage: 1,
+      anchorLimit: 10,
+      dataList: [],
+      addAnchorForm: { username: "", phone: "" },
+      total: 0,
+      anchors: [],
+      anchorIds:[]
     };
   },
   watch: {
@@ -342,6 +474,74 @@ export default {
     this.getCoverPictureList();
   },
   methods: {
+    //重置
+    reset() {
+      this.addAnchorForm = {
+        username: "",
+        phone: "",
+      };
+      this.queryAnchorList();
+    },
+    // 分页, 每页条数
+    pageSizeChangeHandle(val) {
+      this.anchorPage = 1;
+      this.anchorLimit = val;
+      this.queryAnchorList();
+    },
+    // 分页, 当前页
+    pageCurrentChangeHandle(val) {
+      this.anchorPage = val;
+      this.queryAnchorList();
+    },
+    addAnchor(row) {
+      let flag = true;
+      this.anchors.forEach((v) => {
+        if (v === row.username) {
+          flag = false;
+          this.$message.warning("重复添加");
+        }
+      });
+      if (flag) {
+        this.$set(this.ruleForm, "anchorIds", []);
+        this.$set(this.ruleForm, "anchors", "");
+        this.anchors.push(row.username);
+        this.anchorIds.push(row.anchorId)
+        this.ruleForm.anchorIds.push(...this.anchorIds);
+        let result = Array.from(new Set(this.anchors));
+        let str = result.join(",");
+        this.ruleForm.anchors = str;
+        this.$message.success("添加成功！");
+      }
+      this.dialogAnchorFormVisible = false;
+    },
+    //获取添加主播列表
+    queryAnchorList() {
+      this.dataListLoading = true;
+      this.$http
+        .get("/sys/sysRecommendedAnchor/pageForAddLivePreview", {
+          params: {
+            ...this.addAnchorForm,
+          },
+        })
+        .then(({ data: res }) => {
+          this.dataListLoading = false;
+          if (res.code !== 0) {
+            this.dataList = [];
+            return this.$message.error(res.msg);
+          }
+          this.total = res.data.total;
+          this.dataList = res.data.list;
+        })
+        .catch((err) => {
+          this.dataListLoading = false;
+          throw err;
+        });
+    },
+    //添加推荐主播
+    goToAddAnchor() {
+      this.queryAnchorList();
+      this.dialogAnchorFormVisible = true;
+    },
     //获取直播封面图
     getCoverPictureList() {
       this.$http
@@ -377,6 +577,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.ruleForm.startDate = this.dateFormat(this.ruleForm.startDate);
+          return
           this.$http
             .post("/sys/livePreview/createLivePreview", this.ruleForm)
             .then(({ data: res }) => {
