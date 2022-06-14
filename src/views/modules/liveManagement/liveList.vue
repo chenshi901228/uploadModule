@@ -199,6 +199,8 @@
                   ? "直播中"
                   : row.liveState == 0
                   ? "已下播"
+                  :row.liveState == 3
+                  ? "未开播"
                   : "已禁播"
               }}
             </span>
@@ -231,15 +233,37 @@
           fixed="right"
           header-align="center"
           align="center"
+          width="200"
         >
           <template slot-scope="{ row }">
             <el-button
-              v-if="row.liveState == 1"
               type="text"
               size="small"
-              icon="el-icon-edit"
+              icon="el-icon-circle-close"
+              v-if="row.liveState == 1"
               @click="banLiveHandle(row.id)"
               >禁播</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-goods"
+              @click="addProduct(row)"
+              >带货商品</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-user"
+              @click="addAnchor(row)"
+              >推荐主播</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-user-solid"
+              @click="assistant(row)"
+              >助手</el-button
             >
           </template>
         </el-table-column>
@@ -375,6 +399,24 @@ export default {
           this.$refs.remarkModal.close();
           throw err;
         });
+    },
+    //带货商品
+    addProduct(row) {
+      this.$router.push({
+        path: "/preview-cargoGoods-CargoGoods",
+      });
+    },
+    //推荐主播
+    addAnchor(row) {
+      this.$router.push({
+        path: "/preview-recommendAnchor-RecommendAnchor",
+      });
+    },
+    //助手
+    assistant(row) {
+      this.$router.push({
+        path: "/preview-assistant-Assistant",
+      });
     },
   },
 };
