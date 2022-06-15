@@ -17,6 +17,8 @@ import renRegionTree from '@/components/ren-region-tree'
 import { hasPermission, getDictLabel, httpParams } from '@/utils'
 import cloneDeep from 'lodash/cloneDeep'
 
+import ImgCutter from 'vue-img-cutter'
+Vue.component('ImgCutter',ImgCutter)
 
 
 
