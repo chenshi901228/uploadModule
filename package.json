@@ -14,6 +14,8 @@
     "et:list": "gulp themes"
   },
   "dependencies": {
+    "@wangeditor/editor": "^5.1.1",
+    "@wangeditor/editor-for-vue": "^1.0.1",
     "axios": "^0.19.2",
     "babel-eslint": "^8.0.1",
     "babel-plugin-component": "^1.1.1",
