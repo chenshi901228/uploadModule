@@ -266,6 +266,8 @@
                   ? "直播中"
                   : row.liveState == 0
                   ? "已下播"
+                  :row.liveState == 3
+                  ? "未开播"
                   : "已禁播"
               }}
             </span>
@@ -294,11 +296,12 @@
           fixed="right"
           header-align="center"
           align="center"
-          width="120px"
+          width="200"
         >
-          <template slot-scope="{ row }" v-if="row.liveState == 1">
+          <template slot-scope="{ row }">
             <el-button
               type="text"
+              v-if="row.liveState == 1"
               @click="closeLiveHandle(row.anchorUserId)"
               size="small"
               icon="el-icon-video-pause"
@@ -308,8 +311,30 @@
               type="text"
               icon="el-icon-d-arrow-right"
               size="small"
+              v-if="row.liveState == 1 || row.liveState == 3"
               @click="joinLiveHandle(row)"
               >进入直播间</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-goods"
+              @click="addProduct(row)"
+              >带货商品</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-user"
+              @click="addAnchor(row)"
+              >推荐主播</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-user-solid"
+              @click="assistant(row)"
+              >助手</el-button
             >
           </template>
         </el-table-column>
@@ -489,6 +514,25 @@ export default {
         query: { liveTheme: row.liveTheme },
       });
       window.open(t.href, "_blank");
+    },
+    //带货商品
+    addProduct(row) {
+      this.$router.push({
+        path: "/preview-cargoGoods-CargoGoods",
+      });
+    },
+    //推荐主播
+    addAnchor(row) {
+      this.$router.push({
+        path: "/preview-recommendAnchor-RecommendAnchor",
+        query: { liveId: row.id }
+      });
+    },
+    //助手
+    assistant(row) {
+      this.$router.push({
+        path: "/preview-assistant-Assistant",
+      });
     },
   },
 };

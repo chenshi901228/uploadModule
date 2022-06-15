@@ -53,21 +53,6 @@
           >
           </el-date-picker>
         </el-form-item>
-        <!-- <el-col :span="8">
-                <el-form-item label="结束时间" prop="factEndDate">
-                  <el-date-picker
-                    size="small"
-                    :clearable="true"
-                    style="width: 194px"
-                    v-model="dataForm.factEndDate"
-                    type="datetime"
-                    placeholder="选择日期时间"
-                    :formatter="dateFormat"
-                    :editable="false"
-                  >
-                  </el-date-picker>
-                </el-form-item>
-              </el-col> -->
         <el-form-item
           label="实际开播时间"
           prop="factStartDate"
@@ -262,7 +247,7 @@
         ></el-table-column>
         <el-table-column
           width="150"
-          label="封面图"
+          label="直播宣传图"
           prop="frontCoverUrl"
           align="center"
         >
@@ -297,6 +282,13 @@
         <el-table-column
           width="120"
           label="手机号码"
+          prop="anchorTel"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          width="120"
+          label="助手"
           prop="anchorTel"
           align="center"
         >
@@ -438,7 +430,7 @@
         >
         </el-table-column>
         <el-table-column
-          width="120"
+          width="200"
           label="操作"
           fixed="right"
           header-align="center"
@@ -449,9 +441,30 @@
               v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1"
               type="text"
               size="small"
-              icon="el-icon-circle-plus-outline"
+              icon="el-icon-plus"
               @click="createRoom(scope.$index, scope.row)"
               >创建直播</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-goods"
+              @click="addProduct(scope.row)"
+              >带货商品</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-user"
+              @click="addAnchor(scope.row)"
+              >推荐主播</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-user-solid"
+              @click="assistant(scope.row)"
+              >助手</el-button
             >
             <el-button
               icon="el-icon-sort"
@@ -505,15 +518,21 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogFormVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="confirm('ruleForm')">确 定</el-button>
+        <el-button size="small" @click="dialogFormVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="confirm('ruleForm')"
+          >确 定</el-button
+        >
       </div>
     </el-dialog>
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
       <span>确认{{ showState === 0 ? "显示" : "隐藏" }}吗？</span>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="confirmShowState">确 定</el-button>
+        <el-button size="small" type="primary" @click="confirmShowState"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
   </el-card>
@@ -564,6 +583,27 @@ export default {
     this.getDynamicGroupList();
   },
   methods: {
+    //带货商品
+    addProduct(row) {
+      this.$router.push({
+        path: "/preview-cargoGoods-CargoGoods",
+      });
+    },
+    //推荐主播
+    addAnchor(row) {
+      this.$router.push({
+        path: "/preview-recommendAnchor-RecommendAnchor",
+        query:{
+          liveId:row.id
+        }
+      });
+    },
+    //助手
+    assistant(row) {
+      this.$router.push({
+        path: "/preview-assistant-Assistant",
+      });
+    },
     query() {
       this.dataListLoading = true;
       let dataObj = {};
@@ -616,24 +656,39 @@ export default {
     },
     //创建直播
     createRoom(index, row) {
-      this.$http.get('/sys/mixedflow/getLiving').then(res=>{//获取直播状态
-        if(res.data.data){
-          this.$message({
-            type:"warning",
-            message:"当前正在直播中！"
-          })
-          return          
-        }else{
-          const routeData = this.$router.resolve({
-            name: "liveRoom",
-            query: {
-              liveTheme: row.liveTheme,
-              livePreviewId: row.id,
-            },
-          });
-          window.open(routeData.href, "_blank");
-        }
-      })
+      // this.$http.get("/sys/mixedflow/getLiving").then((res) => {
+      //   //获取直播状态
+      //   if (res.data.data) {
+      //     this.$message({
+      //       type: "warning",
+      //       message: "当前正在直播中！",
+      //     });
+      //     return;
+      //   } else {
+      // const routeData = this.$router.resolve({
+      //   name: "liveRoom",
+      //   query: {
+      //     liveTheme: row.liveTheme,
+      //     livePreviewId: row.id,
+      //   },
+      // });
+      // window.open(routeData.href, "_blank");
+      this.$http
+        .post("/sys/livePreview/createLiveInPreview", {
+          id: row.id,
+        })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          } else {
+            this.$message.success("创建直播成功！请在直播列表中查看");
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
+      //   }
+      // });
     },
     //显示与隐藏
     showThis(index, row) {

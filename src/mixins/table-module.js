@@ -97,6 +97,7 @@ export default {
                 this.total = res.data.total;
             }).catch((err) => {
                 this.dataListLoading = false;
+                this.$message.error(JSON.stringify(err.message))
                 throw err
             });
         },

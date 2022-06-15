@@ -3,7 +3,7 @@
     <template v-if="!loading">
       <main-navbar />
       <main-sidebar />
-      <div class="aui-content__wrapper" :style="{ 'min-height': (documentClientHeight - 50) + 'px' }">
+      <div class="aui-content__wrapper" :style="{ 'min-height': (documentClientHeight - 52) + 'px' }">
         <main-content v-if="!$store.state.contentIsNeedRefresh"/>
       </div>
       <main-theme-tools />
