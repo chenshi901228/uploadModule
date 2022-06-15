@@ -92,8 +92,8 @@
             <el-button
               icon="el-icon-refresh"
               size="mini"
-              @click="resetDataForm()"
-              >{{ $t("reset") }}</el-button
+              @click="resetDataForm"
+              >重置</el-button
             >
             <el-button size="mini" plain @click="open">
               <i

@@ -606,6 +606,10 @@ export default {
     assistant(row) {
       this.$router.push({
         path: "/preview-assistant-Assistant",
+        query: {
+          liveId: row.id,
+          anchorId: row.anchorUserId,
+        },
       });
     },
     query() {
