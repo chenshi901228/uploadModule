@@ -74,7 +74,17 @@
 
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
-          <div class="headerTool--handle-btns-left"></div>
+          <div class="headerTool--handle-btns-left">
+            <el-button
+              type="primary"
+              plain
+              icon="el-icon-plus"
+              size="mini"
+              :disabled="dataListSelections.length === 0"
+              @click="addSelect()"
+              >批量添加</el-button
+            >
+          </div>
           <div class="headerTool--handle-btns-right">
             <el-form-item>
               <el-tooltip
@@ -98,9 +108,17 @@
         v-loading="dataListLoading"
         :data="dataList"
         :height="siteContentViewHeight"
+        @selection-change="dataListSelectionChangeHandle"
         style="width: 100%"
         ref="table"
       >
+        <el-table-column
+          type="selection"
+          header-align="center"
+          align="center"
+          width="50"
+          fixed="left"
+        ></el-table-column>
         <el-table-column type="index" label="序号" width="50" align="center">
         </el-table-column>
         <el-table-column
@@ -203,6 +221,17 @@
         @refreshDataList="getDataList"
       ></add-or-update>
     </div>
+    <el-dialog title="批量添加" :visible.sync="dialogAddVisible" width="30%">
+      <span>确定定批量添加推荐主播?</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="dialogAddVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="confirmAddSelect"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
 
     <el-dialog title="提醒" :visible.sync="dialogDeleteVisible" width="30%">
       <span>确定删除该主播推荐</span>
@@ -253,17 +282,45 @@ export default {
       dialogDeleteVisible: false,
       id: "",
       ids: [],
+      dialogAddVisible: false,
+      selectAddList: [],
     };
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
-      vm.dataForm.liveId = vm.$route.query.liveId
-      vm.query()
+      vm.dataForm.liveId = vm.$route.query.liveId;
+      vm.query();
     });
   },
   methods: {
+    //确认批量添加
+    confirmAddSelect() {
+      this.$http
+        .post("/sys/sysRecommendedAnchor", this.selectAddList)
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          } else {
+            this.selectAddList = [];
+            this.dialogAddVisible = false;
+            this.$message.success("添加成功！");
+            this.query();
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
     //批量添加
-    addProduct() {},
+    addSelect() {
+      this.dialogAddVisible = true;
+      this.dataListSelections.forEach((v) => {
+        this.selectAddList.push({
+          liveId: this.dataForm.liveId,
+          anchorId: v.anchorId,
+        });
+      });
+    },
     //删除
     deleteSelect(row) {
       this.ids.push(row.id);
@@ -276,11 +333,13 @@ export default {
     },
     //添加主播
     addAnchor(row) {
+      let list = [];
+      list.push({
+        liveId: this.dataForm.liveId,
+        anchorId: row.anchorId,
+      });
       this.$http
-        .post("/sys/sysRecommendedAnchor", {
-          liveId: this.dataForm.liveId,
-          anchorId: row.anchorId,
-        })
+        .post("/sys/sysRecommendedAnchor", list)
         .then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg);
