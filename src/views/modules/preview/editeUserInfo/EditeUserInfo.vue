@@ -31,7 +31,11 @@
         >
           <i class="el-icon-plus"></i>
         </el-upload> -->
-        <upload :fileList="fileList" :limit="1" :multiple="false" @getImg="getImg"></upload>
+        <ImgCutter @cutDown="cutDown" fileType="jpeg">
+            <button slot="open">选择图片</button>
+        </ImgCutter>
+        <img :src="imgSrc" alt="">
+        <!-- <upload :fileList="fileList" :limit="1" :multiple="false" @getImg="getImg"></upload> -->
       </el-form-item>
       <el-form-item>
         <!-- <el-button @click="resetForm('ruleForm')">取消</el-button> -->
@@ -47,6 +51,7 @@
 </template>
 
 <script>
+import Cookies from 'js-cookie'
 import Upload from "@/components/upload/index";
 import mixinTableModule from "@/mixins/table-module";
 export default {
@@ -71,6 +76,7 @@ export default {
         ],
         introduce: [{ required: true, message: "请输入主播简介", trigger: "blur" }],
       },
+      imgSrc:''
     };
   },
   watch: {},
@@ -94,8 +100,18 @@ export default {
     
   },
   methods: {
+    cutDown(event) {
+      this.imgSrc = event.dataURL;
+      console.log(event.file);//输出为base64数据
+      var form = new FormData(); // FormData 对象
+      form.append("file", event.file); // 文件对象
+      this.$http.post(`/oss/file/upload?access_token=${Cookies.get('access_token')}`,form).then(res=>{
+        console.log(res)
+      })
+    },
     // 头像上传
     getImg(imgList) {
+      console.log(imgList)
       this.fileList = imgList;
     },
     submitForm(formName) {
