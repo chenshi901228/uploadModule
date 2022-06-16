@@ -11,13 +11,19 @@
             style="margin: 0px 85px 10px"
           ></el-avatar>
           <div>用户昵称：{{ diaForm.nickName }}</div>
+          <div>手机号码：{{diaForm.phoneNum}}</div>
           <div>是否认证：{{ diaForm.legalizeFlg === 1 ? "是" : "否" }}</div>
           <div>是否指导师：{{ diaForm.tutorFlg === 1 ? "是" : "否" }}</div>
-          <div>邀请注册：{{ diaForm.inviteUserName }}</div>
+          <div>邀请注册：{{ diaForm.inviteUserName }}人</div>
           <div>TA邀请人：{{ diaForm.createBy }}</div>
           <div>注册时间：{{ diaForm.createDate }}</div>
         </div>
-
+        <div class="diaBoxLeft_title">种子账户</div>
+        <div class="diaBoxLeft_mes">
+          <div>
+            可用种子：{{ diaForm.priceBalance ? diaForm.priceBalance : 0 }}大豆
+          </div>
+        </div>
         <div class="diaBoxLeft_title">账户信息</div>
         <div class="diaBoxLeft_mes">
           <div>
@@ -30,12 +36,9 @@
               diaForm.priceRecharge ? diaForm.priceRecharge : 0
             }}元
           </div>
-          <div>购买商品消费：￥{{ diaForm.shoppingConsumption || 0 }}元</div>
-          <div>
-            可用大豆：{{ diaForm.priceBalance ? diaForm.priceBalance : 0 }}大豆
-          </div>
-          <div>刷礼物消费：{{ diaForm.giftConsumption || 0 }}大豆</div>
-          <div>粉丝团加入消费：{{ diaForm.fansConsumption || 0 }}大豆</div>
+          <div>商品消费：￥{{ diaForm.shoppingConsumption || 0 }}元</div>
+          <div>礼物消费：{{ diaForm.giftConsumption || 0 }}种子</div>
+          <div>加入粉丝团消费：{{ diaForm.fansConsumption || 0 }}种子</div>
         </div>
       </div>
       <div class="diaBoxRight">
