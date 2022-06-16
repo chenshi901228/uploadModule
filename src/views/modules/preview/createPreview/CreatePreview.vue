@@ -77,19 +77,19 @@
             <i slot="default" class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
-        <el-form-item label="助手" prop="dynamicGroupIds">
+        <el-form-item label="助手" prop="assistantIds">
           <el-select
-            v-model="ruleForm.dynamicGroupIds"
+            v-model="ruleForm.assistantIds"
             filterable
             multiple
             placeholder="请选择"
             :clearable="true"
           >
             <el-option
-              v-for="(item, index) in options"
+              v-for="(item, index) in assistantOptions"
               :key="index"
-              :label="item.name"
-              :value="item.id"
+              :label="item.userName"
+              :value="item.weixinUserId"
             >
             </el-option>
           </el-select>
@@ -164,22 +164,13 @@
             >{{ TiLength }}/2000</span
           >
         </el-form-item>
-        <el-form-item label="添加商品" prop="goodIds">
-          <el-select
-            v-model="ruleForm.goodIds"
-            filterable
-            multiple
-            placeholder="请选择"
-            :clearable="true"
-          >
-            <el-option
-              v-for="(item, index) in options"
-              :key="index"
-              :label="item.name"
-              :value="item.id"
-            >
-            </el-option>
-          </el-select>
+        <el-form-item label="添加商品" prop="goods">
+          <el-input
+            @click.native="goToAddGoods"
+            v-model="ruleForm.goods"
+            readonly
+            clearable
+          ></el-input>
         </el-form-item>
 
         <el-form-item label="添加主播" prop="anchors">
@@ -332,6 +323,197 @@
       >
       </el-pagination>
     </el-dialog>
+    <!-- 添加推荐商品弹窗 -->
+    <el-dialog
+      title="带货商品"
+      :visible.sync="dialogGoodsFormVisible"
+      width="70%"
+      top="20px"
+    >
+      <el-form
+        :inline="true"
+        :model="goodsForm"
+        @keyup.enter.native="queryGoodsList()"
+        size="small"
+        label-width="100px"
+      >
+        <el-form-item label="商品名称" prop="productName">
+          <el-input
+            placeholder="请输入"
+            style="width: 200px"
+            clearable
+            v-model="goodsForm.productName"
+          />
+        </el-form-item>
+        <el-form-item label="商品类型" prop="productType">
+          <el-select
+            placeholder="请选择"
+            style="width: 200px"
+            v-model="goodsForm.productType"
+            clearable
+          >
+            <el-option value="专业课" label="专业课"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="是否免费" prop="isFree">
+          <el-select
+            placeholder="请选择"
+            style="width: 200px"
+            v-model="goodsForm.isFree"
+            clearable
+          >
+            <el-option :value="1" label="是"></el-option>
+            <el-option :value="0" label="否"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="关联商品编号" prop="linkedProductId">
+          <el-input
+            placeholder="请输入"
+            style="width: 200px"
+            clearable
+            v-model="goodsForm.linkedProductId"
+          />
+        </el-form-item>
+        <el-form-item label="添加状态" prop="isAdd">
+          <el-select
+            placeholder="请选择"
+            style="width: 200px"
+            v-model="goodsForm.isAdd"
+            clearable
+          >
+            <el-option :value="0" label="否"></el-option>
+            <el-option :value="1" label="是"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            size="mini"
+            @click="queryGoodsList"
+            >查询</el-button
+          >
+          <el-button icon="el-icon-refresh" size="mini" @click="reset1"
+            >重置</el-button
+          >
+        </el-form-item>
+
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left"></div>
+        </div>
+      </el-form>
+      <el-table
+        v-loading="dataListLoading"
+        :data="goodsList"
+        style="width: 100%"
+        ref="table"
+        fit
+        max-height="500"
+      >
+        <el-table-column type="index" label="序号" width="50" align="center">
+        </el-table-column>
+        <el-table-column
+          prop="productImage"
+          label="商品图片"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <div>
+              <img
+                style="width: 80px; height: '80px'"
+                class="frontCoverImg"
+                :src="
+                  row.productImage || 'https://picsum.photos/400/300?random=1'
+                "
+                alt=""
+              />
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="productName"
+          label="商品名称"
+          header-align="center"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="oldPrice"
+          label="商品价格"
+          header-align="center"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="price"
+          label="销售价格"
+          header-align="center"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="productType"
+          label="商品类型"
+          header-align="center"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="isFree"
+          label="是否免费"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.isFree === 1 ? "是" : "否" }}
+          </template></el-table-column
+        >
+        <el-table-column
+          prop="id"
+          label="关联商品编号"
+          header-align="center"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="isAdd"
+          label="添加状态"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.isAdd === 1 ? "是" : "否" }}
+          </template></el-table-column
+        >
+        <el-table-column
+          label="操作"
+          fixed="right"
+          header-align="center"
+          align="center"
+          width="150"
+        >
+          <template slot-scope="scope">
+            <el-button
+              icon="el-icon-plus"
+              type="text"
+              size="small"
+              @click="addGoods(scope.row)"
+              >添加</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        background
+        :current-page="goodsPage"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="goodsLimit"
+        :total="goodsTotal"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="pageSizeChangeHandle1"
+        @current-change="pageCurrentChangeHandle1"
+      >
+      </el-pagination>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -381,7 +563,7 @@ export default {
         startDate: "",
         estimateLiveTime: "",
         frontCoverUrl: "",
-        dynamicGroupIds: [],
+        // dynamicGroupIds: [],
         liveIntroduce: "",
       },
       dialogImageUrl: "",
@@ -413,7 +595,7 @@ export default {
         //   { required: true, message: "请选择投放人群", trigger: "blur" },
         // ],
         liveIntroduce: [
-          { required: true, message: "请填写活动形式", trigger: "blur" },
+          { required: true, message: "请填写直播介绍", trigger: "blur" },
         ],
       },
       pickerOptions: {
@@ -439,10 +621,21 @@ export default {
       anchorPage: 1,
       anchorLimit: 10,
       dataList: [],
-      addAnchorForm: { username: "", phone: "" },
+      addAnchorForm: {},
       total: 0,
       anchors: [],
-      anchorIds:[]
+      recommendedAnchorList: [],
+      dialogGoodsFormVisible: false,
+      goodsTotal: 0,
+      goodsPage: 1,
+      goodsLimit: 10,
+      goodsForm: {},
+      goodsList: [],
+      goods: [],
+      productIds: [],
+      userId: "",
+      goodsDataListLoading: false,
+      assistantOptions: [],
     };
   },
   watch: {
@@ -468,9 +661,16 @@ export default {
       startDate: "",
       estimateLiveTime: "",
       frontCoverUrl: "",
-      dynamicGroupIds: [],
+      // dynamicGroupIds: [],
       liveIntroduce: "",
+      productIds: [],
+      goods: "",
+      recommendedAnchorList: [],
+      anchors: "",
+      assistantIds: [],
     };
+    this.userId = this.$store.state.user.id;
+    this.getDynamicAssistantList();
     this.getCoverPictureList();
   },
   methods: {
@@ -493,6 +693,7 @@ export default {
       this.anchorPage = val;
       this.queryAnchorList();
     },
+    //添加主播
     addAnchor(row) {
       let flag = true;
       this.anchors.forEach((v) => {
@@ -502,11 +703,11 @@ export default {
         }
       });
       if (flag) {
-        this.$set(this.ruleForm, "anchorIds", []);
+        this.$set(this.ruleForm, "recommendedAnchorList", []);
         this.$set(this.ruleForm, "anchors", "");
         this.anchors.push(row.username);
-        this.anchorIds.push(row.anchorId)
-        this.ruleForm.anchorIds.push(...this.anchorIds);
+        this.recommendedAnchorList.push(row.anchorId);
+        this.ruleForm.recommendedAnchorList.push(...this.recommendedAnchorList);
         let result = Array.from(new Set(this.anchors));
         let str = result.join(",");
         this.ruleForm.anchors = str;
@@ -514,12 +715,89 @@ export default {
       }
       this.dialogAnchorFormVisible = false;
     },
+    //重置
+    reset1() {
+      this.goodsForm = {
+        productName: "",
+        productType: "",
+        isFree: "",
+        linkedProductId: "",
+        isAdd: "",
+      };
+      this.queryGoodsList();
+    },
+    // 分页, 每页条数
+    pageSizeChangeHandle1(val) {
+      this.goodsPage = 1;
+      this.goodsLimit = val;
+      this.queryGoodsList();
+    },
+    // 分页, 当前页
+    pageCurrentChangeHandle1(val) {
+      this.goodsPage = val;
+      this.queryGoodsList();
+    },
+    //添加商品
+    addGoods(row) {
+      let flag = true;
+      this.goods.forEach((v) => {
+        if (v === row.productName) {
+          flag = false;
+          this.$message.warning("重复添加");
+        }
+      });
+      if (flag) {
+        this.$set(this.ruleForm, "productIds", []);
+        this.$set(this.ruleForm, "goods", "");
+        this.goods.push(row.productName);
+        this.productIds.push(row.id);
+        this.ruleForm.productIds.push(...this.productIds);
+        let result = Array.from(new Set(this.goods));
+        let str = result.join(",");
+        this.ruleForm.goods = str;
+        this.$message.success("添加成功！");
+      }
+      this.dialogGoodsFormVisible = false;
+    },
+    //获取推荐商品列表
+    queryGoodsList() {
+      this.goodsDataListLoading = true;
+      this.$http
+        .get("/sys/wxapp/anchorProduct/listWithAnchorIdPage", {
+          params: {
+            page: this.goodsPage,
+            limit: this.goodsLimit,
+            anchorId: this.userId,
+            ...this.goodsForm,
+          },
+        })
+        .then(({ data: res }) => {
+          this.goodsDataListLoading = false;
+          if (res.code !== 0) {
+            this.goodsList = [];
+            return this.$message.error(res.msg);
+          }
+          this.goodsTotal = res.data.total;
+          this.goodsList = res.data.list;
+        })
+        .catch((err) => {
+          this.goodsDataListLoading = false;
+          throw err;
+        });
+    },
+    //添加商品
+    goToAddGoods() {
+      this.queryGoodsList();
+      this.dialogGoodsFormVisible = true;
+    },
     //获取添加主播列表
     queryAnchorList() {
       this.dataListLoading = true;
       this.$http
         .get("/sys/sysRecommendedAnchor/pageForAddLivePreview", {
           params: {
+            page: this.anchorPage,
+            limit: this.anchorLimit,
             ...this.addAnchorForm,
           },
         })
@@ -577,9 +855,18 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.ruleForm.startDate = this.dateFormat(this.ruleForm.startDate);
-          return
+          let dataForm = {
+            liveTheme: this.ruleForm.liveTheme,
+            startDate: this.ruleForm.startDate,
+            estimateLiveTime: this.ruleForm.estimateLiveTime,
+            frontCoverUrl: this.ruleForm.frontCoverUrl,
+            liveIntroduce: this.ruleForm.liveIntroduce,
+            productIds: this.ruleForm.productIds,
+            recommendedAnchorList: this.ruleForm.recommendedAnchorList,
+            assistantIds: this.ruleForm.assistantIds,
+          };
           this.$http
-            .post("/sys/livePreview/createLivePreview", this.ruleForm)
+            .post("/sys/livePreview/createLivePreview", dataForm)
             .then(({ data: res }) => {
               if (res.code !== 0) {
                 return this.$message.error(res.msg);
@@ -593,8 +880,13 @@ export default {
                 startDate: "",
                 estimateLiveTime: "",
                 frontCoverUrl: "",
-                dynamicGroupIds: [],
+                // dynamicGroupIds: [],
                 liveIntroduce: "",
+                productIds: [],
+                goods: "",
+                recommendedAnchorList: [],
+                anchors: "",
+                assistantIds: [],
               };
               this.ruleForm.frontCoverUrl = this.defaultImg[0];
             })
@@ -674,6 +966,22 @@ export default {
             return this.$message.error(res.msg);
           }
           this.options = res.data;
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
+    //获取助手
+    getDynamicAssistantList() {
+      this.$http
+        .get(
+          `/sys/anchorAssistant/live/getAnchorAssistantWithLiveByAnchorId?anchorId=${this.userId}`
+        )
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          this.assistantOptions = res.data;
         })
         .catch((err) => {
           throw err;

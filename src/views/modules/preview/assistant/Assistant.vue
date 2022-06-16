@@ -97,17 +97,10 @@
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        @selection-change="dataListSelectionChangeHandle"
         :height="siteContentViewHeight"
         style="width: 100%"
         ref="table"
       >
-        <el-table-column
-          type="selection"
-          header-align="center"
-          align="center"
-          width="50"
-        ></el-table-column>
         <el-table-column type="index" label="序号" width="50" align="center">
         </el-table-column>
         <el-table-column
@@ -221,7 +214,7 @@ export default {
       giftOptions: [], //礼物下拉选择内容
       fansLevelsOptions: [], //粉丝等级options
       dialogVisible: false,
-      ids: "",
+      ids: [],
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -234,7 +227,7 @@ export default {
   methods: {
     //删除
     deleteSelect(row) {
-      this.ids.push(row.productLiveId);
+      this.ids.push(row.assistantLiveId);
       this.dialogVisible = true;
     },
     //确认删除
@@ -253,6 +246,7 @@ export default {
           if (res.code !== 0) {
             return this.$message.error(res.msg);
           } else {
+            this.dialogVisible = false;
             this.$message.success("删除成功！");
             this.query();
           }
@@ -266,10 +260,10 @@ export default {
     //添加
     add(row) {
       this.$http
-        .post("/sys/anchorProduct/live", {
+        .post("/sys/anchorAssistant/live", {
           liveId: this.dataForm.liveId,
           anchorId: this.dataForm.anchorId,
-          id: row.id,
+          weixinUserId: row.weixinUserId,
           type: 2,
         })
         .then(({ data: res }) => {
