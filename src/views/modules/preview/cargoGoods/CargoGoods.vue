@@ -14,7 +14,7 @@
       >
         <el-form-item
           label="商品名称"
-          prop="level"
+          prop="productName"
           v-if="isOpen || formItemCount >= 1"
         >
           <el-input
@@ -26,33 +26,27 @@
         </el-form-item>
         <el-form-item
           label="商品类型"
-          prop="levelName"
+          prop="productType"
           v-if="isOpen || formItemCount >= 2"
         >
           <el-select
             placeholder="请选择"
-            @visible-change="getFansLevels"
             style="width: 200px"
-            v-model="dataForm.level"
+            v-model="dataForm.productType"
             clearable
           >
-            <el-option
-              v-for="item in fansLevelsOptions"
-              :key="item"
-              :value="item"
-              :label="item"
-            ></el-option>
+            <el-option value="专业课" label="专业课"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
           label="是否免费"
-          prop="levelName"
+          prop="isFree"
           v-if="isOpen || formItemCount >= 3"
         >
           <el-select
             placeholder="请选择"
             style="width: 200px"
-            v-model="dataForm.level"
+            v-model="dataForm.isFree"
             clearable
           >
             <el-option :value="1" label="是"></el-option>
@@ -61,34 +55,29 @@
         </el-form-item>
         <el-form-item
           label="关联商品编号"
-          prop="level"
+          prop="linkedProductId"
           v-if="isOpen || formItemCount >= 4"
         >
           <el-input
             placeholder="请输入"
             style="width: 200px"
             clearable
-            v-model="dataForm.productName"
+            v-model="dataForm.linkedProductId"
           />
         </el-form-item>
         <el-form-item
           label="添加状态"
-          prop="levelName"
+          prop="isAdd"
           v-if="isOpen || formItemCount >= 5"
         >
           <el-select
             placeholder="请选择"
-            @visible-change="getFansLevels"
             style="width: 200px"
-            v-model="dataForm.level"
+            v-model="dataForm.isAdd"
             clearable
           >
-            <el-option
-              v-for="item in fansLevelsOptions"
-              :key="item"
-              :value="item"
-              :label="item"
-            ></el-option>
+            <el-option :value="0" label="否"></el-option>
+            <el-option :value="1" label="是"></el-option>
           </el-select>
         </el-form-item>
         <div class="headerTool-search-btns">
@@ -103,8 +92,8 @@
             <el-button
               icon="el-icon-refresh"
               size="mini"
-              @click="resetDataForm()"
-              >{{ $t("reset") }}</el-button
+              @click="resetDataForm"
+              >重置</el-button
             >
             <el-button size="mini" plain @click="open">
               <i
@@ -124,6 +113,7 @@
                 plain
                 icon="el-icon-plus"
                 size="mini"
+                :disabled="dataListSelections.length === 0"
                 @click="addProduct"
                 >批量添加</el-button
               >
@@ -175,59 +165,76 @@
         <el-table-column type="index" label="序号" width="50" align="center">
         </el-table-column>
         <el-table-column
-          prop="level"
+          prop="productImage"
           label="商品图片"
           header-align="center"
           align="center"
         >
+          <template slot-scope="{ row }">
+            <div>
+              <img
+                style="width: 80px; height: '80px'"
+                class="frontCoverImg"
+                :src="
+                  row.productImage || 'https://picsum.photos/400/300?random=1'
+                "
+                alt=""
+              />
+            </div>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="levelName"
+          prop="productName"
           label="商品名称"
           header-align="center"
           align="center"
         >
         </el-table-column>
         <el-table-column
-          prop="intimacyNum"
+          prop="oldPrice"
           label="商品价格"
           header-align="center"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="delFlg"
+          prop="price"
           label="销售价格"
           header-align="center"
           align="center"
         >
-          <template slot-scope="scope">
-            {{ scope.row.delFlg ? "删除" : "正常" }}
-          </template>
         </el-table-column>
         <el-table-column
-          prop="intimacyNum"
+          prop="productType"
           label="商品类型"
           header-align="center"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="intimacyNum"
+          prop="isFree"
           label="是否免费"
           header-align="center"
           align="center"
-        ></el-table-column>
+        >
+          <template slot-scope="scope">
+            {{ scope.row.isFree === 1 ? "是" : "否" }}
+          </template></el-table-column
+        >
         <el-table-column
-          prop="intimacyNum"
+          prop="id"
           label="关联商品编号"
           header-align="center"
           align="center"
         ></el-table-column>
         <el-table-column
-          prop="intimacyNum"
+          prop="isAdd"
           label="添加状态"
           header-align="center"
           align="center"
-        ></el-table-column>
+        >
+          <template slot-scope="scope">
+            {{ scope.row.isAdd === 1 ? "是" : "否" }}
+          </template></el-table-column
+        >
         <el-table-column
           :label="$t('handle')"
           fixed="right"
@@ -237,6 +244,7 @@
         >
           <template slot-scope="scope">
             <el-button
+              v-if="scope.row.isAdd === 1"
               icon="el-icon-delete"
               type="text"
               size="small"
@@ -244,6 +252,7 @@
               >删除</el-button
             >
             <el-button
+              v-if="scope.row.isAdd === 1"
               icon="el-icon-upload2"
               type="text"
               size="small"
@@ -251,6 +260,7 @@
               >置顶</el-button
             >
             <el-button
+              v-if="scope.row.isAdd === 0"
               icon="el-icon-plus"
               type="text"
               size="small"
@@ -278,19 +288,27 @@
         @refreshDataList="getDataList"
       ></add-or-update>
     </div>
-    <el-dialog title="批量添加" :visible.sync="dialogVisible" width="30%">
-      <span>确定批量添加店铺中的全部商品</span>
+    <el-dialog title="批量添加" :visible.sync="dialogAddVisible" width="30%">
+      <span>确定批量添加店铺中的商品</span>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="confirmAddAll">确 定</el-button>
+        <el-button size="small" @click="dialogAddVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="confirmAddSelect"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
 
-    <el-dialog title="提醒" :visible.sync="dialogVisible" width="30%">
+    <el-dialog title="提醒" :visible.sync="dialogDeleteVisible" width="30%">
       <span>确定删除该商品</span>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="confirmDelete">确 定</el-button>
+        <el-button size="small" @click="dialogDeleteVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="confirmDelete"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
 
@@ -298,7 +316,9 @@
       <span>置顶该商品后，将展示在第一个，确认置顶</span>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="confirmCargo">确 定</el-button>
+        <el-button size="small" type="primary" @click="confirmCargo"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
   </el-card>
@@ -312,65 +332,173 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/sysfanslevel/page",
+        getDataListURL: "/sys/anchorProduct/live/pageWithLive",
         getDataListIsPage: true,
-        exportURL: "/sys/sysfanslevel/export",
-        deleteURL: "/sys/sysfanslevel",
         deleteIsBatch: true,
+        createdIsNeed: false,
+        activatedIsNeed: false,
       },
       dataForm: {
-        name: "",
-        isFree: null,
-        status: null,
+        liveId: "",
+        type: 2,
+        anchorId: "",
       },
-      loading: false, //礼物输入下拉选择loading
-      giftOptions: [], //礼物下拉选择内容
-      fansLevelsOptions: [], //粉丝等级options
-      dialogVisible:false
-
+      dialogVisible: false,
+      dialogDeleteVisible: false,
+      id: "",
+      ids: [],
+      dialogAddVisible: false,
+      selectAddList: [],
     };
   },
-  watch: {},
-  components: {},
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.dataForm.liveId = vm.$route.query.liveId;
+      vm.dataForm.anchorId = vm.$route.query.anchorId;
+      vm.query();
+    });
+  },
   methods: {
-    //批量添加
-    addProduct() {},
-    //删除
-    deleteSelect(row) {},
-    //置顶
-    toTop(row) {},
-    //添加
-    add(row) {},
     //确认批量添加
-    confirmAddAll(){
-
-    },
-    //确认删除
-    confirmDelete(){
-
-    },
-    //确认置顶
-    confirmCargo(){
-
-    },
-    // 获取粉丝等级
-    getFansLevels(type) {
-      if (!type) return;
+    confirmAddSelect() {
       this.$http
-        .get("/sys/sysfanslevel/getLevelList")
+        .post("/sys/anchorProduct/live", {
+          liveId: this.dataForm.liveId,
+          anchorId: this.dataForm.anchorId,
+          productIdList: this.selectAddList,
+          type: 2,
+        })
         .then(({ data: res }) => {
-          if (res.code == 0) {
-            this.fansLevelsOptions = res.data;
-          } else {
-            this.fansLevelsOptions = [];
+          if (res.code !== 0) {
+            this.dialogAddVisible = false;
+            this.selectAddList = [];
             return this.$message.error(res.msg);
+          } else {
+            this.selectAddList = [];
+            this.dialogAddVisible = false;
+            this.$message.success("添加成功！");
+            this.query();
           }
         })
         .catch((err) => {
-          this.fansLevelsOptions = [];
-          this.$message.error(JSON.stringify(err));
+          throw err;
         });
+    },
+    //批量添加
+    addProduct() {
+      let flag = this.dataListSelections.some((val) => {
+        return val.isAdd === 1;
+      });
+      if (flag) {
+        this.$message.warning("请选择未添加商品！");
+      } else {
+        this.dialogAddVisible = true;
+        this.dataListSelections.forEach((v) => {
+          this.selectAddList.push(v.id);
+        });
+      }
+    },
+    //删除
+    deleteSelect(row) {
+      this.ids.push(row.productLiveId);
+      this.dialogDeleteVisible = true;
+    },
+    //置顶
+    toTop(row) {
+      this.id = row.productLiveId;
+      this.dialogVisible = true;
+    },
+    //添加
+    add(row) {
+      let list = [];
+      list.push(row.id);
+      this.$http
+        .post("/sys/anchorProduct/live", {
+          liveId: this.dataForm.liveId,
+          anchorId: this.dataForm.anchorId,
+          productIdList: list,
+          type: 2,
+        })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          } else {
+            this.$message.success("添加成功！");
+            this.query();
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
+    //确认删除
+    confirmDelete() {
+      this.$http
+        .delete(`/sys/anchorProduct/live/deleteWithLive`, {
+          data: {
+            ids: this.ids,
+            liveId: this.dataForm.liveId,
+            type: 2,
+          },
+        })
+        .then(({ data: res }) => {
+          this.ids = [];
+          this.dialogDeleteVisible = false;
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          } else {
+            this.$message.success("删除成功！");
+            this.query();
+          }
+        })
+        .catch((err) => {
+          this.ids = [];
+          this.dialogDeleteVisible = false;
+          throw err;
+        });
+    },
+    //确认置顶
+    confirmCargo() {
+      this.$http
+        .put("/sys/anchorProduct/live/setTop", {
+          id: this.id,
+        })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          } else {
+            this.$message.success("置顶成功！");
+            this.dialogVisible = false;
+            this.query();
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
+    //重置
+    resetDataForm() {
+      this.dataForm = {
+        productName: "",
+        productType: "",
+        isFree: "",
+        linkedProductId: "",
+        isAdd: "",
+        liveId: this.$route.query.liveId,
+        type: 2,
+        anchorId: this.$route.query.anchorId,
+      };
+
+      this.query();
     },
   },
 };
 </script>
+<style scoped lang="scss">
+.mod-live__liveList {
+  .frontCoverImg {
+    width: 100%;
+    height: 80px;
+  }
+}
+</style>

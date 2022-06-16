@@ -275,9 +275,6 @@ export default {
       dataForm: {
         liveId: "",
       },
-      loading: false, //礼物输入下拉选择loading
-      giftOptions: [], //礼物下拉选择内容
-      fansLevelsOptions: [], //粉丝等级options
       dialogVisible: false,
       dialogDeleteVisible: false,
       id: "",
@@ -299,6 +296,8 @@ export default {
         .post("/sys/sysRecommendedAnchor", this.selectAddList)
         .then(({ data: res }) => {
           if (res.code !== 0) {
+            this.dialogAddVisible = false;
+            this.selectAddList = [];
             return this.$message.error(res.msg);
           } else {
             this.selectAddList = [];

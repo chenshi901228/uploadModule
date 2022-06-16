@@ -519,6 +519,10 @@ export default {
     addProduct(row) {
       this.$router.push({
         path: "/preview-cargoGoods-CargoGoods",
+        query: {
+          liveId: row.id,
+          anchorId: row.anchorUserId
+        }
       });
     },
     //推荐主播
