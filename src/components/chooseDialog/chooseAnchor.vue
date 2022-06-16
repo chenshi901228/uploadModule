@@ -43,7 +43,7 @@
             <!-- 操作按钮 -->
             <div class="headerTool-handle-btns">
                 <div class="headerTool--handle-btns-left">
-                    <el-form-item>
+                    <!-- <el-form-item>
                         <el-button
                             type="primary"
                             plain
@@ -51,7 +51,7 @@
                             size="mini"
                             :disabled="!dataListSelections.length"
                             @click="add()">批量添加</el-button>
-                    </el-form-item>
+                    </el-form-item> -->
                 </div>
             </div>
         </el-form>
@@ -76,7 +76,6 @@
                 :key="item.prop"
                 :prop="item.prop"
                 :label="item.label"
-                :width="item.width || 120"
                 show-overflow-tooltip>
                 <template slot-scope="{ row }">
                     <!-- 封面图 -->
@@ -91,7 +90,7 @@
                     </span>
                 </template>
             </el-table-column>
-            <el-table-column
+            <!-- <el-table-column
                 :label="$t('handle')"
                 fixed="right"
                 header-align="center"
@@ -103,7 +102,7 @@
                         icon="el-icon-plus"
                         @click="add(row)">添加</el-button>
                 </template>
-            </el-table-column>
+            </el-table-column> -->
         </el-table>
         <el-pagination
             background
@@ -116,7 +115,7 @@
             @current-change="pageCurrentChangeHandle">
         </el-pagination>
         <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="close" size="small">关 闭</el-button>
+            <el-button type="primary" @click="add()" size="small">确 认</el-button>
         </span>
     </el-dialog>
 </template>
@@ -135,19 +134,46 @@ export default {
             total: 0,                   // 总条数
             dataListLoading: false,     // 数据列表，loading状态
             dataListSelections: [],     // 数据列表，多选项
+            defaultSelected: [], //默认选中的数据
             tableItem: [
                 { prop: "avatarUrl", label: "主播头像" },
                 { prop: "username", label: "主播昵称" },
                 { prop: "phone", label: "手机号码" },
-                { prop: "updateDate", label: "更新时间", width: 150 },
-                { prop: "delFlg", label: "上架状态" },
+                { prop: "updateDate", label: "更新时间" },
             ],
         }
     },
     methods: {
-        init() {
+        init(data) {
+            this.defaultSelected = data || []
             this.dialogVisible = true
             this.query()
+        },
+        setCurPageSelected() {
+            this.$nextTick(() => {
+                if (this.defaultSelected.length) {
+                    let arr = []
+                    this.dataList.map((row, i) => {
+                        this.defaultSelected.map(item => {
+                            if(row.anchorId == item.anchorId) {
+                                arr.push(i)
+                            }
+                        })
+                    });
+
+                    if(arr.length) {
+                        arr.map(item => {
+                            this.$refs.table.toggleRowSelection(this.dataList[item], true);
+                        })
+                    }else {
+                        this.$refs.table.clearSelection();
+                    }
+
+                } else {
+                    this.$refs.table.clearSelection();
+                }
+
+            })
         },
         // 获取数据列表
         query () {
@@ -167,6 +193,8 @@ export default {
                 }
                 this.dataList = res.data.list
                 this.total = res.data.total
+
+                this.setCurPageSelected()
             }).catch((err) => {
                 this.dataListLoading = false
                 this.$message.error(JSON.stringify(err.message))

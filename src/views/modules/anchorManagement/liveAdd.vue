@@ -156,55 +156,29 @@ export default {
         },
         // 推荐主播弹框
         chooseAnchor() {
-            this.$refs.chooseAnchor.init()
+            this.$refs.chooseAnchor.init(this.recommendedAnchorList)
         },
 
         // 确认添加推荐主播
         addAnchorConfirm(data) {
             this.$refs.chooseAnchor.close()
 
-            let arr = [...this.recommendedAnchorList, ...data]
-            
-
-            // 去除重复的主播
-            for(let i=0;i<arr.length;i++) {
-                for(let j=i+1;j<arr.length;j++) {
-                    if(arr[i].anchorId == arr[j].anchorId) {
-                        arr.splice(j, 1)
-                        j--
-                    }
-                }
-            }
-
-            this.recommendedAnchorList = arr
-            this.dataForm.anchor = arr.map(item => item.username).join(",")
+            this.recommendedAnchorList = data
+            this.dataForm.anchor = data.map(item => item.username).join(",")
         },
 
 
         // 推荐商品弹框
         chooseProduct() {
-            this.$refs.chooseProduct.init()
+            this.$refs.chooseProduct.init(this.productIds)
         },
 
         // 确认添加推荐商品
         addProductConfirm(data) {
             this.$refs.chooseProduct.close()
 
-            let arr = [...this.productIds, ...data]
-            
-
-            // 去除重复的商品
-            for(let i=0;i<arr.length;i++) {
-                for(let j=i+1;j<arr.length;j++) {
-                    if(arr[i].id == arr[j].id) {
-                        arr.splice(j, 1)
-                        j--
-                    }
-                }
-            }
-
-            this.productIds = arr
-            this.dataForm.product = arr.map(item => item.productName).join(",")
+            this.productIds = data
+            this.dataForm.product = data.map(item => item.productName).join(",")
         },
 
         // 取消添加
