@@ -178,7 +178,7 @@
                 plain
                 icon="el-icon-plus"
                 size="mini"
-                @click="newLive"
+                @click="createLive"
                 >创建直播</el-button
               >
             </el-form-item>
@@ -436,6 +436,10 @@ export default {
       }
     },
     // 创建直播
+    createLive() {
+      this.$router.push({ path: "anchorManagement-liveAdd" })
+    },
+    // 创建直播
     newLive() {
       this.$http.get('/sys/mixedflow/getLiving').then(res=>{//获取直播状态
         if(res.data.data){
@@ -536,6 +540,10 @@ export default {
     assistant(row) {
       this.$router.push({
         path: "/preview-assistant-Assistant",
+        query: {
+          liveId: row.id,
+          anchorId: row.anchorUserId
+        }
       });
     },
   },

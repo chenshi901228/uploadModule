@@ -80,6 +80,11 @@ export default {
             type: Number,
             default: 1
         },
+        // 上传附件大小限制
+        fileMaxSize: {
+            type: Number,
+            default: 200
+        },
         // 是否多选
         multiple: {
             type: Boolean,
@@ -123,10 +128,10 @@ export default {
             type = type[type.length - 1]
             let fileType = this.fileType.includes(type.toLocaleLowerCase())
 
-            let fileSize = file.size / 1024 / 1024 < 1024
+            let fileSize = file.size / 1024 / 1024 < this.fileMaxSize
 
             if(!fileSize) {
-                this.$message.error("上传附件大小不能超过 1G!")
+                this.$message.error(`上传附件大小不能超过 ${this.fileMaxSize}M!`)
                 return false
             }
 
