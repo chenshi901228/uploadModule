@@ -2110,10 +2110,6 @@ export default {
               if (res.code !== 0) {
                 return this.$message.error(res.msg);
               }
-              if (this.total_dia >= 9) {
-                this.$message.warning("最多可上架9个商品，请删除后再重新上架!");
-                return;
-              }
               this.$message.success("上架成功!");
               this.queryUserList();
               this.dialogUserFormVisible = false;
@@ -2161,10 +2157,6 @@ export default {
             .then(({ data: res }) => {
               if (res.code !== 0) {
                 return this.$message.error(res.msg);
-              }
-              if (this.total_dia >= 9) {
-                this.$message.warning("最多可上架9个商品，请删除后再重新上架!");
-                return;
               }
               this.$message.success("上架成功!");
               this.queryUserList();

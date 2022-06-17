@@ -32,6 +32,7 @@
                         placeholder="请选择" 
                         v-model="dataForm.product"
                         @click.native="chooseProduct"></el-input>
+                    <span class="count">{{productIds.length}}条</span>
                 </el-form-item>
                 <el-form-item label="添加主播" prop="anchor">
                     <el-input 
@@ -39,6 +40,7 @@
                         placeholder="请选择" 
                         v-model="dataForm.anchor"
                         @click.native="chooseAnchor"></el-input>
+                    <span class="count">{{recommendedAnchorList.length}}条</span>
                 </el-form-item>
                 <el-form-item label="直播背景">
                     <custom-upload 
@@ -73,13 +75,13 @@
                         type="primary" 
                         :icon="submitLoading ? 'el-icon-loading' : ''"
                         :disabled="submitLoading" 
-                        @click="onSubmit">确定</el-button>
+                        @click="onSubmit">创建直播</el-button>
                 </el-form-item>
             </el-form>
 
-            <!-- 主播 -->
+            <!-- 主播弹框 -->
             <choose-anchor ref="chooseAnchor" @add="addAnchorConfirm"></choose-anchor>
-            <!--  -->
+            <!-- 商品弹框 -->
             <choose-product ref="chooseProduct" @add="addProductConfirm"></choose-product>
         </div>
     </el-card>
@@ -181,7 +183,7 @@ export default {
             this.dataForm.product = data.map(item => item.productName).join(",")
         },
 
-        // 取消添加
+        // 取消创建直播
         cancel() {
             this.$refs.dataForm.resetFields()
             this.dataForm.frontCoverUrl = ""
@@ -249,5 +251,10 @@ export default {
 <style lang="scss" scoped>
     .tips {
         color: #666;
+    }
+    .count {
+        display: inline-block;
+        margin-left: 10px;
+        color: #909399;
     }
 </style>

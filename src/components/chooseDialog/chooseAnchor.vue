@@ -55,11 +55,23 @@
                 </div>
             </div>
         </el-form>
+        <!-- 选中的内容 -->
+        <div class="selectedData">
+            <el-tooltip  
+                v-for="item in defaultSelected" 
+                :key="item.anchorId" 
+                :content="item.username" 
+                placement="top">
+                    <span class="showTitle">{{item.username}}<i @click="deleteSelect(item)" class="el-icon-close"></i></span>
+            </el-tooltip>
+        </div>
         <el-table
             v-loading="dataListLoading"
             :data="dataList"
             ref="table"
-            @selection-change="dataListSelectionChangeHandle"
+            @select="selectRow"
+            @select-all="selectAll"
+            height="360px"
             style="width: 100%">
             <el-table-column
                 type="selection"
@@ -146,34 +158,36 @@ export default {
     methods: {
         init(data) {
             this.defaultSelected = data || []
+            this.page = 1
+            this.limit = 10
             this.dialogVisible = true
             this.query()
         },
+        // 设置默认选中的行
         setCurPageSelected() {
             this.$nextTick(() => {
                 if (this.defaultSelected.length) {
-                    let arr = []
                     this.dataList.map((row, i) => {
                         this.defaultSelected.map(item => {
                             if(row.anchorId == item.anchorId) {
-                                arr.push(i)
+                                this.$refs.table.toggleRowSelection(row, true);
                             }
                         })
                     });
-
-                    if(arr.length) {
-                        arr.map(item => {
-                            this.$refs.table.toggleRowSelection(this.dataList[item], true);
-                        })
-                    }else {
-                        this.$refs.table.clearSelection();
-                    }
 
                 } else {
                     this.$refs.table.clearSelection();
                 }
 
             })
+
+
+            // 防止table刷新错位
+            if(this.$refs.table) {
+                this.$nextTick(()=>{
+                    this.$refs.table.doLayout()
+                })
+            }
         },
         // 获取数据列表
         query () {
@@ -202,15 +216,67 @@ export default {
         },
         // 选择添加
         add(row) {
-            if(row) {
-                this.$emit("add", [row])
-            }else {
-                this.$emit("add", this.dataListSelections)
+            this.$emit("add", this.defaultSelected)
+        },
+        // 点击删除
+        deleteSelect(data) {
+
+            this.$confirm("确认取消推荐主播", "提示", {
+                confirmButtonText: "确认",
+                cancelButtonText: "取消",
+                type: "warning",
+            }).then(() => {
+                // 取消选中行
+                this.dataList.forEach(row => {
+                    if(row.anchorId == data.anchorId) {
+                        this.$refs.table.toggleRowSelection(row, false);
+                    }
+                })
+                // 默认选中数据中去掉这条数据
+                this.defaultSelected = this.defaultSelected.filter(item => item.anchorId != data.anchorId)
+            }).catch(() => this.$message.info("取消操作"))
+
+        },
+        // 手动选中行变化
+        selectRow(selection, row) {
+            // 判断是选中还是取消选中
+            let isSelected = selection.filter(item => item.anchorId == row.anchorId).length == 1
+            if(isSelected) { //选中-添加数据
+                this.defaultSelected.push(row)
+            }else { //删除数据
+                this.defaultSelected = this.defaultSelected.filter(item => item.anchorId != row.anchorId)
             }
         },
-        // 多选
-        dataListSelectionChangeHandle (val) {
-            this.dataListSelections = val
+        // 手动勾选全选
+        selectAll(selection) {
+            if(selection.length) { //全部选中
+                if(!this.defaultSelected.length) {
+                    this.defaultSelected = selection
+                }else {
+                    let data = JSON.parse(JSON.stringify(selection))
+                    let arr = [...this.defaultSelected, ...data]
+
+                    // 全选时，合并数据去重
+                    for(let i = 0; i < arr.length; i++) {
+                        for(let j = i + 1; j < arr.length; j++) {
+                            if(arr[i].anchorId == arr[j].anchorId) {
+                                arr.splice(i, 1)
+                                j--
+                            }
+                        }
+                    }
+
+                    this.defaultSelected = arr
+                }
+            }else { //全部取消
+                this.dataList.map(item => {
+                    this.defaultSelected.map((val, index) => {
+                        if(item.anchorId == val.anchorId) {
+                            this.defaultSelected.splice(index, 1)
+                        }
+                    })
+                })
+            }
         },
         // 分页, 每页条数
         pageSizeChangeHandle (val) {
@@ -244,6 +310,34 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+    .selectedData {
+        display: flex;
+        flex-wrap: wrap;
+        .showTitle {
+            display: inline-block;
+            max-width: 150px;
+            padding: 0 20px 0 10px;
+            line-height: 30px;
+            background: #eaf4fc;
+            color: #909399;
+            border-radius: 6px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;    
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            position: relative;
+            i {
+                position: absolute;
+                right: 4px;
+                top: 4px;
+            }
+        }
+    }
+    .el-dialog__body {
+        padding: 10px 20px !important;
+    }
     .avatarImg {
         width: 60px;
         height: 60px;
