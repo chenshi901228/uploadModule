@@ -1,8 +1,8 @@
 <template>
   <el-dialog top="20px" width="45%" :visible.sync="visible" :title="!dataForm.id ? $t('add') : $t('update')" :close-on-click-modal="false" :close-on-press-escape="false">
     <el-form :model="dataForm" size="small" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
-      <el-form-item prop="username" :label="$t('user.username')">
-        <el-input v-model="dataForm.username" :placeholder="$t('user.username')"></el-input>
+      <el-form-item prop="realName" :label="$t('user.username')">
+        <el-input v-model="dataForm.realName" :placeholder="$t('user.username')"></el-input>
       </el-form-item>
       <el-form-item prop="deptName" :label="$t('user.deptName')">
         <ren-dept-tree v-model="dataForm.deptId" :placeholder="$t('dept.title')" :dept-name.sync="dataForm.deptName"></ren-dept-tree>
@@ -13,7 +13,7 @@
       <el-form-item prop="confirmPassword" :label="$t('user.confirmPassword')" :class="{ 'is-required': !dataForm.id }">
         <el-input v-model="dataForm.confirmPassword" type="password" :placeholder="$t('user.confirmPassword')"></el-input>
       </el-form-item>
-      <el-form-item prop="realName" :label="$t('user.realName')">
+      <!-- <el-form-item prop="realName" :label="$t('user.realName')">
         <el-input v-model="dataForm.realName" :placeholder="$t('user.realName')"></el-input>
       </el-form-item>
       <el-form-item prop="gender" :label="$t('user.gender')" size="mini">
@@ -25,7 +25,7 @@
       </el-form-item>
       <el-form-item prop="email" :label="$t('user.email')">
         <el-input v-model="dataForm.email" :placeholder="$t('user.email')"></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item prop="mobile" :label="$t('user.mobile')">
         <el-input v-model="dataForm.mobile" :placeholder="$t('user.mobile')"></el-input>
       </el-form-item>
@@ -71,8 +71,8 @@ export default {
         password: '',
         confirmPassword: '',
         realName: '',
-        gender: 0,
-        email: '',
+        // gender: 0,
+        // email: '',
         mobile: '',
         roleIdList: [],
         postIdList: [],
@@ -97,12 +97,12 @@ export default {
         }
         callback()
       }
-      var validateEmail = (rule, value, callback) => {
-        if (!isEmail(value)) {
-          return callback(new Error(this.$t('validate.format', { 'attr': this.$t('user.email') })))
-        }
-        callback()
-      }
+      // var validateEmail = (rule, value, callback) => {
+      //   if (!isEmail(value)) {
+      //     return callback(new Error(this.$t('validate.format', { 'attr': this.$t('user.email') })))
+      //   }
+      //   callback()
+      // }
       var validateMobile = (rule, value, callback) => {
         if (!isMobile(value)) {
           return callback(new Error(this.$t('validate.format', { 'attr': this.$t('user.mobile') })))
@@ -110,7 +110,7 @@ export default {
         callback()
       }
       return {
-        username: [
+        realName: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ],
         deptName: [
@@ -122,13 +122,13 @@ export default {
         confirmPassword: [
           { validator: validateConfirmPassword, trigger: 'blur' }
         ],
-        realName: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ],
-        email: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
-          { validator: validateEmail, trigger: 'blur' }
-        ],
+        // realName: [
+        //   { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+        // ],
+        // email: [
+        //   { required: true, message: this.$t('validate.required'), trigger: 'blur' },
+        //   { validator: validateEmail, trigger: 'blur' }
+        // ],
         mobile: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' },
           { validator: validateMobile, trigger: 'blur' }
@@ -177,7 +177,7 @@ export default {
         if (res.code !== 0) {
           return this.$message.error(res.msg)
         }
-        this.dataForm = {
+        let obj = {
           ...this.dataForm,
           ...res.data,
           roleIdList: []
@@ -185,10 +185,13 @@ export default {
         // 角色配置, 区分是否为默认角色
         for (var i = 0; i < res.data.roleIdList.length; i++) {
           if (this.roleList.filter(item => item.id === res.data.roleIdList[i])[0]) {
-            this.dataForm.roleIdList.push(res.data.roleIdList[i])
+            obj.roleIdList.push(res.data.roleIdList[i])
             continue
           }
           this.roleIdListDefault.push(res.data.roleIdList[i])
+        }
+        for (let key in this.dataForm) {
+          this.dataForm[key] = obj[key]
         }
       }).catch(() => {})
     },
@@ -200,6 +203,7 @@ export default {
         }
         this.$http[!this.dataForm.id ? 'post' : 'put']('/sys/user', {
           ...this.dataForm,
+          username:this.dataForm.mobile,
           roleIdList: [
             ...this.dataForm.roleIdList,
             ...this.roleIdListDefault

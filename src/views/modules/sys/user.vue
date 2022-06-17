@@ -9,26 +9,26 @@
         size="small"
         label-width="100px"
         label-position="right"
-        @keyup.enter.native="changeTbas(diaTbas)"
+        @keyup.enter.native="getUserList(diaTbas)"
       >
-        <el-form-item label="用户名称" prop="username">
+        <el-form-item label="用户名称">
           <el-input
-            v-model="dataForm.username"
+            v-model="dataForm.nickName"
             placeholder="请输入"
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item label="手机号码" prop="gender">
+        <el-form-item label="手机号码">
           <el-input
             v-model="dataForm.phone"
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item label="账号状态" prop="gender">
-          <el-input
-            v-model="dataForm.status"
-            placeholder="请选择"
-          ></el-input>
+        <el-form-item label="账号状态">
+          <el-select v-model="dataForm.status" clearable placeholder="请选择">
+            <el-option label="正常" value="1">正常</el-option>
+            <el-option label="停用" value="0">停用</el-option>
+          </el-select>
         </el-form-item>
         <!-- <el-form-item :label="$t('dept.title')" prop="deptId">
           <ren-dept-tree
@@ -44,7 +44,7 @@
               type="primary" 
               icon="el-icon-search" 
               size="mini"
-              @click="changeTbas(diaTbas)">{{ $t("query") }}</el-button>
+              @click="getUserList(diaTbas)">{{ $t("query") }}</el-button>
             <el-button 
               icon="el-icon-refresh" 
               size="mini" 
@@ -174,22 +174,30 @@
           align="center"
           width="150"
         >
-          <template slot-scope="scope">
+          <template slot-scope="{ row }">
             <el-button
               v-if="$hasPermission('sys:user:update')"
               type="text"
               size="mini"
               icon="el-icon-edit"
-              @click="addOrUpdateHandle(scope.row.id)"
-              >{{ $t("update") }}</el-button
+              @click="addOrUpdateHandle(row.id)"
+              >编辑</el-button
             >
-            <el-button
+            <!-- <el-button
               v-if="$hasPermission('sys:user:delete')"
               type="text"
               size="mini"
               icon="el-icon-delete"
-              @click="deleteHandle(scope.row.id)"
+              @click="deleteHandle(row.id)"
               >{{ $t("delete") }}</el-button
+            > -->
+            <el-button
+              icon="el-icon-close"
+              type="text"
+              size="small"
+              v-if="!row.delFlg"
+              @click="forbidden(row)"
+              >{{ row.status != 0 ? "禁用" : "解除" }}</el-button
             >
           </template>
         </el-table-column>
@@ -206,30 +214,19 @@
       >
       </el-pagination>
       <!-- 弹窗, 新增 / 修改 -->
-      <!-- <add-or-update
+      <add-or-update
         v-if="addOrUpdateVisible"
         ref="addOrUpdate"
         @refreshDataList="changeTbas(diaTbas)"
-      ></add-or-update> -->
-      <el-dialog
-        title="提示"
-        :visible.sync="addOrUpdateVisible"
-        width="30%"
-        >
-        <span>这是一段信息</span>
-
-        <span slot="footer" class="dialog-footer">
-          <el-button @click="addOrUpdateVisible = false">取 消</el-button>
-          <el-button type="primary" @click="addOrUpdateVisible = false">确 定</el-button>
-        </span>
-      </el-dialog>
+      ></add-or-update>
     </div>
   </el-card>
 </template>
 
 <script>
+import debounce from 'lodash/debounce'
 // import mixinViewModule from "@/mixins/view-module";
-// import AddOrUpdate from "./user-add-or-update";
+import AddOrUpdate from "./user-add-or-update";
 export default {
   // mixins: [mixinViewModule],
   data() {
@@ -243,8 +240,26 @@ export default {
       // },
       addOrUpdateVisible:false,
       diaTbas: 1,
+      addDataForm:{
+        id: '',
+        mobile: '',
+        roleIdList: [],
+        postIdList: [],
+        status: 1,
+        username: '',
+        deptId: '0',
+        deptName: '',
+      },
+      dataRule:{
+        username: [
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+        ],
+        deptName: [
+          { required: true, message: this.$t('validate.required'), trigger: 'change' }
+        ],
+      },
       dataForm: {
-        username: "",
+        nickName: "",
         phone: "",
         status: "",
       },
@@ -317,18 +332,42 @@ export default {
     };
   },
   components: {
-    // AddOrUpdate,
+    AddOrUpdate,
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.changeTbas(1);
     });
   },
+  computed:{
+    computed: {
+      dataRule () {
+        var validateMobile = (rule, value, callback) => {
+          if (!isMobile(value)) {
+            return callback(new Error(this.$t('validate.format', { 'attr': this.$t('user.mobile') })))
+          }
+          callback()
+        }
+        return {
+          username: [
+            { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          ],
+          deptName: [
+            { required: true, message: this.$t('validate.required'), trigger: 'change' }
+          ],
+          mobile: [
+            { required: true, message: this.$t('validate.required'), trigger: 'blur' },
+            { validator: validateMobile, trigger: 'blur' }
+          ]
+        }
+      }
+    },
+  },
   created() {},
   methods: {
     changeTbas(n){
       this.dataForm={
-        username: "",
+        nickName: "",
         phone: "",
         status: "",
       }
@@ -352,7 +391,6 @@ export default {
         this.dataForm.page = this.page
       }else{
         delete this.dataForm.type
-        this.dataForm.nickName = this.dataForm.username
         url = '/sys/manage/weixinUser/managePage'
       }
       this.dataForm.limit = this.limit
@@ -375,10 +413,10 @@ export default {
     // 新增 / 修改
     addOrUpdateHandle (id) {
       this.addOrUpdateVisible = true
-      // this.$nextTick(() => {
-      //   this.$refs.addOrUpdate.dataForm.id = id
-      //   this.$refs.addOrUpdate.init()
-      // })
+      this.$nextTick(() => {
+        this.$refs.addOrUpdate.dataForm.id = id
+        this.$refs.addOrUpdate.init()
+      })
       console.log(id)
     },
     // 分页, 每页条数
@@ -391,6 +429,43 @@ export default {
     pageCurrentChangeHandle(val) {
       this.page = val;
       this.getUserList(this.diaTbas);
+    },
+    forbiddenHandle(type, data) {
+      let url = type
+        ? "/sys/manage/weixinUser/startUsing"
+        : "/sys/manage/weixinUser/forbiddenUsere";
+      this.$http
+        .put(url, { userIds: data })
+        .then(({ data: res }) => {
+          if (res.code == 0) {
+            this.$message.success("操作成功");
+            this.changeTbas(this.diaTbas)
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    // 禁用，解除用户
+    forbidden(row) {
+      //单个操作
+      this.$confirm(
+        `确认[${row.status == 0 ? "解除" : "禁用"}]${row.realName||row.nickName}?`,
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.forbiddenHandle(row.status == 0 ? 1 : 0, [row.id]);
+        })
+        .catch(() => {
+          this.$message.info("已取消操作");
+        });
     },
   },
 };

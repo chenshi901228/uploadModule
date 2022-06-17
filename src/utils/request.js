@@ -16,7 +16,7 @@ const http = axios.create({
  */
 http.interceptors.request.use(config => {
   config.headers['Accept-Language'] = Cookies.get('language') || 'zh-CN'
-  if (config.url !== '/auth/oauth/token') {
+  if (config.url !== '/auth/oauth/token'&&config.url !== '/message/sms/sendCodeWithLogin') {
     config.headers['Authorization'] = 'Bearer ' + Cookies.get('access_token') || ''
   }
   // 默认参数
