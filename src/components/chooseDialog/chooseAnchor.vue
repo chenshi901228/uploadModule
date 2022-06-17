@@ -167,22 +167,13 @@ export default {
         setCurPageSelected() {
             this.$nextTick(() => {
                 if (this.defaultSelected.length) {
-                    let arr = []
                     this.dataList.map((row, i) => {
                         this.defaultSelected.map(item => {
                             if(row.anchorId == item.anchorId) {
-                                arr.push(i)
+                                this.$refs.table.toggleRowSelection(row, true);
                             }
                         })
                     });
-
-                    if(arr.length) {
-                        arr.map(item => {
-                            this.$refs.table.toggleRowSelection(this.dataList[item], true);
-                        })
-                    }else {
-                        this.$refs.table.clearSelection();
-                    }
 
                 } else {
                     this.$refs.table.clearSelection();
@@ -229,14 +220,22 @@ export default {
         },
         // 点击删除
         deleteSelect(data) {
-            // 取消选中行
-            this.dataList.forEach(row => {
-                if(row.anchorId == data.anchorId) {
-                    this.$refs.table.toggleRowSelection(row, false);
-                }
-            })
-            // 默认选中数据中去掉这条数据
-            this.defaultSelected = this.defaultSelected.filter(item => item.anchorId != data.anchorId)
+
+            this.$confirm("确认取消推荐主播", "提示", {
+                confirmButtonText: "确认",
+                cancelButtonText: "取消",
+                type: "warning",
+            }).then(() => {
+                // 取消选中行
+                this.dataList.forEach(row => {
+                    if(row.anchorId == data.anchorId) {
+                        this.$refs.table.toggleRowSelection(row, false);
+                    }
+                })
+                // 默认选中数据中去掉这条数据
+                this.defaultSelected = this.defaultSelected.filter(item => item.anchorId != data.anchorId)
+            }).catch(() => this.$message.info("取消操作"))
+
         },
         // 手动选中行变化
         selectRow(selection, row) {
@@ -317,7 +316,7 @@ export default {
         .showTitle {
             display: inline-block;
             max-width: 150px;
-            padding: 0 10px;
+            padding: 0 20px 0 10px;
             line-height: 30px;
             background: #eaf4fc;
             color: #909399;

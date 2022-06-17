@@ -224,22 +224,13 @@ export default {
             this.$nextTick(() => {
                 if (this.defaultSelected.length) {
                     
-                    let arr = []
                     this.dataList.map((row, i) => {
                         this.defaultSelected.map(item => {
                             if(row.id == item.id) {
-                                arr.push(i)
+                                this.$refs.table.toggleRowSelection(row, true);
                             }
                         })
-                    });
-
-                    if(arr.length) {
-                        arr.map(item => {
-                            this.$refs.table.toggleRowSelection(this.dataList[item], true);
-                        })
-                    }else {
-                        this.$refs.table.clearSelection();
-                    }
+                    })
 
                 } else {
                     this.$refs.table.clearSelection();
@@ -303,14 +294,21 @@ export default {
         },
         // 点击删除
         deleteSelect(data) {
-            // 取消选中行
-            this.dataList.forEach(row => {
-                if(row.id == data.id) {
-                    this.$refs.table.toggleRowSelection(row, false);
-                }
-            })
-            // 默认选中数据中去掉这条数据
-            this.defaultSelected = this.defaultSelected.filter(item => item.id != data.id)
+            this.$confirm("确认取消推荐商品", "提示", {
+                confirmButtonText: "确认",
+                cancelButtonText: "取消",
+                type: "warning",
+            }).then(() => {
+                // 取消选中行
+                this.dataList.forEach(row => {
+                    if(row.id == data.id) {
+                        this.$refs.table.toggleRowSelection(row, false);
+                    }
+                })
+                // 默认选中数据中去掉这条数据
+                this.defaultSelected = this.defaultSelected.filter(item => item.id != data.id)
+            }).catch(() => this.$message.info("取消操作"))
+            
         },
         // 手动选中行变化
         selectRow(selection, row) {
