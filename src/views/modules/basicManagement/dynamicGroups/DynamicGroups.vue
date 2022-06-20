@@ -220,9 +220,9 @@
         </el-table>
         <el-pagination
           background
-          :current-groupMensPage="page"
-          :groupMensPage-sizes="[10, 20, 50, 100]"
-          :groupMensPage-size="limit"
+          :current-page="page"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="limit"
           :total="groupMensTotal"
           layout="total, sizes, prev, pager, next, jumper"
           @size-change="pageSizeChangeHandle"
@@ -558,7 +558,7 @@ export default {
       this.groupMensPage = 1;
       this.groupGroups = [];
       this.loadMoreText = "加载更多";
-      this.load();
+      this.queryDynamicGroup();
     },
     //分页获取动态组
     load() {
@@ -755,7 +755,7 @@ export default {
     // 重置搜索条件
     resetDataForm(formName = "dataForm") {
       this.$refs[formName].resetFields();
-      this.this.groupMensPage = 1;
+      this.groupMensPage = 1;
       this.groupGroups = [];
       this.queryDynamicGroup();
     },
