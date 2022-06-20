@@ -37,7 +37,7 @@
           placeholder="销售价格"
         ></el-input>
       </el-form-item>
-      <el-form-item label="分成比例：" prop="proportion">
+      <el-form-item label="库存数量：" prop="stock">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <!-- <el-input-number
           v-model="dataForm.proportion"
@@ -48,10 +48,9 @@
         >
         </el-input-number> -->
         <el-input
-          v-model="dataForm.proportion"
-          placeholder="分成比例"
+          v-model="dataForm.stock"
+          placeholder="库存数量"
         ></el-input>
-        %
       </el-form-item>
       <el-form-item label="已购买人数：" prop="buyers">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -89,8 +88,9 @@ export default {
       }
     };
     const blurText2 = async (rule, value, callback) => {
-      if (!Number(value) || Number(value) < 10 || Number(value) > 20) {
-        callback(new Error("请输入10到20之间的数字"));
+      const boolean = new RegExp("^\\d+$").test(value);
+      if (!boolean) {
+        callback(new Error("请输入0或正整数"));
       }
     };
     const blurText3 = async (rule, value, callback) => {
@@ -108,8 +108,8 @@ export default {
           { required: true, message: "请输入销售价格", trigger: "change" },
           { validator: blurText1, trigger: "change" },
         ],
-        proportion: [
-          { required: true, message: "请输入分成比例", trigger: "change" },
+        stock: [
+          { required: true, message: "请输入库存数量", trigger: "change" },
           { validator: blurText2, trigger: "change" },
         ],
         buyers: [
@@ -129,6 +129,7 @@ export default {
   methods: {
     init(data) {
       if (data) this.dataForm = JSON.parse(JSON.stringify(data));
+      this.dataForm.stock = this.dataForm.stock == null ? 0 : this.dataForm.stock
       this.visible = true;
     },
     // 取消添加
@@ -147,7 +148,7 @@ export default {
             .put("/sys/course", {
               id: params.id,
               price: params.price,
-              proportion: params.proportion,
+              stock: params.stock,
               buyers: params.buyers,
             })
             .then(({ data: res }) => {
