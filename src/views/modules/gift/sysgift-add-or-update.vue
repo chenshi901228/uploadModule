@@ -39,12 +39,12 @@
           @getImg="getImgPic"
         ></upload>
       </el-form-item>
-      <el-form-item label="是否免费" prop="isFree">
+      <!-- <el-form-item label="是否免费" prop="isFree">
         <el-radio-group v-model="dataForm.isFree">
           <el-radio :label="0">否</el-radio>
           <el-radio :label="1">是</el-radio>
         </el-radio-group>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item v-if="dataForm.isFree == 0" label="礼物价格" prop="price">
         <el-input-number
           v-model="dataForm.price"
@@ -83,7 +83,7 @@ export default {
         icon: "",
         dynamicIcon: "",
         price: "",
-        isFree: 0,
+        // isFree: 0,
         status: "",
       },
       filePicList: [],

@@ -14,7 +14,6 @@
         <el-form-item
           label="礼物名称"
           prop="name"
-          v-if="isOpen || formItemCount >= 1"
         >
           <el-input
           style="width: 200px"
@@ -40,7 +39,7 @@
                   </el-option>
               </el-select> -->
         </el-form-item>
-        <el-form-item
+        <!-- <el-form-item
           label="是否免费"
           prop="isFree"
           v-if="isOpen || formItemCount >= 2"
@@ -49,11 +48,10 @@
             <el-option label="是" :value="1"></el-option>
             <el-option label="否" :value="0"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item
           label="上架状态"
           prop="status"
-          v-if="isOpen || formItemCount >= 3"
         >
           <el-select style="width: 200px" clearable v-model="dataForm.status" placeholder="请选择">
             <el-option label="上架" :value="1"></el-option>
@@ -77,12 +75,12 @@
               @click="resetDataForm()"
               >{{ $t("reset") }}</el-button
             >
-            <el-button size="mini" plain @click="open">
+            <!-- <el-button size="mini" plain @click="open">
               <i
                 :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
               ></i>
               {{ isOpen ? "收起" : "展开" }}
-            </el-button>
+            </el-button> -->
           </el-form-item>
         </div>
 
@@ -195,7 +193,7 @@
           align="center"
           show-overflow-tooltip
         ></el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="isFree"
           label="是否免费"
           header-align="center"
@@ -208,7 +206,7 @@
             >
             <el-tag v-else size="small" type="success">是</el-tag>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="updateDate"
           label="更新时间"
@@ -324,7 +322,7 @@ export default {
       },
       dataForm: {
         name: "",
-        isFree: null,
+        // isFree: null,
         status: null,
       },
       loading: false, //礼物输入下拉选择loading

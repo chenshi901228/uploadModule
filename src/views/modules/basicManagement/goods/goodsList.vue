@@ -248,8 +248,16 @@
                 type="text"
                 size="small"
                 icon="el-icon-delete"
+                v-if="row.delFlg === 0"
                 @click="downGoods(row.id)"
                 >下架</el-button>
+              <el-button
+                type="text"
+                size="small"
+                icon="el-icon-plus"
+                v-if="row.delFlg != 0"
+                @click="upGoods(row.id)"
+                >上架</el-button>
               <el-button
                 type="text"
                 size="small"

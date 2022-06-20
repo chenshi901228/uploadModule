@@ -42,6 +42,8 @@
                             style="width: 400px"
                             v-model.trim="dataForm.consultativeKey"
                             placeholder="协议key"
+                            :maxlength="50"
+                            show-word-limit
                             clearable
                         >
                         </el-input>
