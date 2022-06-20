@@ -74,7 +74,7 @@
 import mixinTableModule from "@/mixins/table-module";
 import CustomUpload from "@/components/common/custom-upload";
 import { getVideoDuration } from "@/utils/index";
-import ChooseProduct from "@/components/chooseDialog/chooseProduct"
+import ChooseProduct from "./chooseDialog/chooseProduct"
 export default {
   mixins: [mixinTableModule],
   components: {
