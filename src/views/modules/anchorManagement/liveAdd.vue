@@ -198,50 +198,75 @@ export default {
         onSubmit() {
             this.$refs.dataForm.validate(async (valid) => {
                 if(valid){
-
-                    if(!this.$refs.frontCoverUpload.isUploadAll() || !this.$refs.bgLiveUpload.isUploadAll()){
-                        return this.$message.error("有附件正在上传中")
-                    }
-
-                    if(!this.frontCoverList.length){
-                        return this.$message.error("请上传直播宣传图")
-                    }
-
-                    let params = {}
-                    params = JSON.parse(JSON.stringify(this.dataForm))
-                    // 删除显示的主播、商品
-                    delete params.anchor
-                    delete params.product
                     
-
-                    // 附件处理
-                    params.frontCoverUrl = this.frontCoverList[0].url
-                    params.bgLiveUrl = this.bgLiveList[0] ? this.bgLiveList[0].url : ""
-
-                    delete params.bgLiveUrl //暂时不传
-
-                    // 商品ids
-                    params.productIds = this.productIds.map(item => item.id)
-                    // 主播ids
-                    params.recommendedAnchorList = this.recommendedAnchorList.map(item => item.anchorId)
-
-                    // 当前主播id
-                    params.anchorUserId = this.userId
-
-                    console.log(params)
-                    this.submitLoading = true
-                    this.$http.post("/sys/liveList/createLiveInLiveList", params).then(({ data: res }) => {
+                    try {
+                        if(!this.$refs.frontCoverUpload.isUploadAll() || !this.$refs.bgLiveUpload.isUploadAll()){
+                            return this.$message.error("有附件正在上传中")
+                        }
+    
+                        if(!this.frontCoverList.length){
+                            return this.$message.error("请上传直播宣传图")
+                        }
+    
+                        let params = {}
+                        params = JSON.parse(JSON.stringify(this.dataForm))
+                        // 删除显示的主播、商品
+                        delete params.anchor
+                        delete params.product
+                        
+    
+                        // 附件处理
+                        params.frontCoverUrl = this.frontCoverList[0].url
+                        params.bgLiveUrl = this.bgLiveList[0] ? this.bgLiveList[0].url : ""
+    
+                        delete params.bgLiveUrl //暂时不传
+    
+                        // 商品ids
+                        params.productIds = this.productIds.map(item => item.id)
+                        // 主播ids
+                        params.recommendedAnchorList = this.recommendedAnchorList.map(item => item.anchorId)
+    
+                        // 当前主播id
+                        params.anchorUserId = this.userId
+    
+                        console.log(params)
+                        this.submitLoading = true
+    
+                        // 是否有正在直播
+                        let { data: living } = await this.$http.get('/sys/mixedflow/getLiving')
+    
+                        if(living.data){
+                            this.$message.warning("当前正在直播中！")
+                            this.submitLoading = false
+                            return       
+                        }
+    
+                        let { data: creatLive } = await this.$http.post("/sys/liveList/createLiveInLiveList", params)
+    
                         this.submitLoading = false
-                        if(res.code == 0){
+                        if(creatLive.code == 0){
                             this.$message.success("创建直播成功")
                             this.cancel()
                         }else{
-                            this.$message.error(res.msg)
+                            this.$message.error(creatLive.msg)
                         }
-                    }).catch(err => {
+    
+                        // this.$http.post("/sys/liveList/createLiveInLiveList", params).then(({ data: res }) => {
+                        //     this.submitLoading = false
+                        //     if(res.code == 0){
+                        //         this.$message.success("创建直播成功")
+                        //         this.cancel()
+                        //     }else{
+                        //         this.$message.error(res.msg)
+                        //     }
+                        // }).catch(err => {
+                        //     this.submitLoading = false
+                        //     this.$message.error(JSON.stringify(err.message))
+                        // })
+                    }catch(err) {
                         this.submitLoading = false
                         this.$message.error(JSON.stringify(err.message))
-                    })
+                    }
                 }
             })
         }

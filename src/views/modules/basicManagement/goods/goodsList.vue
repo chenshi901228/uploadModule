@@ -89,6 +89,20 @@
             >
             </el-input>
           </el-form-item>
+          <el-form-item
+            label="状态"
+            prop="delFlg"
+            v-if="isOpen || formItemCount >= 5"
+          >
+            <el-select 
+              style="width: 200px" 
+              v-model="dataForm.delFlg" 
+              placeholder="商品类型"
+              clearable>
+                <el-option :value="0" label="上架"></el-option>
+                <el-option :value="1" label="下架"></el-option>
+            </el-select>
+          </el-form-item>
 
           <div class="headerTool-search-btns">
             <el-form-item>
@@ -214,8 +228,8 @@
                 {{ row.proportion }}%
               </span>
               <!-- 状态 -->
-              <span v-else-if="item.prop == 'status'">
-                <el-tag size="small" type="success">上架</el-tag>
+              <span v-else-if="item.prop == 'delFlg'">
+                <el-tag size="small" :type="row.delFlg === 0 ? 'success' : 'danger'">{{row.delFlg === 0 ? '上架' : '下架'}}</el-tag>
               </span>
               <span v-else>
                 {{ row[item.prop] || "-" }}
@@ -305,7 +319,7 @@ export default {
         { prop: "id", label: "关联产品编号" },
         // { prop: "proportion", label: "分成比例" },
         { prop: "updateDate", label: "更新时间", width: 180 },
-        { prop: "status", label: "状态" },
+        { prop: "delFlg", label: "状态" },
       ],
       loading: false, //搜索loading
       goodsNameOptions: [], //商品名称下拉选项

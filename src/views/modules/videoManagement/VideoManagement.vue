@@ -1,9 +1,9 @@
 
-<!-- 主播管理-直播列表 -->
+<!-- 短视频管理 -->
 
 <template>
   <el-card shadow="never" class="aui-card--fill">
-    <div class="mod-live__liveList">
+    <div class="mod-live__livePlayBack">
       <el-form
         class="headerTool"
         :inline="true"
@@ -15,9 +15,9 @@
         @keyup.enter.native="getDataList"
       >
         <el-form-item
-          v-if="isOpen || formItemCount >= 1"
-          label="直播主题"
+          label="回放主题"
           prop="liveTheme"
+          v-if="isOpen || formItemCount >= 1"
         >
           <el-input
             size="small"
@@ -29,41 +29,39 @@
           </el-input>
         </el-form-item>
         <el-form-item
+          label="主播"
+          prop="anchorUser"
           v-if="isOpen || formItemCount >= 2"
-          label="开播时间"
-          prop="startDate"
         >
-          <el-date-picker
+          <el-input
             size="small"
-            v-model="dataForm.startDate"
-            type="datetime"
             style="width: 200px"
-            format="yyyy-MM-dd HH:mm"
-            value-format="yyyy-MM-dd HH:mm"
-            placeholder="请选择开播时间"
+            v-model.trim="dataForm.anchorUser"
+            placeholder="请输入姓名或手机号码"
+            clearable
           >
-          </el-date-picker>
+          </el-input>
         </el-form-item>
         <el-form-item
+          label="视频显示"
+          prop="showMode"
           v-if="isOpen || formItemCount >= 3"
-          label="结束时间"
-          prop="endDate"
         >
-          <el-date-picker
+          <el-select
+            clearable
             size="small"
-            v-model="dataForm.endDate"
-            type="datetime"
             style="width: 200px"
-            format="yyyy-MM-dd HH:mm"
-            value-format="yyyy-MM-dd HH:mm"
-            placeholder="请选择结束时间"
+            v-model="dataForm.showMode"
+            placeholder="请选择"
           >
-          </el-date-picker>
+            <el-option label="横屏" :value="1"></el-option>
+            <el-option label="竖屏" :value="0"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 4"
           label="投放人群"
           prop="dynamicGroupName"
+          v-if="isOpen || formItemCount >= 4"
         >
           <el-select
             size="small"
@@ -84,61 +82,31 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 5"
-          label="直播间ID"
-          prop="livingRoomId"
-        >
-          <el-input
-            style="width: 200px"
-            size="small"
-            v-model.trim="dataForm.livingRoomId"
-            placeholder="请输入直播间ID"
-            clearable
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item
-          v-if="isOpen || formItemCount >= 6"
-          label="是否录制"
-          prop="transcribeFlg"
-        >
-          <el-select
-            clearable
-            style="width: 200px"
-            size="small"
-            v-model="dataForm.transcribeFlg"
-            placeholder="请选择"
-          >
-            <el-option label="是" :value="1"></el-option>
-            <el-option label="否" :value="0"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          v-if="isOpen || formItemCount >= 7"
-          label="直播状态"
+          label="回放状态"
           prop="liveState"
+          v-if="isOpen || formItemCount >= 5"
         >
           <el-select
             clearable
-            style="width: 200px"
             size="small"
+            style="width: 200px"
             v-model="dataForm.liveState"
             placeholder="请选择"
           >
-            <el-option label="直播中" :value="1"></el-option>
-            <el-option label="已下播" :value="0"></el-option>
-            <el-option label="已禁播" :value="2"></el-option>
+            <el-option label="可回放" :value="1"></el-option>
+            <el-option label="已删除" :value="0"></el-option>
+            <el-option label="生成中" :value="2"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 8"
           label="显示状态"
           prop="showState"
+          v-if="isOpen || formItemCount >= 6"
         >
           <el-select
             clearable
-            style="width: 200px"
             size="small"
+            style="width: 200px"
             v-model="dataForm.showState"
             placeholder="请选择"
           >
@@ -146,6 +114,7 @@
             <el-option label="隐藏" :value="0"></el-option>
           </el-select>
         </el-form-item>
+
         <div class="headerTool-search-btns">
           <el-form-item>
             <el-button
@@ -169,29 +138,26 @@
             </el-button>
           </el-form-item>
         </div>
+
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
-            <el-form-item>
-              <el-button
-                type="primary"
-                plain
-                icon="el-icon-plus"
-                size="mini"
-                @click="createLive"
-                >创建直播</el-button
-              >
-            </el-form-item>
-            <el-form-item>
-              <el-button
-                type="warning"
-                plain
-                icon="el-icon-download"
-                size="mini"
-                @click="exportHandle"
-                >{{ $t("export") }}</el-button
-              >
-            </el-form-item>
+            <el-button
+              size="mini"
+              plain
+              icon="el-icon-plus"
+              type="primary"
+              @click="addOrUpdateHandle()"
+              >{{ $t("add") }}</el-button
+            >
+            <el-button
+              type="warning"
+              plain
+              icon="el-icon-download"
+              size="mini"
+              @click="exportHandle"
+              >{{ $t("export") }}</el-button
+            >
           </div>
           <div class="headerTool--handle-btns-right">
             <el-form-item>
@@ -236,9 +202,6 @@
           :label="item.label"
           :width="item.width || 120"
           show-overflow-tooltip
-          :sortable="
-            ['transcribeFlg', 'liveState', 'showState'].includes(item.prop)
-          "
         >
           <template slot-scope="{ row }">
             <!-- 封面图 -->
@@ -251,24 +214,18 @@
                 alt=""
               />
             </div>
-            <!-- 显示方式 -->
+            <!-- 视频显示 -->
             <span v-else-if="item.prop == 'showMode'">
               {{ row.showMode ? "横屏" : "竖屏" }}
             </span>
-            <!-- 是否录制 -->
-            <span v-else-if="item.prop == 'transcribeFlg'">
-              {{ row.transcribeFlg ? "是" : "否" }}
-            </span>
-            <!-- 直播状态 -->
+            <!-- 回放状态 -->
             <span v-else-if="item.prop == 'liveState'">
               {{
                 row.liveState == 1
-                  ? "直播中"
+                  ? "可回放"
                   : row.liveState == 0
-                  ? "已下播"
-                  :row.liveState == 3
-                  ? "未开播"
-                  : "已禁播"
+                  ? "已删除"
+                  : "生成中"
               }}
             </span>
             <!-- 显示状态 -->
@@ -282,9 +239,16 @@
             >
               {{ row[item.prop] }}
             </span>
-            <!-- 直播时长 -->
-            <span v-else-if="item.prop == 'liveTime'">
-              {{ row.liveTime ? row.liveTime + "分钟" : "-" }}
+            <!-- 视频大小 -->
+            <span v-else-if="item.prop == 'videoSize'">
+              {{ sizeTostr(row[item.prop]) }}
+            </span>
+            <!-- 投放人群 -->
+            <span v-else-if="item.prop == 'dynamicGroupName'">
+              {{ row.dynamicGroupName || "-" }}
+            </span>
+            <span v-else-if="item.prop == 'liveDuration'">
+              {{ getLiveDuration(row.relationLiveUrl) }}
             </span>
             <span v-else>
               {{ row[item.prop] || "-" }}
@@ -299,42 +263,56 @@
           width="200"
         >
           <template slot-scope="{ row }">
-            <el-button
+            <!-- <el-button
+              size="small"
+              icon="el-icon-download"
               type="text"
               v-if="row.liveState == 1"
-              @click="closeLiveHandle(row.anchorUserId)"
+              @click="actionHandle('1', row)"
+              >下载视频</el-button
+            > -->
+            <el-button
               size="small"
-              icon="el-icon-video-pause"
-              >下播</el-button
+              icon="el-icon-video-camera"
+              style="margin-left: 10px"
+              type="text"
+              @click="viewVideo(row)"
+              >查看详情</el-button
             >
             <el-button
-              type="text"
-              icon="el-icon-d-arrow-right"
               size="small"
-              v-if="row.liveState == 1 || row.liveState == 3"
-              @click="joinLiveHandle(row)"
-              >进入直播间</el-button
+              icon="el-icon-chat-dot-square"
+              style="margin-left: 10px"
+              type="text"
+              v-if="row.liveState == 1"
+              @click="actionHandle('2', row)"
+              >评论详情</el-button
             >
             <el-button
-              type="text"
               size="small"
-              icon="el-icon-goods"
+              icon="el-icon-sort"
+              style="margin-left: 10px"
+              type="text"
+              v-if="row.liveState == 1"
+              @click="showOrHide(row)"
+              >{{ row.showState ? "隐藏" : "显示" }}</el-button
+            >
+            <el-button
+              size="small"
+              icon="el-icon-shopping-cart-2"
+              style="margin-left: 10px"
+              type="text"
+              v-if="row.liveState != 0"
               @click="addProduct(row)"
               >带货商品</el-button
             >
             <el-button
-              type="text"
               size="small"
-              icon="el-icon-user"
-              @click="addAnchor(row)"
-              >推荐主播</el-button
-            >
-            <el-button
+              icon="el-icon-delete"
+              style="margin-left: 10px"
               type="text"
-              size="small"
-              icon="el-icon-user-solid"
-              @click="assistant(row)"
-              >助手</el-button
+              @click="deleteVideo(row)"
+              >删除</el-button
             >
           </template>
         </el-table-column>
@@ -351,55 +329,58 @@
       >
       </el-pagination>
     </div>
+    <!-- 新增 -->
+    <add-or-update
+      ref="addOrUpdate"
+      @refreshDataList="getDataList"
+    ></add-or-update>
   </el-card>
 </template>
 
 <script>
 import mixinTableModule from "@/mixins/table-module";
+import { sizeTostr, downloadFileUrl } from "@/utils/index";
+import AddOrUpdate from "./livePlayBack-add-or-update.vue";
 export default {
   mixins: [mixinTableModule],
+  components: {
+    AddOrUpdate,
+  },
   data() {
     return {
       mixinTableModuleOptions: {
-        getDataListURL: "/sys/liveList/pageOwn", // 数据列表接口，API地址
-        exportURL: "/sys/liveList/export", // 导出接口，API地址
+        getDataListURL: "/sys/livePlayback/pageOwn", // 数据列表接口，API地址
+        exportURL: "/sys/livePlayback/export", // 导出接口，API地址
       },
       dataForm: {
         liveTheme: "",
-        startDate: "",
-        endDate: "",
-        livingRoomId: "",
-        dynamicGroupName: "",
-        transcribeFlg: null,
-        liveState: null,
+        anchorUser: "",
+        showMode: null,
         showState: null,
+        liveState: null,
+        dynamicGroupName: "",
       },
 
       tableItem: [
         { prop: "frontCoverUrl", label: "封面图" },
-        { prop: "liveTheme", label: "直播主题" },
-        { prop: "liveBroadcastWay", label: "推流端" },
-        { prop: "showMode", label: "显示方式" },
+        { prop: "liveTheme", label: "回放主题" },
         { prop: "anchorUser", label: "主播" },
         { prop: "anchorTel", label: "手机号码" },
-        { prop: "startDate", label: "开播时间", width: 180 },
-        { prop: "endDate", label: "结束时间", width: 180 },
-        { prop: "liveTime", label: "直播时长（分）" },
+        { prop: "showMode", label: "视频显示" },
+        { prop: "liveDuration", label: "视频时长" },
+        { prop: "videoSize", label: "视频大小" },
         { prop: "dynamicGroupName", label: "投放人群" },
-        { prop: "audienceNum", label: "观众总数" },
-        { prop: "maxOnlineNum", label: "最高同时在线" },
+        { prop: "playbackNum", label: "回放次数" },
+        { prop: "commentNum", label: "评论次数" },
         { prop: "giveLikeNum", label: "点赞次数" },
-        { prop: "interactionNum", label: "互动次数" },
         { prop: "shareNum", label: "分享次数" },
         { prop: "addUserNum", label: "新增用户" },
-        { prop: "transcribeFlg", label: "是否录制" },
-        { prop: "liveState", label: "直播状态" },
+        { prop: "liveState", label: "回放状态" },
         { prop: "showState", label: "显示状态" },
         { prop: "livingRoomId", label: "直播间ID", width: 180 },
         { prop: "remark", label: "备注" },
         { prop: "createDate", label: "创建时间", width: 180 },
       ],
-
       dynamicGroupOptions: [], //投放人群
       getDynamicGroupLoading: false, //下拉框加载数据loading
     };
@@ -411,6 +392,33 @@ export default {
     this.query();
   },
   methods: {
+    //查看视频详情
+    viewVideo(row) {},
+    //删除视频
+    deleteVideo(row) {},
+    // 视频大小转换
+    sizeTostr(size) {
+      return sizeTostr(size);
+    },
+    // 视频时长设置
+    getLiveDuration(url) {
+      return "-";
+    },
+    actionHandle(action, data) {
+      switch (action) {
+        case "1": // 下载视频
+          if (data.relationLiveUrl)
+            window.open(downloadFileUrl(data.relationLiveUrl));
+          break;
+        case "2": // 查看评论详情
+          if (data.id)
+            this.$router.push({
+              name: "liveManagement-livePlayBackComment",
+              query: { id: data.id, sys: 0 },
+            });
+          break;
+      }
+    },
     // 投放人群下拉请求数据
     getDynamicGroup(value) {
       if (value) {
@@ -435,87 +443,42 @@ export default {
           });
       }
     },
-    // 创建直播
-    createLive() {
-      this.$router.push({ path: "anchorManagement-liveAdd" })
-    },
-    // 下播
-    closeLiveHandle(id) {
-      this.$alert("确定关闭直播？", "提示", {
-        confirmButtonText: "确定",
-        callback: (action) => {
-          console.log(action);
-          if (action == "confirm") {
-            this.$loading({ background: "rgba(0,0,0,.5)" });
-            this.$http
-              .post("/sys/mixedflow/stopMixedFlow", {
-                UserId: id,
-                RoomId: id,
-              })
-              .then((res) => {
-                if (res.data.success && res.data.msg == "success") {
-                  this.$nextTick(() => {
-                    // 以服务的方式调用的 Loading 需要异步关闭
-                    this.$loading().close();
-                  });
-                  this.$message({ message: "直播已关闭", type: "success" });
-                  localStorage.removeItem("liveStatus"); //将直播状态移除
-                  localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
-                  localStorage.removeItem("isRecord"); //将录制状态移除
-                  localStorage.removeItem("studentList"); //将学生列表移除
-                  this.query();
-                } else {
-                  this.$nextTick(() => {
-                    // 以服务的方式调用的 Loading 需要异步关闭
-                    this.$loading().close();
-                  });
-                  this.$message({ message: "结束直播失败", type: "error" });
-                }
-              });
-          }
-        },
+
+    // 视频显示/隐藏
+    showOrHide(data) {
+      this.customConfirm(`确认${data.showState ? "隐藏" : "显示"}？`, (cb) => {
+        this.$http
+          .put("/sys/livePlayback/showOrHide", {
+            id: data.id,
+            showState: data.showState ? 0 : 1,
+          })
+          .then(({ data: res }) => {
+            if (res.code == 0) {
+              this.$message.success("操作成功");
+              this.query();
+            } else {
+              this.$message.error(res.msg);
+            }
+            cb();
+          })
+          .catch((err) => {
+            console.log(err);
+            cb();
+          });
       });
     },
-    // 进入直播间
-    joinLiveHandle(row) {
-      let t = this.$router.resolve({
-        name: "liveRoom",
-        query: { liveTheme: row.liveTheme },
-      });
-      window.open(t.href, "_blank");
-    },
-    //带货商品
-    addProduct(row) {
+    // 添加商品
+    addProduct({ id, anchorUserId }) {
       this.$router.push({
-        path: "/preview-cargoGoods-CargoGoods",
-        query: {
-          liveId: row.id,
-          anchorId: row.anchorUserId
-        }
-      });
-    },
-    //推荐主播
-    addAnchor(row) {
-      this.$router.push({
-        path: "/preview-recommendAnchor-RecommendAnchor",
-        query: { liveId: row.id }
-      });
-    },
-    //助手
-    assistant(row) {
-      this.$router.push({
-        path: "/preview-assistant-Assistant",
-        query: {
-          liveId: row.id,
-          anchorId: row.anchorUserId
-        }
+        name: "anchorManagement-productAdd",
+        query: { playbackId: id, anchorId: anchorUserId },
       });
     },
   },
 };
 </script>
 <style lang="scss" scoped>
-.mod-live__liveList {
+.mod-live__livePlayBack {
   .frontCoverImg {
     width: 100%;
     height: 60px;
