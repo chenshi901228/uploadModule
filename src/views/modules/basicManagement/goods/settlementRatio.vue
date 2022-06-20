@@ -232,7 +232,7 @@
           :loading="submitLoading"
           size="small"
           type="primary"
-          @click="submit"
+          @click="submit(setText)"
           >确定</el-button
         >
       </span>
@@ -275,7 +275,12 @@ export default {
       submitLoading: false,
       dataRule: {
         proportion: [
-          { required: true, message: "请输入结算比例", trigger: "change" },
+          {
+            required: true,
+            message:
+              "不能输入字母，中文，特殊字符，空格，小数，负数，大于99得数等",
+            trigger: "blur",
+          },
         ],
       },
       setText: "",
@@ -291,6 +296,8 @@ export default {
   methods: {
     // 批量or单独设置
     editHandle(num) {
+      this.editeForm.proportion = 0;
+
       if (num === 1) {
         this.setText = "全部主播结算比例";
       } else {
@@ -336,10 +343,10 @@ export default {
         .catch(() => this.$message.info("取消删除"));
     },
     // 表单提交
-    submit() {
+    submit(setText) {
       this.$refs.editeForm.validate((valid) => {
         if (valid) {
-          if ((this.setText = "全部主播结算比例")) {
+          if (setText === "全部主播结算比例") {
             this.submitLoading = true;
             let parmas = {};
             parmas.productId = this.$route.query.productId;

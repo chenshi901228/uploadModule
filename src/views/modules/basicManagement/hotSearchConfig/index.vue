@@ -198,7 +198,7 @@ export default {
                 { prop: "value", label: "配置内容" },
                 { prop: "type", label: "分类" },
                 { prop: "clickNum", label: "点击量" },
-                { prop: "createBy", label: "创建人", width: 180 },
+                { prop: "updateByName", label: "创建人", width: 180 },
                 { prop: "updateDate", label: "更新时间", width: 150 },
             ],
             // 分类选项

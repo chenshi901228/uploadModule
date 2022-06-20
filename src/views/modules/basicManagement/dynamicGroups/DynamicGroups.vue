@@ -126,17 +126,6 @@
             <div class="headerTool--handle-btns-left">
               <el-form-item>
                 <el-button
-                  plain
-                  icon="el-icon-delete"
-                  size="mini"
-                  v-if="dataListSelections.length !== 0"
-                  type="danger"
-                  @click="deleteSelect()"
-                  >批量移除</el-button
-                >
-              </el-form-item>
-              <el-form-item>
-                <el-button
                   size="mini"
                   plain
                   icon="el-icon-sort-down"
@@ -153,6 +142,27 @@
                   type="primary"
                   @click="addUser"
                   >新增</el-button
+                >
+              </el-form-item>
+              <el-form-item>
+                <el-button
+                  plain
+                  icon="el-icon-delete"
+                  size="mini"
+                  :disabled="dataListSelections.length === 0"
+                  type="danger"
+                  @click="deleteSelect()"
+                  >批量移除</el-button
+                >
+              </el-form-item>
+              <el-form-item>
+                <el-button
+                  plain
+                  icon="el-icon-delete"
+                  size="mini"
+                  type="danger"
+                  @click="deleteAll()"
+                  >一键移除</el-button
                 >
               </el-form-item>
             </div>
@@ -336,6 +346,22 @@
           >取 消</el-button
         >
         <el-button size="small" type="primary" @click="confirmDelte"
+          >确 定</el-button
+        >
+      </span>
+    </el-dialog>
+
+    <el-dialog
+      title="一键移除"
+      :visible.sync="dialogDeleteAllVisible"
+      width="30%"
+    >
+      <span>确认全部移出动态组的成员?</span>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="dialogDeleteAllVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="confirmDelteAll"
           >确 定</el-button
         >
       </span>
@@ -532,6 +558,8 @@ export default {
       loadMoreText: "加载更多",
       uploadFlag: false,
       dowloadFalseUrl: "",
+      dialogDeleteAllVisible: false,
+      deleteAllId: "",
     };
   },
   watch: {
@@ -548,12 +576,37 @@ export default {
         this.reset();
       }
     },
+    groupGroups(n, o) {
+      if (n.length >= this.groupMensTotal) {
+        this.loadMoreText = "已加载全部";
+      }
+    },
   },
   created() {
     this.queryDynamicGroup();
   },
   activated() {},
   methods: {
+    //一键移除
+    deleteAll() {
+      this.dialogDeleteAllVisible = true;
+    },
+    //一键移除确认
+    confirmDelteAll() {
+      this.$http
+        .delete(`/sys/dynamicGroup/deleteByGroupId/${this.chooseGroupId}`)
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          this.$message.success("移除成功!");
+          this.dialogDeleteAllVisible = false;
+          this.queryPageWithGroupId(this.chooseGroupId);
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
     loadName() {
       this.groupMensPage = 1;
       this.groupGroups = [];
@@ -875,6 +928,7 @@ export default {
       this.userListPage = val;
       this.queryUserList();
     },
+    //重置
     resetDataForm() {
       this.dataForm = {
         name: "",
@@ -953,6 +1007,7 @@ export default {
         }
       }
     },
+    //确认删除
     confirmShowState() {
       this.$http
         .delete("/sys/dynamicGroupUser", { data: this.ids })
@@ -1028,7 +1083,6 @@ export default {
     },
     //批量删除
     deleteSelect() {
-      console.log(this.dataListSelections);
       this.dataListSelections.forEach((v) => {
         this.ids.push(v.id);
       });

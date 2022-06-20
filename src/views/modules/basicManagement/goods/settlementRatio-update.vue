@@ -47,11 +47,13 @@ export default {
   data() {
     return {
       visible: false,
-      dataForm: {},
+      dataForm: {
+        proportion:0
+      },
       submitLoading: false,
       dataRule: {
         proportion: [
-          { required: true, message: "请输入结算比例", trigger: "change" },
+          { required: true, message: "不能输入字母，中文，特殊字符，空格，小数，负数，大于99得数等", trigger: "blur" },
         ],
       },
     };
