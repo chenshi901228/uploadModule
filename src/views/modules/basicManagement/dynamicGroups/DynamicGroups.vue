@@ -801,6 +801,7 @@ export default {
           this.$message.success("修改成功!");
           this.dialogEditeFormVisible = false;
           this.groupMensPage = 1;
+          this.groupGroups = [];
           this.queryDynamicGroup();
           this.editeGroupForm.name = "";
         })
