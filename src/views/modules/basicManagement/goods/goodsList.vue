@@ -223,9 +223,9 @@
                   row.isFree ? "是" : "否"
                 }}</el-tag>
               </span>
-              <!-- 分成比例 -->
-              <span v-else-if="item.prop == 'proportion'">
-                {{ row.proportion }}%
+              <!-- 库存数量 -->
+              <span v-else-if="item.prop == 'stock'">
+                {{ row.stock || 0 }}
               </span>
               <!-- 状态 -->
               <span v-else-if="item.prop == 'delFlg'">
@@ -255,6 +255,7 @@
                 size="small"
                 icon="el-icon-edit"
                 @click="edit(row)"
+                v-if="row.delFlg != 0"
                 >编辑</el-button>
               <el-button
                 type="text"
@@ -314,7 +315,7 @@ export default {
         { prop: "price", label: "销售价格" },
         { prop: "productType", label: "商品类型" },
         { prop: "isFree", label: "是否免费" },
-        { prop: "num", label: "库存数量" },
+        { prop: "stock", label: "库存数量" },
         { prop: "buyers", label: "已购买人数" },
         { prop: "id", label: "关联产品编号" },
         // { prop: "proportion", label: "分成比例" },

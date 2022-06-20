@@ -31,11 +31,11 @@
         >
           <i class="el-icon-plus"></i>
         </el-upload> -->
-        <ImgCutter @cutDown="cutDown" fileType="jpeg">
+        <!-- <ImgCutter @cutDown="cutDown" fileType="jpeg">
             <button slot="open">选择图片</button>
         </ImgCutter>
-        <img :src="imgSrc" alt="">
-        <!-- <upload :fileList="fileList" :limit="1" :multiple="false" @getImg="getImg"></upload> -->
+        <img :src="imgSrc" alt=""> -->
+        <upload :fileList="fileList" :limit="1" :multiple="false" @getImg="getImg"></upload>
       </el-form-item>
       <el-form-item>
         <!-- <el-button @click="resetForm('ruleForm')">取消</el-button> -->
