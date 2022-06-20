@@ -229,7 +229,7 @@
               </span>
               <!-- 状态 -->
               <span v-else-if="item.prop == 'delFlg'">
-                <el-tag size="small" type="success">{{row.delFlg === 0 ? '上架' : '下架'}}</el-tag>
+                <el-tag size="small" :type="row.delFlg === 0 ? 'success' : 'danger'">{{row.delFlg === 0 ? '上架' : '下架'}}</el-tag>
               </span>
               <span v-else>
                 {{ row[item.prop] || "-" }}
