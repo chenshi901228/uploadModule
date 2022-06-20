@@ -15,7 +15,7 @@
         @keyup.enter.native="getDataList"
       >
         <el-form-item
-          label="回放主题"
+          label="视频主题"
           prop="liveTheme"
           v-if="isOpen || formItemCount >= 1"
         >
@@ -24,20 +24,6 @@
             style="width: 200px"
             v-model.trim="dataForm.liveTheme"
             placeholder="请输入选择"
-            clearable
-          >
-          </el-input>
-        </el-form-item>
-        <el-form-item
-          label="主播"
-          prop="anchorUser"
-          v-if="isOpen || formItemCount >= 2"
-        >
-          <el-input
-            size="small"
-            style="width: 200px"
-            v-model.trim="dataForm.anchorUser"
-            placeholder="请输入姓名或手机号码"
             clearable
           >
           </el-input>
@@ -59,49 +45,28 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          label="投放人群"
-          prop="dynamicGroupName"
+          label="审核状态"
+          prop="approveStatus"
           v-if="isOpen || formItemCount >= 4"
         >
           <el-select
-            size="small"
-            style="width: 200px"
-            v-model="dataForm.dynamicGroupName"
-            placeholder="请选择投放人群"
-            :loading="getDynamicGroupLoading"
-            @visible-change="getDynamicGroup"
-            clearable
-          >
-            <el-option
-              v-for="item in dynamicGroupOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.name"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          label="回放状态"
-          prop="liveState"
-          v-if="isOpen || formItemCount >= 5"
-        >
-          <el-select
             clearable
             size="small"
             style="width: 200px"
-            v-model="dataForm.liveState"
+            v-model="dataForm.approveStatus"
             placeholder="请选择"
           >
-            <el-option label="可回放" :value="1"></el-option>
-            <el-option label="已删除" :value="0"></el-option>
-            <el-option label="生成中" :value="2"></el-option>
+            <el-option label="审核中" :value="0"></el-option>
+            <el-option label="已通过" :value="1"></el-option>
+            <el-option label="已驳回" :value="2"></el-option>
+            <el-option label="审核中" :value="3"></el-option>
+            <el-option label="已通过" :value="4"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
           label="显示状态"
           prop="showState"
-          v-if="isOpen || formItemCount >= 6"
+          v-if="isOpen || formItemCount >= 5"
         >
           <el-select
             clearable
@@ -147,8 +112,8 @@
               plain
               icon="el-icon-plus"
               type="primary"
-              @click="addOrUpdateHandle()"
-              >{{ $t("add") }}</el-button
+              @click="addOrUpdateHandle"
+              >新增</el-button
             >
             <el-button
               type="warning"
@@ -232,6 +197,18 @@
             <span v-else-if="item.prop == 'showState'">
               {{ row.showState ? "显示" : "隐藏" }}
             </span>
+            <!-- 审核状态 -->
+            <span v-else-if="item.prop == 'approveStatus'">
+              {{
+                row.approveStatus === 0
+                  ? "审核中"
+                  : row.approveStatus === 1
+                  ? "已通过"
+                  : row.approveStatus === 2
+                  ? "已驳回"
+                  : "-"
+              }}
+            </span>
             <!-- 直播间ID -->
             <span
               v-else-if="item.prop == 'livingRoomId'"
@@ -242,10 +219,6 @@
             <!-- 视频大小 -->
             <span v-else-if="item.prop == 'videoSize'">
               {{ sizeTostr(row[item.prop]) }}
-            </span>
-            <!-- 投放人群 -->
-            <span v-else-if="item.prop == 'dynamicGroupName'">
-              {{ row.dynamicGroupName || "-" }}
             </span>
             <span v-else-if="item.prop == 'liveDuration'">
               {{ getLiveDuration(row.relationLiveUrl) }}
@@ -329,23 +302,14 @@
       >
       </el-pagination>
     </div>
-    <!-- 新增 -->
-    <add-or-update
-      ref="addOrUpdate"
-      @refreshDataList="getDataList"
-    ></add-or-update>
   </el-card>
 </template>
 
 <script>
 import mixinTableModule from "@/mixins/table-module";
 import { sizeTostr, downloadFileUrl } from "@/utils/index";
-import AddOrUpdate from "./livePlayBack-add-or-update.vue";
 export default {
   mixins: [mixinTableModule],
-  components: {
-    AddOrUpdate,
-  },
   data() {
     return {
       mixinTableModuleOptions: {
@@ -358,28 +322,26 @@ export default {
         showMode: null,
         showState: null,
         liveState: null,
-        dynamicGroupName: "",
+        approveStatus: 3,
       },
 
       tableItem: [
-        { prop: "frontCoverUrl", label: "封面图" },
-        { prop: "liveTheme", label: "回放主题" },
+        { prop: "frontCoverUrl", label: "视频宣传图" },
+        { prop: "liveTheme", label: "视频主题" },
         { prop: "anchorUser", label: "主播" },
         { prop: "anchorTel", label: "手机号码" },
         { prop: "showMode", label: "视频显示" },
         { prop: "liveDuration", label: "视频时长" },
         { prop: "videoSize", label: "视频大小" },
-        { prop: "dynamicGroupName", label: "投放人群" },
-        { prop: "playbackNum", label: "回放次数" },
+        { prop: "playbackNum", label: "播放次数" },
         { prop: "commentNum", label: "评论次数" },
         { prop: "giveLikeNum", label: "点赞次数" },
         { prop: "shareNum", label: "分享次数" },
         { prop: "addUserNum", label: "新增用户" },
-        { prop: "liveState", label: "回放状态" },
+        { prop: "approveStatus", label: "审核状态" },
         { prop: "showState", label: "显示状态" },
-        { prop: "livingRoomId", label: "直播间ID", width: 180 },
-        { prop: "remark", label: "备注" },
-        { prop: "createDate", label: "创建时间", width: 180 },
+        { prop: "createByName", label: "创建人" },
+        { prop: "createDate", label: "创建时间" },
       ],
       dynamicGroupOptions: [], //投放人群
       getDynamicGroupLoading: false, //下拉框加载数据loading
@@ -392,8 +354,19 @@ export default {
     this.query();
   },
   methods: {
+    //新增视频
+    addOrUpdateHandle() {
+      this.$router.push({
+        name: "videoManagement-addVideo",
+      });
+    },
     //查看视频详情
-    viewVideo(row) {},
+    viewVideo(row) {
+      this.$router.push({
+        name: "videoManagement-videoDetail",
+        query: { id: row.id },
+      });
+    },
     //删除视频
     deleteVideo(row) {},
     // 视频大小转换
@@ -419,31 +392,6 @@ export default {
           break;
       }
     },
-    // 投放人群下拉请求数据
-    getDynamicGroup(value) {
-      if (value) {
-        //展开下拉框 请求数据
-        this.getDynamicGroupLoading = true;
-        this.$http
-          .get("/sys/dynamicGroup/getDynamicGroupList")
-          .then(({ data: res }) => {
-            if (res.code == 0) {
-              this.dynamicGroupOptions = res.data;
-            } else {
-              this.$message.error(res.msg);
-              this.dynamicGroupOptions = [];
-              this.dataForm.dynamicGroupName = "";
-            }
-            this.getDynamicGroupLoading = false;
-          })
-          .catch((err) => {
-            this.getDynamicGroupLoading = false;
-            this.dynamicGroupOptions = [];
-            this.dataForm.dynamicGroupName = "";
-          });
-      }
-    },
-
     // 视频显示/隐藏
     showOrHide(data) {
       this.customConfirm(`确认${data.showState ? "隐藏" : "显示"}？`, (cb) => {

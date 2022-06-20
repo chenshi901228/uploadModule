@@ -1,49 +1,16 @@
+
+<!-- 新增视频 -->
+
 <template>
-  <el-dialog
-    top="20px"
-    :visible.sync="visible"
-    :title="!dataForm.id ? $t('add') : $t('update')"
-    :close-on-click-modal="false"
-    @close="cancel"
-    :close-on-press-escape="false"
-  >
+  <el-card shadow="never" class="aui-card--fill">
     <el-form
       :model="dataForm"
       :rules="rules"
       ref="dataForm"
       label-width="110px"
     >
-      <el-form-item label="回放主题" prop="liveTheme">
+      <el-form-item label="视频主题" prop="liveTheme">
         <el-input v-model="dataForm.liveTheme"></el-input>
-      </el-form-item>
-      <el-form-item label="封面图" required>
-        <custom-upload
-          ref="frontCoverUpload"
-          @uploadSuccess="frontCoverUploadSuccess"
-          @uploadRemove="frontCoverUploadRemove"
-          :fileList="frontCoverList"
-        ></custom-upload>
-      </el-form-item>
-      <el-form-item label="主播" prop="anchor">
-        <el-select
-          style="width: 100%"
-          v-model="dataForm.anchor"
-          filterable
-          remote
-          reserve-keyword
-          clearable
-          placeholder="请输入选择"
-          :remote-method="getAnchorInfo"
-          :loading="loading"
-        >
-          <el-option
-            v-for="item in anchorOptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
-          </el-option>
-        </el-select>
       </el-form-item>
       <el-form-item label="视频显示" prop="showMode">
         <el-select
@@ -56,25 +23,15 @@
           <el-option label="横屏" :value="1"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="投放人群" prop="dynamicGroupIds">
-        <el-select
-          style="width: 100%"
-          v-model="dataForm.dynamicGroupIds"
-          placeholder="请选择投放人群"
-          :loading="getDynamicGroupLoading"
-          @visible-change="getDynamicGroup"
-          clearable
-        >
-          <el-option
-            v-for="item in dynamicGroupOptions"
-            :key="item.id"
-            :label="item.name"
-            :value="item.id"
-          >
-          </el-option>
-        </el-select>
+      <el-form-item label="视频宣传图" required>
+        <custom-upload
+          ref="frontCoverUpload"
+          @uploadSuccess="frontCoverUploadSuccess"
+          @uploadRemove="frontCoverUploadRemove"
+          :fileList="frontCoverList"
+        ></custom-upload>
       </el-form-item>
-      <el-form-item label="回放视频" required>
+      <el-form-item label="上传视频" required>
         <custom-upload
           ref="relationLiveUpload"
           @uploadSuccess="relationLiveUploadSuccess"
@@ -83,8 +40,19 @@
           :fileList="relationLiveList"
         ></custom-upload>
       </el-form-item>
+      <el-form-item label="添加商品" prop="goods">
+          <el-input
+            style="width: 400px"
+            placeholder="推荐商品"
+            @click.native="chooseProduct"
+            v-model="dataForm.goods"
+            readonly
+            clearable
+          ></el-input>
+          <span class="count">{{dataForm.productIds.length}}条</span>
+        </el-form-item>
     </el-form>
-    <span slot="footer" class="dialog-footer">
+    <div class="footer">
       <el-button :disabled="submitLoading" size="small" @click="visible = false"
         >取 消</el-button
       >
@@ -96,27 +64,35 @@
         @click="submit"
         >添 加</el-button
       >
-    </span>
-  </el-dialog>
+    </div>
+    <!-- 商品弹框 -->
+      <choose-product ref="chooseProduct" @add="addProductConfirm"></choose-product>
+  </el-card>
 </template>
+
 <script>
+import mixinTableModule from "@/mixins/table-module";
 import CustomUpload from "@/components/common/custom-upload";
 import { getVideoDuration } from "@/utils/index";
+import ChooseProduct from "@/components/chooseDialog/chooseProduct"
 export default {
+  mixins: [mixinTableModule],
   components: {
     CustomUpload,
+    ChooseProduct
   },
   data() {
     return {
       visible: false,
       dataForm: {
-        id: null,
+        anchorUserId: "",
         liveTheme: "",
         frontCoverUrl: "",
-        anchor: "",
+        anchorUser: "",
         showMode: null,
         relationLiveUrl: "",
-        dynamicGroupIds: "",
+        goods:"",
+        productIds:[]
       },
       frontCoverList: [], //封面列表
       loading: false, //输入主播选择loading
@@ -124,10 +100,7 @@ export default {
       relationLiveList: [], //视频列表
       rules: {
         liveTheme: [
-          { required: true, message: "请输入直播主题", trigger: "blur" },
-        ],
-        anchor: [
-          { required: true, message: "请输入主播选择", trigger: "blur" },
+          { required: true, message: "请输入视频主题", trigger: "blur" },
         ],
         showMode: [
           { required: true, message: "请选择视频显示", trigger: "blur" },
@@ -136,12 +109,32 @@ export default {
       submitLoading: false,
       dynamicGroupOptions: [], //投放人群
       getDynamicGroupLoading: false, //下拉框加载数据loading
+      goods: [],
+      productIds: [],
     };
   },
+  created() {
+    this.dataForm.anchorUserId = this.userInfo.id
+    this.dataForm.anchorUser = this.userInfo.realName
+  },
+  computed: {
+    userInfo() {
+      return this.$store.state.user;
+    },
+  },
+  activated() {},
   methods: {
-    init(id) {
-      if (id) this.dataForm.id = id;
-      this.visible = true;
+    // 推荐商品弹框
+    chooseProduct() {
+        this.$refs.chooseProduct.init(this.dataForm.productIds)
+    },
+
+    // 确认添加推荐商品
+    addProductConfirm(data) {
+        this.$refs.chooseProduct.close()
+
+        this.dataForm.productIds = data
+        this.dataForm.goods = data.map(item => item.productName).join(",")
     },
     // 封面图上传
     frontCoverUploadSuccess(file) {
@@ -199,10 +192,9 @@ export default {
     // 投放人群下拉请求数据
     getDynamicGroup(value) {
       if (value) {
-        //展开下拉框 请求数据
-        if (!this.dataForm.anchor)
+        if (!this.dataForm.anchorUser)
           return this.$message.warning("请先输入搜索选择主播");
-        let t = JSON.parse(this.dataForm.anchor);
+        let t = JSON.parse(this.dataForm.anchorUser);
         this.getDynamicGroupLoading = true;
         this.$http
           .get("/sys/dynamicGroup/getDynamicGroupList", {
@@ -254,12 +246,6 @@ export default {
           let params = {};
           params = JSON.parse(JSON.stringify(this.dataForm));
 
-          delete params.id;
-          delete params.anchor;
-
-          // 主播信息处理
-          let o = JSON.parse(this.dataForm.anchor);
-
           // 附件处理
           params.frontCoverUrl = this.frontCoverList[0].url;
           params.relationLiveUrl = this.relationLiveList[0].url;
@@ -269,22 +255,15 @@ export default {
           );
           params.liveDuration = (liveDuration / 60).toFixed(2);
 
-          // 投放人群处理
-          if (this.dataForm.dynamicGroupIds) {
-            params.dynamicGroupIds = [params.dynamicGroupIds];
-          } else {
-            delete params.dynamicGroupIds;
-          }
           this.submitLoading = true;
           this.$http
-            .post("/sys/livePlayback/save", { ...params, ...o })
+            .post("/sys/livePlayback/save", { ...params })
             .then(({ data: res }) => {
               if (res.code == 0) {
                 this.$message.success("添加视频成功");
                 this.submitLoading = false;
                 this.cancel();
                 this.visible = false;
-                this.$emit("refreshDataList");
               } else {
                 this.submitLoading = false;
                 this.$message.error(res.msg);
