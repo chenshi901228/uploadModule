@@ -16,7 +16,7 @@
       >
         <el-form-item
           label="问题标题"
-          prop="isFree"
+          prop="title"
         >
           <el-input
             :clearable="true"
@@ -215,7 +215,7 @@
         class="demo-ruleForm"
       >
         <el-form-item label="问题标题" prop="name" required>
-          <el-input maxlength="15" v-model="problem.name"></el-input>
+          <el-input maxlength="50" v-model="problem.name" show-word-limit></el-input>
         </el-form-item>
         <el-form-item label="内容" prop="desc" required>
           <!-- 富文本编辑器, 容器 -->
@@ -255,7 +255,7 @@
         class="demo-ruleForm"
       >
         <el-form-item label="问题标题" prop="name" required>
-          <el-input maxlength="15" v-model="editeImgForm.name"></el-input>
+          <el-input maxlength="50" v-model="editeImgForm.name" show-word-limit></el-input>
         </el-form-item>
         <el-form-item label="内容" prop="desc" required>
           <!-- 富文本编辑器, 容器 -->

@@ -16,7 +16,7 @@
       >
         <el-form-item
           label="问题分类"
-          prop="isFree"
+          prop="classify"
         >
           <el-select
             style="width: 200px"
@@ -232,7 +232,7 @@
         class="demo-ruleForm"
       >
         <el-form-item label="问题分类" prop="name" required>
-          <el-input maxlength="15" v-model="imgForm.name"></el-input>
+          <el-input maxlength="10" v-model="imgForm.name" show-word-limit></el-input>
         </el-form-item>
         <el-form-item label="上传" prop="img" required>
           <el-upload
@@ -297,6 +297,9 @@
         label-width="100px"
         class="demo-ruleForm"
       >
+        <el-form-item label="问题分类" prop="name">
+          <el-input maxlength="10" v-model="editeImgForm.name" show-word-limit></el-input>
+        </el-form-item>
         <el-form-item label="上传" prop="img">
           <div
             v-if="editeUrl.length !== 0"
@@ -352,9 +355,6 @@
             </el-upload>
           </div>
           <span>点击可看大图</span>
-        </el-form-item>
-        <el-form-item label="封面图名称" prop="name">
-          <el-input maxlength="15" v-model="editeImgForm.name"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
