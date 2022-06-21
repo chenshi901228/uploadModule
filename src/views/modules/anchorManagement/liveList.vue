@@ -480,7 +480,7 @@ export default {
     joinLiveHandle(row) {
       let t = this.$router.resolve({
         name: "liveRoom",
-        query: { liveTheme: row.liveTheme },
+        query: { liveTheme: row.liveTheme, TaskId: row.id },
       });
       window.open(t.href, "_blank");
     },
