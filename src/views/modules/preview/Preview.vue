@@ -38,9 +38,21 @@
           ></el-input>
         </el-form-item>
         <el-form-item
+          label="助手"
+          prop="assistant"
+          v-if="isOpen || formItemCount >= 3"
+        >
+          <el-input
+            style="width: 200px"
+            :clearable="true"
+            v-model="dataForm.assistant"
+            placeholder="请输入助手昵称或手机号码"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
           label="预计开播时间"
           prop="startDate"
-          v-if="isOpen || formItemCount >= 3"
+          v-if="isOpen || formItemCount >= 4"
         >
           <el-date-picker
             :clearable="true"
@@ -56,7 +68,7 @@
         <el-form-item
           label="实际开播时间"
           prop="factStartDate"
-          v-if="isOpen || formItemCount >= 4"
+          v-if="isOpen || formItemCount >= 5"
         >
           <el-date-picker
             :clearable="true"
@@ -72,7 +84,7 @@
         <el-form-item
           label="投放人群"
           prop="dynamicGroupName"
-          v-if="isOpen || formItemCount >= 5"
+          v-if="isOpen || formItemCount >= 6"
         >
           <el-select
             v-model="dataForm.dynamicGroupName"
@@ -93,7 +105,7 @@
         <el-form-item
           label="直播间ID"
           prop="livingRoomId"
-          v-if="isOpen || formItemCount >= 6"
+          v-if="isOpen || formItemCount >= 7"
         >
           <el-input
             style="width: 200px"
@@ -105,7 +117,7 @@
         <el-form-item
           label="预约状态"
           prop="appointmentState"
-          v-if="isOpen || formItemCount >= 7"
+          v-if="isOpen || formItemCount >= 8"
         >
           <el-select
             style="width: 200px"
@@ -120,7 +132,7 @@
         <el-form-item
           label="直播状态"
           prop="liveState"
-          v-if="isOpen || formItemCount >= 8"
+          v-if="isOpen || formItemCount >= 9"
         >
           <el-select
             style="width: 200px"
@@ -138,7 +150,7 @@
         <el-form-item
           label="显示状态"
           prop="showState"
-          v-if="isOpen || formItemCount >= 9"
+          v-if="isOpen || formItemCount >= 10"
         >
           <el-select
             style="width: 200px"
@@ -148,6 +160,21 @@
           >
             <el-option label="显示" value="1"></el-option>
             <el-option label="隐藏" value="0"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="删除状态"
+          prop="delFlg"
+          v-if="isOpen || formItemCount >= 11"
+        >
+          <el-select
+            style="width: 200px"
+            :clearable="true"
+            v-model="dataForm.delFlg"
+            placeholder="删除状态"
+          >
+            <el-option label="已删除" :value="1"></el-option>
+            <el-option label="未删除" :value="0"></el-option>
           </el-select>
         </el-form-item>
 
@@ -289,7 +316,7 @@
         <el-table-column
           width="120"
           label="助手"
-          prop="anchorTel"
+          prop="assistant"
           align="center"
         >
         </el-table-column>
@@ -556,6 +583,8 @@ export default {
         liveState: "",
         showState: "",
         appointmentState: "",
+        delFlg: "",
+        assistant:""
       },
       page: 1, // 当前页码
       limit: 10, // 每页数
@@ -634,6 +663,8 @@ export default {
         dataObj.liveState = Number(this.dataForm.liveState);
       } else if (this.dataForm.showState) {
         dataObj.showState = Number(this.dataForm.showState);
+      } else if (this.dataForm.delFlg) {
+        dataObj.delFlg = Number(this.dataForm.delFlg);
       } else if (this.dataForm.transcribeFlg) {
         dataObj.transcribeFlg = Number(this.dataForm.transcribeFlg);
       } else if (this.dataForm.appointmentState) {
@@ -690,7 +721,7 @@ export default {
             return this.$message.error(res.msg);
           } else {
             this.$message.success("创建直播成功！请在直播列表中查看");
-            this.getDataList()
+            this.getDataList();
           }
         })
         .catch((err) => {
@@ -822,6 +853,8 @@ export default {
         dataObj.liveState = Number(this.dataForm.liveState);
       } else if (this.dataForm.showState) {
         dataObj.showState = Number(this.dataForm.showState);
+      } else if (this.dataForm.delFlg) {
+        dataObj.delFlg = Number(this.dataForm.delFlg);
       } else if (this.dataForm.transcribeFlg) {
         dataObj.transcribeFlg = Number(this.dataForm.transcribeFlg);
       } else if (this.dataForm.appointmentState) {

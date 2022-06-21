@@ -1,14 +1,16 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
-    <div style="margin-bottom:30px;">视频主题：{{ info.liveTheme }}</div>
-    <div style="margin-bottom:30px;">主    播：{{ info.anchorUser }}</div>
-    <div style="margin-bottom:30px;">视频显示：{{ info.showMode === 0 ? "竖屏" : "横屏" }}</div>
-    <div style="margin-bottom:30px;">
+    <div style="margin-bottom: 30px">视频主题：{{ info.liveTheme }}</div>
+    <div style="margin-bottom: 30px">主 播：{{ info.anchorUser }}</div>
+    <div style="margin-bottom: 30px">
+      视频显示：{{ info.showMode === 0 ? "竖屏" : "横屏" }}
+    </div>
+    <div style="margin-bottom: 30px">
       <div>封面图：</div>
       <el-image :src="info.frontCoverUrl"></el-image>
     </div>
     <div>
-       <div>视频：</div>
+      <div>视频：</div>
       <video
         ref="video"
         id="video"
@@ -19,6 +21,29 @@
         :webkit-playsinline="webkitplaysinline"
         style="width: 100%; height: 100%"
       ></video>
+    </div>
+    <div v-if="checkFlag && info.approveStatus === 0">
+      <el-form
+        :model="ruleForm"
+        ref="ruleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+      >
+        <el-form-item label="备注" prop="desc">
+          <el-input
+            size="small"
+            type="textarea"
+            v-model="ruleForm.desc"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <div
+        style="display: flex; justify-content: flex-end"
+        class="dialog-footer"
+      >
+        <el-button size="small" @click="resolve">驳回</el-button>
+        <el-button type="primary" size="small" @click="confirm">通过</el-button>
+      </div>
     </div>
   </el-card>
 </template>
@@ -50,15 +75,68 @@ export default {
       }, //初始化时定位到的历史播放记录
       videoPlayer: null,
       currentResource: {}, //当前的资源
+      ruleForm: {
+        desc: "",
+      },
+      checkFlag: false,
+      id: "",
     };
   },
   created() {
-    this.info = this.$route.query.videoDetail;
+    this.id = this.$route.query.videoDetail.id;
   },
   mounted() {
     this.querylist();
   },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      if (from.name === "videoManagement-videoApproval") {
+        vm.query();
+        vm.checkFlag = true;
+      } else if (from.name === "videoManagement-VideoManagement") {
+        vm.info = vm.$route.query.videoDetail;
+        vm.checkFlag = false;
+      }
+    });
+  },
+  beforeDestroy() {
+    if (this.checkFlag) {
+      this.getOut();
+      this.checkFlag = false;
+    }
+  },
   methods: {
+    //获取详情
+    query() {
+      this.$http
+        .get(`/sys/livePlayback/check/${this.id}`)
+        .then(({ data: res }) => {
+          if (res.code == 0) {
+            this.info = res.data;
+          } else {
+            this.$message.error(res.msg);
+            this.$router.push({
+              name: "videoManagement-videoApproval",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    //审批离开
+    getOut() {
+      this.$http
+        .get(`/sys/livePlayback/checkOut/${this.id}`)
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     querylist() {
       this.$nextTick(() => {
         this.initVideoplayer();
@@ -135,6 +213,44 @@ export default {
         .catch(() => {
           this.videoPlayer.currentTime = 0;
           this.videoPlayer.pause();
+        });
+    },
+    //驳回
+    resolve() {
+      this.$http
+        .put("/sys/livePlayback/approve", {
+          id: this.id,
+          approveStatus: 2,
+          remark: this.ruleForm.desc,
+        })
+        .then(({ data: res }) => {
+          if (res.code == 0) {
+            this.$message.success("已驳回");
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    //通过
+    confirm() {
+      this.$http
+        .put("/sys/livePlayback/approve", {
+          id: this.id,
+          approveStatus: 1,
+          remark: this.ruleForm.desc,
+        })
+        .then(({ data: res }) => {
+          if (res.code == 0) {
+            this.$message.success("已通过");
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
         });
     },
   },

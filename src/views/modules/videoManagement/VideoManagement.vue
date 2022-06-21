@@ -183,8 +183,14 @@
             <span v-else-if="item.prop == 'showMode'">
               {{ row.showMode ? "横屏" : "竖屏" }}
             </span>
-            <!-- 回放状态 -->
-            <span v-else-if="item.prop == 'liveState'">
+            <!-- 删除状态 -->
+            <span
+              v-else-if="
+                item.prop == 'liveState' &&
+                $store.state.user.superAdmin &&
+                $store.state.user.superAdmin === 1
+              "
+            >
               {{
                 row.liveState == 1
                   ? "可回放"
@@ -196,6 +202,16 @@
             <!-- 显示状态 -->
             <span v-else-if="item.prop == 'showState'">
               {{ row.showState ? "显示" : "隐藏" }}
+            </span>
+            <!-- 备注 -->
+            <span
+              v-else-if="
+                item.prop == 'remark' &&
+                $store.state.user.superAdmin &&
+                $store.state.user.superAdmin === 1
+              "
+            >
+              {{ row.remark }}
             </span>
             <!-- 审核状态 -->
             <span v-else-if="item.prop == 'approveStatus'">
@@ -236,15 +252,24 @@
           width="200"
         >
           <template slot-scope="{ row }">
-            <!-- <el-button
+            <el-button
               size="small"
               icon="el-icon-download"
               type="text"
-              v-if="row.liveState == 1"
+              v-if="
+                row.liveState !== 0 &&
+                $store.state.user.superAdmin &&
+                $store.state.user.superAdmin === 1
+              "
               @click="actionHandle('1', row)"
               >下载视频</el-button
-            > -->
+            >
             <el-button
+              v-if="
+                row.liveState !== 0 &&
+                $store.state.user.superAdmin &&
+                $store.state.user.superAdmin !== 1
+              "
               size="small"
               icon="el-icon-video-camera"
               style="margin-left: 10px"
@@ -257,7 +282,7 @@
               icon="el-icon-chat-dot-square"
               style="margin-left: 10px"
               type="text"
-              v-if="row.liveState == 1"
+              v-if="row.liveState !== 0"
               @click="actionHandle('2', row)"
               >评论详情</el-button
             >
@@ -266,7 +291,7 @@
               icon="el-icon-sort"
               style="margin-left: 10px"
               type="text"
-              v-if="row.liveState == 1"
+              v-if="row.liveState !== 0"
               @click="showOrHide(row)"
               >{{ row.showState ? "隐藏" : "显示" }}</el-button
             >
@@ -280,6 +305,11 @@
               >带货商品</el-button
             >
             <el-button
+              v-if="
+                row.liveState !== 0 &&
+                $store.state.user.superAdmin &&
+                $store.state.user.superAdmin === 1
+              "
               size="small"
               icon="el-icon-delete"
               style="margin-left: 10px"
@@ -302,6 +332,31 @@
       >
       </el-pagination>
     </div>
+    <el-dialog title="删除" :visible.sync="dialogFormVisible">
+      <el-form
+        :model="ruleForm"
+        :rules="rules"
+        ref="ruleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+      >
+        <el-form-item label="备注" prop="desc">
+          <el-input
+            size="small"
+            type="textarea"
+            v-model="ruleForm.desc"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" @click="dialogFormVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="confirm('ruleForm')"
+          >确 定</el-button
+        >
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -313,8 +368,10 @@ export default {
   data() {
     return {
       mixinTableModuleOptions: {
-        getDataListURL: "/sys/livePlayback/pageOwn", // 数据列表接口，API地址
+        getDataListURL: "", // 数据列表接口，API地址
         exportURL: "/sys/livePlayback/export", // 导出接口，API地址
+        createdIsNeed: false,
+        activatedIsNeed: false,
       },
       dataForm: {
         liveTheme: "",
@@ -340,19 +397,34 @@ export default {
         { prop: "addUserNum", label: "新增用户" },
         { prop: "approveStatus", label: "审核状态" },
         { prop: "showState", label: "显示状态" },
+        { prop: "liveState", label: "删除状态" },
+        { prop: "remark", label: "备注" },
         { prop: "createByName", label: "创建人" },
         { prop: "createDate", label: "创建时间" },
       ],
       dynamicGroupOptions: [], //投放人群
       getDynamicGroupLoading: false, //下拉框加载数据loading
+      dialogFormVisible: false,
+      ruleForm: {
+        desc: "",
+      },
+      rules: {
+        desc: [{ required: true, message: "请填写备注内容", trigger: "blur" }],
+      },
+      ids: "",
     };
   },
   created() {
-    // this.query()
-  },
-  activated() {
+    if (this.$store.state.user.superAdmin === 1) {
+      this.mixinTableModuleOptions.getDataListURL = "/sys/livePlayback/page";
+      this.dataForm.approveStatus = 1;
+    } else {
+      this.mixinTableModuleOptions.getDataListURL = "/sys/livePlayback/pageOwn";
+      this.dataForm.approveStatus = 3;
+    }
     this.query();
   },
+  activated() {},
   methods: {
     //新增视频
     addOrUpdateHandle() {
@@ -367,8 +439,46 @@ export default {
         query: { videoDetail: row },
       });
     },
-    //删除视频
-    deleteVideo(row) {},
+    // //删除视频
+    deleteVideo(row) {
+      this.dialogFormVisible = true;
+      this.ids = row.id;
+    },
+    //删除
+    confirm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let deleteURL = "";
+          if (this.$store.state.user.superAdmin === 1) {
+            deleteURL = "/sys/livePlayback/delete";
+          } else {
+            deleteURL = "/sys/livePlayback/factDelete";
+          }
+          this.$http
+            .delete(deleteURL, {
+              data: { id: this.ids, remark: this.ruleForm.desc },
+            })
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                this.ids = "";
+                this.ruleForm.desc = "";
+                return this.$message.error(res.msg);
+              }
+              this.ids = "";
+              this.ruleForm.desc = "";
+              this.query();
+              this.$message.success("删除成功!");
+              this.dialogFormVisible = false;
+            })
+            .catch((err) => {
+              throw err;
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    },
     // 视频大小转换
     sizeTostr(size) {
       return sizeTostr(size);
