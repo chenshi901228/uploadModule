@@ -20,12 +20,12 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="主播" prop="anchorUser">
+        <el-form-item v-if="isOpen || formItemCount >= 2" label="助手" prop="assistant">
           <el-input
             style="width: 200px"
             :clearable="true"
-            v-model="dataForm.anchorUser"
-            placeholder="请输入"
+            v-model="dataForm.assistant"
+            placeholder="请输入助手昵称或手机号码"
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 3" label="预计开播时间" prop="startDate">
@@ -475,6 +475,7 @@ export default {
         liveState: "",
         showState: "",
         appointmentState: "",
+        assistant:""
       },
       page: 1, // 当前页码
       limit: 10, // 每页数
