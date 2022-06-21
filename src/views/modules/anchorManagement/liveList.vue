@@ -23,13 +23,27 @@
             size="small"
             style="width: 200px"
             v-model.trim="dataForm.liveTheme"
-            placeholder="请输入选择"
+            placeholder="请输入"
             clearable
           >
           </el-input>
         </el-form-item>
         <el-form-item
           v-if="isOpen || formItemCount >= 2"
+          label="助手"
+          prop="assistant"
+        >
+          <el-input
+            size="small"
+            style="width: 200px"
+            v-model.trim="dataForm.assistant"
+            placeholder="请输入助手昵称或手机号码"
+            clearable
+          >
+          </el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="isOpen || formItemCount >= 3"
           label="开播时间"
           prop="startDate"
         >
@@ -41,22 +55,6 @@
             format="yyyy-MM-dd HH:mm"
             value-format="yyyy-MM-dd HH:mm"
             placeholder="请选择开播时间"
-          >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item
-          v-if="isOpen || formItemCount >= 3"
-          label="结束时间"
-          prop="endDate"
-        >
-          <el-date-picker
-            size="small"
-            v-model="dataForm.endDate"
-            type="datetime"
-            style="width: 200px"
-            format="yyyy-MM-dd HH:mm"
-            value-format="yyyy-MM-dd HH:mm"
-            placeholder="请选择结束时间"
           >
           </el-date-picker>
         </el-form-item>
@@ -366,8 +364,8 @@ export default {
       },
       dataForm: {
         liveTheme: "",
+        assistant: "",
         startDate: "",
-        endDate: "",
         livingRoomId: "",
         dynamicGroupName: "",
         transcribeFlg: null,
@@ -380,6 +378,7 @@ export default {
         { prop: "liveTheme", label: "直播主题" },
         { prop: "liveBroadcastWay", label: "推流端" },
         { prop: "showMode", label: "显示方式" },
+        { prop: "assistant", label: "助手" },
         { prop: "anchorUser", label: "主播" },
         { prop: "anchorTel", label: "手机号码" },
         { prop: "startDate", label: "开播时间", width: 180 },
