@@ -52,12 +52,12 @@
           <el-option :value="0" label="否"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="关联商品编号" prop="linkedProductId">
+      <el-form-item label="关联商品编号" prop="productId">
         <el-input
           placeholder="请输入"
           style="width: 200px"
           clearable
-          v-model="dataForm.linkedProductId"
+          v-model="dataForm.productId"
         />
       </el-form-item>
       <el-form-item>
@@ -206,7 +206,7 @@ export default {
         productName: "",
         productType: "",
         isFree: null,
-        linkedProductId: "",
+        productId: "",
       },
       dataList: [], // 数据列表
       page: 1, // 当前页码
