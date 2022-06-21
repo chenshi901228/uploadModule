@@ -364,7 +364,7 @@ export default {
     viewVideo(row) {
       this.$router.push({
         name: "videoManagement-videoDetail",
-        query: { id: row.id },
+        query: { videoDetail: row },
       });
     },
     //删除视频

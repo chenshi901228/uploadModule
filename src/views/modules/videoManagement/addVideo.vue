@@ -41,16 +41,18 @@
         ></custom-upload>
       </el-form-item>
       <el-form-item label="添加商品" prop="goods">
-          <el-input
-            style="width: 400px"
-            placeholder="推荐商品"
-            @click.native="chooseProduct"
-            v-model="dataForm.goods"
-            readonly
-            clearable
-          ></el-input>
-          <span class="count">{{dataForm.productIds.length}}条</span>
-        </el-form-item>
+        <el-input
+          style="width: 400px"
+          placeholder="推荐商品"
+          @click.native="chooseProduct"
+          v-model="dataForm.goods"
+          readonly
+          clearable
+        ></el-input>
+        <span class="count"
+          >{{ dataForm.livePlaybackProductList.length }}条</span
+        >
+      </el-form-item>
     </el-form>
     <div class="footer">
       <el-button :disabled="submitLoading" size="small" @click="visible = false"
@@ -66,7 +68,10 @@
       >
     </div>
     <!-- 商品弹框 -->
-      <choose-product ref="chooseProduct" @add="addProductConfirm"></choose-product>
+    <choose-product
+      ref="chooseProduct"
+      @add="addProductConfirm"
+    ></choose-product>
   </el-card>
 </template>
 
@@ -74,12 +79,12 @@
 import mixinTableModule from "@/mixins/table-module";
 import CustomUpload from "@/components/common/custom-upload";
 import { getVideoDuration } from "@/utils/index";
-import ChooseProduct from "./chooseDialog/chooseProduct"
+import ChooseProduct from "./chooseDialog/chooseProduct";
 export default {
   mixins: [mixinTableModule],
   components: {
     CustomUpload,
-    ChooseProduct
+    ChooseProduct,
   },
   data() {
     return {
@@ -90,9 +95,9 @@ export default {
         frontCoverUrl: "",
         anchorUser: "",
         showMode: null,
+        goods: "",
+        livePlaybackProductList: [],
         relationLiveUrl: "",
-        goods:"",
-        productIds:[]
       },
       frontCoverList: [], //封面列表
       loading: false, //输入主播选择loading
@@ -110,12 +115,11 @@ export default {
       dynamicGroupOptions: [], //投放人群
       getDynamicGroupLoading: false, //下拉框加载数据loading
       goods: [],
-      productIds: [],
     };
   },
   created() {
-    this.dataForm.anchorUserId = this.userInfo.id
-    this.dataForm.anchorUser = this.userInfo.realName
+    this.dataForm.anchorUserId = this.userInfo.id;
+    this.dataForm.anchorUser = this.userInfo.realName;
   },
   computed: {
     userInfo() {
@@ -126,15 +130,23 @@ export default {
   methods: {
     // 推荐商品弹框
     chooseProduct() {
-        this.$refs.chooseProduct.init(this.dataForm.productIds)
+      this.$refs.chooseProduct.init(this.dataForm.livePlaybackProductList);
     },
 
     // 确认添加推荐商品
     addProductConfirm(data) {
-        this.$refs.chooseProduct.close()
+      this.$refs.chooseProduct.close();
 
-        this.dataForm.productIds = data
-        this.dataForm.goods = data.map(item => item.productName).join(",")
+      data.forEach((v) => {
+        this.dataForm.livePlaybackProductList.push({
+          anchorProductId: v.anchorProductId,
+          anchorId: this.dataForm.anchorUserId,
+          productId: v.productId,
+        });
+      });
+
+      // this.dataForm.livePlaybackProductList = data;
+      this.dataForm.goods = data.map((item) => item.productName).join(",");
     },
     // 封面图上传
     frontCoverUploadSuccess(file) {
@@ -219,9 +231,9 @@ export default {
     cancel() {
       this.$refs.dataForm.resetFields();
       this.dataForm.frontCoverUrl = "";
-      this.dataForm.relationLiveUrl = "";
       this.frontCoverList = [];
       this.relationLiveList = [];
+      this.dataForm.relationLiveUrl = "";
 
       this.dynamicGroupOptions = [];
     },
@@ -256,6 +268,7 @@ export default {
           params.liveDuration = (liveDuration / 60).toFixed(2);
 
           this.submitLoading = true;
+
           this.$http
             .post("/sys/livePlayback/save", { ...params })
             .then(({ data: res }) => {
