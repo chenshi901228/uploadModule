@@ -17,10 +17,8 @@
         <el-form-item
           label="问题标题"
           prop="isFree"
-          v-if="isOpen || formItemCount >= 3"
         >
           <el-input
-            size="small"
             :clearable="true"
             style="width: 200px"
             v-model="dataForm.title"
@@ -43,12 +41,12 @@
               @click="resetDataForm()"
               >{{ $t("reset") }}</el-button
             >
-            <el-button size="mini" plain @click="open">
+            <!-- <el-button size="mini" plain @click="open">
               <i
                 :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
               ></i>
               {{ isOpen ? "收起" : "展开" }}
-            </el-button>
+            </el-button> -->
           </el-form-item>
         </div>
 
