@@ -690,6 +690,7 @@ export default {
             return this.$message.error(res.msg);
           } else {
             this.$message.success("创建直播成功！请在直播列表中查看");
+            this.getDataList()
           }
         })
         .catch((err) => {
