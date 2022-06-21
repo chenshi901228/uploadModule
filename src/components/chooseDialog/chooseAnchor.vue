@@ -253,6 +253,7 @@ export default {
                 if(!this.defaultSelected.length) {
                     this.defaultSelected = selection
                 }else {
+                    // 创建临时变量 
                     let data = JSON.parse(JSON.stringify(selection))
                     let arr = [...this.defaultSelected, ...data]
 
@@ -269,13 +270,18 @@ export default {
                     this.defaultSelected = arr
                 }
             }else { //全部取消
+                // 创建临时变量  
+                let data = JSON.parse(JSON.stringify(this.defaultSelected))
+
                 this.dataList.map(item => {
-                    this.defaultSelected.map((val, index) => {
+                    data.map((val, index) => {
                         if(item.anchorId == val.anchorId) {
-                            this.defaultSelected.splice(index, 1)
+                            data.splice(index, 1)
                         }
                     })
                 })
+
+                this.defaultSelected = data
             }
         },
         // 分页, 每页条数
@@ -313,6 +319,8 @@ export default {
     .selectedData {
         display: flex;
         flex-wrap: wrap;
+        max-height: 60px;
+        overflow-y: auto;
         .showTitle {
             display: inline-block;
             max-width: 150px;

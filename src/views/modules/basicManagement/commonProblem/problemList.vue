@@ -16,11 +16,9 @@
       >
         <el-form-item
           label="问题标题"
-          prop="isFree"
-          v-if="isOpen || formItemCount >= 3"
+          prop="title"
         >
           <el-input
-            size="small"
             :clearable="true"
             style="width: 200px"
             v-model="dataForm.title"
@@ -43,12 +41,12 @@
               @click="resetDataForm()"
               >{{ $t("reset") }}</el-button
             >
-            <el-button size="mini" plain @click="open">
+            <!-- <el-button size="mini" plain @click="open">
               <i
                 :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
               ></i>
               {{ isOpen ? "收起" : "展开" }}
-            </el-button>
+            </el-button> -->
           </el-form-item>
         </div>
 
@@ -217,7 +215,7 @@
         class="demo-ruleForm"
       >
         <el-form-item label="问题标题" prop="name" required>
-          <el-input maxlength="15" v-model="problem.name"></el-input>
+          <el-input maxlength="50" v-model="problem.name" show-word-limit></el-input>
         </el-form-item>
         <el-form-item label="内容" prop="desc" required>
           <!-- 富文本编辑器, 容器 -->
@@ -257,7 +255,7 @@
         class="demo-ruleForm"
       >
         <el-form-item label="问题标题" prop="name" required>
-          <el-input maxlength="15" v-model="editeImgForm.name"></el-input>
+          <el-input maxlength="50" v-model="editeImgForm.name" show-word-limit></el-input>
         </el-form-item>
         <el-form-item label="内容" prop="desc" required>
           <!-- 富文本编辑器, 容器 -->
