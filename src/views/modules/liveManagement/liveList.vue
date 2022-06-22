@@ -12,50 +12,7 @@
         size="small"
         label-width="100px"
         @keyup.enter.native="getDataList">
-          <el-form-item v-if="isOpen || formItemCount >= 1" label="是否录制" prop="transcribeFlg">
-            <el-select
-              clearable
-              v-model="dataForm.transcribeFlg"
-              placeholder="请选择"
-              style="width: 200px"
-            >
-              <el-option label="是" :value="1"></el-option>
-              <el-option label="否" :value="0"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item v-if="isOpen || formItemCount >= 2" label="直播间ID" prop="livingRoomId">
-            <el-input
-              v-model.trim="dataForm.livingRoomId"
-              placeholder="请输入直播间ID"
-              clearable
-              style="width: 200px"
-            >
-            </el-input>
-          </el-form-item>
-          <el-form-item v-if="isOpen || formItemCount >= 3" label="直播状态" prop="liveState">
-            <el-select
-              clearable
-              v-model="dataForm.liveState"
-              placeholder="请选择"
-              style="width: 200px"
-            >
-              <el-option label="直播中" :value="1"></el-option>
-              <el-option label="已下播" :value="0"></el-option>
-              <el-option label="已禁播" :value="2"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item v-if="isOpen || formItemCount >= 4" label="显示状态" prop="showState">
-            <el-select
-              clearable
-              v-model="dataForm.showState"
-              placeholder="请选择"
-              style="width: 200px"
-            >
-              <el-option label="显示" :value="1"></el-option>
-              <el-option label="隐藏" :value="0"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item v-if="isOpen || formItemCount >= 5" label="直播主题" prop="liveTheme">
+          <el-form-item v-if="isOpen || formItemCount >= 1" label="直播主题" prop="liveTheme">
             <el-input
 
               v-model.trim="dataForm.liveTheme"
@@ -65,7 +22,7 @@
             >
             </el-input>
           </el-form-item>
-          <el-form-item v-if="isOpen || formItemCount >= 6" label="主播" prop="anchorUser">
+          <el-form-item v-if="isOpen || formItemCount >= 2" label="主播" prop="anchorUser">
             <el-input
 
               v-model.trim="dataForm.anchorUser"
@@ -75,19 +32,29 @@
             >
             </el-input>
           </el-form-item>
-          <el-form-item v-if="isOpen || formItemCount >= 7" label="结束时间" prop="endDate">
+          <el-form-item v-if="isOpen || formItemCount >= 3" label="助手" prop="assistant">
+            <el-input
+
+              v-model.trim="dataForm.assistant"
+              placeholder="请输入助手昵称或手机号码"
+              clearable
+              style="width: 200px"
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item v-if="isOpen || formItemCount >= 4" label="开播时间" prop="startDate">
             <el-date-picker
 
-              v-model="dataForm.endDate"
+              v-model="dataForm.startDate"
               type="datetime"
               style="width: 200px"
               format="yyyy-MM-dd HH:mm"
               value-format="yyyy-MM-dd HH:mm"
-              placeholder="请选择结束时间"
+              placeholder="请选择开播时间"
             >
             </el-date-picker>
           </el-form-item>
-          <el-form-item v-if="isOpen || formItemCount >= 8" label="投放人群" prop="dynamicGroupName">
+          <el-form-item v-if="isOpen || formItemCount >= 5" label="投放人群" prop="dynamicGroupName">
             <el-select
 
               v-model="dataForm.dynamicGroupName"
@@ -106,6 +73,50 @@
               </el-option>
             </el-select>
           </el-form-item>
+          <el-form-item v-if="isOpen || formItemCount >= 6" label="是否录制" prop="transcribeFlg">
+            <el-select
+              clearable
+              v-model="dataForm.transcribeFlg"
+              placeholder="请选择"
+              style="width: 200px"
+            >
+              <el-option label="是" :value="1"></el-option>
+              <el-option label="否" :value="0"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="isOpen || formItemCount >= 7" label="直播间ID" prop="livingRoomId">
+            <el-input
+              v-model.trim="dataForm.livingRoomId"
+              placeholder="请输入直播间ID"
+              clearable
+              style="width: 200px"
+            >
+            </el-input>
+          </el-form-item>
+          <el-form-item v-if="isOpen || formItemCount >= 8" label="直播状态" prop="liveState">
+            <el-select
+              clearable
+              v-model="dataForm.liveState"
+              placeholder="请选择"
+              style="width: 200px"
+            >
+              <el-option label="直播中" :value="1"></el-option>
+              <el-option label="已下播" :value="0"></el-option>
+              <el-option label="已禁播" :value="2"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="isOpen || formItemCount >= 9" label="显示状态" prop="showState">
+            <el-select
+              clearable
+              v-model="dataForm.showState"
+              placeholder="请选择"
+              style="width: 200px"
+            >
+              <el-option label="显示" :value="1"></el-option>
+              <el-option label="隐藏" :value="0"></el-option>
+            </el-select>
+          </el-form-item>
+          
           <!-- 搜索重置展开按钮 -->
           <div class="headerTool-search-btns">
             <el-form-item>
@@ -306,9 +317,9 @@ export default {
       },
       dataForm: {
         liveTheme: "",
+        assistant: "",
         anchorUser: "",
         startDate: "",
-        endDate: "",
         livingRoomId: "",
         dynamicGroupName: "",
         transcribeFlg: null,
@@ -320,6 +331,7 @@ export default {
         { prop: "frontCoverUrl", label: "封面图" },
         { prop: "liveBroadcastWay", label: "推流端" },
         { prop: "showMode", label: "显示方式" },
+        { prop: "assistant", label: "助手" },
         { prop: "liveTheme", label: "直播主题" },
         { prop: "anchorUser", label: "主播" },
         { prop: "anchorTel", label: "手机号码" },
