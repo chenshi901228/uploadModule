@@ -45,7 +45,7 @@
           <el-radio :label="1">是</el-radio>
         </el-radio-group>
       </el-form-item> -->
-      <el-form-item v-if="dataForm.isFree == 0" label="礼物价格" prop="price">
+      <el-form-item label="礼物价格" prop="price">
         <el-input-number
           v-model="dataForm.price"
           placeholder="价格"
