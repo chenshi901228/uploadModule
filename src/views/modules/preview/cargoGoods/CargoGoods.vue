@@ -89,10 +89,7 @@
               @click="getDataList"
               >{{ $t("query") }}</el-button
             >
-            <el-button
-              icon="el-icon-refresh"
-              size="mini"
-              @click="resetDataForm"
+            <el-button icon="el-icon-refresh" size="mini" @click="resetDataForm"
               >重置</el-button
             >
             <el-button size="mini" plain @click="open">
@@ -353,6 +350,11 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
+      if (from.name === "preview-Preview") {
+        vm.dataForm.type = 2;
+      } else if (from.name === "anchorManagement-liveList") {
+        vm.dataForm.type = 1;
+      }
       vm.dataForm.liveId = vm.$route.query.liveId;
       vm.dataForm.anchorId = vm.$route.query.anchorId;
       vm.query();

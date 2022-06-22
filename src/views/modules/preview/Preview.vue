@@ -465,7 +465,7 @@
         >
           <template slot-scope="scope">
             <el-button
-              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1"
+              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1 && scope.row.liveState === 3"
               type="text"
               size="small"
               icon="el-icon-plus"
@@ -473,6 +473,7 @@
               >创建直播</el-button
             >
             <el-button
+              v-if="scope.row.liveState === 3"
               type="text"
               size="small"
               icon="el-icon-goods"
@@ -480,6 +481,7 @@
               >带货商品</el-button
             >
             <el-button
+              v-if="scope.row.liveState === 3"
               type="text"
               size="small"
               icon="el-icon-user"
@@ -487,6 +489,7 @@
               >推荐主播</el-button
             >
             <el-button
+             v-if="scope.row.liveState === 3"
               type="text"
               size="small"
               icon="el-icon-user-solid"
@@ -495,14 +498,14 @@
             >
             <el-button
               icon="el-icon-sort"
-              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1"
+              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1 && scope.row.liveState === 3"
               type="text"
               size="small"
               @click="showThis(scope.$index, scope.row)"
               >{{ scope.row.showState === 0 ? "显示" : "隐藏" }}</el-button
             >
             <el-button
-              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1"
+              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1 && scope.row.liveState === 3"
               type="text"
               icon="el-icon-edit"
               size="small"
@@ -510,7 +513,7 @@
               >编辑</el-button
             >
             <el-button
-              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1"
+              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1 && scope.row.liveState === 3"
               type="text"
               icon="el-icon-delete"
               size="small"
@@ -584,7 +587,7 @@ export default {
         showState: "",
         appointmentState: "",
         delFlg: "",
-        assistant:""
+        assistant: "",
       },
       page: 1, // 当前页码
       limit: 10, // 每页数

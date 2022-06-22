@@ -167,7 +167,7 @@ export default {
         img.onload = function () {
           imgWidth = img.width;
           imgHight = img.height;
-          let valid = img.width == width && img.height == height;
+          let valid = img.width >= width && img.height >= height;
           valid ? resolve() : reject();
         };
         img.src = _URL.createObjectURL(file);

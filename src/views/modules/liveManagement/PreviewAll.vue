@@ -12,7 +12,11 @@
         size="small"
         @keyup.enter.native="getDataList"
       >
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="直播主题" prop="liveTheme">
+        <el-form-item
+          v-if="isOpen || formItemCount >= 1"
+          label="直播主题"
+          prop="liveTheme"
+        >
           <el-input
             style="width: 200px"
             :clearable="true"
@@ -20,7 +24,11 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="助手" prop="assistant">
+        <el-form-item
+          v-if="isOpen || formItemCount >= 2"
+          label="助手"
+          prop="assistant"
+        >
           <el-input
             style="width: 200px"
             :clearable="true"
@@ -28,7 +36,11 @@
             placeholder="请输入助手昵称或手机号码"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 3" label="预计开播时间" prop="startDate">
+        <el-form-item
+          v-if="isOpen || formItemCount >= 3"
+          label="预计开播时间"
+          prop="startDate"
+        >
           <el-date-picker
             style="width: 200px"
             :clearable="true"
@@ -40,7 +52,11 @@
           >
           </el-date-picker>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 5" label="实际开播时间" prop="factStartDate">
+        <el-form-item
+          v-if="isOpen || formItemCount >= 5"
+          label="实际开播时间"
+          prop="factStartDate"
+        >
           <el-date-picker
             style="width: 200px"
             :clearable="true"
@@ -52,24 +68,32 @@
           >
           </el-date-picker>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 6" label="投放人群" prop="dynamicGroupName">
-            <el-select
-              style="width: 200px"
-              v-model="dataForm.dynamicGroupName"
-              filterable
-              placeholder="请选择"
-              :clearable="true"
+        <el-form-item
+          v-if="isOpen || formItemCount >= 6"
+          label="投放人群"
+          prop="dynamicGroupName"
+        >
+          <el-select
+            style="width: 200px"
+            v-model="dataForm.dynamicGroupName"
+            filterable
+            placeholder="请选择"
+            :clearable="true"
+          >
+            <el-option
+              v-for="(item, index) in options"
+              :key="index"
+              :label="item.name"
+              :value="item.name"
             >
-              <el-option
-                v-for="(item, index) in options"
-                :key="index"
-                :label="item.name"
-                :value="item.name"
-              >
-              </el-option>
-            </el-select>
+            </el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 7" label="直播间ID" prop="livingRoomId">
+        <el-form-item
+          v-if="isOpen || formItemCount >= 7"
+          label="直播间ID"
+          prop="livingRoomId"
+        >
           <el-input
             style="width: 200px"
             :clearable="true"
@@ -77,7 +101,11 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 8" label="预约状态" prop="appointmentState">
+        <el-form-item
+          v-if="isOpen || formItemCount >= 8"
+          label="预约状态"
+          prop="appointmentState"
+        >
           <el-select
             style="width: 200px"
             :clearable="true"
@@ -88,7 +116,11 @@
             <el-option label="预约中" value="1"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 9" label="直播状态" prop="liveState">
+        <el-form-item
+          v-if="isOpen || formItemCount >= 9"
+          label="直播状态"
+          prop="liveState"
+        >
           <el-select
             style="width: 200px"
             :clearable="true"
@@ -102,7 +134,11 @@
             <el-option label="已删除" value="4"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 10" label="显示状态" prop="showState">
+        <el-form-item
+          v-if="isOpen || formItemCount >= 10"
+          label="显示状态"
+          prop="showState"
+        >
           <el-select
             style="width: 200px"
             :clearable="true"
@@ -115,17 +151,23 @@
         </el-form-item>
         <div class="headerTool-search-btns">
           <el-form-item>
-            <el-button 
-              type="primary" 
-              icon="el-icon-search" 
+            <el-button
+              type="primary"
+              icon="el-icon-search"
               size="mini"
-              @click="getDataList">{{ $t("query") }}</el-button>
-            <el-button 
-              icon="el-icon-refresh" 
-              size="mini" 
-              @click="resetDataForm()">{{ $t("reset") }}</el-button>
+              @click="getDataList"
+              >{{ $t("query") }}</el-button
+            >
+            <el-button
+              icon="el-icon-refresh"
+              size="mini"
+              @click="resetDataForm()"
+              >{{ $t("reset") }}</el-button
+            >
             <el-button size="mini" plain @click="open">
-              <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              <i
+                :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
+              ></i>
               {{ isOpen ? "收起" : "展开" }}
             </el-button>
           </el-form-item>
@@ -134,24 +176,36 @@
           <div class="headerTool-btns-left">
             <el-button
               v-if="dataListSelections.length !== 0"
-              size="mini" 
+              size="mini"
               type="danger"
               plain
-              icon="el-icon-delete" 
+              icon="el-icon-delete"
               @click="deleteSelect()"
-              >批量删除</el-button>
-            <el-button 
+              >批量删除</el-button
+            >
+            <el-button
               type="warning"
               plain
-              icon="el-icon-download" 
-              size="mini" 
+              icon="el-icon-download"
+              size="mini"
               @click="exportT()"
-              >{{ $t("export") }}</el-button>
+              >{{ $t("export") }}</el-button
+            >
           </div>
           <div class="headerTool-btns-right">
             <el-form-item>
-              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-                <el-button size="small" icon="el-icon-refresh" circle @click="getDataList"></el-button>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="刷新"
+                placement="top"
+              >
+                <el-button
+                  size="small"
+                  icon="el-icon-refresh"
+                  circle
+                  @click="getDataList"
+                ></el-button>
               </el-tooltip>
             </el-form-item>
           </div>
@@ -300,9 +354,7 @@
         >
           <template slot-scope="scope">
             <span>{{
-              scope.row.appointmentState === 0
-                ? "已结束"
-                : "预约中"
+              scope.row.appointmentState === 0 ? "已结束" : "预约中"
             }}</span>
           </template>
         </el-table-column>
@@ -377,7 +429,11 @@
         >
           <template slot-scope="scope">
             <el-button
-              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1"
+              v-if="
+                scope.row.appointmentState !== 0 &&
+                scope.row.delFlg !== 1 &&
+                scope.row.liveState === 3
+              "
               type="text"
               size="small"
               icon="el-icon-view"
@@ -385,6 +441,7 @@
               >{{ scope.row.showState === 0 ? "显示" : "隐藏" }}</el-button
             >
             <el-button
+              v-if="scope.row.liveState === 3"
               type="text"
               size="small"
               icon="el-icon-goods"
@@ -392,6 +449,7 @@
               >带货商品</el-button
             >
             <el-button
+              v-if="scope.row.liveState === 3"
               type="text"
               size="small"
               icon="el-icon-user"
@@ -399,6 +457,7 @@
               >推荐主播</el-button
             >
             <el-button
+              v-if="scope.row.liveState === 3"
               type="text"
               size="small"
               icon="el-icon-user-solid"
@@ -406,7 +465,11 @@
               >助手</el-button
             >
             <el-button
-              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1"
+              v-if="
+                scope.row.appointmentState !== 0 &&
+                scope.row.delFlg !== 1 &&
+                scope.row.liveState === 3
+              "
               type="text"
               size="small"
               icon="el-icon-delete"
@@ -437,12 +500,20 @@
         class="demo-ruleForm"
       >
         <el-form-item label="备注" prop="desc">
-          <el-input size="small" type="textarea" v-model="ruleForm.desc"></el-input>
+          <el-input
+            size="small"
+            type="textarea"
+            v-model="ruleForm.desc"
+          ></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogFormVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="confirm('ruleForm')">确 定</el-button>
+        <el-button size="small" @click="dialogFormVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="confirm('ruleForm')"
+          >确 定</el-button
+        >
       </div>
     </el-dialog>
 
@@ -450,7 +521,9 @@
       <span>确认{{ showState === 0 ? "显示" : "隐藏" }}吗？</span>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="confirmShowState">确 定</el-button>
+        <el-button size="small" type="primary" @click="confirmShowState"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
   </el-card>
@@ -475,7 +548,7 @@ export default {
         liveState: "",
         showState: "",
         appointmentState: "",
-        assistant:""
+        assistant: "",
       },
       page: 1, // 当前页码
       limit: 10, // 每页数
@@ -513,9 +586,9 @@ export default {
     addAnchor(row) {
       this.$router.push({
         path: "/preview-recommendAnchor-RecommendAnchor",
-        query:{
-          liveId:row.id
-        }
+        query: {
+          liveId: row.id,
+        },
       });
     },
     //助手

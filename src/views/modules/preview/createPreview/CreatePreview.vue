@@ -11,7 +11,7 @@
         label-width="110px"
         class="demo-ruleForm"
       >
-        <el-form-item label="直播主题" prop="liveTheme" required>
+        <el-form-item label="直播主题" prop="liveTheme">
           <el-input
             style="width: 400px"
             placeholder="直播主题"
@@ -33,10 +33,11 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="预计时长" prop="estimateLiveTime">
-          <el-input 
+          <el-input
             style="width: 400px"
-            placeholder="预计时长" 
-            v-model="ruleForm.estimateLiveTime"></el-input>
+            placeholder="预计时长"
+            v-model="ruleForm.estimateLiveTime"
+          ></el-input>
         </el-form-item>
         <el-form-item label="直播宣传图" prop="frontCoverUrl" class="img-item">
           <div v-for="item in defaultImg" :key="item" class="img-box">
@@ -181,7 +182,7 @@
             readonly
             clearable
           ></el-input>
-          <span class="count">{{ruleForm.productIds.length}}条</span>
+          <span class="count">{{ ruleForm.productIds.length }}条</span>
         </el-form-item>
 
         <el-form-item label="添加主播" prop="anchors">
@@ -193,40 +194,59 @@
             readonly
             clearable
           ></el-input>
-          <span class="count">{{ruleForm.recommendedAnchorList.length}}条</span>
+          <span class="count"
+            >{{ ruleForm.recommendedAnchorList.length }}条</span
+          >
         </el-form-item>
+
+        <el-form-item label="直播宣传图">
+          <custom-upload
+            ref="frontCoverUpload"
+            @uploadSuccess="frontCoverUploadSuccess"
+            @uploadRemove="frontCoverUploadRemove"
+            :fileList="frontCoverList"
+            :fileType="['png', 'jpg', 'jpeg']"
+            :fileMaxSize="1"
+          ></custom-upload>
+          <div>
+            格式限制：jpg/jpeg/png,建议图片尺寸不小于630px×347px，大小不得超过2M
+          </div>
+        </el-form-item>
+
         <el-form-item>
-          <el-button 
-            type="primary" 
-            size="small" 
+          <el-button
+            type="primary"
+            size="small"
             :icon="submitLoading ? 'el-icon-loading' : ''"
-            :disabled="submitLoading" 
+            :disabled="submitLoading"
             @click="submitForm('ruleForm')"
             >立即创建</el-button
           >
         </el-form-item>
       </el-form>
 
-
-
       <!-- 主播弹框 -->
       <choose-anchor ref="chooseAnchor" @add="addAnchorConfirm"></choose-anchor>
       <!-- 商品弹框 -->
-      <choose-product ref="chooseProduct" @add="addProductConfirm"></choose-product>
+      <choose-product
+        ref="chooseProduct"
+        @add="addProductConfirm"
+      ></choose-product>
     </div>
   </el-card>
 </template>
 
 <script>
+import CustomUpload from "@/components/common/custom-upload";
 import Cookies from "js-cookie";
 import { Quill, quillEditor } from "vue-quill-editor";
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import "../../../../assets/font.css";
-import ChooseAnchor from "@/components/chooseDialog/chooseAnchor"
-import ChooseProduct from "@/components/chooseDialog/chooseProduct"
-import ComModule from "@/mixins/common-module"
+import ChooseAnchor from "@/components/chooseDialog/chooseAnchor";
+import ChooseProduct from "@/components/chooseDialog/chooseProduct";
+import ComModule from "@/mixins/common-module";
 // 自定义字体大小
 let Size = Quill.import("attributors/style/size");
 Size.whitelist = ["10px", "12px", "14px", "16px", "18px", "20px"];
@@ -250,10 +270,11 @@ Font.whitelist = fonts;
 Quill.register(Font, true);
 export default {
   mixins: [ComModule],
-  components: { 
+  components: {
     quillEditor,
     ChooseAnchor,
-    ChooseProduct
+    ChooseProduct,
+    CustomUpload,
   },
   data() {
     const blurText = async (rule, value, callback) => {
@@ -329,6 +350,7 @@ export default {
       userId: "",
       assistantOptions: [],
       submitLoading: false,
+      frontCoverList: [],
     };
   },
   watch: {
@@ -366,6 +388,16 @@ export default {
     this.getCoverPictureList();
   },
   methods: {
+    // 封面图上传
+    frontCoverUploadSuccess(file) {
+      this.frontCoverList.push(file);
+      console.log(this.frontCoverList)
+    },
+    frontCoverUploadRemove(file) {
+      this.frontCoverList = this.frontCoverList.filter(
+        (item) => item.uid != file.uid
+      );
+    },
     //获取直播封面图
     getCoverPictureList() {
       this.$http
@@ -399,41 +431,41 @@ export default {
 
     // 推荐主播弹框
     chooseAnchor() {
-        this.$refs.chooseAnchor.init(this.ruleForm.recommendedAnchorList)
+      this.$refs.chooseAnchor.init(this.ruleForm.recommendedAnchorList);
     },
 
     // 确认添加推荐主播
     addAnchorConfirm(data) {
-        this.$refs.chooseAnchor.close()
+      this.$refs.chooseAnchor.close();
 
-        this.ruleForm.recommendedAnchorList = data
-        this.ruleForm.anchors = data.map(item => item.username).join(",")
+      this.ruleForm.recommendedAnchorList = data;
+      this.ruleForm.anchors = data.map((item) => item.username).join(",");
     },
-
 
     // 推荐商品弹框
     chooseProduct() {
-        this.$refs.chooseProduct.init(this.ruleForm.productIds)
+      this.$refs.chooseProduct.init(this.ruleForm.productIds);
     },
 
     // 确认添加推荐商品
     addProductConfirm(data) {
-        this.$refs.chooseProduct.close()
+      this.$refs.chooseProduct.close();
 
-        this.ruleForm.productIds = data
-        this.ruleForm.goods = data.map(item => item.productName).join(",")
+      this.ruleForm.productIds = data;
+      this.ruleForm.goods = data.map((item) => item.productName).join(",");
     },
 
     //提交表单
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          let dataForm = {}
+          let dataForm = {};
           this.ruleForm.startDate = this.dateFormat(this.ruleForm.startDate);
 
           // 商品、主播返回ids[]
-          dataForm.productIds = this.ruleForm.productIds.map(item => item.id)
-          dataForm.recommendedAnchorList = this.ruleForm.recommendedAnchorList.map(item => item.anchorId)
+          dataForm.productIds = this.ruleForm.productIds.map((item) => item.id);
+          dataForm.recommendedAnchorList =
+            this.ruleForm.recommendedAnchorList.map((item) => item.anchorId);
 
           dataForm = {
             liveTheme: this.ruleForm.liveTheme,
@@ -442,14 +474,15 @@ export default {
             frontCoverUrl: this.ruleForm.frontCoverUrl,
             liveIntroduce: this.ruleForm.liveIntroduce,
             assistantIds: this.ruleForm.assistantIds,
+            frontCover:this.frontCoverList[0].url
           };
 
-          this.submitLoading = true
+          this.submitLoading = true;
 
           this.$http
             .post("/sys/livePreview/createLivePreview", dataForm)
             .then(({ data: res }) => {
-              this.submitLoading = false
+              this.submitLoading = false;
               if (res.code !== 0) {
                 return this.$message.error(res.msg);
               }
@@ -468,11 +501,12 @@ export default {
                 assistantIds: [],
               };
               this.ruleForm.frontCoverUrl = this.defaultImg[0];
+              this.frontCoverList = []
 
-              this.closeCurrentTab()
+              this.closeCurrentTab();
             })
             .catch((err) => {
-              this.submitLoading = false
+              this.submitLoading = false;
               console.log(err);
             });
         } else {
