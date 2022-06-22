@@ -49,7 +49,7 @@
         <el-input-number
           v-model="dataForm.price"
           placeholder="价格"
-          :min="1"
+          :min="0"
         ></el-input-number>
       </el-form-item>
     </el-form>
