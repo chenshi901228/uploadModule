@@ -212,10 +212,10 @@ export default {
         return false;
       }
 
-      if (file.type.indexOf("image") !== -1) {
-        //调用[限制图片尺寸]函数
-        this.limitFileWH(630, 347, file).then((res) => {
-          if (res) {
+      // if (file.type.indexOf("image") !== -1) {
+      //   //调用[限制图片尺寸]函数
+      //   this.limitFileWH(630, 347, file).then((res) => {
+      //     if (res) {
             this.uploadList.push({
               uid: file.uid,
               uploading: true,
@@ -224,18 +224,18 @@ export default {
               name: file.name,
             });
             return true;
-          }
-        });
-      } else if (file.type.indexOf("video") !== -1) {
-        this.uploadList.push({
-          uid: file.uid,
-          uploading: true,
-          progress: 0,
-          type: file.type,
-          name: file.name,
-        });
-        return true;
-      }
+      //     }
+      //   });
+      // } else if (file.type.indexOf("video") !== -1) {
+      //   this.uploadList.push({
+      //     uid: file.uid,
+      //     uploading: true,
+      //     progress: 0,
+      //     type: file.type,
+      //     name: file.name,
+      //   });
+      //   return true;
+      // }
     },
     // 上传中
     uploadProgress(event, file, fileList) {

@@ -80,23 +80,15 @@
             <i slot="default" class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
-        <el-form-item label="助手" prop="assistantIds">
-          <el-select
+        <el-form-item label="助手" prop="assistant">
+          <el-input
             style="width: 400px"
-            v-model="ruleForm.assistantIds"
-            filterable
-            multiple
-            placeholder="请选择"
-            :clearable="true"
-          >
-            <el-option
-              v-for="(item, index) in assistantOptions"
-              :key="index"
-              :label="item.userName"
-              :value="item.weixinUserId"
-            >
-            </el-option>
-          </el-select>
+            placeholder="助手"
+            @click.native="chooseAssistants"
+            v-model="ruleForm.assistant"
+            readonly
+            clearable
+          ></el-input>
         </el-form-item>
         <el-form-item
           class="quill-editor"
@@ -168,30 +160,26 @@
             >{{ TiLength }}/2000</span
           >
         </el-form-item>
-        <el-form-item label="添加商品" prop="goodIds">
+        <el-form-item label="添加商品" prop="products">
           <el-input
             style="width: 400px"
             placeholder="推荐商品"
             @click.native="chooseProduct"
-            v-model="ruleForm.goods"
+            v-model="ruleForm.products"
             readonly
             clearable
           ></el-input>
-          <span class="count">{{ ruleForm.productIds.length }}条</span>
         </el-form-item>
 
-        <el-form-item label="添加主播" prop="anchorIds">
+        <el-form-item label="添加主播" prop="recommendedAnchors">
           <el-input
             style="width: 400px"
             placeholder="推荐主播"
             @click.native="chooseAnchor"
-            v-model="ruleForm.anchors"
+            v-model="ruleForm.recommendedAnchors"
             readonly
             clearable
           ></el-input>
-          <span class="count"
-            >{{ ruleForm.recommendedAnchorList.length }}条</span
-          >
         </el-form-item>
 
         <el-form-item label="直播宣传图">
@@ -229,26 +217,17 @@
 
         <el-form-item>
           <el-button type="primary" size="small" @click="submitForm('ruleForm')"
-            >立即创建</el-button
+            >立即修改</el-button
           >
           <!-- <el-button @click="resetForm('ruleForm')">重置</el-button> -->
         </el-form-item>
       </el-form>
     </div>
-    <!-- 主播弹框 -->
-    <choose-anchor ref="chooseAnchor" @add="addAnchorConfirm"></choose-anchor>
-    <!-- 商品弹框 -->
-    <choose-product
-      ref="chooseProduct"
-      @add="addProductConfirm"
-    ></choose-product>
   </el-card>
 </template>
 
 <script>
 import CustomUpload from "@/components/common/custom-upload";
-import ChooseAnchor from "@/components/chooseDialog/chooseAnchor";
-import ChooseProduct from "@/components/chooseDialog/chooseProduct";
 import ComModule from "@/mixins/common-module";
 import Cookies from "js-cookie";
 import { Quill, quillEditor } from "vue-quill-editor";
@@ -281,8 +260,6 @@ export default {
   mixins: [ComModule],
   components: {
     quillEditor,
-    ChooseAnchor,
-    ChooseProduct,
     CustomUpload,
   },
   data() {
@@ -302,17 +279,13 @@ export default {
         startDate: "",
         estimateLiveTime: "",
         frontCoverUrl: "",
-        assistantIds: [],
         liveIntroduce: "",
-        goodIds: [],
-        anchorIds: [],
-        productIds: [],
-        recommendedAnchorList: [],
+        assistant: "",
+        products: "",
+        recommendedAnchors: "",
+        frontCover: "",
       },
       dialogImageUrl: "",
-      dialogVisible: false,
-      disabled: false,
-      chooseFlag: false,
       showDefaultImg: false,
       defaultImg: [],
       fileList: [],
@@ -359,14 +332,11 @@ export default {
         },
       },
       TiLength: 0,
-      options: [],
-      goods: [],
-      productIds: [],
       userId: "",
-      assistantOptions: [],
       submitLoading: false,
       frontCoverList: [],
       frontCoverListDefault: "",
+      info: {},
     };
   },
   watch: {
@@ -381,67 +351,64 @@ export default {
       }
     },
   },
-  created() {
+  activated() {
+    this.ruleForm = {
+      id: "",
+      liveTheme: "",
+      startDate: "",
+      estimateLiveTime: "",
+      frontCoverUrl: "",
+      liveIntroduce: "",
+      assistant: "",
+      products: "",
+      recommendedAnchors: "",
+      frontCover: "",
+    };
+    this.dialogImageUrl = "";
+    this.showDefaultImg = false;
+    this.defaultImg = [];
+    this.fileList = [];
+
     this.uploadUrl = `${
       window.SITE_CONFIG["apiURL"]
     }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
-  },
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      vm.userId = vm.$store.state.user.id;
-      vm.getDynamicAssistantList();
-
-      vm.getCoverPictureList();
-      vm.ruleForm.id = "";
-      vm.ruleForm.liveTheme = "";
-      vm.ruleForm.startDate = "";
-      vm.ruleForm.estimateLiveTime = "";
-      vm.ruleForm.frontCoverUrl = "";
-      vm.fileList = [];
-      vm.ruleForm.liveIntroduce = "";
-      let dataForm = JSON.parse(window.sessionStorage.getItem("dataForm"));
-      if (dataForm) {
-        vm.ruleForm.id = dataForm.id;
-        vm.ruleForm.liveTheme = dataForm.liveTheme;
-        vm.ruleForm.startDate = dataForm.startDate;
-        vm.ruleForm.estimateLiveTime = dataForm.estimateLiveTime;
-        // if (dataForm.dynamicGroupIdsString && dataForm.dynamicGroupName) {
-        //   vm.ruleForm.assistantIds = dataForm.dynamicGroupIdsString.split(",");
-        // }
-
-        let assistantArr = dataForm.assistant.split(",");
-
-        console.log(vm.assistantOptions);
-
-        vm.assistantOptions.forEach((v) => {
-          assistantArr.forEach((val) => {
-            if (v.userName === val) {
-              vm.ruleForm.assistantIds.push(v.userName);
-            }
-          });
-        });
-
-        console.log(assistantArr);
-        console.log(vm.ruleForm.assistantIds);
-
-        vm.ruleForm.frontCoverUrl = dataForm.frontCoverUrl;
-        vm.fileList.push(dataForm.frontCoverUrl);
-        vm.ruleForm.liveIntroduce = dataForm.liveIntroduce;
-        vm.frontCoverListDefault = dataForm.frontCover;
-      } else {
-        vm.$router.push({
-          path: "/preview-Preview",
-        });
-        vm.$message({
-          message: "请选择编辑的预告！",
-          type: "warning",
-          duration: 1500,
-          onClose: () => {},
-        });
-      }
-    });
+    this.getPreviewDetail();
+    this.userId = this.$store.state.user.id;
+    this.getCoverPictureList();
   },
   methods: {
+    //获取数据
+    getPreviewDetail() {
+      this.$http
+        .get(`/sys/livePreview/getDetailed/${this.$route.query.id}`)
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          } else {
+            this.ruleForm.id = res.data.id;
+            this.ruleForm.liveTheme = res.data.liveTheme;
+            this.ruleForm.startDate = res.data.startDate;
+            this.ruleForm.estimateLiveTime = res.data.estimateLiveTime;
+            this.ruleForm.frontCoverUrl = res.data.frontCoverUrl;
+            this.fileList.push(res.data.frontCoverUrl);
+            this.ruleForm.liveIntroduce = res.data.liveIntroduce;
+            this.ruleForm.assistant = res.data.assistant;
+            this.ruleForm.products = res.data.products;
+            this.ruleForm.recommendedAnchors = res.data.recommendedAnchors;
+            this.ruleForm.frontCover = res.data.frontCover
+              ? res.data.frontCover
+              : "";
+            this.frontCoverListDefault = res.data.frontCover
+              ? res.data.frontCover
+              : "";
+
+            this.info = res.data;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
     //删除背景图
     handleRemoveItem() {
       this.frontCoverListDefault = "";
@@ -484,30 +451,34 @@ export default {
         this.TiLength = e.quill.getLength() - 1;
       }
     },
-    // 推荐主播弹框
+    // 推荐主播
     chooseAnchor() {
-      this.$refs.chooseAnchor.init(this.ruleForm.recommendedAnchorList);
+      this.$router.push({
+        path: "/preview-recommendAnchor-RecommendAnchor",
+        query: {
+          liveId: this.info.id,
+        },
+      });
     },
-
-    // 确认添加推荐主播
-    addAnchorConfirm(data) {
-      this.$refs.chooseAnchor.close();
-
-      this.ruleForm.recommendedAnchorList = data;
-      this.ruleForm.anchors = data.map((item) => item.username).join(",");
+    //编辑助手
+    chooseAssistants() {
+      this.$router.push({
+        path: "/preview-assistant-Assistant",
+        query: {
+          liveId: this.info.id,
+          anchorId: this.info.anchorUserId,
+        },
+      });
     },
-
-    // 推荐商品弹框
+    // 推荐商品
     chooseProduct() {
-      this.$refs.chooseProduct.init(this.ruleForm.productIds);
-    },
-
-    // 确认添加推荐商品
-    addProductConfirm(data) {
-      this.$refs.chooseProduct.close();
-
-      this.ruleForm.productIds = data;
-      this.ruleForm.goods = data.map((item) => item.productName).join(",");
+      this.$router.push({
+        path: "/preview-cargoGoods-CargoGoods",
+        query: {
+          liveId: this.info.id,
+          anchorId: this.info.anchorUserId,
+        },
+      });
     },
     //提交表单
     submitForm(formName) {
@@ -517,31 +488,26 @@ export default {
           this.ruleForm.startDate = this.dateFormat(this.ruleForm.startDate);
 
           dataForm = {
+            id: this.ruleForm.id,
             liveTheme: this.ruleForm.liveTheme,
             startDate: this.ruleForm.startDate,
             estimateLiveTime: this.ruleForm.estimateLiveTime,
             frontCoverUrl: this.ruleForm.frontCoverUrl,
             liveIntroduce: this.ruleForm.liveIntroduce,
-            assistantIds: this.ruleForm.assistantIds,
-            frontCover:
-              this.frontCoverList[0].url &&
-              this.frontCoverListDefault.length === 0
-                ? this.frontCoverList[0].url
-                : this.frontCoverListDefault,
           };
-
-          if (this.frontCoverListDefault.length !== 0) {
-            dataForm.frontCover;
+          if (
+            this.frontCoverList.length !== 0 &&
+            this.frontCoverList[0] &&
+            this.frontCoverList[0].url &&
+            this.frontCoverList[0].url !== 0 &&
+            this.frontCoverListDefault.length === 0
+          ) {
+            dataForm.frontCover = this.frontCoverList[0].url;
+          } else if (this.frontCoverList.length === 0) {
+            dataForm.frontCover = this.frontCoverListDefault;
           }
 
-          // 商品、主播返回ids[]
-          dataForm.productIds = this.ruleForm.productIds.map((item) => item.id);
-          dataForm.recommendedAnchorList =
-            this.ruleForm.recommendedAnchorList.map((item) => item.anchorId);
-
           this.submitLoading = true;
-          console.log(dataForm);
-          return;
 
           this.$http
             .put("/sys/livePreview/update", dataForm)
@@ -557,11 +523,8 @@ export default {
                 estimateLiveTime: "",
                 frontCoverUrl: "",
                 liveIntroduce: "",
-                productIds: [],
                 goods: "",
-                recommendedAnchorList: [],
                 anchors: "",
-                assistantIds: [],
               };
               this.ruleForm.frontCoverUrl = this.defaultImg[0];
               this.frontCoverList = [];
@@ -643,22 +606,6 @@ export default {
     //补零
     dateIfAddZero: function (time) {
       return time < 10 ? "0" + time : time;
-    },
-    //获取助手
-    getDynamicAssistantList() {
-      this.$http
-        .get(
-          `/sys/anchorAssistant/live/getAnchorAssistantWithLiveByAnchorId?anchorId=${this.userId}`
-        )
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          }
-          this.assistantOptions = res.data;
-        })
-        .catch((err) => {
-          throw err;
-        });
     },
   },
 };

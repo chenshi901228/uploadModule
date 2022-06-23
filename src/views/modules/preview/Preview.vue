@@ -465,7 +465,11 @@
         >
           <template slot-scope="scope">
             <el-button
-              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1 && scope.row.liveState === 3"
+              v-if="
+                scope.row.appointmentState !== 0 &&
+                scope.row.delFlg !== 1 &&
+                scope.row.liveState === 3
+              "
               type="text"
               size="small"
               icon="el-icon-plus"
@@ -489,7 +493,7 @@
               >推荐主播</el-button
             >
             <el-button
-             v-if="scope.row.liveState === 3"
+              v-if="scope.row.liveState === 3"
               type="text"
               size="small"
               icon="el-icon-user-solid"
@@ -498,14 +502,22 @@
             >
             <el-button
               icon="el-icon-sort"
-              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1 && scope.row.liveState === 3"
+              v-if="
+                scope.row.appointmentState !== 0 &&
+                scope.row.delFlg !== 1 &&
+                scope.row.liveState === 3
+              "
               type="text"
               size="small"
               @click="showThis(scope.$index, scope.row)"
               >{{ scope.row.showState === 0 ? "显示" : "隐藏" }}</el-button
             >
             <el-button
-              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1 && scope.row.liveState === 3"
+              v-if="
+                scope.row.appointmentState !== 0 &&
+                scope.row.delFlg !== 1 &&
+                scope.row.liveState === 3
+              "
               type="text"
               icon="el-icon-edit"
               size="small"
@@ -513,7 +525,11 @@
               >编辑</el-button
             >
             <el-button
-              v-if="scope.row.appointmentState !== 0 && scope.row.delFlg !== 1 && scope.row.liveState === 3"
+              v-if="
+                scope.row.appointmentState !== 0 &&
+                scope.row.delFlg !== 1 &&
+                scope.row.liveState === 3
+              "
               type="text"
               icon="el-icon-delete"
               size="small"
@@ -760,9 +776,11 @@ export default {
     },
     //编辑
     handle(index, row) {
-      window.sessionStorage.setItem("dataForm", JSON.stringify(row));
       this.$router.push({
         path: "/preview-editePreview-EditePreview",
+        query: {
+          id: row.id,
+        },
       });
     },
     //删除
