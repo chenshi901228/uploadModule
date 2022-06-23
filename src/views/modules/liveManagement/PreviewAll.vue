@@ -421,7 +421,7 @@
         >
         </el-table-column>
         <el-table-column
-          width="120"
+          width="200"
           label="操作"
           fixed="right"
           header-align="center"

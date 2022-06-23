@@ -464,13 +464,14 @@ export default {
             this.ruleForm.recommendedAnchorList.map((item) => item.anchorId);
 
           dataForm = {
+            ...dataForm,
             liveTheme: this.ruleForm.liveTheme,
             startDate: this.ruleForm.startDate,
             estimateLiveTime: this.ruleForm.estimateLiveTime,
             frontCoverUrl: this.ruleForm.frontCoverUrl,
             liveIntroduce: this.ruleForm.liveIntroduce,
             assistantIds: this.ruleForm.assistantIds,
-            frontCover:this.frontCoverList[0].url
+            frontCover: this.frontCoverList.length ? this.frontCoverList[0].url : ""
           };
 
           this.submitLoading = true;

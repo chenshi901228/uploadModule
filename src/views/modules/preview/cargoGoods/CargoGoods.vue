@@ -65,7 +65,7 @@
             v-model="dataForm.linkedProductId"
           />
         </el-form-item>
-        <!-- <el-form-item
+        <el-form-item
           label="添加状态"
           prop="isAdd"
           v-if="isOpen || formItemCount >= 5"
@@ -79,7 +79,7 @@
             <el-option :value="0" label="否"></el-option>
             <el-option :value="1" label="是"></el-option>
           </el-select>
-        </el-form-item> -->
+        </el-form-item>
         <div class="headerTool-search-btns">
           <el-form-item>
             <el-button
