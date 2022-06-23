@@ -60,10 +60,10 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 5" label="回放状态" prop="liveState">
+        <el-form-item v-if="isOpen || formItemCount >= 5" label="生成状态" prop="liveState">
           <el-select
             clearable
-            v-model="dataForm.liveState"
+            v-model="dataForm.productState"
             placeholder="请选择"
             style="width: 200px"
           >
@@ -72,7 +72,7 @@
             <el-option label="生成中" :value="2"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 6" label="显示状态" prop="showState">
+        <!-- <el-form-item v-if="isOpen || formItemCount >= 6" label="显示状态" prop="showState">
           <el-select
             clearable
             v-model="dataForm.showState"
@@ -82,7 +82,7 @@
             <el-option label="显示" :value="1"></el-option>
             <el-option label="隐藏" :value="0"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">
           <el-form-item>
@@ -105,12 +105,12 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button
+              <!-- <el-button
                 size="mini"
                 plain
                 icon="el-icon-plus"
                 type="primary"
-                @click="addOrUpdateHandle()">{{ $t("add") }}</el-button>
+                @click="addOrUpdateHandle()">{{ $t("add") }}</el-button> -->
               <el-button 
                 type="warning"
                 plain
@@ -292,7 +292,7 @@ export default {
   data() {
     return {
       mixinTableModuleOptions: {
-        getDataListURL: "/sys/livePlayback/page", // 数据列表接口，API地址
+        getDataListURL: "/sys/liveplaybacknew/page", // 数据列表接口，API地址
         exportURL: "/sys/livePlayback/export", // 导出接口，API地址
       },
       dataForm: {
@@ -305,7 +305,7 @@ export default {
       },
 
       tableItem: [
-        { prop: "frontCoverUrl", label: "封面图" },
+        { prop: "frontCoverUrl", label: "直播宣传图" },
         { prop: "liveTheme", label: "回放主题" },
         { prop: "anchorUser", label: "主播" },
         { prop: "anchorTel", label: "手机号码" },
@@ -313,16 +313,16 @@ export default {
         { prop: "liveDuration", label: "视频时长" },
         { prop: "videoSize", label: "视频大小" },
         { prop: "dynamicGroupName", label: "投放人群" },
-        { prop: "playbackNum", label: "回放次数" },
-        { prop: "commentNum", label: "评论次数" },
-        { prop: "giveLikeNum", label: "点赞次数" },
-        { prop: "shareNum", label: "分享次数" },
-        { prop: "addUserNum", label: "新增用户" },
-        { prop: "liveState", label: "回放状态" },
+        { prop: "productState", label: "生成状态" },
         { prop: "showState", label: "显示状态" },
         { prop: "livingRoomId", label: "直播间ID", width: 180 },
-        { prop: "remark", label: "备注" },
         { prop: "createDate", label: "创建时间", width: 180 },
+        // { prop: "playbackNum", label: "回放次数" },
+        // { prop: "commentNum", label: "评论次数" },
+        // { prop: "giveLikeNum", label: "点赞次数" },
+        // { prop: "shareNum", label: "分享次数" },
+        // { prop: "addUserNum", label: "新增用户" },
+        // { prop: "remark", label: "备注" },
       ],
       dynamicGroupOptions: [], //投放人群
       getDynamicGroupLoading: false, //下拉框加载数据loading
