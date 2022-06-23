@@ -369,7 +369,7 @@ export default {
           liveId: this.dataForm.liveId,
           anchorId: this.dataForm.anchorId,
           productIdList: this.selectAddList,
-          type: 2,
+          type: this.dataForm.type,
         })
         .then(({ data: res }) => {
           if (res.code !== 0) {
@@ -420,7 +420,7 @@ export default {
           liveId: this.dataForm.liveId,
           anchorId: this.dataForm.anchorId,
           productIdList: list,
-          type: 2,
+          type: this.dataForm.type,
         })
         .then(({ data: res }) => {
           if (res.code !== 0) {
@@ -441,7 +441,7 @@ export default {
           data: {
             ids: this.ids,
             liveId: this.dataForm.liveId,
-            type: 2,
+            type: this.dataForm.type,
           },
         })
         .then(({ data: res }) => {
@@ -487,9 +487,9 @@ export default {
         isFree: "",
         linkedProductId: "",
         isAdd: "",
-        liveId: this.$route.query.liveId,
-        type: 2,
-        anchorId: this.$route.query.anchorId,
+        liveId: this.dataForm.liveId,
+        type: this.dataForm.type,
+        anchorId: this.dataForm.anchorId,
       };
 
       this.query();
