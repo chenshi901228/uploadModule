@@ -350,18 +350,16 @@ export default {
       authEdit: 1, //从直播列表进来是否有编辑权限：1-有，0-没有
     };
   },
-  created() {
-    this.dataForm.liveId = this.$route.query.liveId;
-    this.dataForm.type = this.$route.query.type
-    this.dataForm.anchorId = this.$route.query.anchorId
-    this.query();
-  },
   activated() {
     if(this.$route.query.authEdit != undefined) { //有表示来自直播列表
       this.authEdit = this.$route.query.authEdit
     }else { //来自预告
       this.authEdit = 1
     }
+    this.dataForm.liveId = this.$route.query.liveId;
+    this.dataForm.type = this.$route.query.type
+    this.dataForm.anchorId = this.$route.query.anchorId
+    this.query();
   },
   methods: {
     //确认批量添加

@@ -625,7 +625,6 @@ export default {
     };
   },
   watch: {},
-  created() {},
   activated() {
     this.query();
     this.getDynamicGroupList();
