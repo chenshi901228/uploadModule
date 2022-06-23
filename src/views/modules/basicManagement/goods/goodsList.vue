@@ -78,30 +78,16 @@
           </el-form-item>
           <el-form-item
             label="关联产品编号"
-            prop="id"
+            prop="linkedProductId"
             v-if="isOpen || formItemCount >= 4"
           >
             <el-input
               style="width: 200px"
-              v-model.trim="dataForm.id"
+              v-model.trim="dataForm.linkedProductId"
               placeholder="请输入"
               clearable
             >
             </el-input>
-          </el-form-item>
-          <el-form-item
-            label="状态"
-            prop="delFlg"
-            v-if="isOpen || formItemCount >= 5"
-          >
-            <el-select 
-              style="width: 200px" 
-              v-model="dataForm.delFlg" 
-              placeholder="商品类型"
-              clearable>
-                <el-option :value="0" label="上架"></el-option>
-                <el-option :value="1" label="下架"></el-option>
-            </el-select>
           </el-form-item>
 
           <div class="headerTool-search-btns">
@@ -313,7 +299,7 @@ export default {
         productName: "",
         productType: "",
         isFree: null,
-        id: "",
+        linkedProductId: "",
       },
 
       tableItem: [
@@ -325,7 +311,7 @@ export default {
         { prop: "isFree", label: "是否免费" },
         { prop: "stock", label: "库存数量" },
         { prop: "buyers", label: "已购买人数" },
-        { prop: "id", label: "关联产品编号" },
+        { prop: "linkedProductId", label: "关联产品编号", width: 320 },
         // { prop: "proportion", label: "分成比例" },
         { prop: "updateDate", label: "更新时间", width: 180 },
         { prop: "delFlg", label: "状态" },
