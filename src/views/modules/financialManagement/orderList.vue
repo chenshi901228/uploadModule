@@ -224,7 +224,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="productId"
+          prop="linkedProductId"
           label="关联产品编号"
           min-width="120px"
           header-align="center"

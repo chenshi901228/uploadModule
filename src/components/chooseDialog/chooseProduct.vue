@@ -49,7 +49,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item
-                label="关联商品编号"
+                label="关联产品编号"
                 prop="linkedProductId">
                 <el-input
                     placeholder="请输入"

@@ -52,12 +52,12 @@
           <el-option :value="0" label="否"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="关联商品编号" prop="productId">
+      <el-form-item label="关联产品编号" prop="linkedProductId">
         <el-input
           placeholder="请输入"
           style="width: 200px"
           clearable
-          v-model="dataForm.productId"
+          v-model="dataForm.linkedProductId"
         />
       </el-form-item>
       <el-form-item>
@@ -206,7 +206,7 @@ export default {
         productName: "",
         productType: "",
         isFree: null,
-        productId: "",
+        linkedProductId: "",
       },
       dataList: [], // 数据列表
       page: 1, // 当前页码
@@ -222,7 +222,7 @@ export default {
         { prop: "price", label: "销售价格" },
         { prop: "productType", label: "商品类型" },
         { prop: "isFree", label: "是否免费" },
-        { prop: "productId", label: "关联产品编号" },
+        { prop: "linkedProductId", label: "关联产品编号" },
         { prop: "updateDate", label: "更新时间", width: 180 },
         { prop: "isAdd", label: "添加状态" },
         { prop: "isFeatured", label: "主推状态" },
