@@ -176,7 +176,7 @@
         >
           <template slot-scope="{ row }">
             <el-button
-              v-if="$hasPermission('sys:user:update')"
+              v-if="$hasPermission('sys:user:update')&&diaTbas===1"
               type="text"
               size="mini"
               icon="el-icon-edit"

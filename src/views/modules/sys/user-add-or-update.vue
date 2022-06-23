@@ -7,10 +7,10 @@
       <el-form-item prop="deptName" :label="$t('user.deptName')">
         <ren-dept-tree v-model="dataForm.deptId" :placeholder="$t('dept.title')" :dept-name.sync="dataForm.deptName"></ren-dept-tree>
       </el-form-item>
-      <el-form-item prop="password" :label="$t('user.password')" :class="{ 'is-required': !dataForm.id }">
+      <el-form-item v-if="!dataForm.id" prop="password" :label="$t('user.password')" :class="{ 'is-required': !dataForm.id }">
         <el-input v-model="dataForm.password" type="password" :placeholder="$t('user.password')"></el-input>
       </el-form-item>
-      <el-form-item prop="confirmPassword" :label="$t('user.confirmPassword')" :class="{ 'is-required': !dataForm.id }">
+      <el-form-item v-if="!dataForm.id" prop="confirmPassword" :label="$t('user.confirmPassword')" :class="{ 'is-required': !dataForm.id }">
         <el-input v-model="dataForm.confirmPassword" type="password" :placeholder="$t('user.confirmPassword')"></el-input>
       </el-form-item>
       <!-- <el-form-item prop="realName" :label="$t('user.realName')">
