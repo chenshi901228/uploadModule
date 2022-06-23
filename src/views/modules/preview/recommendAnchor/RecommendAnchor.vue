@@ -245,7 +245,7 @@
       </span>
     </el-dialog>
     <el-dialog title="置顶" :visible.sync="dialogVisible" width="30%">
-      <span>置顶该商品后，将展示在第一个，确认置顶</span>
+      <span>置顶该主播后，将展示在第一个，确认置顶</span>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
         <el-button size="small" type="primary" @click="confirmCargo"
