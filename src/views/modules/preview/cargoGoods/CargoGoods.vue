@@ -54,7 +54,7 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          label="关联商品编号"
+          label="关联产品编号"
           prop="linkedProductId"
           v-if="isOpen || formItemCount >= 4"
         >
@@ -65,7 +65,7 @@
             v-model="dataForm.linkedProductId"
           />
         </el-form-item>
-        <el-form-item
+        <!-- <el-form-item
           label="添加状态"
           prop="isAdd"
           v-if="isOpen || formItemCount >= 5"
@@ -79,7 +79,7 @@
             <el-option :value="0" label="否"></el-option>
             <el-option :value="1" label="是"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <div class="headerTool-search-btns">
           <el-form-item>
             <el-button
@@ -217,8 +217,8 @@
           </template></el-table-column
         >
         <el-table-column
-          prop="id"
-          label="关联商品编号"
+          prop="linkedProductId"
+          label="关联产品编号"
           header-align="center"
           align="center"
         ></el-table-column>
@@ -229,7 +229,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            {{ scope.row.isAdd === 1 ? "是" : "否" }}
+            {{ scope.row.isAdd === 1 ? "已添加" : "未添加" }}
           </template></el-table-column
         >
         <el-table-column

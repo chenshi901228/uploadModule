@@ -10,7 +10,7 @@
             size="small"
             label-width="110px"
             >
-                <el-form-item label="直播主题" prop="liveTheme" required>
+                <el-form-item label="直播主题" prop="liveTheme">
                     <el-input 
                         style="width: 400px" 
                         v-model.trim="dataForm.liveTheme"
@@ -21,6 +21,7 @@
                     <custom-upload 
                         ref="frontCoverUpload"
                         :fileMaxSize="2"
+                        :fileType="['png', 'jpg', 'jpeg']"
                         @uploadSuccess="frontCoverUploadSuccess" 
                         @uploadRemove="frontCoverUploadRemove"
                         :fileList="frontCoverList"></custom-upload>
@@ -32,7 +33,6 @@
                         placeholder="请选择" 
                         v-model="dataForm.product"
                         @click.native="chooseProduct"></el-input>
-                    <span class="count">{{productIds.length}}条</span>
                 </el-form-item>
                 <el-form-item label="添加主播" prop="anchor">
                     <el-input 
@@ -40,12 +40,12 @@
                         placeholder="请选择" 
                         v-model="dataForm.anchor"
                         @click.native="chooseAnchor"></el-input>
-                    <span class="count">{{recommendedAnchorList.length}}条</span>
                 </el-form-item>
                 <el-form-item label="直播背景">
                     <custom-upload 
                         ref="bgLiveUpload"
                         :fileMaxSize="2"
+                        :fileType="['png', 'jpg', 'jpeg']"
                         @uploadSuccess="bgLiveUploadSuccess" 
                         @uploadRemove="bgLiveUploadRemove"
                         :fileList="bgLiveList"></custom-upload>
@@ -105,7 +105,7 @@ export default {
                 frontCoverUrl: "", //直播宣传图
                 product: "", //推荐商品
                 anchor: "", //推荐主播
-                bgLiveUrl: "", //直播背景
+                frontCover: "", //直播背景
                 assistantIds: "" //助手
             },
             frontCoverList: [], //直播宣传图
@@ -166,7 +166,7 @@ export default {
             this.$refs.chooseAnchor.close()
 
             this.recommendedAnchorList = data
-            this.dataForm.anchor = data.map(item => item.username).join(",")
+            this.dataForm.anchor = data.length ? `已选择${data.length}个主播` : ""
         },
 
 
@@ -180,14 +180,14 @@ export default {
             this.$refs.chooseProduct.close()
 
             this.productIds = data
-            this.dataForm.product = data.map(item => item.productName).join(",")
+            this.dataForm.product = data.length ? `已选择${data.length}个商品` : ""
         },
 
         // 取消创建直播
         cancel() {
             this.$refs.dataForm.resetFields()
             this.dataForm.frontCoverUrl = ""
-            this.dataForm.bgLiveUrl = ""
+            this.dataForm.frontCover = ""
             this.frontCoverList = []
             this.bgLiveList = []
 
@@ -217,9 +217,8 @@ export default {
     
                         // 附件处理
                         params.frontCoverUrl = this.frontCoverList[0].url
-                        params.bgLiveUrl = this.bgLiveList[0] ? this.bgLiveList[0].url : ""
+                        params.frontCover = this.bgLiveList[0] ? this.bgLiveList[0].url : ""
     
-                        delete params.bgLiveUrl //暂时不传
     
                         // 商品ids
                         params.productIds = this.productIds.map(item => item.id)

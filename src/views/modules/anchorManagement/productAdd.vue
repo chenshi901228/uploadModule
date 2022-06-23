@@ -51,10 +51,10 @@
           <div v-if="isOpen">
             <el-row>
               <el-col :span="8">
-                <el-form-item label="关联产品编号" prop="searchProductId">
+                <el-form-item label="关联产品编号" prop="linkedProductId">
                     <el-input
                         size="small"
-                        v-model.trim="dataForm.searchProductId"
+                        v-model.trim="dataForm.linkedProductId"
                         placeholder="请输入"
                         clearable
                     >
@@ -222,7 +222,7 @@ export default {
         productName: "",
         productType: "",
         isFree: null,
-        searchProductId: "",
+        linkedProductId: "",
         isAdd: null,
         isFeatured: null,
       },
@@ -238,7 +238,7 @@ export default {
         { prop: "price", label: "销售价格" },
         { prop: "productType", label: "商品类型" },
         { prop: "isFree", label: "是否免费" },
-        { prop: "productId", label: "关联产品编号" },
+        { prop: "linkedProductId", label: "关联产品编号" },
         { prop: "updateDate", label: "更新时间", width: 180 },
         { prop: "isAdd", label: "添加状态" },
         { prop: "isFeatured", label: "主推状态" },
