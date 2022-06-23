@@ -25,7 +25,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 2" label="主播" prop="anchorUser">
           <el-input
             v-model.trim="dataForm.anchorUser"
-            placeholder="请输入姓名或手机号码"
+            placeholder="请输入姓名"
             clearable
             style="width: 200px"
           >
@@ -60,16 +60,15 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 5" label="生成状态" prop="liveState">
+        <el-form-item v-if="isOpen || formItemCount >= 5" label="生成状态" prop="productState">
           <el-select
             clearable
             v-model="dataForm.productState"
             placeholder="请选择"
             style="width: 200px"
           >
-            <el-option label="可回放" :value="1"></el-option>
-            <el-option label="已删除" :value="0"></el-option>
-            <el-option label="生成中" :value="2"></el-option>
+            <el-option label="生成中" :value="0"></el-option>
+            <el-option label="已生成" :value="1"></el-option>
           </el-select>
         </el-form-item>
         <!-- <el-form-item v-if="isOpen || formItemCount >= 6" label="显示状态" prop="showState">
@@ -167,13 +166,11 @@
               {{ row.showMode ? "横屏" : "竖屏" }}
             </span>
             <!-- 回放状态 -->
-            <span v-else-if="item.prop == 'liveState'">
+            <span v-else-if="item.prop == 'productState'">
               {{
-                row.liveState == 1
-                  ? "可回放"
-                  : row.liveState == 0
-                  ? "已删除"
-                  : "生成中"
+                  row.productState == 0
+                  ? "生成中"
+                  : "已生成"
               }}
             </span>
             <!-- 显示状态 -->
@@ -211,15 +208,24 @@
           width="200"
         >
           <template slot-scope="{ row }">
-            <!-- <el-button
+            <el-button
               type="text"
               size="small"
+              v-if="row.productState==1"
               icon="el-icon-download"
-              v-if="row.liveState == 1"
               @click="actionHandle('1',row)"
               >下载视频</el-button
-            > -->
+            >
             <el-button
+              size="small"
+              style="margin-left: 10px"
+              type="text"
+              v-if="row.productState==1"
+              icon="el-icon-view"
+              @click="sendPrompt(row.id)"
+              >发送回放提醒</el-button
+            >
+            <!-- <el-button
               size="small"
               style="margin-left: 10px"
               type="text"
@@ -246,7 +252,7 @@
               v-if="row.liveState != 0"
               @click="showOrHide(row)"
               >{{ row.showState ? "隐藏" : "显示" }}</el-button
-            >
+            > -->
           </template>
         </el-table-column>
       </el-table>
@@ -293,14 +299,14 @@ export default {
     return {
       mixinTableModuleOptions: {
         getDataListURL: "/sys/liveplaybacknew/page", // 数据列表接口，API地址
-        exportURL: "/sys/livePlayback/export", // 导出接口，API地址
+        exportURL: "/sys/liveplaybacknew/export", // 导出接口，API地址
       },
       dataForm: {
         liveTheme: "",
         anchorUser: "",
         showMode: null,
         showState: null,
-        liveState: null,
+        productState: null,
         dynamicGroupName: "",
       },
 
@@ -361,6 +367,15 @@ export default {
           this.$refs.remarkModal.init(data.id);
           break;
       }
+    },
+    sendPrompt(id){
+      this.$http.put(`/sys/liveplaybacknew/sendImMsg/${id}`).then(res=>{
+        if(res.data.code == 0){
+          this.$message.success('发送提醒成功！');
+        }else{
+          this.$message.error(res.msg);
+        }
+      })
     },
     // 投放人群下拉请求数据
     getDynamicGroup(value) {

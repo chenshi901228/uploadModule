@@ -580,6 +580,11 @@ export default {
     addProduct(row) {
       this.$router.push({
         path: "/preview-cargoGoods-CargoGoods",
+        query: {
+          liveId: row.id,
+          anchorId: row.anchorUserId,
+          type: 2,
+        },
       });
     },
     //推荐主播
@@ -595,6 +600,11 @@ export default {
     assistant(row) {
       this.$router.push({
         path: "/preview-assistant-Assistant",
+        query: {
+          liveId: row.id,
+          anchorId: row.anchorUserId,
+          type: 2,
+        },
       });
     },
     query() {
