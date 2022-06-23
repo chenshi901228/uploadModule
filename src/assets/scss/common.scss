@@ -771,3 +771,13 @@ img {
   content: "-";
   color: #606266;
 }
+
+
+// 确认弹框提示内容换行--
+.el-message-box__wrapper {
+  .el-message-box__message {
+    p {
+      word-break: break-all;
+    }
+  }
+}

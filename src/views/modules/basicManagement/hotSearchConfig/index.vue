@@ -226,7 +226,7 @@ export default {
         },
         // 移除
         deleteCount(data) {
-            this.$confirm(`确认移除配置[${data.value.length > 10 ? data.value.slice(0, 10) + '...' : data.value}]?`, "提示", {
+            this.$confirm(`确认移除配置[${data.value}]?`, "提示", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
                 type: "warning",
@@ -243,7 +243,7 @@ export default {
         },
         // 上移或下移
         upOrDownHandle(data, type) {
-            this.$confirm(`确认${type == -1 ? "下移" : "上移"}配置[${data.value.length > 10 ? data.value.slice(0, 10) + '...' : data.value}]?`, "提示", {
+            this.$confirm(`确认${type == -1 ? "下移" : "上移"}配置[${data.value}]?`, "提示", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
                 type: "warning",
