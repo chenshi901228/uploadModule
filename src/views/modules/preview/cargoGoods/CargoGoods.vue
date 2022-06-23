@@ -104,7 +104,7 @@
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
-            <el-form-item>
+            <el-form-item v-if="authEdit == 1">
               <el-button
                 type="primary"
                 plain
@@ -115,7 +115,7 @@
                 >批量添加</el-button
               >
             </el-form-item>
-            <el-form-item>
+            <!-- <el-form-item>
               <el-button
                 type="warning"
                 plain
@@ -124,7 +124,7 @@
                 @click="exportHandle"
                 >{{ $t("export") }}</el-button
               >
-            </el-form-item>
+            </el-form-item> -->
           </div>
           <div class="headerTool--handle-btns-right">
             <el-form-item>
@@ -238,6 +238,7 @@
           header-align="center"
           align="center"
           width="150"
+          v-if="authEdit == 1"
         >
           <template slot-scope="scope">
             <el-button
@@ -346,13 +347,21 @@ export default {
       ids: [],
       dialogAddVisible: false,
       selectAddList: [],
+      authEdit: 1, //从直播列表进来是否有编辑权限：1-有，0-没有
     };
   },
   created() {
     this.dataForm.liveId = this.$route.query.liveId;
     this.dataForm.type = this.$route.query.type
-    this.dataForm.anchorId = this.$route.query.anchorId;
+    this.dataForm.anchorId = this.$route.query.anchorId
     this.query();
+  },
+  activated() {
+    if(this.$route.query.authEdit != undefined) { //有表示来自直播列表
+      this.authEdit = this.$route.query.authEdit
+    }else { //来自预告
+      this.authEdit = 1
+    }
   },
   methods: {
     //确认批量添加

@@ -80,6 +80,7 @@
               plain
               icon="el-icon-plus"
               size="mini"
+              v-if="authEdit == 1"
               :disabled="dataListSelections.length === 0"
               @click="addSelect()"
               >批量添加</el-button
@@ -174,6 +175,7 @@
           header-align="center"
           align="center"
           width="150"
+          v-if="authEdit == 1"
         >
           <template slot-scope="scope">
             <el-button
@@ -281,13 +283,19 @@ export default {
       ids: [],
       dialogAddVisible: false,
       selectAddList: [],
+      authEdit: 1, //从直播列表进来是否有编辑权限：1-有，0-没有
     };
   },
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      vm.dataForm.liveId = vm.$route.query.liveId;
-      vm.query();
-    });
+  created() {
+    this.dataForm.liveId = this.$route.query.liveId;
+    this.query();
+  },
+  activated() {
+    if(this.$route.query.authEdit != undefined) { //有表示来自直播列表
+      this.authEdit = this.$route.query.authEdit
+    }else { //来自预告
+      this.authEdit = 1
+    }
   },
   methods: {
     //确认批量添加

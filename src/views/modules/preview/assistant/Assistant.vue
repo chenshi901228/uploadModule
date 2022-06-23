@@ -139,6 +139,7 @@
           header-align="center"
           align="center"
           width="150"
+          v-if="authEdit == 1"
         >
           <template slot-scope="scope">
             <el-button
@@ -215,6 +216,7 @@ export default {
       fansLevelsOptions: [], //粉丝等级options
       dialogVisible: false,
       ids: [],
+      authEdit: 1, //从直播列表进来是否有编辑权限：1-有，0-没有
     };
   },
   created() {
@@ -222,6 +224,13 @@ export default {
     this.dataForm.type = this.$route.query.type
     this.dataForm.anchorId = this.$route.query.anchorId;
     this.query();
+  },
+  activated() {
+    if(this.$route.query.authEdit != undefined) { //有表示来自直播列表
+      this.authEdit = this.$route.query.authEdit
+    }else { //来自预告
+      this.authEdit = 1
+    }
   },
   methods: {
     //删除
