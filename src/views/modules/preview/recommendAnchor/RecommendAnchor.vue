@@ -312,13 +312,20 @@ export default {
     },
     //批量添加
     addSelect() {
-      this.dialogAddVisible = true;
-      this.dataListSelections.forEach((v) => {
-        this.selectAddList.push({
-          liveId: this.dataForm.liveId,
-          anchorId: v.anchorId,
-        });
+      let flag = this.dataListSelections.some((val) => {
+        return val.state === '1';
       });
+      if (flag) {
+        this.$message.warning("请选择未添加主播！");
+      } else {
+        this.dialogAddVisible = true;
+        this.dataListSelections.forEach((v) => {
+          this.selectAddList.push({
+            liveId: this.dataForm.liveId,
+            anchorId: v.anchorId,
+          });
+        });
+      }
     },
     //删除
     deleteSelect(row) {
