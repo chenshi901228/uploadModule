@@ -490,6 +490,7 @@ export default {
         path: "/preview-cargoGoods-CargoGoods",
         query: {
           liveId: row.id,
+          type: 1,
           anchorId: row.anchorUserId,
           authEdit: row.liveState == 1 || row.liveState == 3 ? 1 : 0 //仅未开播和直播中能修改
         }
@@ -511,6 +512,7 @@ export default {
         path: "/preview-assistant-Assistant",
         query: {
           liveId: row.id,
+          type: 1,
           anchorId: row.anchorUserId,
           authEdit: row.liveState == 1 || row.liveState == 3 ? 1 : 0 //仅未开播和直播中能修改
         }
