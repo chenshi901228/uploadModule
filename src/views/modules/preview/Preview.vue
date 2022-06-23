@@ -638,6 +638,7 @@ export default {
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,
+          type: 2,
         },
       });
     },
@@ -657,6 +658,7 @@ export default {
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,
+          type: 2,
         },
       });
     },

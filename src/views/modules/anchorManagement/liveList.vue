@@ -490,7 +490,8 @@ export default {
         path: "/preview-cargoGoods-CargoGoods",
         query: {
           liveId: row.id,
-          anchorId: row.anchorUserId
+          anchorId: row.anchorUserId,
+          type: 1,
         }
       });
     },
@@ -507,7 +508,8 @@ export default {
         path: "/preview-assistant-Assistant",
         query: {
           liveId: row.id,
-          anchorId: row.anchorUserId
+          anchorId: row.anchorUserId,
+          type: 1,
         }
       });
     },

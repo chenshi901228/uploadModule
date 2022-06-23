@@ -217,17 +217,11 @@ export default {
       ids: [],
     };
   },
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      if (from.name === "preview-Preview") {
-        vm.dataForm.type = 2;
-      } else if (from.name === "anchorManagement-liveList") {
-        vm.dataForm.type = 1;
-      }
-      vm.dataForm.liveId = vm.$route.query.liveId;
-      vm.dataForm.anchorId = vm.$route.query.anchorId;
-      vm.query();
-    });
+  created() {
+    this.dataForm.liveId = this.$route.query.liveId;
+    this.dataForm.type = this.$route.query.type
+    this.dataForm.anchorId = this.$route.query.anchorId;
+    this.query();
   },
   methods: {
     //删除
