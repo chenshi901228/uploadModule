@@ -374,19 +374,20 @@ export default {
       },
 
       tableItem: [
-        { prop: "frontCoverUrl", label: "封面图" },
+        { prop: "frontCoverUrl", label: "直播宣传图" },
         { prop: "liveTheme", label: "直播主题" },
         { prop: "liveBroadcastWay", label: "推流端" },
         { prop: "showMode", label: "显示方式" },
         { prop: "assistant", label: "助手" },
-        { prop: "anchorUser", label: "主播" },
-        { prop: "anchorTel", label: "手机号码" },
         { prop: "startDate", label: "开播时间", width: 180 },
         { prop: "endDate", label: "结束时间", width: 180 },
-        { prop: "liveTime", label: "直播时长（分）" },
         { prop: "dynamicGroupName", label: "投放人群" },
         { prop: "audienceNum", label: "观众总数" },
         { prop: "maxOnlineNum", label: "最高同时在线" },
+        { prop: "liveHot", label: "直播间亲密度" },
+        // { prop: "anchorUser", label: "主播" },
+        // { prop: "anchorTel", label: "手机号码" },
+        // { prop: "liveTime", label: "直播时长（分）" },
         { prop: "giveLikeNum", label: "点赞次数" },
         { prop: "interactionNum", label: "互动次数" },
         { prop: "shareNum", label: "分享次数" },
@@ -489,7 +490,8 @@ export default {
         path: "/preview-cargoGoods-CargoGoods",
         query: {
           liveId: row.id,
-          anchorId: row.anchorUserId
+          anchorId: row.anchorUserId,
+          authEdit: row.liveState == 1 || row.liveState == 3 ? 1 : 0 //仅未开播和直播中能修改
         }
       });
     },
@@ -497,7 +499,10 @@ export default {
     addAnchor(row) {
       this.$router.push({
         path: "/preview-recommendAnchor-RecommendAnchor",
-        query: { liveId: row.id }
+        query: { 
+          liveId: row.id,
+          authEdit: row.liveState == 1 || row.liveState == 3 ? 1 : 0 //仅未开播和直播中能修改 
+        }
       });
     },
     //助手
@@ -506,7 +511,8 @@ export default {
         path: "/preview-assistant-Assistant",
         query: {
           liveId: row.id,
-          anchorId: row.anchorUserId
+          anchorId: row.anchorUserId,
+          authEdit: row.liveState == 1 || row.liveState == 3 ? 1 : 0 //仅未开播和直播中能修改
         }
       });
     },

@@ -747,7 +747,7 @@
                 icon="el-icon-plus"
                 size="mini"
                 v-if="dataListSelectionUsers.length !== 0"
-                @click="deleteUserSelect()"
+                @click="upSelect()"
                 >批量上架</el-button
               >
             </el-form-item>
@@ -2141,7 +2141,7 @@ export default {
         });
     },
     //批量上架
-    deleteUserSelect() {
+    upSelect() {
       this.$confirm("确认上架商品, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
