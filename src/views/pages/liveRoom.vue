@@ -623,6 +623,10 @@ export default {
       microphoneId:'',//麦克风设备
       uploadDialogVisible:false,//共享桌面
       fileList:[],
+      params:{
+        limit:10,
+        page:1
+      }
     };
   },
   created() {
@@ -1459,11 +1463,18 @@ export default {
     },
     // 获取主播推荐商品
     getAnchorProduct() {
+      let obj = {
+        liveId:this.$route.query.TaskId,
+        anchorId:this.roomId,
+        isAdd:1,
+        type:2
+      }
+      let params = {...this.params,...obj}
       this.$http
-        .get(`/sys/wxapp/anchorProduct/listWithAnchorId/${this.userID}`)
+        .get(`/sys/anchorProduct/live/pageWithLive`,{params})
         .then((res) => {
           console.log("主播推荐商品", res.data.data);
-          let data = res.data.data;
+          let data = res.data.data.list;
           data.forEach((item) => {
             if (item.productTag) {
               item.productTag = item.productTag.split("|");
@@ -1481,7 +1492,7 @@ export default {
     },
     //获取主播推荐主播
     getRecommendList() {
-      this.$http.get(`/sys/manage/anchor/recommend/list`).then((res) => {
+      this.$http.get(`/sys/manage/anchor/recommend/list`,{params}).then((res) => {
         console.log("获取主播推荐主播", res);
         this.recommendList = res.data.data;
       });
