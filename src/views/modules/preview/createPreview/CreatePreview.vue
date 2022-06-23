@@ -167,36 +167,32 @@
               <!-- You can also add your own -->
             </div>
           </quill-editor>
-          <span
+          <!-- <span
             class="wordNumber"
             style="position: absolute; left: 730px; bottom: 40px"
             >{{ TiLength }}/2000</span
-          >
+          > -->
         </el-form-item>
         <el-form-item label="添加商品" prop="goods">
           <el-input
             style="width: 400px"
-            placeholder="推荐商品"
+            placeholder="请选择"
             @click.native="chooseProduct"
             v-model="ruleForm.goods"
             readonly
             clearable
           ></el-input>
-          <span class="count">{{ ruleForm.productIds.length }}条</span>
         </el-form-item>
 
         <el-form-item label="添加主播" prop="anchors">
           <el-input
             style="width: 400px"
-            placeholder="推荐主播"
+            placeholder="请选择"
             @click.native="chooseAnchor"
             v-model="ruleForm.anchors"
             readonly
             clearable
           ></el-input>
-          <span class="count"
-            >{{ ruleForm.recommendedAnchorList.length }}条</span
-          >
         </el-form-item>
 
         <el-form-item label="直播宣传图">
@@ -206,7 +202,7 @@
             @uploadRemove="frontCoverUploadRemove"
             :fileList="frontCoverList"
             :fileType="['png', 'jpg', 'jpeg']"
-            :fileMaxSize="1"
+            :fileMaxSize="2"
           ></custom-upload>
           <div>
             格式限制：jpg/jpeg/png,建议图片尺寸不小于630px×347px，大小不得超过2M
@@ -439,7 +435,7 @@ export default {
       this.$refs.chooseAnchor.close();
 
       this.ruleForm.recommendedAnchorList = data;
-      this.ruleForm.anchors = data.map((item) => item.username).join(",");
+      this.ruleForm.anchors = data.length ? `已选择${data.length}个主播` : ""
     },
 
     // 推荐商品弹框
@@ -452,7 +448,7 @@ export default {
       this.$refs.chooseProduct.close();
 
       this.ruleForm.productIds = data;
-      this.ruleForm.goods = data.map((item) => item.productName).join(",");
+      this.ruleForm.goods = data.length ? `已选择${data.length}个商品` : ""
     },
 
     //提交表单
