@@ -324,6 +324,7 @@
               <!-- <div @click="openEffect">开启美颜</div>
               <div @click="closeEffect">关闭美颜</div> -->
               <!-- <div @click="deviceDialogVisible=true">设备选择</div> -->
+              <div @click="trends==1?trends=0:trends=1" v-if="!liveStatus">{{trends==1?'关闭动态':'开启动态'}}</div>
             </div>
             <div class="header_right">
               <div class="wacth_num">
@@ -628,7 +629,8 @@ export default {
         limit:10,
         page:1
       },
-      total:0
+      total:0,
+      trends:1,//直播动态开启或关闭 1：开启 0：关闭
     };
   },
   created() {
@@ -834,6 +836,10 @@ export default {
     },
     selectCamera(value){
       this.cameraId = value
+    },
+    changeTrends(){
+      console.log(this.trends)
+      this.trends==1?this.trends=0:this.trends=1
     },
     async toolClick(data) {
       if (data.type === "mike") {
@@ -1082,7 +1088,7 @@ export default {
       }
       this.$loading({ background: "rgba(0,0,0,.5)", text: "直播开启中..." });
       this.$http
-        .post("/sys/mixedflow/anchorBroadcast", {...obj, TaskId: this.$route.query.TaskId})
+        .post("/sys/mixedflow/anchorBroadcast", {...obj, TaskId: this.$route.query.TaskId,trends:this.trends})
         .then((res) => {
           if (res.data.data && res.data.data.Data) {
             this.liveStatus = true;
