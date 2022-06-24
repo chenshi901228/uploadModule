@@ -8,13 +8,14 @@
       :rules="rules"
       ref="dataForm"
       label-width="110px"
+      size="small"
     >
       <el-form-item label="视频主题" prop="liveTheme">
-        <el-input v-model="dataForm.liveTheme"></el-input>
+        <el-input placeholder="请输入视频主题" style="width: 400px" v-model="dataForm.liveTheme"></el-input>
       </el-form-item>
       <el-form-item label="视频显示" prop="showMode">
         <el-select
-          style="width: 100%"
+          style="width: 400px"
           v-model="dataForm.showMode"
           clearable
           placeholder="请选择"
@@ -58,9 +59,6 @@
           readonly
           clearable
         ></el-input>
-        <span class="count"
-          >{{ dataForm.livePlaybackProductList.length }}条</span
-        >
       </el-form-item>
     </el-form>
     <div class="footer">
@@ -124,6 +122,7 @@ export default {
       dynamicGroupOptions: [], //投放人群
       getDynamicGroupLoading: false, //下拉框加载数据loading
       goods: [],
+      productIds: [], //推荐商品ids
     };
   },
   created() {
@@ -139,23 +138,24 @@ export default {
   methods: {
     // 推荐商品弹框
     chooseProduct() {
-      this.$refs.chooseProduct.init(this.dataForm.livePlaybackProductList);
+      this.$refs.chooseProduct.init(this.productIds);
     },
 
     // 确认添加推荐商品
     addProductConfirm(data) {
+      console.log(data)
       this.$refs.chooseProduct.close();
 
-      data.forEach((v) => {
-        this.dataForm.livePlaybackProductList.push({
+      this.dataForm.livePlaybackProductList = data.map((v) => {
+        return {
           anchorProductId: v.anchorProductId,
           anchorId: this.dataForm.anchorUserId,
           productId: v.productId,
-        });
+        }
       });
-
+      this.productIds = data
       // this.dataForm.livePlaybackProductList = data;
-      this.dataForm.goods = data.map((item) => item.productName).join(",");
+      this.dataForm.goods = data.length ? `已选择${data.length}个商品` : ""
     },
     // 封面图上传
     frontCoverUploadSuccess(file) {

@@ -264,11 +264,13 @@
               @click="actionHandle('1', row)"
               >下载视频</el-button
             >
+            <!-- &&
+                $store.state.user.superAdmin &&
+                $store.state.user.superAdmin !== 1 -->
+            <!-- 平台人员权限，待考虑 -->
             <el-button
               v-if="
-                row.liveState !== 0 &&
-                $store.state.user.superAdmin &&
-                $store.state.user.superAdmin !== 1
+                row.liveState !== 0 
               "
               size="small"
               icon="el-icon-video-camera"
