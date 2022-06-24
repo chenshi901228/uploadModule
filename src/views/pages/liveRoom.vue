@@ -195,7 +195,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="商品" name="fourth">
-            <div class="list_content">
+            <div class="list_content" v-infinite-scroll="load">
               <div
                 class="content"
                 v-for="(item, index) in goodsList"
@@ -229,7 +229,7 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="直播预告" name="fifth">
-            <div class="list_content">
+            <div class="list_content" v-infinite-scroll="load">
               <div
                 class="content"
                 v-for="(item, index) in livePreviewList"
@@ -250,14 +250,14 @@
             </div>
           </el-tab-pane>
           <el-tab-pane label="推荐主播" name="sixth">
-            <div class="list_content">
+            <div class="list_content" v-infinite-scroll="load">
               <div
                 class="content"
                 v-for="(item, index) in recommendList"
                 :key="index"
               >
                 <div class="recommend_content">
-                  <span>{{ item.sort }}</span>
+                  <span>{{ index+1 }}</span>
                   <img :src="item.avatarUrl" alt="" />
                   <div class="anchorInfo">
                     <span>{{ item.username }}</span>
@@ -540,6 +540,7 @@ export default {
   },
   data() {
     return {
+      count:0,
       activeName: "first",
       userName: "",
       userID: "",
@@ -626,7 +627,8 @@ export default {
       params:{
         limit:10,
         page:1
-      }
+      },
+      total:0
     };
   },
   created() {
@@ -780,6 +782,28 @@ export default {
     });
   },
   methods: {
+    load () {//主播推荐商品列表、直播预告列表、推荐主播列表加载
+      this.params.page++
+      if(this.activeName==='fourth'){
+        if(this.goodsList.length>=this.total){
+          return
+        }else{
+          this.getAnchorProduct()
+        }
+      }else if(this.activeName==='fifth'){
+        if(this.livePreviewList.length>=this.total){
+          return
+        }else{
+          this.getLivePreviewList();
+        }
+      }else{
+        if(this.recommendList.length>=this.total){
+          return
+        }else{
+          this.getRecommendList();
+        }
+      } 
+    },
     async shareDesk(){
       this.screenStream = await this.zg.createStream({ //屏幕共享流
         screen: {
@@ -871,7 +895,23 @@ export default {
       console.log(this.headerNavActive)
     },
     handleClick(tab, event) {
-      console.log(tab, event);
+      this.params.page=1
+      switch(this.activeName){
+        case 'fourth':
+          this.goodsList = []
+          this.getAnchorProduct()
+          break
+        case 'fifth':
+          this.livePreviewList = []
+          this.getLivePreviewList()
+          break
+        case 'sixth':
+          this.recommendList = []
+          this.getRecommendList()
+          break
+        default:
+          break
+      }
     },
     muteMthod(data) {
       //禁言
@@ -1207,9 +1247,9 @@ export default {
           });
       }
       this.startLive();
-      this.getAnchorProduct();
-      this.getLivePreviewList();
-      this.getRecommendList();
+      // this.getAnchorProduct();
+      // this.getLivePreviewList();
+      // this.getRecommendList();
     },
     onSdkReady(event) {
       //监听IM sdk状态
@@ -1467,7 +1507,7 @@ export default {
         liveId:this.$route.query.TaskId,
         anchorId:this.roomId,
         isAdd:1,
-        type:2
+        type:1
       }
       let params = {...this.params,...obj}
       this.$http
@@ -1480,21 +1520,34 @@ export default {
               item.productTag = item.productTag.split("|");
             }
           });
-          this.goodsList = data;
+          this.goodsList = this.goodsList.concat(data)
+          this.total = res.data.data.total
         });
     },
     // 获取直播预约列表
     getLivePreviewList() {
-      this.$http.get(`/sys/livePreview/pageOwn`,{params:{appointmentState: 1,showState: 1}}).then((res) => {
+      let obj = {
+        liveState:3,
+        appointmentState:1
+      }
+      let params = {...this.params,...obj}
+      this.$http.get(`/sys/livePreview/pageOwn`,{params}).then((res) => {
         console.log("获取直播预约列表", res);
-        this.livePreviewList = res.data.data.list;
+        this.livePreviewList = this.livePreviewList.concat(res.data.data.list)
+        this.total = res.data.data.total
       });
     },
     //获取主播推荐主播
     getRecommendList() {
-      this.$http.get(`/sys/manage/anchor/recommend/list`,{params}).then((res) => {
+      let obj = {
+        liveId:this.$route.query.TaskId,
+        state:1
+      }
+      let params = {...this.params,...obj}
+      this.$http.get(`/sys/sysRecommendedAnchor/page`,{params}).then((res) => {
         console.log("获取主播推荐主播", res);
-        this.recommendList = res.data.data;
+        this.recommendList = this.recommendList.concat(res.data.data.list)
+        this.total = res.data.data.total
       });
     },
     //推送商品、直播预告
