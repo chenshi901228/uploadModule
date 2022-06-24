@@ -125,8 +125,10 @@ export default {
         }
         this.dataList = this.mixinViewModuleOptions.getDataListIsPage ? res.data.list : res.data
         this.total = this.mixinViewModuleOptions.getDataListIsPage ? res.data.total : 0
-      }).catch(() => {
+      }).catch((err) => {
         this.dataListLoading = false
+        this.$message.error(JSON.stringify(err.message))
+        throw err
       })
     },
     // 多选
