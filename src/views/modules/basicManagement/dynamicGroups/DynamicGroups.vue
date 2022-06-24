@@ -53,7 +53,7 @@
               ></i>
             </div>
           </div>
-          <div>
+          <div v-if="groupGroupsFlag">
             <el-button @click="load" plain type="warning">{{
               loadMoreText
             }}</el-button>
@@ -515,6 +515,7 @@ export default {
         name: "",
       },
       groupGroups: [],
+      groupGroupsFlag:true,
       groupMensPage: 1,
       groupMensLimit: 10,
       groupMensTotal: 0,
@@ -579,6 +580,7 @@ export default {
     groupGroups(n, o) {
       if (n.length >= this.groupMensTotal) {
         this.loadMoreText = "已加载全部";
+        this.groupGroupsFlag = false
       }
     },
   },
