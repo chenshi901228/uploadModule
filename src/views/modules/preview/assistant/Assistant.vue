@@ -39,7 +39,7 @@
         <el-form-item
           label="添加状态"
           prop="isAdd"
-          v-if="isOpen || formItemCount >= 3"
+          v-if="(isOpen || formItemCount >= 3) && authEdit == 1"
         >
           <el-select
             placeholder="请选择"
