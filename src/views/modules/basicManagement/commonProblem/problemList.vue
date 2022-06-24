@@ -102,6 +102,7 @@
             </el-form-item>
           </div>
         </div>
+        <div>问题分类：{{classify}}</div>
       </el-form>
       <el-table
         v-loading="dataListLoading"
@@ -358,10 +359,12 @@ export default {
       uploadType: "", //编辑器选择上传图片or视频
       sortVal: "",
       sortId: "",
+      classify:""
     };
   },
   mounted() {},
   activated() {
+    this.classify = this.$route.query.classify
     this.query();
   },
   watch: {},
