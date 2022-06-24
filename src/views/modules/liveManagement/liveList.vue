@@ -443,7 +443,7 @@ export default {
           liveId: row.id,
           anchorId: row.anchorUserId,
           type: 1,
-          authEdit: row.liveState == 1 || row.liveState == 3 ? 1 : 0 //仅未开播和直播中能修改 
+          authEdit: row.liveState == 3 ? 1 : 0 //仅未开播能修改 
         }
       });
     },

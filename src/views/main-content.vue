@@ -144,19 +144,18 @@ export default {
     // tab标签右键操作
     openMenu(e) {
       e.preventDefault()
-      const menuMinWidth = 105
+      const menuMinWidth = 136
       const offsetLeft = this.$el.getBoundingClientRect().left // container margin left
       const offsetWidth = this.$el.offsetWidth // container width
-      const maxLeft = offsetWidth - menuMinWidth // left boundary
-      const left = e.clientX - offsetLeft + 10 // 15: margin right
+      const maxLeft = offsetWidth + offsetLeft - menuMinWidth // left boundary
+      const left = e.clientX + 10
 
       if (left > maxLeft) {
         this.left = maxLeft
       } else {
         this.left = left
       }
-
-      this.top = e.clientY - 50
+      this.top = e.clientY
       this.visible = true
       this.selectedTag = e.target.dataset.tabname
     },
@@ -172,7 +171,7 @@ export default {
     margin: 0;
     background: #fff;
     z-index: 3000;
-    position: absolute;
+    position: fixed;
     list-style-type: none;
     padding: 5px 0;
     border-radius: 4px;

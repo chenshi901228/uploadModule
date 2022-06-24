@@ -39,7 +39,7 @@
         <el-form-item
           label="添加状态"
           prop="levelName"
-          v-if="isOpen || formItemCount >= 3"
+          v-if="(isOpen || formItemCount >= 3) && authEdit == 1"
         >
           <el-select
             placeholder="请选择"
@@ -164,6 +164,7 @@
           label="添加状态"
           header-align="center"
           align="center"
+          v-if="authEdit == 1"
         >
           <template slot-scope="scope">
             {{ scope.row.state === "0" ? "未添加" : "已添加" }}

@@ -199,7 +199,7 @@
               type="text"
               size="small"
               icon="el-icon-c-scale-to-original"
-              @click="toProblemList(row.id)"
+              @click="toProblemList(row)"
               >问题列表</el-button
             >
             <el-button
@@ -487,11 +487,12 @@ export default {
         });
     },
     //问题列表
-    toProblemList(id) {
+    toProblemList(row) {
       this.$router.push({
         name: "basicManagement-commonProblem-problemList",
         query: {
-          questionsId: id,
+          questionsId: row.id,
+          classify:row.classify
         },
       });
     },
@@ -705,5 +706,8 @@ export default {
 }
 /deep/input[type="number"] {
   -moz-appearance: textfield !important;
+}
+/deep/.hide_box .el-upload--picture-card {
+  display: none;
 }
 </style>
