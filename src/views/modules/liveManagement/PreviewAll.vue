@@ -184,6 +184,15 @@
               >批量删除</el-button
             >
             <el-button
+              v-if="dataListSelections.length === 1"
+              type="primary"
+              plain
+              icon="el-icon-plus"
+              size="mini"
+              @click="addPreview"
+              >添加预告</el-button
+            >
+            <el-button
               type="warning"
               plain
               icon="el-icon-download"
@@ -757,7 +766,10 @@ export default {
     //添加预告
     addPreview() {
       this.$router.push({
-        path: "/preview-createPreview-CreatePreview.vue",
+        path: "/preview-createPreview-CreatePreviewAll",
+        query: {
+          anchorId: this.dataListSelections[0].anchorUserId,
+        },
       });
     },
     //导出
