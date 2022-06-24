@@ -45,16 +45,35 @@
 <script>
 export default {
   data() {
+    var check = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error("结算比例不能为空"));
+      }
+      setTimeout(() => {
+        if (
+          Number.isInteger(value) &&
+          Number.isInteger(value) >= 0 &&
+          Number.isInteger(value) < 99 &&
+          /^d+$/.test(value)
+        ) {
+          callback();
+        } else {
+          callback(
+            new Error(
+              "不能输入字母，中文，特殊字符，空格，小数，负数，大于99得数等"
+            )
+          );
+        }
+      }, 1000);
+    };
     return {
       visible: false,
       dataForm: {
-        proportion:0
+        proportion: 0,
       },
       submitLoading: false,
       dataRule: {
-        proportion: [
-          { required: true, message: "不能输入字母，中文，特殊字符，空格，小数，负数，大于99得数等", trigger: "blur" },
-        ],
+        proportion: [{ validator: check, trigger: "blur" }],
       },
     };
   },
@@ -74,14 +93,14 @@ export default {
         if (valid) {
           let params = {};
           params = JSON.parse(JSON.stringify(this.dataForm));
-          params.anchorIdList = []
-          params.anchorIdList.push(params.anchorId)
+          params.anchorIdList = [];
+          params.anchorIdList.push(params.anchorId);
           this.submitLoading = true;
           this.$http
             .post("/sys/productProportion/updateProportionWithAnchor", {
               anchorIdList: params.anchorIdList,
               productId: params.productId,
-              proportion: params.proportion
+              proportion: params.proportion,
             })
             .then(({ data: res }) => {
               if (res.code == 0) {
