@@ -164,6 +164,7 @@
           label="添加状态"
           header-align="center"
           align="center"
+          v-if="authEdit == 1"
         >
           <template slot-scope="scope">
             {{ scope.row.state === "0" ? "未添加" : "已添加" }}

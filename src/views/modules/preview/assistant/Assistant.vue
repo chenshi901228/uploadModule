@@ -128,6 +128,7 @@
           label="添加状态"
           header-align="center"
           align="center"
+          v-if="authEdit == 1"
         >
           <template slot-scope="scope">
             {{ scope.row.isAdd === 1 ? "已添加" : "未添加" }}
@@ -243,7 +244,7 @@ export default {
           data: {
             ids: this.ids,
             liveId: this.dataForm.liveId,
-            type: 2,
+            type: this.dataForm.type,
           },
         })
         .then(({ data: res }) => {
@@ -270,7 +271,7 @@ export default {
           liveId: this.dataForm.liveId,
           anchorId: this.dataForm.anchorId,
           weixinUserId: row.weixinUserId,
-          type: 2,
+          type: this.dataForm.type,
         })
         .then(({ data: res }) => {
           if (res.code !== 0) {
@@ -291,7 +292,7 @@ export default {
         phone: "",
         isAdd: "",
         liveId: this.$route.query.liveId,
-        type: 2,
+        type: this.dataForm.type,
         anchorId: this.$route.query.anchorId,
       };
 

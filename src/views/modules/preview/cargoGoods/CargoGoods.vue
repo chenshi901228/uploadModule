@@ -227,6 +227,7 @@
           label="添加状态"
           header-align="center"
           align="center"
+          v-if="authEdit == 1"
         >
           <template slot-scope="scope">
             {{ scope.row.isAdd === 1 ? "已添加" : "未添加" }}
