@@ -123,12 +123,13 @@
         header-align="center"
         align="center"
       >
-        <template slot-scope="scope">
+        <template slot-scope="{ row }">
           <el-button
             icon="el-icon-upload2"
             type="text"
             size="small"
-            @click="confirmCargo(scope.row)"
+            v-if="row.isSelected"
+            @click="setTop(row)"
             >置顶</el-button
           >
         </template>
@@ -160,6 +161,7 @@ export default {
         username: "",
         phone: "",
       },
+      allDataList: [], //所有数据集合
       dataList: [], // 数据列表
       page: 1, // 当前页码
       limit: 10, // 每页数
@@ -176,40 +178,47 @@ export default {
     };
   },
   methods: {
-    //确认置顶
-    confirmCargo(row) {
-      this.$http
-        .put("/sys/sysRecommendedAnchor", {
-          id: row.id,
-        })
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          } else {
-            this.$message.success("置顶成功！");
-            this.dialogTopVisible = false;
-            this.query();
-          }
-        })
-        .catch((err) => {
-          throw err;
-        });
-    },
     init(data) {
       this.defaultSelected = data || [];
       this.page = 1;
       this.limit = 10;
       this.dialogVisible = true;
-      this.query();
+      this.getAllData();
+    },
+    //置顶
+    setTop(row) {
+      if(this.defaultSelected.length <= 1) return  //如果只有一条数据则不操作
+      // 默认选中列表中数据置顶
+      this.defaultSelected.map((item, index) => {
+        if(item.anchorId == row.anchorId) {
+          this.defaultSelected.splice(index, 1)
+        }
+      })
+      this.defaultSelected.unshift(row)
+
+      // 所有数据列表中数据置顶
+      this.allDataList.map((item, index) => {
+        if(item.anchorId == row.anchorId) {
+          this.allDataList.splice(index, 1)
+        }
+      })
+      this.allDataList.unshift(row)
+
+
+
+      this.query()
+
     },
     // 设置默认选中的行
     setCurPageSelected() {
       this.$nextTick(() => {
         if (this.defaultSelected.length) {
-          this.dataList.map((row, i) => {
-            this.defaultSelected.map((item) => {
+          this.dataList.forEach((row, i) => {
+            this.defaultSelected.forEach((item) => {
               if (row.anchorId == item.anchorId) {
                 this.$refs.table.toggleRowSelection(row, true);
+                // 数据列表是否选中设为true
+                row["isSelected"] = true
               }
             });
           });
@@ -225,33 +234,48 @@ export default {
         });
       }
     },
-    // 获取数据列表
-    query() {
+
+     // 获取所有数据在本地操作置顶
+    getAllData() {
       this.dataListLoading = true;
       this.$http
         .get("/sys/sysRecommendedAnchor/pageForAddLivePreview", {
           params: {
-            page: this.page,
-            limit: this.limit,
+            page: 1,
+            limit: 999,
             ...this.$httpParams(this.dataForm),
           },
         })
         .then(({ data: res }) => {
           this.dataListLoading = false;
           if (res.code !== 0) {
+            this.allDataList = []
             this.dataList = [];
             this.total = 0;
             return this.$message.error(res.msg);
           }
-          this.dataList = res.data.list;
+          this.allDataList = res.data.list
           this.total = res.data.total;
+          
+          this.query()
 
-          this.setCurPageSelected();
         })
         .catch((err) => {
           this.dataListLoading = false;
           this.$message.error(JSON.stringify(err.message));
         });
+    },
+
+    // 获取数据列表
+    query() {
+
+      this.dataListLoading = true;
+
+      setTimeout(() => {
+        this.dataList = this.allDataList.slice((this.page - 1) * this.limit, this.page * this.limit);
+        this.dataListLoading = false;
+        this.setCurPageSelected();
+      }, 500)
     },
     // 选择添加
     add(row) {
@@ -269,6 +293,8 @@ export default {
           this.dataList.forEach((row) => {
             if (row.anchorId == data.anchorId) {
               this.$refs.table.toggleRowSelection(row, false);
+              // 数据列表是否选中设为false
+              row["isSelected"] = false
             }
           });
           // 默认选中数据中去掉这条数据
@@ -286,11 +312,27 @@ export default {
       if (isSelected) {
         //选中-添加数据
         this.defaultSelected.push(row);
+
+         // 数据列表是否选中设为true
+        this.dataList.forEach(item => {
+          if(item.anchorId == row.anchorId) {
+            item["isSelected"] = true
+          }
+        })
+
       } else {
         //删除数据
         this.defaultSelected = this.defaultSelected.filter(
           (item) => item.anchorId != row.anchorId
         );
+
+         // 数据列表是否选中设为false
+        this.dataList.forEach(item => {
+          if(item.anchorId == row.anchorId) {
+            item["isSelected"] = false
+          }
+        })
+
       }
     },
     // 手动勾选全选
@@ -316,6 +358,13 @@ export default {
 
           this.defaultSelected = arr;
         }
+
+        // 数据列表是否选中设为true
+        this.dataList.forEach(item => {
+          item["isSelected"] = true
+        })
+
+
       } else {
         //全部取消
         // 创建临时变量
@@ -330,6 +379,13 @@ export default {
         });
 
         this.defaultSelected = data;
+
+        // 数据列表是否选中设为false
+        this.dataList.forEach(item => {
+          item["isSelected"] = false
+        })
+
+
       }
     },
     // 分页, 每页条数
@@ -345,7 +401,7 @@ export default {
     },
     getDataList: function () {
       this.page = 1;
-      this.query();
+      this.getAllData();
     },
     // 重置搜索条件
     reset() {
