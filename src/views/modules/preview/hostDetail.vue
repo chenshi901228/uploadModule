@@ -2201,9 +2201,15 @@ export default {
     },
     //编辑主播信息
     editeUserInfo() {
+      let obj = {
+        id:this.diaForm.weixinUserId,
+        username:this.diaForm.username,
+        introduce:this.diaForm.introduce,
+        avatarUrl:this.diaForm.avatarUrl,
+      }
       this.$router.push({
-        name: "preview-editeUserInfo-EditeUserInfo",
-        params: { info: this.diaForm },
+        path: "/preview-editeUserInfo-EditeUserInfo",
+        query: { info: JSON.stringify(obj) },
       });
     },
     //编辑银行卡信息

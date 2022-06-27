@@ -31,11 +31,10 @@
         >
           <i class="el-icon-plus"></i>
         </el-upload> -->
-        <!-- <ImgCutter @cutDown="cutDown" fileType="jpeg">
-            <button slot="open">选择图片</button>
-        </ImgCutter>
-        <img :src="imgSrc" alt=""> -->
         <upload :fileList="fileList" :limit="1" :multiple="false" @getImg="getImg"></upload>
+      </el-form-item>
+      <el-form-item label="主播二维码" required>
+        <upload :fileList="fileListQRcode" :limit="1" :multiple="false" @getImg="getImg"></upload>
       </el-form-item>
       <el-form-item>
         <!-- <el-button @click="resetForm('ruleForm')">取消</el-button> -->
@@ -66,7 +65,8 @@ export default {
         introduce: "",
       },
       id: null, //主播id
-      fileList: [],
+      fileList: [],//主播头像
+      fileListQRcode:[],//主播二维码
       dialogImageUrl: "",
       dialogVisible: false,
       rules: {
@@ -82,13 +82,19 @@ export default {
   watch: {},
   created() {},
   activated() {
-    let info = this.$route.params.info
+    let info = JSON.parse(this.$route.query.info)
     console.log(info)
     if(info) {
       this.id = info.weixinUserId
       this.ruleForm.username = info.username
       this.ruleForm.introduce = info.introduce
       this.fileList = [
+        {
+          name: new Date().getTime(),
+          url: info.avatarUrl || "https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/default_avatar.png"
+        }
+      ]
+      this.fileListQRcode = [
         {
           name: new Date().getTime(),
           url: info.avatarUrl || "https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/default_avatar.png"
