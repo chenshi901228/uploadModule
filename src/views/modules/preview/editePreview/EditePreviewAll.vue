@@ -1,4 +1,4 @@
-// 添加列表
+// 编辑列表
 
 <template>
   <el-card shadow="never" class="aui-card--fill">
@@ -7,74 +7,46 @@
         :model="ruleForm"
         :rules="rules"
         ref="ruleForm"
-        size="small"
         label-width="110px"
         class="demo-ruleForm"
       >
         <el-form-item label="直播主题" prop="liveTheme">
           <el-input
-            style="width: 400px"
-            placeholder="直播主题"
-            v-model.trim="ruleForm.liveTheme"
+            v-model="ruleForm.liveTheme"
             maxlength="60"
             show-word-limit
           ></el-input>
         </el-form-item>
-        <el-form-item label="主播" prop="anchorId">
-          <el-select
-            style="width: 400px"
-            v-model="ruleForm.anchorId"
-            filterable
-            remote
-            reserve-keyword
-            clearable
-            placeholder="请输入选择"
-            :remote-method="getAnchorInfo"
-            :loading="loading"
-            @change="changeAnchorId"
-          >
-            <el-option
-              v-for="item in anchorOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
         <el-form-item label="预计开播时间" prop="startDate">
           <el-date-picker
-            style="width: 400px"
             v-model="ruleForm.startDate"
             type="datetime"
             placeholder="预计开播时间"
-            :picker-options="pickerOptions"
             :formatter="dateFormat"
             :editable="false"
+            :picker-options="pickerOptions"
           >
           </el-date-picker>
         </el-form-item>
         <el-form-item label="预计时长" prop="estimateLiveTime">
-          <el-input
-            style="width: 400px"
-            placeholder="预计时长"
-            v-model="ruleForm.estimateLiveTime"
-          ></el-input>
+          <el-input v-model="ruleForm.estimateLiveTime"></el-input>
         </el-form-item>
         <el-form-item label="直播宣传图" prop="frontCoverUrl" class="img-item">
-          <div v-for="item in defaultImg" :key="item" class="img-box">
-            <el-image
-              style="width: 100px; height: 100px"
-              :src="item"
-              fit="cover"
-              @click="choosePic(item)"
-            ></el-image>
-            <img
-              v-if="item === ruleForm.frontCoverUrl"
-              class="like-img"
-              src="@/assets/img/like_red.png"
-              alt=""
-            />
+          <div v-if="showDefaultImg" class="img-box-content">
+            <div v-for="item in defaultImg" :key="item" class="img-box">
+              <el-image
+                style="width: 100px; height: 100px"
+                :src="item"
+                fit="cover"
+                @click="choosePic(item)"
+              ></el-image>
+              <img
+                v-if="item === ruleForm.frontCoverUrl"
+                class="like-img"
+                src="@/assets/img/like_red.png"
+                alt=""
+              />
+            </div>
           </div>
           <div v-for="item in fileList" :key="item" class="img-box">
             <el-image
@@ -98,6 +70,7 @@
           </div>
           <el-upload
             class="upload-demo"
+            v-if="showDefaultImg"
             :action="uploadUrl"
             :on-success="handleSuccess"
             list-type="picture-card"
@@ -107,43 +80,15 @@
             <i slot="default" class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
-        <el-form-item label="助手" prop="assistantIds">
-          <el-select
+        <el-form-item label="助手" prop="assistant">
+          <el-input
             style="width: 400px"
-            v-model="ruleForm.assistantIds"
-            filterable
-            multiple
-            placeholder="请选择"
-            :clearable="true"
-            @visible-change="changeAssistantIds($event)"
-          >
-            <el-option
-              v-for="(item, index) in assistantOptions"
-              :key="index"
-              :label="item.userName"
-              :value="item.weixinUserId"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="投放人群" prop="dynamicGroupIds">
-          <el-select
-            style="width: 400px"
-            v-model="ruleForm.dynamicGroupIds"
-            filterable
-            multiple
-            placeholder="请选择"
-            :clearable="true"
-            @visible-change="changeDynamicGroupList($event)"
-          >
-            <el-option
-              v-for="(item, index) in options"
-              :key="index"
-              :label="item.name"
-              :value="item.id"
-            >
-            </el-option>
-          </el-select>
+            placeholder="助手"
+            @click.native="chooseAssistants"
+            v-model="ruleForm.assistant"
+            readonly
+            clearable
+          ></el-input>
         </el-form-item>
         <el-form-item
           class="quill-editor"
@@ -153,7 +98,7 @@
           <quill-editor
             v-model="ruleForm.liveIntroduce"
             ref="myQuillEditor"
-            style="width: 800px; height: 380px"
+            style="height: 380px"
             :options="editorOption"
             @change="onEditorChange($event)"
           >
@@ -209,42 +154,61 @@
               <!-- You can also add your own -->
             </div>
           </quill-editor>
-          <!-- <span
+          <span
             class="wordNumber"
-            style="position: absolute; left: 730px; bottom: 40px"
+            style="position: absolute; right: 40px; bottom: 30px"
             >{{ TiLength }}/2000</span
-          > -->
+          >
         </el-form-item>
-        <el-form-item label="添加商品" prop="goods">
+        <el-form-item label="添加商品" prop="products">
           <el-input
             style="width: 400px"
-            placeholder="请选择"
+            placeholder="推荐商品"
             @click.native="chooseProduct"
-            v-model="ruleForm.goods"
+            v-model="ruleForm.products"
             readonly
             clearable
           ></el-input>
         </el-form-item>
 
-        <el-form-item label="添加主播" prop="anchors">
+        <el-form-item label="添加主播" prop="recommendedAnchors">
           <el-input
             style="width: 400px"
-            placeholder="请选择"
+            placeholder="推荐主播"
             @click.native="chooseAnchor"
-            v-model="ruleForm.anchors"
+            v-model="ruleForm.recommendedAnchors"
             readonly
             clearable
           ></el-input>
         </el-form-item>
 
         <el-form-item label="直播宣传图">
+          <div
+            class="frontCover-img-box"
+            v-if="frontCoverListDefault.length !== 0"
+          >
+            <div class="frontCover-box">
+              <img
+                :src="frontCoverListDefault"
+                style="width: 100px; height: 100px"
+                alt=""
+              />
+              <img
+                @click="handleRemoveItem"
+                class="close-img"
+                src="@/assets/img/close.png"
+                alt=""
+              />
+            </div>
+          </div>
           <custom-upload
+            v-if="frontCoverListDefault.length === 0"
             ref="frontCoverUpload"
             @uploadSuccess="frontCoverUploadSuccess"
             @uploadRemove="frontCoverUploadRemove"
             :fileList="frontCoverList"
             :fileType="['png', 'jpg', 'jpeg']"
-            :fileMaxSize="2"
+            :fileMaxSize="1"
           ></custom-upload>
           <div>
             格式限制：jpg/jpeg/png,建议图片尺寸不小于630px×347px，大小不得超过2M
@@ -252,44 +216,25 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button
-            type="primary"
-            size="small"
-            :icon="submitLoading ? 'el-icon-loading' : ''"
-            :disabled="submitLoading"
-            @click="submitForm('ruleForm')"
-            >立即创建</el-button
+          <el-button type="primary" size="small" @click="submitForm('ruleForm')"
+            >立即修改</el-button
           >
+          <!-- <el-button @click="resetForm('ruleForm')">重置</el-button> -->
         </el-form-item>
       </el-form>
-
-      <!-- 主播弹框 -->
-      <choose-anchor
-        ref="chooseAnchor"
-        @add="addAnchorConfirm"
-        :anchorId="anchorId"
-      ></choose-anchor>
-      <!-- 商品弹框 -->
-      <choose-product
-        ref="chooseProduct"
-        @add="addProductConfirm"
-        :anchorId="anchorId"
-      ></choose-product>
     </div>
   </el-card>
 </template>
 
 <script>
 import CustomUpload from "@/components/common/custom-upload";
+import ComModule from "@/mixins/common-module";
 import Cookies from "js-cookie";
 import { Quill, quillEditor } from "vue-quill-editor";
 import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import "../../../../assets/font.css";
-import ChooseAnchor from "../recommendAnchor/chooseAnchor";
-import ChooseProduct from "../cargoGoods/chooseProduct";
-import ComModule from "@/mixins/common-module";
 // 自定义字体大小
 let Size = Quill.import("attributors/style/size");
 Size.whitelist = ["10px", "12px", "14px", "16px", "18px", "20px"];
@@ -315,8 +260,6 @@ export default {
   mixins: [ComModule],
   components: {
     quillEditor,
-    ChooseAnchor,
-    ChooseProduct,
     CustomUpload,
   },
   data() {
@@ -331,18 +274,19 @@ export default {
     };
     return {
       ruleForm: {
+        id: "",
         liveTheme: "",
         startDate: "",
         estimateLiveTime: "",
         frontCoverUrl: "",
-        dynamicGroupIds: [],
         liveIntroduce: "",
-        anchorId: "",
+        assistant: "",
+        products: "",
+        recommendedAnchors: "",
+        frontCover: "",
       },
       dialogImageUrl: "",
-      // dialogVisible: false,
-      disabled: false,
-      // chooseFlag: false,
+      showDefaultImg: false,
       defaultImg: [],
       fileList: [],
       uploadUrl: "",
@@ -361,22 +305,15 @@ export default {
           { required: true, message: "请输入预计时长", trigger: "blur" },
           { validator: blurText, trigger: "blur" }, //表单验证的时候会调用的方法
         ],
-        anchorId: [
-          { required: true, message: "请选择主播", trigger: "blur" },
-        ],
+        // frontCoverUrl: [
+        //   { required: true, message: "请选择直播宣传图", trigger: "change" },
+        // ],
         // userGroup: [
         //   { required: true, message: "请选择投放人群", trigger: "blur" },
         // ],
         liveIntroduce: [
-          { required: true, message: "请填写直播介绍", trigger: "blur" },
+          { required: true, message: "请填写活动形式", trigger: "blur" },
         ],
-      },
-      pickerOptions: {
-        disabledDate(time) {
-          const date = new Date();
-          const oneday = date.getTime();
-          return time.getTime() < new Date().getTime() - 86400000;
-        },
       },
       editorOption: {
         placeholder: "请输入",
@@ -387,16 +324,19 @@ export default {
           },
         },
       },
-      options: [],
+      pickerOptions: {
+        disabledDate(time) {
+          const date = new Date();
+          const oneday = date.getTime();
+          return time.getTime() < new Date().getTime() - 86400000;
+        },
+      },
       TiLength: 0,
-      goods: [],
-      productIds: [],
-      assistantOptions: [],
+      userId: "",
       submitLoading: false,
       frontCoverList: [],
-      anchorId: "",
-      anchorOptions: [], //主播选项
-      loading: false, //输入主播选择loading
+      frontCoverListDefault: "",
+      info: {},
     };
   },
   watch: {
@@ -411,33 +351,71 @@ export default {
       }
     },
   },
-  computed: {},
-  created() {},
   activated() {
-    this.uploadUrl = `${
-      window.SITE_CONFIG["apiURL"]
-    }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
     this.ruleForm = {
+      id: "",
       liveTheme: "",
       startDate: "",
       estimateLiveTime: "",
       frontCoverUrl: "",
-      dynamicGroupIds: [],
       liveIntroduce: "",
-      productIds: [],
-      goods: "",
-      recommendedAnchorList: [],
-      anchors: "",
-      assistantIds: [],
+      assistant: "",
+      products: "",
+      recommendedAnchors: "",
+      frontCover: "",
     };
-    this.anchorId = this.$route.query.anchorId;
+    this.dialogImageUrl = "";
+    this.showDefaultImg = false;
+    this.defaultImg = [];
+    this.fileList = [];
+
+    this.uploadUrl = `${
+      window.SITE_CONFIG["apiURL"]
+    }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
+    this.getPreviewDetail();
+    this.userId = this.$store.state.user.id;
     this.getCoverPictureList();
   },
   methods: {
+    //获取数据
+    getPreviewDetail() {
+      this.$http
+        .get(`/sys/livePreview/getDetailed/${this.$route.query.id}`)
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          } else {
+            this.ruleForm.id = res.data.id;
+            this.ruleForm.liveTheme = res.data.liveTheme;
+            this.ruleForm.startDate = res.data.startDate;
+            this.ruleForm.estimateLiveTime = res.data.estimateLiveTime;
+            this.ruleForm.frontCoverUrl = res.data.frontCoverUrl;
+            this.fileList.push(res.data.frontCoverUrl);
+            this.ruleForm.liveIntroduce = res.data.liveIntroduce;
+            this.ruleForm.assistant = res.data.assistant;
+            this.ruleForm.products = res.data.products;
+            this.ruleForm.recommendedAnchors = res.data.recommendedAnchors;
+            this.ruleForm.frontCover = res.data.frontCover
+              ? res.data.frontCover
+              : "";
+            this.frontCoverListDefault = res.data.frontCover
+              ? res.data.frontCover
+              : "";
+
+            this.info = res.data;
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    //删除背景图
+    handleRemoveItem() {
+      this.frontCoverListDefault = "";
+    },
     // 封面图上传
     frontCoverUploadSuccess(file) {
       this.frontCoverList.push(file);
-      console.log(this.frontCoverList);
     },
     frontCoverUploadRemove(file) {
       this.frontCoverList = this.frontCoverList.filter(
@@ -460,7 +438,6 @@ export default {
             });
           }
           this.defaultImg = list;
-          this.ruleForm.frontCoverUrl = this.defaultImg[0];
         })
         .catch((err) => {
           throw err;
@@ -474,64 +451,35 @@ export default {
         this.TiLength = e.quill.getLength() - 1;
       }
     },
-
-    // 推荐主播弹框
+    // 推荐主播
     chooseAnchor() {
-      this.$refs.chooseAnchor.init(this.ruleForm.recommendedAnchorList);
+      this.$router.push({
+        path: "/preview-recommendAnchor-RecommendAnchor",
+        query: {
+          liveId: this.info.id,
+        },
+      });
     },
-
-    // 确认添加推荐主播
-    addAnchorConfirm(data) {
-      this.$refs.chooseAnchor.close();
-
-      this.ruleForm.recommendedAnchorList = data;
-      this.ruleForm.anchors = data.length ? `已选择${data.length}个主播` : "";
+    //编辑助手
+    chooseAssistants() {
+      this.$router.push({
+        path: "/preview-assistant-Assistant",
+        query: {
+          liveId: this.info.id,
+          anchorId: this.info.anchorUserId,
+        },
+      });
     },
-
-    // 输入选择主播
-    getAnchorInfo(s) {
-      if (s != "") {
-        this.loading = true;
-        this.$http
-          .get("/sys/anchor/info/getSysAnchorInfos/" + s)
-          .then(({ data: res }) => {
-            this.loading = false;
-            if (res.code == 0) {
-              let arr = [];
-              res.data.map((item) => {
-                arr.push({
-                  value: item.weixinUserId,
-                  label: `主播：${item.username}  手机号：${item.phone}`,
-                });
-              });
-              this.anchorOptions = arr;
-            } else {
-              this.anchorOptions = [];
-              this.$message.error(res.msg);
-            }
-          })
-          .catch((err) => {
-            this.loading = false;
-            this.anchorOptions = [];
-            throw err;
-          });
-      } else {
-        this.anchorOptions = [];
-      }
-    },
-    // 推荐商品弹框
+    // 推荐商品
     chooseProduct() {
-      this.$refs.chooseProduct.init(this.ruleForm.productIds);
+      this.$router.push({
+        path: "/preview-cargoGoods-CargoGoods",
+        query: {
+          liveId: this.info.id,
+          anchorId: this.info.anchorUserId,
+        },
+      });
     },
-
-    // 确认添加推荐商品
-    addProductConfirm(data) {
-      this.$refs.chooseProduct.close();
-
-      this.ruleForm.productIds = data;
-      this.ruleForm.goods = data.length ? `已选择${data.length}个商品` : "";
-    },
-
     //提交表单
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -539,49 +487,44 @@ export default {
           let dataForm = {};
           this.ruleForm.startDate = this.dateFormat(this.ruleForm.startDate);
 
-          // 商品、主播返回ids[]
-          dataForm.productIds = this.ruleForm.productIds.map((item) => item.id);
-          dataForm.recommendedAnchorList =
-            this.ruleForm.recommendedAnchorList.map((item) => item.anchorId);
-
           dataForm = {
-            ...dataForm,
+            id: this.ruleForm.id,
             liveTheme: this.ruleForm.liveTheme,
-            anchorId: this.ruleForm.anchorId,
             startDate: this.ruleForm.startDate,
             estimateLiveTime: this.ruleForm.estimateLiveTime,
             frontCoverUrl: this.ruleForm.frontCoverUrl,
             liveIntroduce: this.ruleForm.liveIntroduce,
-            assistantIds: this.ruleForm.assistantIds,
-            dynamicGroupIds: this.ruleForm.dynamicGroupIds,
-            frontCover: this.frontCoverList.length
-              ? this.frontCoverList[0].url
-              : "",
           };
+          if (
+            this.frontCoverList.length !== 0 &&
+            this.frontCoverList[0] &&
+            this.frontCoverList[0].url &&
+            this.frontCoverList[0].url !== 0 &&
+            this.frontCoverListDefault.length === 0
+          ) {
+            dataForm.frontCover = this.frontCoverList[0].url;
+          } else if (this.frontCoverList.length === 0) {
+            dataForm.frontCover = this.frontCoverListDefault;
+          }
 
           this.submitLoading = true;
 
           this.$http
-            .post("/sys/livePreview/createLivePreview", dataForm)
+            .put("/sys/livePreview/update", dataForm)
             .then(({ data: res }) => {
               this.submitLoading = false;
               if (res.code !== 0) {
                 return this.$message.error(res.msg);
               }
-              this.$message.success("创建预告成功！");
+              this.$message.success("修改预告成功！");
               this.ruleForm = {
                 liveTheme: "",
                 startDate: "",
                 estimateLiveTime: "",
                 frontCoverUrl: "",
-                dynamicGroupIds: [],
                 liveIntroduce: "",
-                productIds: [],
-                anchorId: "",
                 goods: "",
-                recommendedAnchorList: [],
                 anchors: "",
-                assistantIds: [],
               };
               this.ruleForm.frontCoverUrl = this.defaultImg[0];
               this.frontCoverList = [];
@@ -598,6 +541,17 @@ export default {
         }
       });
     },
+    //取消
+    cancel() {
+      window.sessionStorage.removeItem("dataForm");
+      this.$router.push({
+        path: "/preview-Preview",
+      });
+    },
+    //重置
+    resetForm(formName) {
+      this.$refs[formName].resetFields();
+    },
     //上传后
     handleSuccess(response, file, fileList) {
       this.fileList.push(response.data.url);
@@ -610,6 +564,7 @@ export default {
           this.fileList.splice(i, 1);
         }
       });
+      this.showDefaultImg = true;
       if (this.fileList.length === 0) {
         this.ruleForm.frontCoverUrl = this.defaultImg[0];
       } else {
@@ -652,61 +607,6 @@ export default {
     dateIfAddZero: function (time) {
       return time < 10 ? "0" + time : time;
     },
-    //改变主播ID
-    changeAnchorId(val) {
-      if (val) {
-        this.getDynamicAssistantList();
-        this.getDynamicGroupList();
-      }
-    },
-    //获取助手
-    getDynamicAssistantList() {
-      if (this.ruleForm.anchorId && this.ruleForm.anchorId.length !== 0) {
-        this.$http
-          .get(
-            `/sys/anchorAssistant/live/getAnchorAssistantWithLiveByAnchorId?anchorId=${this.ruleForm.anchorId}`
-          )
-          .then(({ data: res }) => {
-            if (res.code !== 0) {
-              return this.$message.error(res.msg);
-            }
-            this.assistantOptions = res.data;
-          })
-          .catch((err) => {
-            throw err;
-          });
-      }
-    },
-    //获取投放人群
-    getDynamicGroupList() {
-      if (this.ruleForm.anchorId && this.ruleForm.anchorId.length !== 0) {
-        this.$http
-          .get(
-            `/sys/dynamicGroup/getAllDynamicGroupList?anchorId=${this.ruleForm.anchorId}`
-          )
-          .then(({ data: res }) => {
-            if (res.code !== 0) {
-              return this.$message.error(res.msg);
-            }
-            this.options = res.data;
-          })
-          .catch((err) => {
-            throw err;
-          });
-      }
-    },
-    //助手下拉框出现
-    changeAssistantIds(e) {
-      if (e && !this.ruleForm.anchorId) {
-        this.$message.warning("请先选择主播");
-      }
-    },
-    //投放人群下拉框出现
-    changeDynamicGroupList(e) {
-      if (e && !this.ruleForm.anchorId) {
-        this.$message.warning("请先选择主播");
-      }
-    },
   },
 };
 </script>
@@ -716,17 +616,32 @@ export default {
     width: 100%;
     height: 80px;
   }
-  // /deep/.el-input {
-  //   width: 300px;
-  //   padding-right: 50px;
-  // }
-  .count {
-    display: inline-block;
-    margin-left: 10px;
-    color: #909399;
+  /deep/.el-input {
+    width: 300px;
+    padding-right: 50px;
+  }
+
+  /deep/.frontCover-img-box {
+    .frontCover-box {
+      position: relative;
+      display: inline-block;
+    }
+    .el-image {
+      margin: 0 !important;
+    }
+    .close-img {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      top: 0;
+      right: 0;
+    }
   }
   /deep/.img-item {
     .el-form-item__content {
+      display: flex;
+    }
+    .img-box-content {
       display: flex;
     }
     .img-box {

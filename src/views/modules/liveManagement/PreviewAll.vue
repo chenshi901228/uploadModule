@@ -473,6 +473,13 @@
               >助手</el-button
             >
             <el-button
+              type="text"
+              size="small"
+              icon="el-icon-edit"
+              @click="handleEdite(scope.row)"
+              >编辑</el-button
+            >
+            <el-button
               v-if="
                 scope.row.appointmentState !== 0 &&
                 scope.row.delFlg !== 1 &&
@@ -696,8 +703,13 @@ export default {
         });
     },
     //编辑
-    handle(index, row) {
-      console.log(index, row);
+    handleEdite(row) {
+      this.$router.push({
+        path: "/preview-editePreview-EditePreviewAll",
+        query: {
+          id: row.id,
+        },
+      });
     },
     //删除
     handleDelete(index, row) {
