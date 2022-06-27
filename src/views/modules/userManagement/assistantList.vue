@@ -1,0 +1,336 @@
+<template>
+  <el-card shadow="never" class="aui-card--fill">
+    <div class="mod-pay__order">
+      <el-form
+        class="headerTool"
+        :inline="true"
+        :model="dataForm"
+        ref="dataForm"
+        size="small"
+        label-width="100px"
+        label-position="right"
+        @keyup.enter.native="getDataList()"
+      >
+        <el-form-item
+          label="助手昵称"
+          prop="userName"
+          v-if="isOpen || formItemCount >= 1"
+        >
+          <el-input
+            style="width: 200px"
+            placeholder="请输入"
+            v-model="dataForm.userName"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="手机号码"
+          prop="phone"
+          v-if="isOpen || formItemCount >= 2"
+        >
+          <el-input
+            style="width: 200px"
+            placeholder="请输入"
+            v-model="dataForm.phone"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="是否认证"
+          prop="legalizeFlg"
+          v-if="isOpen || formItemCount >= 3"
+        >
+          <el-select
+            style="width: 200px"
+            placeholder="请选择"
+            v-model="dataForm.legalizeFlg"
+            clearable
+          >
+            <el-option :value="0" label="未认证"></el-option>
+            <el-option :value="1" label="认证"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="是否认证导师"
+          prop="tutorFlg"
+          v-if="isOpen || formItemCount >= 4"
+        >
+          <el-select
+            style="width: 200px"
+            placeholder="请选择"
+            v-model="dataForm.tutorFlg"
+            clearable
+          >
+            <el-option :value="0" label="未认证"></el-option>
+            <el-option :value="1" label="认证"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          label="邀请人"
+          prop="inviteUserName"
+          v-if="isOpen || formItemCount >= 5"
+        >
+          <el-input
+            style="width: 200px"
+            placeholder="邀请人"
+            v-model="dataForm.inviteUserName"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="邀请人手机号码"
+          prop="inviteUserPhone"
+          v-if="isOpen || formItemCount >= 6"
+        >
+          <el-input
+            style="width: 200px"
+            placeholder="请输入"
+            v-model="dataForm.inviteUserPhone"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          label="账号状态"
+          prop="status"
+          v-if="isOpen || formItemCount >= 7"
+        >
+          <el-select
+            style="width: 200px"
+            placeholder="请选择"
+            v-model="dataForm.status"
+            clearable
+          >
+            <el-option :value="1" label="正常"></el-option>
+            <el-option :value="0" label="禁用"></el-option>
+          </el-select>
+        </el-form-item>
+
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button
+              type="primary"
+              icon="el-icon-search"
+              size="mini"
+              @click="getDataList"
+              >{{ $t("query") }}</el-button
+            >
+            <el-button
+              icon="el-icon-refresh"
+              size="mini"
+              @click="resetDataForm()"
+              >{{ $t("reset") }}</el-button
+            >
+            <el-button size="mini" plain @click="open">
+              <i
+                :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
+              ></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button>
+          </el-form-item>
+        </div>
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-button 
+              type="warning"
+              plain
+              icon="el-icon-download" 
+              size="mini"
+              @click="exportHandle">{{ $t("export") }}</el-button>
+          </div>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="刷新"
+                placement="top"
+              >
+                <el-button
+                  size="small"
+                  icon="el-icon-refresh"
+                  circle
+                  @click="getDataList"
+                ></el-button>
+              </el-tooltip>
+            </el-form-item>
+          </div>
+        </div>
+      </el-form>
+      <el-table
+        v-loading="dataListLoading"
+        :data="dataList"
+        @selection-change="dataListSelectionChangeHandle"
+        :height="siteContentViewHeight"
+        style="width: 100%"
+        ref="table"
+      >
+        <el-table-column
+          type="selection"
+          header-align="center"
+          align="center"
+          width="50"
+        ></el-table-column>
+        <el-table-column
+          prop="avatarUrl"
+          label="用户头像"
+          header-align="center"
+          align="center"
+          width="100"
+        >
+          <template slot-scope="scope">
+            <img
+              :src="
+                scope.row.avatarUrl ||
+                require('@/assets/img/default_avatar.png')
+              "
+              alt=""
+              style="width: 60px; height: 60px"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          prop="userName"
+          label="助手昵称"
+          header-align="center"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          prop="phone"
+          label="手机号码"
+          header-align="center"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          prop="legalizeFlg"
+          label="是否认证"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.legalizeFlg === 1 ? "认证" : "未认证" }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          prop="tutorFlg"
+          label="是否是指导师"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="scope">
+            {{ scope.row.tutorFlg === 1 ? "认证" : "未认证" }}
+          </template>
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          prop="inviteUserName"
+          label="邀请人"
+          header-align="center"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          prop="inviteUserPhone"
+          label="邀请人手机号码"
+          header-align="center"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          prop="createDate"
+          label="创建时间"
+          header-align="center"
+          align="center"
+          width="180"
+        ></el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+          prop="createDate"
+          label="状态"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <div>{{ scope.row.status == 0 ? "禁用" : "正常" }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          :label="$t('handle')"
+          fixed="right"
+          header-align="center"
+          align="center"
+          width="120"
+        >
+          <template slot-scope="scope">
+            <el-button
+              icon="el-icon-c-scale-to-original"
+              type="text"
+              size="small"
+              @click="openDetail(scope.row)"
+              >详情</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        background
+        :current-page="page"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="limit"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="pageSizeChangeHandle"
+        @current-change="pageCurrentChangeHandle"
+      >
+      </el-pagination>
+    </div>
+  </el-card>
+</template>
+
+<script>
+import mixinViewModule from "@/mixins/view-module";
+import { addDynamicRoute } from "@/router";
+import Template from "../devtools/template.vue";
+export default {
+  mixins: [mixinViewModule],
+  data() {
+    return {
+      mixinViewModuleOptions: {
+        getDataListURL: "/sys/manage/weixinUser/anchor/fans/assistantPage",
+        exportURL: "/sys/manage/weixinUser/anchor/fans/assistantPageExport", // 导出接口，API地址
+        getDataListIsPage: true,
+      },
+      dataForm: {
+        userName: "",
+        phone: "",
+        legalizeFlg: null,
+        tutorFlg: null,
+        inviteUserName: "",
+        inviteUserPhone: "",
+        status: "",
+      },
+      dataList: [],
+    };
+  },
+  components: { Template },
+  methods: {
+    // 打开用户详情弹窗
+    openDetail(data) {
+      let obj={
+        userName:data.userName,
+        phone:data.phone,
+        weixinUserId:data.weixinUserId
+      }
+      this.$router.push({
+        path: "/userManagement-assistantDetail",
+        query:{info:JSON.stringify(obj)}
+      });
+    },
+  },
+};
+</script>

@@ -18,14 +18,6 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="主播昵称" prop="username">
-          <el-input
-            style="width: 200px"
-            placeholder="主播昵称"
-            v-model="dataForm.username"
-            clearable
-          ></el-input>
-        </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 3" label="手机号码" prop="phone">
           <el-input
             style="width: 200px"
@@ -34,26 +26,36 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 4" label="身份证号" prop="idCard">
+        <el-form-item v-if="isOpen || formItemCount >= 2" label="主播昵称" prop="username">
+          <el-input
+            style="width: 200px"
+            placeholder="主播昵称"
+            v-model="dataForm.username"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <!-- <el-form-item v-if="isOpen || formItemCount >= 4" label="身份证号" prop="idCard">
           <el-input
             style="width: 200px"
             placeholder="身份证号"
             v-model="dataForm.idCard"
             clearable
           ></el-input>
-        </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 5" label="性别" prop="gender">
+        </el-form-item> -->
+        <el-form-item v-if="isOpen || formItemCount >= 5" label="更改类型" prop="updateType">
           <el-select 
             style="width: 200px"
-            placeholder="性别" 
-            v-model="dataForm.gender" 
+            placeholder="请选择更改类型" 
+            v-model="dataForm.updateType" 
             clearable>
-            <el-option :value="0" label="男"></el-option>
-            <el-option :value="1" label="女"></el-option>
-            <el-option :value="2" label="保密"></el-option>
+            <el-option :value="1" label="全量修改"></el-option>
+            <el-option :value="2" label="修改名称"></el-option>
+            <el-option :value="3" label="修改简介"></el-option>
+            <el-option :value="4" label="修改头像"></el-option>
+            <el-option :value="5" label="背景图片"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 6" label="审批状态" prop="status">
+        <!-- <el-form-item v-if="isOpen || formItemCount >= 6" label="审批状态" prop="status">
           <el-select 
             style="width: 200px"
             placeholder="审批状态" 
@@ -63,7 +65,7 @@
             <el-option :value="1" label="同意"></el-option>
             <el-option :value="-1" label="拒绝"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">
           <el-form-item>
@@ -85,14 +87,14 @@
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
-            <el-form-item>
+            <!-- <el-form-item>
               <el-button 
                 type="warning"
                 plain
                 icon="el-icon-download" 
                 size="mini"
                 @click="exportHandle">{{ $t("export") }}</el-button>
-            </el-form-item>
+            </el-form-item> -->
           </div>
           <div class="headerTool--handle-btns-right">
             <el-form-item>
@@ -149,12 +151,12 @@
             {{ scope.row.status === 0 ? '' : scope.row.updateDate }}
           </template>
         </el-table-column> -->
-        <el-table-column
+        <!-- <el-table-column
           type="selection"
           header-align="center"
           align="center"
           width="50"
-        ></el-table-column>
+        ></el-table-column> -->
         <el-table-column
           prop="avatarUrl"
           label="主播头像"
@@ -172,14 +174,7 @@
             />
           </template>
         </el-table-column>
-        <el-table-column
-          show-overflow-tooltip
-          prop="username"
-          label="主播昵称"
-          header-align="center"
-          align="center"
-          width="120"
-        ></el-table-column>
+        
         <el-table-column
           show-overflow-tooltip
           prop="realName"
@@ -219,6 +214,14 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
+          prop="username"
+          label="主播昵称"
+          header-align="center"
+          align="center"
+          width="120"
+        ></el-table-column>
+        <el-table-column
+          show-overflow-tooltip
           prop="introduce"
           label="主播介绍"
           header-align="center"
@@ -226,6 +229,21 @@
           width="120"
         ></el-table-column>
         <el-table-column
+          show-overflow-tooltip
+          prop="updateType"
+          label="更改类型"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span v-if="scope.row.gender === 1">全量修改</span>
+            <span v-else-if="scope.row.gender === 2">修改名称</span>
+            <span v-else-if="scope.row.gender === 3">修改简介</span>
+            <span v-else-if="scope.row.gender === 4">修改头像</span>
+            <span v-else-if="scope.row.gender === 5">背景图片</span>
+          </template>
+        </el-table-column>
+        <!-- <el-table-column
           show-overflow-tooltip
           prop="legalizeFlg"
           label="是否认证"
@@ -247,11 +265,11 @@
           <template slot-scope="scope">
             {{ scope.row.tutorFlg === 1 ? "认证" : "未认证" }}
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           show-overflow-tooltip
           prop="createDate"
-          label="申请时间"
+          label="提交时间"
           header-align="center"
           align="center"
           width="180"
@@ -285,9 +303,9 @@
           align="center"
         >
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.status === 0" type="info">待处理</el-tag>
-            <el-tag v-if="scope.row.status === 1" type="success">同意</el-tag>
-            <el-tag v-if="scope.row.status === -1" type="danger">拒绝</el-tag>
+            <el-tag v-if="scope.row.status === 0" type="info">待审批</el-tag>
+            <el-tag v-if="scope.row.status === 1" type="success">已通过</el-tag>
+            <el-tag v-if="scope.row.status === -1" type="danger">已驳回</el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -299,7 +317,7 @@
         >
           <template slot-scope="scope">
             <el-button icon="el-icon-document" type="text" size="small" @click="openDetail(scope.row)"
-              >详情</el-button
+              >查看</el-button
             >
           </template>
         </el-table-column>
@@ -345,9 +363,7 @@ export default {
         realName: "",
         idCard: "",
         username: "",
-        phone: "",
-        gender: "",
-        status: "",
+        updateType: "",
       },
     };
   },

@@ -8,40 +8,48 @@
                 'https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/default_avatar.png'
               " style="width:60px;height:60px" alt="">
         </div> -->
-      <div style="display: flex; margin: 20px 0 10px; align-items: center;">
-       <span style="width:100px;text-align:right;margin:0 10px">主播头像：</span> <img :src="
-                diaForm.avatarUrl ||
-                'https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/default_avatar.png'
-              " style="width:60px;height:60px" alt="">
+      <div style="display: flex; margin: 20px 0 10px">
+       <span style="width:100px;text-align:right;margin:0 10px">真实姓名：</span> {{ diaForm.realName || '-' }}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">主播昵称：</span> {{ diaForm.username }}
+       <span style="width:100px;text-align:right;margin:0 10px">手机号码：</span> {{ diaForm.phone || '-'  }}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">真实姓名：</span> {{ diaForm.realName || '' }}
-      </div>
-      <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">手机号码：</span> {{ diaForm.phone }}
-      </div>
-      <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">身份证号：</span> {{ diaForm.idCard || '' }}
+       <span style="width:100px;text-align:right;margin:0 10px">身份证号：</span> {{ diaForm.idCard || '-' }}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
        <span style="width:100px;text-align:right;margin:0 10px">性别：</span> {{
           diaForm.gender === 0 ? "男" : diaForm.gender === 1 ? "女" : "保密"
         }}
       </div>
-        <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">主播介绍：</span> <span style="word-break: break-all;max-width:800px;">{{ diaForm.introduce }}</span>
+      <div style="display: flex; margin: 20px 0 10px">
+       <span style="width:100px;text-align:right;margin:0 10px">更改：</span> {{ diaForm.updateType==1?'全量修改':diaForm.updateType==2?'修改名称':diaForm.updateType==3?'修改简介':diaForm.updateType==4?'修改头像':diaForm.updateType==5?'背景图片':diaForm.updateType==6?'银行卡信息修改':'-'}}
+      </div>
+      <div style="display: flex; margin: 20px 0 10px">
+       <span style="width:100px;text-align:right;margin:0 10px">主播昵称：</span> {{ diaForm.username || '-'  }}
+      </div>
+      <div style="display: flex; margin: 20px 0 10px">
+        <span style="width:100px;text-align:right;margin:0 10px">主播简介：</span> <span style="word-break: break-all;max-width:800px;">{{ diaForm.introduce  || '-' }}</span>
+      </div>
+      <div style="display: flex; margin: 20px 0 10px; align-items: center;">
+       <span style="width:100px;text-align:right;margin:0 10px">主播头像：</span> <img :src="
+                diaForm.avatarUrl ||
+                'https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/default_avatar.png'
+              " style="width:60px;height:60px" alt="">
+      </div>
+      <div style="display: flex; margin: 20px 0 10px; align-items: center;">
+       <span style="width:100px;text-align:right;margin:0 10px">主播二维码：</span> <img :src="
+                diaForm.qrCode || '-'
+              " style="width:60px;height:60px" alt="">
       </div>
       <!-- <div style="display: flex; margin: 20px 0 10px">主播介绍：</div>
       <div style="display: flex; margin: 0 20px">{{ diaForm.introduce }}</div> -->
-      <div style="display: flex; margin: 20px 0 10px">
+      <!-- <div style="display: flex; margin: 20px 0 10px">
        <span style="width:100px;text-align:right;margin:0 10px">是否认证：</span> {{ diaForm.legalizeFlg === 1 ? "认证" : "未认证" }}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
        <span style="width:100px;text-align:right;margin:0 10px">是否是指导师：</span> {{ diaForm.tutorFlg === 1 ? "认证" : "未认证" }}
-      </div>
+      </div> -->
       <div style="display: flex; margin: 20px 0 10px">
        <span style="width:100px;text-align:right;margin:0 10px">备注：</span>
        <el-input show-word-limit type="textarea" maxlength="100" placeholder="请输入，可不填" v-model="diaForm.remark" :disabled="diaForm.status != 0"/>
