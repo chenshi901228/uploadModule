@@ -193,9 +193,6 @@
             <span v-else-if="item.prop == 'videoSize'">
               {{ sizeTostr(row[item.prop]) }}
             </span>
-            <span v-else-if="item.prop == 'liveDuration'">
-              {{ getLiveDuration(row.relationLiveUrl) }}
-            </span>
             <span v-else>
               {{ row[item.prop] || "-" }}
             </span>
@@ -261,7 +258,7 @@ export default {
         { prop: "anchorUser", label: "主播" },
         { prop: "anchorTel", label: "手机号码" },
         { prop: "showMode", label: "视频显示" },
-        { prop: "liveDuration", label: "视频时长" },
+        { prop: "longTime", label: "视频时长" },
         { prop: "videoSize", label: "视频大小" },
         { prop: "approveStatus", label: "审核状态" },
         { prop: "remark", label: "备注" },
@@ -287,10 +284,6 @@ export default {
     // 视频大小转换
     sizeTostr(size) {
       return sizeTostr(size);
-    },
-    // 视频时长设置
-    getLiveDuration(url) {
-      return "-";
     },
   },
 };

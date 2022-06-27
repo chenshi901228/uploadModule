@@ -234,7 +234,7 @@ export default {
                     params.relationLiveUrl = this.relationLiveList[0].url
                     params.videoSize = this.relationLiveList[0].size
                     let liveDuration = await getVideoDuration(this.relationLiveList[0].url)
-                    params.liveDuration = (liveDuration / 60).toFixed(2)
+                    params.longTime = (liveDuration / 60).toFixed(2)
 
                     // 投放人群处理
                     if(this.dataForm.dynamicGroupIds) {

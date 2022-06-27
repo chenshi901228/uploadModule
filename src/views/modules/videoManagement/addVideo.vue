@@ -270,11 +270,12 @@ export default {
           // 附件处理
           params.frontCoverUrl = this.frontCoverList[0].url;
           params.relationLiveUrl = this.relationLiveList[0].url;
-          params.videoSize = this.relationLiveList[0].size;
+          params.videoSize = this.relationLiveList[0].size; //视频大小
+          // 视频时长
           let liveDuration = await getVideoDuration(
             this.relationLiveList[0].url
           );
-          params.liveDuration = (liveDuration / 60).toFixed(2);
+          params.longTime = (liveDuration / 60).toFixed(2);
 
           this.submitLoading = true;
 
