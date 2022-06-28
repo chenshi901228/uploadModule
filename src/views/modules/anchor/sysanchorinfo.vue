@@ -53,24 +53,28 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 6" label="认证类型" prop="status">
+        <el-form-item v-if="isOpen || formItemCount >= 6" label="认证类型" prop="userType">
           <el-select 
             style="width: 200px"
             placeholder="请选择" 
-            v-model="dataForm.status" 
+            v-model="dataForm.userType" 
             clearable>
             <el-option :value="1" label="个人"></el-option>
             <el-option :value="2" label="企业"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 7" label="审核类型" prop="status">
+        <el-form-item v-if="isOpen || formItemCount >= 7" label="审核类型" prop="updateType">
           <el-select 
             style="width: 200px"
             placeholder="请选择" 
-            v-model="dataForm.status" 
+            v-model="dataForm.updateType" 
             clearable>
-            <el-option :value="0" label="主播申请"></el-option>
-            <el-option :value="1" label="账户信息"></el-option>
+            <el-option :value="1" label="全量修改"></el-option>
+            <el-option :value="2" label="修改名称"></el-option>
+            <el-option :value="3" label="修改简介"></el-option>
+            <el-option :value="4" label="修改头像"></el-option>
+            <el-option :value="5" label="背景图片"></el-option>
+            <el-option :value="6" label="银行卡信息修改"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 8" label="审批状态" prop="status">
@@ -397,11 +401,13 @@ export default {
       },
       dataForm: {
         realName: "",
-        // idCard: "",
+        idCard: "",
         username: "",
         phone: "",
         gender: "",
-        // status: "",
+        userType:"",
+        updateType:"",
+        status: "",
       },
     };
   },

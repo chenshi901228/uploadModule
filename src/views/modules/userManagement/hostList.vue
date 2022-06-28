@@ -16,7 +16,7 @@
           v-if="isOpen || formItemCount >= 1"
         >
           <el-input
-            placeholder="主播昵称"
+            placeholder="请输入"
             v-model="dataForm.anchorName"
             clearable
             style="width: 200px"
@@ -29,7 +29,7 @@
         >
           <el-input
             style="width: 200px"
-            placeholder="真实姓名"
+            placeholder="请输入"
             v-model="dataForm.realName"
             clearable
           ></el-input>
@@ -41,7 +41,7 @@
         >
           <el-input
             style="width: 200px"
-            placeholder="手机号码"
+            placeholder="请输入"
             v-model="dataForm.phone"
             clearable
           ></el-input>
@@ -53,7 +53,7 @@
         >
           <el-input
             style="width: 200px"
-            placeholder="身份证号"
+            placeholder="请输入"
             v-model="dataForm.idCard"
             clearable
           ></el-input>
@@ -65,7 +65,7 @@
         >
           <el-select
             style="width: 200px"
-            placeholder="性别"
+            placeholder="请选择"
             v-model="dataForm.gender"
             clearable
           >
@@ -75,13 +75,13 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          label="状态"
+          label="账号状态"
           prop="disabledFlg"
           v-if="isOpen || formItemCount >= 6"
         >
           <el-select
             style="width: 200px"
-            placeholder="状态"
+            placeholder="请选择"
             v-model="dataForm.disabledFlg"
             clearable
           >
@@ -116,9 +116,12 @@
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
-            <!-- <el-form-item>
-              
-            </el-form-item> -->
+            <el-button 
+              type="warning"
+              plain
+              icon="el-icon-download" 
+              size="mini"
+              @click="exportHandle">{{ $t("export") }}</el-button>
           </div>
           <div class="headerTool--handle-btns-right">
             <el-form-item>
@@ -142,10 +145,17 @@
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
+        @selection-change="dataListSelectionChangeHandle"
         :height="siteContentViewHeight"
         style="width: 100%"
         ref="table"
       >
+        <el-table-column
+          type="selection"
+          header-align="center"
+          align="center"
+          width="50"
+        ></el-table-column>
         <el-table-column
           prop="avatarUrl"
           label="主播头像"
@@ -239,7 +249,7 @@
           align="center"
           width="100"
         ></el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="dynamicGroupFlg"
           label="动态组授权"
           show-overflow-tooltip
@@ -250,7 +260,7 @@
           <template slot-scope="scope">
             <div>{{ scope.row.dynamicGroupFlg ? "已授权" : "未授权" }}</div>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="liveState"
           label="正在直播"
@@ -264,7 +274,15 @@
             }}</el-tag>
           </template>
         </el-table-column>
-
+        
+        <el-table-column
+          prop="groupNum"
+          label="群组数"
+          show-overflow-tooltip
+          header-align="center"
+          align="center"
+        >
+        </el-table-column>      
         <el-table-column
           prop="disabledFlg"
           label="状态"
@@ -272,7 +290,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            <div>{{ scope.row.delFlg ? "停用" : "正常" }}</div>
+            <el-tag size="small" :type="scope.row.disabledFlg ? 'danger' : 'success'">{{scope.row.disabledFlg ? "停用" : "正常"}}</el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -305,7 +323,7 @@
               @click="editDetail(scope.row)"
               >编辑</el-button
             >
-            <el-button
+            <!-- <el-button
               type="text"
               icon="el-icon-sort"
               size="small"
@@ -327,7 +345,7 @@
               v-else
               @click="impower(scope.row.weixinUserId, 0)"
               >取消授权</el-button
-            >
+            > -->
           </template>
         </el-table-column>
       </el-table>
@@ -356,6 +374,7 @@ export default {
     return {
       mixinViewModuleOptions: {
         getDataListURL: "/sys/anchor/info/pageWithUserManage",
+        exportURL: "/sys/anchor/info/pageWithUserManageExport", // 导出接口，API地址
         getDataListIsPage: true,
         deleteURL: "/sys/pay/order",
         deleteIsBatch: true,
@@ -382,9 +401,22 @@ export default {
     },
     //编辑
     editDetail(data) {
+      // this.$router.push({
+      //   name: "preview-editeUserInfo-EditeUserInfo",
+      //   params: { info: data },
+      // });
+      console.log(data)
+      let obj = {
+        id:data.weixinUserId,
+        username:data.username,
+        introduce:data.introduce,
+        avatarUrl:data.avatarUrl,
+        qrCode:data.qrCode,
+        type:'platform'
+      }
       this.$router.push({
-        name: "preview-editeUserInfo-EditeUserInfo",
-        params: { info: data },
+        path: "/preview-editeUserInfo-EditeUserInfo",
+        query: { info: JSON.stringify(obj) },
       });
     },
     forbiddenHandle(type, data) {

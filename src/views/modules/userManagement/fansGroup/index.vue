@@ -38,7 +38,7 @@
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
-            <el-form-item>
+            <!-- <el-form-item>
               <el-button 
                 size="mini" 
                 type="primary" 
@@ -46,12 +46,12 @@
                 icon="el-icon-plus"
                 @click="dialogVisibleGroup=true" 
                 style="marginBottom:10px;">创建群组</el-button>
-            </el-form-item>
+            </el-form-item> -->
           </div>
           <div class="headerTool--handle-btns-right">
             <el-form-item>
               <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-                <el-button size="small" icon="el-icon-refresh" circle @click="getfansGroupList"></el-button>
+                <el-button size="small" icon="el-icon-refresh" circle @click="pageCurrentChangeHandle(1)"></el-button>
               </el-tooltip>
             </el-form-item>
           </div>
@@ -72,9 +72,24 @@
             header-align="center"
             align="center"
           >
+            <template slot-scope="{row}">
+              <div v-if="prop=='groupImage'">
+                <img
+                  :src="row.groupImage || require('@/assets/img/default_cover.jpg')"
+                  alt=""
+                  style="width: 50px; height: 50px"
+                />
+              </div>
+              <span v-else-if="prop=='delFlg'">
+                {{row.delFlg==1?'隐藏':'显示'}}
+              </span>
+              <span v-else>
+                {{ row[prop] || '-' }}
+              </span>
+            </template>
           </el-table-column>
         </template>
-        <el-table-column
+        <!-- <el-table-column
           width="200"
           label="操作"
           fixed="right"
@@ -82,12 +97,6 @@
           align="center"
         >
           <template slot-scope="scope">
-            <!-- <el-button
-              size="mini"
-              type="primary"
-              @click="handleAddUser(scope.$index, scope.row)"
-              >添加成员</el-button
-            > -->
             <el-button
               size="mini"
               type="text"
@@ -96,7 +105,7 @@
               >查看成员</el-button
             >
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <el-pagination
           background
@@ -387,11 +396,12 @@ export default {
         groupName:'',
         limit:10,
         page:1,
-        anchorId:this.$route.query.anchorId,
+        anchorId:'',
       },
       diaTableTitle:{
         groupName:"群组名称",
-        peopleNum:"用户人数",
+        groupImage:"群组二维码",
+        delFlg:"显示状态",
         createDate:"创建时间",
       },
       total: 0,//群组条数
@@ -447,7 +457,8 @@ export default {
       currentGroupName: "" //当前查看的群组
     }
   },
-  created(){
+  activated(){
+    this.groupNameForm.anchorId=this.$route.query.anchorId
     this.getfansGroupList()
   },
   methods:{
@@ -539,6 +550,8 @@ export default {
     //重置
     reset(formName){
       this.groupNameForm.groupName = ''
+      this.groupNameForm.limit=10
+      this.groupNameForm.page=1
       this.hasJoinFansUserForm.nickName = ''
       this.hasJoinFansUserForm.phone = ''
       this.hasJoinFansUserForm.level = ''

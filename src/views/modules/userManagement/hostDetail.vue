@@ -823,7 +823,7 @@ export default {
   methods: {
     fansGroup() {
       this.$router.push({
-        name: "userManagement-fansGroup-index",
+        path: "/userManagement-fansGroup-index",
         query: { anchorId: this.userId },
       });
     },

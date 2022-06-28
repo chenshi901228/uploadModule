@@ -133,27 +133,27 @@
         <div class="normal_info">
           <div>
             <span>开户银行</span>
-            {{diaForm.bankInfo.depositBank||'-'}}
+            {{diaForm.bankInfo&&diaForm.bankInfo.depositBank||'-'}}
           </div>
           <div>
             <span>支行名称</span>
-            {{diaForm.bankInfo.branchName||'-'}}
+            {{diaForm.bankInfo&&diaForm.bankInfo.branchName||'-'}}
           </div>
           <div>
             <span>账户名称</span>
-            {{diaForm.bankInfo.accountName||'-'}}
+            {{diaForm.bankInfo&&diaForm.bankInfo.accountName||'-'}}
           </div>
           <div>
             <span>银行账号</span>
-            {{diaForm.bankInfo.bankAccount||'-'}}
+            {{diaForm.bankInfo&&diaForm.bankInfo.bankAccount||'-'}}
           </div>
           <div>
             <span>开户行所在地</span>
-            {{diaForm.bankInfo.address||'-'}}
+            {{diaForm.bankInfo&&diaForm.bankInfo.address||'-'}}
           </div>
           <div>
             <span>验证金额</span>
-            {{diaForm.bankInfo.attestAmount}}
+            {{diaForm.bankInfo&&diaForm.bankInfo.attestAmount || 0}}
           </div>
         </div>
       </div>
