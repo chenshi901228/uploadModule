@@ -167,7 +167,6 @@ export default {
       limit: 10, // 每页数
       total: 0, // 总条数
       dataListLoading: false, // 数据列表，loading状态
-      dataListSelections: [], // 数据列表，多选项
       defaultSelected: [], //默认选中的数据
       tableItem: [
         { prop: "avatarUrl", label: "主播头像" },
@@ -187,14 +186,15 @@ export default {
     },
     //置顶
     setTop(row) {
-      if(this.defaultSelected.length <= 1) return  //如果只有一条数据则不操作
-      // 默认选中列表中数据置顶
-      this.defaultSelected.map((item, index) => {
-        if(item.anchorId == row.anchorId) {
-          this.defaultSelected.splice(index, 1)
-        }
-      })
-      this.defaultSelected.unshift(row)
+      if(this.defaultSelected.length > 1) {  //如果有1条以上数据，才将默认选中列表中数据置顶
+        // 默认选中列表中数据置顶
+        this.defaultSelected.map((item, index) => {
+          if(item.anchorId == row.anchorId) {
+            this.defaultSelected.splice(index, 1)
+          }
+        })
+        this.defaultSelected.unshift(row)
+      } 
 
       // 所有数据列表中数据置顶
       this.allDataList.map((item, index) => {
@@ -343,8 +343,7 @@ export default {
           this.defaultSelected = selection;
         } else {
           // 创建临时变量
-          let data = JSON.parse(JSON.stringify(selection));
-          let arr = [...this.defaultSelected, ...data];
+          let arr = JSON.parse(JSON.stringify([...this.defaultSelected, ...selection]));
 
           // 全选时，合并数据去重
           for (let i = 0; i < arr.length; i++) {
@@ -413,7 +412,6 @@ export default {
     close() {
       this.$refs.dataForm.resetFields();
       this.$refs.table.clearSelection();
-      this.dataListSelections = [];
       this.dialogVisible = false;
     },
   },
