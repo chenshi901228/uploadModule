@@ -34,7 +34,7 @@
         <upload :fileList="fileList" :limit="1" :multiple="false" @getImg="getImg"></upload>
       </el-form-item>
       <el-form-item label="主播二维码" required>
-        <upload :fileList="fileListQRcode" :limit="1" :multiple="false" @getImg="getImg"></upload>
+        <upload :fileList="fileListQRcode" :limit="1" :multiple="false" @getImg="getImgQRcode"></upload>
       </el-form-item>
       <el-form-item>
         <!-- <el-button @click="resetForm('ruleForm')">取消</el-button> -->
@@ -76,30 +76,35 @@ export default {
         ],
         introduce: [{ required: true, message: "请输入主播简介", trigger: "blur" }],
       },
-      imgSrc:''
+      imgSrc:'',
+      type:'',//平台还是主播
     };
   },
   watch: {},
   created() {},
   activated() {
     let info = JSON.parse(this.$route.query.info)
+    this.info = info
     console.log(info)
     if(info) {
-      this.id = info.weixinUserId
+      this.id = info.id
       this.ruleForm.username = info.username
       this.ruleForm.introduce = info.introduce
+      this.type = info.type
       this.fileList = [
         {
           name: new Date().getTime(),
           url: info.avatarUrl || "https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/default_avatar.png"
         }
       ]
-      this.fileListQRcode = [
-        {
-          name: new Date().getTime(),
-          url: info.avatarUrl || "https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/default_avatar.png"
-        }
-      ]
+      if(info.qrCode){
+        this.fileListQRcode = [
+          {
+            name: new Date().getTime(),
+            url: info.qrCode
+          }
+        ]
+      }
     }
   },
   mounted() {
@@ -120,12 +125,16 @@ export default {
       console.log(imgList)
       this.fileList = imgList;
     },
+    //二维码上传
+    getImgQRcode(imgList){
+      this.fileListQRcode = imgList;
+    },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
 
           if(!this.fileList.length) return this.$message.error("请上传主播头像")
-
+          if(!this.fileListQRcode.length) return this.$message.error("请上传主播二维码")
           const loading = this.$loading({
             lock: true,
             text: '信息修改中',
@@ -136,9 +145,10 @@ export default {
           let params = {
             id: this.id,
             ...this.ruleForm,
-            avatarUrl: this.fileList[0].response ? this.fileList[0].response.data.url : this.fileList[0].url
+            avatarUrl: this.fileList[0].response ? this.fileList[0].response.data.url : this.fileList[0].url,
+            qrCode: this.fileListQRcode[0].response ? this.fileListQRcode[0].response.data.url : this.fileListQRcode[0].url
           }
-          this.$http.post("sys/anchor/applyInfo/updateBaseInfo", params).then(({ data: res }) => {
+          this.$http.post(this.type?"sys/anchor/applyInfo/updateBaseInfoWithManage":"sys/anchor/applyInfo/updateBaseInfo", params).then(({ data: res }) => {
             if(res.code == 0) {
               this.$message.success("修改主播信息成功")
               this.resetForm(formName)

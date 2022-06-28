@@ -2206,6 +2206,7 @@ export default {
         username:this.diaForm.username,
         introduce:this.diaForm.introduce,
         avatarUrl:this.diaForm.avatarUrl,
+        qrCode:this.diaForm.qrCode,
       }
       this.$router.push({
         path: "/preview-editeUserInfo-EditeUserInfo",

@@ -1,22 +1,28 @@
 <template>
-    <el-upload
-        ref="upload"
-        class="upload-demo" 
-        list-type="picture-card"
-        name="file"
-        accept="image/png,image/jpeg,image/jpg,image/gif" 
-        :action="uploadUrl"
-        :multiple="multiple" 
-        :limit="limit" 
-        :before-upload="beforeUpload" 
-        :on-remove="onRemove" 
-        :file-list="fileList"
-        :on-error="uploadError"
-        :on-success="uploadSuccess"
-        :on-exceed="onExceed">
-        <i class="el-icon-plus"></i>
-        <div slot="tip" class="el-upload__tip">图片格式为jpg、jpeg、png、gif，大小不能超过20M</div>
-    </el-upload>
+    <div>
+        <el-upload
+            ref="upload"
+            class="upload-demo" 
+            list-type="picture-card"
+            name="file"
+            accept="image/png,image/jpeg,image/jpg,image/gif" 
+            :action="uploadUrl"
+            :multiple="multiple" 
+            :limit="limit" 
+            :before-upload="beforeUpload" 
+            :on-preview="handlePictureCardPreview"
+            :on-remove="onRemove" 
+            :file-list="fileList"
+            :on-error="uploadError"
+            :on-success="uploadSuccess"
+            :on-exceed="onExceed">
+            <i class="el-icon-plus"></i>
+            <div slot="tip" class="el-upload__tip">图片格式为jpg、jpeg、png、gif，大小不能超过20M</div>
+        </el-upload>
+        <el-dialog :modal="false" :visible.sync="dialogVisible">
+            <img width="100%" :src="dialogImageUrl" alt="">
+        </el-dialog>
+    </div>
 </template>
 
 
@@ -25,7 +31,9 @@
     export default {
         data(){
             return {
-                uploadUrl:''
+                uploadUrl:'',
+                dialogImageUrl:'',
+                dialogVisible:false
             }
         },
         props:{
@@ -40,7 +48,7 @@
             limit:{
                 type:Number,
                 default:null
-            }
+            },
         },
         created() {
             this.uploadUrl = `${window.SITE_CONFIG['apiURL']}/oss/file/upload?access_token=${Cookies.get('access_token')}`
@@ -57,6 +65,11 @@
             // 图片上传出错的回调
             uploadError(err,file){
                 this.$message.error('上传失败！');
+            },
+            //放大预览
+            handlePictureCardPreview(file){
+                this.dialogImageUrl = file.url;
+                this.dialogVisible = true;
             },
             // 图片上传之前的回调
             beforeUpload(file){
@@ -77,7 +90,7 @@
             // 文件超出数量限制
             onExceed(file, fileList) {
                 this.$message.error(`只能上传${this.limit}张图片！`);
-            }
+            },
         }
     }
 </script>

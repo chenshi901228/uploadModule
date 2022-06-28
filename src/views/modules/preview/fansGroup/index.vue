@@ -14,8 +14,14 @@
             clearable
             style="width: 200px"
             v-model="groupNameForm.groupName"
-            placeholder="群组名称"
+            placeholder="请输入"
           ></el-input>
+        </el-form-item>
+        <el-form-item label="显示状态">
+          <el-select v-model="groupNameForm.delFlg" clearable>
+            <el-option :value="0" label="显示"></el-option>
+            <el-option :value="1" label="隐藏"></el-option>
+          </el-select>
         </el-form-item>
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">
@@ -72,6 +78,21 @@
             header-align="center"
             align="center"
           >
+            <template slot-scope="{row}">
+              <div v-if="prop=='groupImage'">
+                <img
+                  :src="row.groupImage || require('@/assets/img/default_cover.jpg')"
+                  alt=""
+                  style="width: 50px; height: 50px"
+                />
+              </div>
+              <span v-else-if="prop=='delFlg'">
+                {{row.delFlg==1?'隐藏':'显示'}}
+              </span>
+              <span v-else>
+                {{ row[prop] || '-' }}
+              </span>
+            </template>
           </el-table-column>
         </template>
         <el-table-column
@@ -85,16 +106,9 @@
             <el-button
               size="small"
               type="text"
-              icon="el-icon-plus"
-              @click="handleAddUser(scope.$index, scope.row)"
-              >添加成员</el-button
-            >
-            <el-button
-              size="small"
-              type="text"
               icon="el-icon-view"
               @click="handleLookUser(scope.$index, scope.row)"
-              >查看成员</el-button
+              >{{scope.row.delFlg==1?'显示':'隐藏'}}</el-button
             >
           </template>
         </el-table-column>
@@ -120,6 +134,9 @@
       <el-form ref="createGroupform" :model="createGroup" :rules="createGroupRules" label-width="80px">
         <el-form-item label="群组名称" prop="groupName">
           <el-input v-model="createGroup.groupName"></el-input>
+        </el-form-item>
+        <el-form-item label="群二维码" required>
+          <upload :fileList="fileList" :limit="1" :multiple="false" @getImg="getImg"></upload>
         </el-form-item>
         <el-form-item style="textAlign:right;">
           <el-button size="small" @click="dialogVisibleGroup = false">取 消</el-button>
@@ -367,9 +384,13 @@
 </template>
 
 <script>
+import Upload from "@/components/upload/index";
 import mixinTableModule from "@/mixins/table-module";
 export default {
   mixins: [mixinTableModule],
+  components:{
+    Upload
+  },
   data(){
     return{
       dialogVisibleGroup:false,//创建群组弹窗
@@ -381,13 +402,15 @@ export default {
       dataListSelectionUsers:[],
       groupNameForm:{
         groupName:'',
+        delFlg:'',
         limit:10,
         page:1,
-        anchorId:this.$route.query.anchorId,
+        anchorId:'',
       },
       diaTableTitle:{
         groupName:"群组名称",
-        peopleNum:"用户人数",
+        groupImage:"群组二维码",
+        delFlg:"显示状态",
         createDate:"创建时间",
       },
       total: 0,//群组条数
@@ -440,13 +463,20 @@ export default {
         createDate:"入群时间",
       },
       fansLevelsOptions: [], //粉丝等级options
-      currentGroupName: "" //当前查看的群组
+      currentGroupName: "", //当前查看的群组
+      fileList:[],
     }
   },
-  created(){
+  activated(){
+    this.groupNameForm.anchorId=this.$route.query.anchorId
     this.getfansGroupList()
   },
   methods:{
+    // 头像上传
+    getImg(imgList) {
+      console.log(imgList)
+      this.fileList = imgList;
+    },
     //批量选择
     noJoinUserSelectionChangeHandle(val) {
       this.dataListSelectionUsers = val;
@@ -504,7 +534,11 @@ export default {
     confirmCreateGroup(){
       this.$refs.createGroupform.validate((valid) => {
         if (valid) {
-          this.$http.post('/sys/weixinfansgroup',{anchorId: this.$route.query.anchorId,groupName:this.createGroup.groupName}).then(({ data: res })=>{
+          if(!this.fileList.length){
+            this.$message.error('请上传群组二维码')
+            return
+          }
+          this.$http.post('/sys/weixinfansgroup',{anchorId: this.$route.query.anchorId,groupName:this.createGroup.groupName,groupImage:this.fileList[0].response ? this.fileList[0].response.data.url : this.fileList[0].url}).then(({ data: res })=>{
             if (res.code !== 0) {
               return this.$message.error(res.msg);
             }
@@ -557,12 +591,37 @@ export default {
       this.dialogVisibleAddUser = true
       this.getNoJoinFansUserList()
     },
-    //查看成员
+    //显示、隐藏
     handleLookUser(i, row){
-      this.groupId = row.id
-      this.currentGroupName = row.groupName
-      this.dialogVisibleLookUser = true
-      this.getHasJoinFansUserList()
+      // this.groupId = row.id
+      // this.currentGroupName = row.groupName
+      // this.dialogVisibleLookUser = true
+      // this.getHasJoinFansUserList()
+      this.$confirm(`是否${row.delFlg==1?'显示':'隐藏'}该群组?`, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.put('/sys/weixinfansgroup',{id:row.id,delFlg:row.delFlg==1?0:1}).then(res=>{
+          if(res.data.code===0){
+            this.$message({
+              type: 'success',
+              message: '修改成功'
+            }); 
+            this.getfansGroupList()
+          }else{
+            this.$message({
+              type: 'error',
+              message: res.data.msg
+            }); 
+          }
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消'
+        });          
+      });
     },
     //查看加入群的粉丝
     getHasJoinFansUserList(){
