@@ -1534,7 +1534,8 @@ export default {
     getLivePreviewList() {
       let obj = {
         liveState:3,
-        appointmentState:1
+        appointmentState:1,
+        anchorUserId: this.$store.state.user.id
       }
       let params = {...this.params,...obj}
       this.$http.get(`/sys/livePreview/pageOwn`,{params}).then((res) => {

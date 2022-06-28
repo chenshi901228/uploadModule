@@ -7,6 +7,7 @@ export default {
             // 设置属性
             mixinTableModuleOptions: {
                 getDataListURL: '', // 数据列表接口，API地址
+                getDataListIsPage: true, // 数据列表接口，是否需要分页？
                 exportURL: '' // 导出接口，API地址
             },
             dataListLoading: false, // 数据列表，loading状态
@@ -53,6 +54,13 @@ export default {
     activated() {
         this.setOtherViewHeight()
         this.setHeaderSearchWidth()
+
+        // 防止table刷新错位
+        if(this.$refs.table) {
+            this.$nextTick(()=>{
+            this.$refs.table.doLayout()
+            })
+        }
     },
     methods: {
         // 搜索栏高度设置
@@ -81,8 +89,8 @@ export default {
             this.dataListLoading = true;
             this.$http.get(this.mixinTableModuleOptions.getDataListURL, {
                 params: {
-                    page: this.page,
-                    limit: this.limit,
+                    page: this.mixinTableModuleOptions.getDataListIsPage ? this.page : null,
+                    limit: this.mixinTableModuleOptions.getDataListIsPage ? this.limit : null,
                     ...this.$httpParams(this.dataForm),
                     ...this.$httpParams(this.params)
                 },
@@ -93,8 +101,8 @@ export default {
                     this.total = 0;
                     return this.$message.error(res.msg);
                 }
-                this.dataList = res.data.list;
-                this.total = res.data.total;
+                this.dataList = this.mixinTableModuleOptions.getDataListIsPage ? res.data.list : res.data
+                this.total = this.mixinTableModuleOptions.getDataListIsPage ? res.data.total : 0
             }).catch((err) => {
                 this.dataListLoading = false;
                 this.$message.error(JSON.stringify(err.message))

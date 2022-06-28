@@ -372,6 +372,9 @@ export default {
         liveState: null,
         showState: null,
       },
+      params: {
+        anchorUserId: this.$store.state.user.id
+      },
 
       tableItem: [
         { prop: "frontCoverUrl", label: "直播宣传图" },

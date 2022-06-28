@@ -30,7 +30,7 @@
           @visible-change="getProductType"
           style="width: 200px"
           v-model="dataForm.productType"
-          placeholder="商品类型"
+          placeholder="请选择"
           clearable
         >
           <el-option

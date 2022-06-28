@@ -84,6 +84,7 @@ export default {
       },
       template: `
         <img v-if="item.type == 'image'" :style="item.style" :src="row[item.prop] || 'https://picsum.photos/400/300?random=1'"alt=""/>
+        <span v-else-if="item.type == 'string'">{{item.render ? item.render() : ""}}</span>
         <span v-else>{{row[item.prop] || "-"}}</span>
       `,
     },
