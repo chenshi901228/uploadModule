@@ -168,7 +168,7 @@
             icon="el-icon-upload2"
             type="text"
             size="small"
-            v-if="row.isSelected"
+            v-if="row._isSelected"
             @click="setTop(row)"
             >置顶</el-button
           >
@@ -269,7 +269,7 @@ export default {
               if (row.id == item.id) {
                 this.$refs.table.toggleRowSelection(row, true);
                 // 数据列表是否选中设为true
-                row["isSelected"] = true
+                row["_isSelected"] = true
               }
             });
           });
@@ -385,7 +385,7 @@ export default {
             if (row.id == data.id) {
               this.$refs.table.toggleRowSelection(row, false);
               // 数据列表是否选中设为false
-              row["isSelected"] = false
+              row["_isSelected"] = false
             }
           });
           // 默认选中数据中去掉这条数据
@@ -407,7 +407,7 @@ export default {
         // 数据列表是否选中设为true
         this.dataList.forEach(item => {
           if(item.id == row.id) {
-            item["isSelected"] = true
+            item["_isSelected"] = true
           }
         })
       } else {
@@ -420,7 +420,7 @@ export default {
         // 数据列表是否选中设为false
         this.dataList.forEach(item => {
           if(item.id == row.id) {
-            item["isSelected"] = false
+            item["_isSelected"] = false
           }
         })
 
@@ -451,7 +451,7 @@ export default {
 
         // 数据列表是否选中设为true
         this.dataList.forEach(item => {
-          item["isSelected"] = true
+          item["_isSelected"] = true
         })
         
       } else {
@@ -471,7 +471,7 @@ export default {
 
         // 数据列表是否选中设为false
         this.dataList.forEach(item => {
-          item["isSelected"] = false
+          item["_isSelected"] = false
         })
       }
     },
