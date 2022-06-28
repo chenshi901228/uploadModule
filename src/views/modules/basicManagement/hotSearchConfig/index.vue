@@ -238,7 +238,7 @@ export default {
                     }).catch(err => this.$message.error(JSON.stringify(err.message)))
                 })
                 .catch(() => {
-                    this.$message.info("已取消删除");
+                    this.$message.info("已取消操作");
                 });
         },
         // 上移或下移

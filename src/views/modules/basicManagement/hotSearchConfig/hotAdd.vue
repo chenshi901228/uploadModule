@@ -111,7 +111,9 @@ export default {
         calcCurrentTab() {
             switch(this.activeName) {
                 case "live": 
+                    //请求地址 
                     this.mixinTableModuleOptions.getDataListURL = "/sys/hotSearchConfiguration/selectLiveListPageForHotSearchConfiguration"
+                    // table选项
                     this.tableItem = [
                         { prop: "frontCoverUrl", width: 140, label: "直播宣传图", type: "image", style: { width: "100px", height: "60px" } },
                         { prop: "liveTheme", label: "直播主题" },
@@ -127,16 +129,19 @@ export default {
                             }
                         ] }
                     ]
+                    // 搜索字段
                     this.dataForm = {
                         liveTheme: "",
                         anchorUser: "",
                         anchorTel: ""
                     }
+                    // 搜索栏配置
                     this.dataFormItemList = [
                         { label: "直播主题", prop: "liveTheme"},
                         { label: "主播", prop: "anchorUser"},
                         { label: "手机号码", prop: "anchorTel"},
                     ]
+                    // 分类
                     this.type = 1
                     break;
                 case "preview": 
@@ -247,7 +252,7 @@ export default {
                     }).catch(err => this.$message.error(JSON.stringify(err.message)))
                 })
                 .catch(() => {
-                    this.$message.info("已取消删除");
+                    this.$message.info("已取消操作");
                 });
         },
         // tab切换
