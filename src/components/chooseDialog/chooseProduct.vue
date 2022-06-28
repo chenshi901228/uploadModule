@@ -229,11 +229,10 @@ export default {
   },
   methods: {
     init(data) {
-      this.defaultSelected = data || [];
       this.page = 1;
       this.limit = 10;
       this.dialogVisible = true;
-      this.getAllData();
+      this.getAllData(data);
     },
     //置顶
     setTop(row) {
@@ -287,7 +286,7 @@ export default {
     },
 
     // 获取所有数据在本地操作置顶
-    getAllData() {
+    getAllData(data) {
       this.dataListLoading = true;
       this.$http
         .get("/sys/wxapp/anchorProduct/listWithAnchorIdPage", {
@@ -308,6 +307,8 @@ export default {
           }
           this.allDataList = res.data.list
           this.total = res.data.total;
+          // 给默认选中的数据赋值
+          this.defaultSelected = data.length ? JSON.parse(JSON.stringify(data)) : [];
           
           this.initDataSort()
 
@@ -329,7 +330,7 @@ export default {
         this.dataList = this.allDataList.slice((this.page - 1) * this.limit, this.page * this.limit);
         this.dataListLoading = false;
         this.setCurPageSelected();
-      }, 500)
+      }, 200)
     },
 
     // 初始所有数据重排序
@@ -500,6 +501,7 @@ export default {
     close() {
       this.$refs.dataForm.resetFields();
       this.$refs.table.clearSelection();
+      this.defaultSelected = []
       this.dialogVisible = false;
     },
   },
@@ -539,5 +541,6 @@ export default {
 .frontCoverImg {
   max-width: 100px;
   height: 60px;
+  object-fit: cover;
 }
 </style>

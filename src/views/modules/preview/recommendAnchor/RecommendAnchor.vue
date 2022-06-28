@@ -131,7 +131,7 @@
           <template slot-scope="{ row }">
             <div>
               <img
-                style="width: 80px; height: '80px'"
+                style="width: 80px; height: 80px"
                 class="frontCoverImg"
                 :src="row.avatarUrl || 'https://picsum.photos/400/300?random=1'"
                 alt=""

@@ -471,7 +471,8 @@ export default {
   padding: 10px 20px !important;
 }
 .frontCoverImg {
-  max-width: 100px;
+  max-width: 100%;
   height: 60px;
+  object-fit: cover;
 }
 </style>

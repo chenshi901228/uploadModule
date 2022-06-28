@@ -498,8 +498,9 @@ export default {
 <style lang="scss" scoped>
 .mod-live__goodsList {
   .frontCoverImg {
-    width: 100%;
+    max-width: 100%;
     height: 60px;
+    object-fit: cover;
   }
 }
 </style>

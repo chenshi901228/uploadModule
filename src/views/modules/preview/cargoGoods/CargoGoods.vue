@@ -30,12 +30,18 @@
           v-if="isOpen || formItemCount >= 2"
         >
           <el-select
-            placeholder="请选择"
+            @visible-change="getProductType"
             style="width: 200px"
             v-model="dataForm.productType"
+            placeholder="请选择"
             clearable
           >
-            <el-option value="专业课" label="专业课"></el-option>
+            <el-option
+              v-for="item in productTypeOptions"
+              :key="item.productType"
+              :value="item.productType"
+              :label="item.productType"
+            ></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
@@ -76,8 +82,8 @@
             v-model="dataForm.isAdd"
             clearable
           >
-            <el-option :value="0" label="否"></el-option>
-            <el-option :value="1" label="是"></el-option>
+            <el-option :value="0" label="未添加"></el-option>
+            <el-option :value="1" label="已添加"></el-option>
           </el-select>
         </el-form-item>
         <div class="headerTool-search-btns">
@@ -170,7 +176,6 @@
           <template slot-scope="{ row }">
             <div>
               <img
-                style="width: 80px; height: '80px'"
                 class="frontCoverImg"
                 :src="
                   row.productImage || 'https://picsum.photos/400/300?random=1'
@@ -349,10 +354,11 @@ export default {
       dialogAddVisible: false,
       selectAddList: [],
       authEdit: 1, //从直播列表进来是否有编辑权限：1-有，0-没有
+      productTypeOptions: [], //商品类型下拉选项
     };
   },
   activated() {
-    if(this.$route.query.authEdit != undefined) { //有表示来自直播列表
+    if(this.$route.query.authEdit != undefined) { //有标识来自直播列表-设置操作按钮显示
       this.authEdit = this.$route.query.authEdit
     }else { //来自预告
       this.authEdit = 1
@@ -363,6 +369,26 @@ export default {
     this.query();
   },
   methods: {
+
+
+    // 下拉获取商品类型
+    getProductType(type) {
+      if (!type) return;
+      this.$http
+        .get("/sys/course/searchProductType")
+        .then(({ data: res }) => {
+          if (res.code == 0) {
+            this.productTypeOptions = res.data;
+          } else {
+            this.productTypeOptions = [];
+            return this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          this.productTypeOptions = [];
+          this.$message.error(JSON.stringify(err.message));
+        });
+    },
     //确认批量添加
     confirmAddSelect() {
       this.$http
@@ -499,10 +525,11 @@ export default {
 };
 </script>
 <style scoped lang="scss">
-.mod-live__liveList {
+.mod-fansLevel {
   .frontCoverImg {
-    width: 100%;
-    height: 80px;
+    max-width: 100%;
+    height: 60px;
+    object-fit: cover;
   }
 }
 </style>
