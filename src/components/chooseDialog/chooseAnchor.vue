@@ -256,6 +256,8 @@ export default {
           }
           this.allDataList = res.data.list
           this.total = res.data.total;
+
+          this.initDataSort()
           
           this.query()
 
@@ -277,6 +279,22 @@ export default {
         this.setCurPageSelected();
       }, 500)
     },
+
+    // 初始所有数据重排序
+    initDataSort() {
+      let data = JSON.parse(JSON.stringify(this.defaultSelected))
+      if(data.length) {
+        data.map(j => {
+          this.allDataList.map((item, index) => {
+            if(item.anchorId == j.anchorId) {
+              this.allDataList.splice(index, 1)
+            }
+          })
+        })
+        this.allDataList.unshift(...data)
+      }
+    },
+
     // 选择添加
     add(row) {
       this.$emit("add", this.defaultSelected);

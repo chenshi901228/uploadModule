@@ -309,6 +309,8 @@ export default {
           this.allDataList = res.data.list;
           this.total = res.data.total;
 
+          this.initDataSort()
+
           this.query()
         })
         .catch((err) => {
@@ -326,6 +328,21 @@ export default {
         this.dataListLoading = false;
         this.setCurPageSelected();
       }, 500)
+    },
+
+    // 初始所有数据重排序
+    initDataSort() {
+      let data = JSON.parse(JSON.stringify(this.defaultSelected))
+      if(data.length) {
+        data.map(j => {
+          this.allDataList.map((item, index) => {
+            if(item.productId == j.productId) {
+              this.allDataList.splice(index, 1)
+            }
+          })
+        })
+        this.allDataList.unshift(...data)
+      }
     },
     // 下拉获取商品类型
     getProductType(type) {
