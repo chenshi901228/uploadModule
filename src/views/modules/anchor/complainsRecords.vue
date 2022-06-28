@@ -13,7 +13,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="nickName">
           <el-input
             style="width: 200px"
-            placeholder="用户昵称"
+            placeholder="请输入"
             v-model="dataForm.username"
             clearable
           ></el-input>
@@ -21,7 +21,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="phone">
           <el-input
             style="width: 200px"
-            placeholder="手机号码"
+            placeholder="请输入"
             v-model="dataForm.phone"
             clearable
           ></el-input>
@@ -30,7 +30,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 3" label="投诉分类" prop="type">
           <el-select 
             style="width: 200px"
-            placeholder="投诉分类" 
+            placeholder="请选择" 
             v-model="dataForm.type" 
             clearable>
             <el-option :value="1" label="平台投诉"></el-option>
@@ -40,7 +40,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 4" label="投诉标签" prop="tag">
           <el-select 
             style="width: 200px"
-            placeholder="投诉标签" 
+            placeholder="请选择" 
             v-model="dataForm.tag" 
             clearable>
             <el-option value="违法违禁" label="违法违禁"></el-option>
@@ -64,7 +64,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 5" label="处理状态" prop="handlingStatus">
           <el-select
             style="width: 200px"
-            placeholder="处理状态"
+            placeholder="请选择"
             v-model="dataForm.handlingStatus"
             clearable
           >

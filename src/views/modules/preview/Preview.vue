@@ -696,6 +696,7 @@ export default {
             page: this.page,
             limit: this.limit,
             ...dataObj,
+            anchorUserId: this.$store.state.user.id
           },
         })
         .then(({ data: res }) => {

@@ -1,4 +1,4 @@
-<!-- 热门搜索配置-新增 -->
+<!-- 直播推荐-新增 -->
 
 <template>
     <el-card shadow="never" class="aui-card--fill">
@@ -14,15 +14,23 @@
                 @keyup.enter.native="getDataList"
             >
                 <el-form-item
-                    :label="item.label"
-                    :prop="item.prop"
-                    v-for="item in dataFormItemList"
-                    :key="item.prop"
-                >
+                    label="直播主题"
+                    prop="liveTheme">
                     <el-input
                         style="width: 200px"
-                        v-model.trim="dataForm[item.prop]"
-                        :placeholder="item.label"
+                        v-model.trim="dataForm.liveTheme"
+                        placeholder="直播主题"
+                        clearable
+                    >
+                    </el-input>
+                </el-form-item>
+                <el-form-item
+                    label="主播"
+                    prop="anchorUser">
+                    <el-input
+                        style="width: 200px"
+                        v-model.trim="dataForm.anchorUser"
+                        placeholder="主播"
                         clearable
                     >
                     </el-input>
@@ -86,17 +94,17 @@ export default {
     },
     data() {
         return {
-            dataForm: {}, //搜索参数
-            dataFormItemList: [], //搜索栏配置
+            dataForm: {
+                liveTheme: "",
+                anchorUser: ""
+            }, //搜索参数
             tableItem: [], //表格item
             activeName: "live", //当前选中tab
             tabList: [
-                { label: "直播", name: "live" },
-                { label: "预约", name: "preview" },
-                { label: "视频", name: "video" },
-                { label: "主播", name: "anchor" },
+                { label: "直播列表", name: "live" },
+                { label: "直播预告", name: "preview" },
             ],
-            type: 1, //分类(0-预告，1-直播，2-视频，3-主播)
+            liveType: 1, //分类(0-预告，1-直播)
         };
     },
     created() {
@@ -111,8 +119,8 @@ export default {
         calcCurrentTab() {
             switch(this.activeName) {
                 case "live": 
-                    //请求地址 
-                    this.mixinTableModuleOptions.getDataListURL = "/sys/hotSearchConfiguration/selectLiveListPageForHotSearchConfiguration"
+                    // 请求地址
+                    this.mixinTableModuleOptions.getDataListURL = "/sys/liveList/selectPageForLiveRecommend"
                     // table选项
                     this.tableItem = [
                         { prop: "frontCoverUrl", width: 140, label: "直播宣传图", type: "image", style: { width: "100px", height: "60px" } },
@@ -120,139 +128,66 @@ export default {
                         { prop: "anchorUser", label: "主播" },
                         { prop: "anchorTel", label: "手机号码" },
                         { prop: "startDate", label: "开播时间", width: 180  },
+                        { prop: "liveState", label: "直播状态", type:"string", render: () => "直播中" },
                         { prop: "createDate", label: "创建时间", width: 180 },
                         { action: true, actionList: [
                             {
                                 icon: "el-icon-plus",
-                                name: "新增",
+                                name: "推荐",
                                 handle: data => this.add(data)
                             }
                         ] }
                     ]
-                    // 搜索字段
-                    this.dataForm = {
-                        liveTheme: "",
-                        anchorUser: "",
-                        anchorTel: ""
-                    }
-                    // 搜索栏配置
-                    this.dataFormItemList = [
-                        { label: "直播主题", prop: "liveTheme"},
-                        { label: "主播", prop: "anchorUser"},
-                        { label: "手机号码", prop: "anchorTel"},
-                    ]
                     // 分类
-                    this.type = 1
+                    this.liveType = 1
                     break;
                 case "preview": 
-                    this.mixinTableModuleOptions.getDataListURL = "/sys/hotSearchConfiguration/selectLivePreviewPageForHotSearchConfiguration"
+                    this.mixinTableModuleOptions.getDataListURL = "/sys/livePreview/selectLiveListPageForLiveRecommend"
                     this.tableItem = [
                         { prop: "frontCoverUrl", width: 140, label: "直播宣传图", type: "image", style: { width: "100px", height: "60px" } },
                         { prop: "liveTheme", label: "直播主题" },
                         { prop: "anchorUser", label: "主播" },
                         { prop: "anchorTel", label: "手机号码" },
-                        { prop: "startDate", label: "预计开播时间", width: 180  },
+                        { prop: "startDateOther", label: "预计开播时间", width: 180  },
+                        { prop: "liveState", label: "直播状态", type:"string", render: () => "未开播" },
                         { prop: "createDate", label: "创建时间", width: 180 },
                         { action: true, actionList: [
                             {
                                 icon: "el-icon-plus",
-                                name: "新增",
+                                name: "推荐",
                                 handle: data => this.add(data)
                             }
                         ] }
                     ]
-                    this.dataForm = {
-                        liveTheme: "",
-                        anchorUser: "",
-                        anchorTel: ""
-                    }
-                    this.dataFormItemList = [
-                        { label: "直播主题", prop: "liveTheme"},
-                        { label: "主播", prop: "anchorUser"},
-                        { label: "手机号码", prop: "anchorTel"},
-                    ]
-                    this.type = 0
-                    break;
-                case "video": 
-                    this.mixinTableModuleOptions.getDataListURL = "/sys/hotSearchConfiguration/selectLivePlaybackPageForHotSearchConfiguration"
-                    this.tableItem = [
-                        { prop: "frontCoverUrl", width: 140, label: "视频宣传图", type: "image", style: { width: "100px", height: "60px" } },
-                        { prop: "liveTheme", label: "视频主题" },
-                        { prop: "anchorUser", label: "主播" },
-                        { prop: "anchorTel", label: "手机号码" },
-                        { prop: "createDate", label: "创建时间", width: 180 },
-                        { action: true, actionList: [
-                            {
-                                icon: "el-icon-plus",
-                                name: "新增",
-                                handle: data => this.add(data)
-                            }
-                        ] }
-                    ]
-                    this.dataForm = {
-                        liveTheme: "",
-                        anchorUser: "",
-                        anchorTel: ""
-                    }
-                    this.dataFormItemList = [
-                        { label: "视频主题", prop: "liveTheme"},
-                        { label: "主播", prop: "anchorUser"},
-                        { label: "手机号码", prop: "anchorTel"},
-                    ]
-                    this.type = 2
-                    break;
-                case "anchor": 
-                    this.mixinTableModuleOptions.getDataListURL = "/sys/hotSearchConfiguration/selectAnchorInfoPageForHotSearchConfiguration"
-                    this.tableItem = [
-                        { prop: "avatarUrl", width: 120, label: "主播头像", type: "image", style: { width: "60px", height: "60px", borderRadius: "50%" } },
-                        { prop: "username", label: "主播昵称" },
-                        { prop: "realName", label: "真实姓名" },
-                        { prop: "phone", label: "手机号码" },
-                        { prop: "createDate", label: "创建时间", width: 180 },
-                        { action: true, actionList: [
-                            {
-                                icon: "el-icon-plus",
-                                name: "新增",
-                                handle: data => this.add(data)
-                            }
-                        ] }
-                    ]
-                    this.dataForm = {
-                        username: "",
-                        phone: "",
-                    }
-                    this.dataFormItemList = [
-                        { label: "主播", prop: "username"},
-                        { label: "手机号码", prop: "phone"},
-                    ]
-                    this.type = 3
+                    this.liveType = 0
                     break;
             }
         },
-        //   新增配置
+        // 推荐
         add(data) {
-            this.$confirm(`确认新增配置?`, "提示", {
+            this.$confirm(`确认推荐?`, "提示", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
                 type: "warning",
             }).then(() => {
                     let o = {
-                        businessId: data.id,
-                        type: this.type
+                        id: data.id,
+                        anchorTel: data.anchorTel,
+                        anchorUser: data.anchorUser,
+                        createDate: data.createDate,
+                        frontCoverUrl: data.frontCoverUrl,
+                        liveTheme: data.liveTheme,
+                        startDate: this.liveType == 1 ? data.startDate : data.startDateOther, //直播预告字段区分
+                        liveType: this.liveType
                     }
-                    if(this.activeName == "anchor") {
-                        o.value = data.username
-                    }else {
-                        o.value = data.liveTheme
-                    }
-                    this.$http.post("/sys/hotSearchConfiguration", o).then(({data:res}) => {
+                    this.$http.post("/sys/liveList/saveLiveRecommend", o).then(({data:res}) => {
                         if(res.code != 0) return this.$message.error(res.msg)
-                        this.$message.success("新增配置成功")
+                        this.$message.success("推荐成功")
                         this.query()
                     }).catch(err => this.$message.error(JSON.stringify(err.message)))
                 })
                 .catch(() => {
-                    this.$message.info("已取消操作");
+                    this.$message.info("已取消推荐");
                 });
         },
         // tab切换
@@ -262,6 +197,7 @@ export default {
             this.limit = 10
             this.total = 0
             this.dataListSelections = []
+            this.$refs.dataForm.resetFields()
             this.calcCurrentTab()
             this.getDataList()
         }

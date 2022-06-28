@@ -163,13 +163,13 @@
         header-align="center"
         align="center"
       >
-        <template slot-scope="scope">
+        <template slot-scope="{ row }">
           <el-button
-            v-if="scope.row.isAdd === 1"
             icon="el-icon-upload2"
             type="text"
             size="small"
-            @click="confirmCargo(scope.row)"
+            v-if="row._isSelected"
+            @click="setTop(row)"
             >置顶</el-button
           >
         </template>
@@ -203,12 +203,12 @@ export default {
         isFree: null,
         linkedProductId: "",
       },
+      allDataList: [], //所有数据集合
       dataList: [], // 数据列表
       page: 1, // 当前页码
       limit: 10, // 每页数
       total: 0, // 总条数
       dataListLoading: false, // 数据列表，loading状态
-      dataListSelections: [], // 数据列表，多选项
       defaultSelected: [], //默认选中的数据
       tableItem: [
         { prop: "productImage", label: "商品图片" },
@@ -228,39 +228,49 @@ export default {
     },
   },
   methods: {
-    //确认置顶
-    confirmCargo(row) {
-      this.$http
-        .put("/sys/anchorProduct/live/setTop", {
-          id: row.id,
-        })
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          } else {
-            this.$message.success("置顶成功！");
-            this.init();
-          }
-        })
-        .catch((err) => {
-          throw err;
-        });
-    },
     init(data) {
       this.defaultSelected = data || [];
       this.page = 1;
       this.limit = 10;
       this.dialogVisible = true;
-      this.query();
+      this.getAllData();
+    },
+
+    //置顶
+    setTop(row) {
+      if(this.defaultSelected.length > 1) {  //如果有1条以上数据，才将默认选中列表中数据置顶
+        // 默认选中列表中数据置顶
+        this.defaultSelected.map((item, index) => {
+          if(item.productId == row.productId) {
+            this.defaultSelected.splice(index, 1)
+          }
+        })
+        this.defaultSelected.unshift(row)
+      } 
+
+      // 所有数据列表中数据置顶
+      this.allDataList.map((item, index) => {
+        if(item.productId == row.productId) {
+          this.allDataList.splice(index, 1)
+        }
+      })
+      this.allDataList.unshift(row)
+
+
+
+      this.query()
+
     },
     // 设置默认选中的行
     setCurPageSelected() {
       this.$nextTick(() => {
         if (this.defaultSelected.length) {
-          this.dataList.map((row, i) => {
-            this.defaultSelected.map((item) => {
+          this.dataList.forEach((row, i) => {
+            this.defaultSelected.forEach((item) => {
               if (row.productId == item.productId) {
                 this.$refs.table.toggleRowSelection(row, true);
+                // 数据列表是否选中设为true
+                row["_isSelected"] = true
               }
             });
           });
@@ -276,14 +286,14 @@ export default {
         });
       }
     },
-    // 获取数据列表
-    query() {
+    // 获取所有数据在本地操作置顶
+    getAllData() {
       this.dataListLoading = true;
       this.$http
         .get("/sys/playbackProduct/getProductPage", {
           params: {
-            page: this.page,
-            limit: this.limit,
+            page: 1,
+            limit: 999,
             anchorId: this.userId,
             ...this.$httpParams(this.dataForm),
           },
@@ -291,19 +301,48 @@ export default {
         .then(({ data: res }) => {
           this.dataListLoading = false;
           if (res.code !== 0) {
+            this.allDataList = []
             this.dataList = [];
             this.total = 0;
             return this.$message.error(res.msg);
           }
-          this.dataList = res.data.list;
+          this.allDataList = res.data.list;
           this.total = res.data.total;
 
-          this.setCurPageSelected();
+          this.initDataSort()
+
+          this.query()
         })
         .catch((err) => {
           this.dataListLoading = false;
           this.$message.error(JSON.stringify(err.message));
         });
+    },
+
+    // 获取数据列表
+    query() {
+      this.dataListLoading = true;
+
+      setTimeout(() => {
+        this.dataList = this.allDataList.slice((this.page - 1) * this.limit, this.page * this.limit);
+        this.dataListLoading = false;
+        this.setCurPageSelected();
+      }, 500)
+    },
+
+    // 初始所有数据重排序
+    initDataSort() {
+      let data = JSON.parse(JSON.stringify(this.defaultSelected))
+      if(data.length) {
+        data.map(j => {
+          this.allDataList.map((item, index) => {
+            if(item.productId == j.productId) {
+              this.allDataList.splice(index, 1)
+            }
+          })
+        })
+        this.allDataList.unshift(...data)
+      }
     },
     // 下拉获取商品类型
     getProductType(type) {
@@ -339,6 +378,8 @@ export default {
           this.dataList.forEach((row) => {
             if (row.productId == data.productId) {
               this.$refs.table.toggleRowSelection(row, false);
+              // 数据列表是否选中设为false
+              row["_isSelected"] = false
             }
           });
           // 默认选中数据中去掉这条数据
@@ -356,11 +397,25 @@ export default {
       if (isSelected) {
         //选中-添加数据
         this.defaultSelected.push(row);
+
+        // 数据列表是否选中设为true
+        this.dataList.forEach(item => {
+          if(item.productId == row.productId) {
+            item["_isSelected"] = true
+          }
+        })
       } else {
         //删除数据
         this.defaultSelected = this.defaultSelected.filter(
           (item) => item.productId != row.productId
         );
+
+        // 数据列表是否选中设为false
+        this.dataList.forEach(item => {
+          if(item.productId == row.productId) {
+            item["_isSelected"] = false
+          }
+        })
       }
     },
     // 手动勾选全选
@@ -371,8 +426,7 @@ export default {
           this.defaultSelected = selection;
         } else {
           // 创建临时变量
-          let data = JSON.parse(JSON.stringify(selection));
-          let arr = [...this.defaultSelected, ...data];
+          let arr = JSON.parse(JSON.stringify([...this.defaultSelected, ...selection]));
 
           // 全选时，合并数据去重
           for (let i = 0; i < arr.length; i++) {
@@ -386,6 +440,12 @@ export default {
 
           this.defaultSelected = arr;
         }
+
+
+        // 数据列表是否选中设为true
+        this.dataList.forEach(item => {
+          item["_isSelected"] = true
+        })
       } else {
         //全部取消
         // 创建临时变量
@@ -399,6 +459,11 @@ export default {
           });
         });
         this.defaultSelected = data;
+
+        // 数据列表是否选中设为false
+        this.dataList.forEach(item => {
+          item["_isSelected"] = false
+        })
       }
     },
     // 分页, 每页条数
@@ -414,7 +479,7 @@ export default {
     },
     getDataList: function () {
       this.page = 1;
-      this.query();
+      this.getAllData();
     },
     // 重置搜索条件
     reset() {
@@ -426,7 +491,6 @@ export default {
     close() {
       this.$refs.dataForm.resetFields();
       this.$refs.table.clearSelection();
-      this.dataListSelections = [];
       this.dialogVisible = false;
     },
   },
