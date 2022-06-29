@@ -236,6 +236,10 @@
             <span v-else-if="item.prop == 'videoSize'">
               {{ sizeTostr(row[item.prop]) }}
             </span>
+            <!-- 视频时长 -->
+            <span v-else-if="item.prop == 'longTime'">
+              {{ row[item.prop] ? row[item.prop] + "分钟" : "-" }} 
+            </span>
             <span v-else>
               {{ row[item.prop] || "-" }}
             </span>
