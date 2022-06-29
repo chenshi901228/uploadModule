@@ -2236,26 +2236,30 @@ export default {
             }).catch(() => {})
         }
 
-        this.dialogVisible_editBank = true;
+        let url = `anchorManagement-anchorDetails-${this.anchorDetails.userType == 2 ? "editBankForEnterprise" : "editBankForPersonal"}` 
 
-        this.bankForm = {
-            depositBank: this.anchorDetails.depositBank ? this.anchorDetails.depositBank : "",
-            branchName: this.anchorDetails.branchName ? this.anchorDetails.branchName : "",
-            address: this.anchorDetails.province
-            ? [this.anchorDetails.province, this.anchorDetails.city, this.anchorDetails.county]
-            : [],
-            accountName: this.anchorDetails.accountName ? this.anchorDetails.accountName : "",
-            bankAccount: this.anchorDetails.bankAccount ? this.anchorDetails.bankAccount : "",
-        };
+        this.$router.push({ name: url})
 
-        this.restaurants.forEach((v) => {
-            if (
-                this.anchorDetails.depositBank &&
-                this.anchorDetails.depositBank === v.value
-            ) {
-                this.bankForm.depositBankValue = v.dictValue;
-            }
-        });
+        // this.dialogVisible_editBank = true;
+
+        // this.bankForm = {
+        //     depositBank: this.anchorDetails.depositBank ? this.anchorDetails.depositBank : "",
+        //     branchName: this.anchorDetails.branchName ? this.anchorDetails.branchName : "",
+        //     address: this.anchorDetails.province
+        //     ? [this.anchorDetails.province, this.anchorDetails.city, this.anchorDetails.county]
+        //     : [],
+        //     accountName: this.anchorDetails.accountName ? this.anchorDetails.accountName : "",
+        //     bankAccount: this.anchorDetails.bankAccount ? this.anchorDetails.bankAccount : "",
+        // };
+
+        // this.restaurants.forEach((v) => {
+        //     if (
+        //         this.anchorDetails.depositBank &&
+        //         this.anchorDetails.depositBank === v.value
+        //     ) {
+        //         this.bankForm.depositBankValue = v.dictValue;
+        //     }
+        // });
     },
     subimtEditBank() {
       this.$refs.bankForm_host.validate((valid) => {

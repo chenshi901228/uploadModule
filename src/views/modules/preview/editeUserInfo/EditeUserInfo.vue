@@ -150,7 +150,7 @@ export default {
           }
           this.$http.post(this.type?"sys/anchor/applyInfo/updateBaseInfoWithManage":"sys/anchor/applyInfo/updateBaseInfo", params).then(({ data: res }) => {
             if(res.code == 0) {
-              this.$message.success("修改主播信息成功")
+              this.$message.success("修改主播信息成功,请等待后台审核")
               this.resetForm(formName)
               this.fileList = []
               this.id = null
