@@ -25,7 +25,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 2" label="主播" prop="anchorUser">
           <el-input
             v-model.trim="dataForm.anchorUser"
-            placeholder="请输入姓名"
+            placeholder="请输入姓名或手机号"
             clearable
             style="width: 200px"
           >
