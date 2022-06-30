@@ -237,12 +237,12 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span v-if="scope.row.gender === 1">全量修改</span>
-            <span v-else-if="scope.row.gender === 2">修改名称</span>
-            <span v-else-if="scope.row.gender === 3">修改简介</span>
-            <span v-else-if="scope.row.gender === 4">修改头像</span>
-            <span v-else-if="scope.row.gender === 5">背景图片</span>
-            <span v-else-if="scope.row.gender === 6">银行卡信息修改</span>
+            <span v-if="scope.row.updateType === 1">全量修改</span>
+            <span v-else-if="scope.row.updateType === 2">修改名称</span>
+            <span v-else-if="scope.row.updateType === 3">修改简介</span>
+            <span v-else-if="scope.row.updateType === 4">修改头像</span>
+            <span v-else-if="scope.row.updateType === 5">背景图片</span>
+            <span v-else-if="scope.row.updateType === 6">银行卡信息修改</span>
           </template>
         </el-table-column>
         <!-- <el-table-column

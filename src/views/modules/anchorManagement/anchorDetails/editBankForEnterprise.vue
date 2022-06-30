@@ -83,7 +83,7 @@ export default {
         return {
             dataRule_bank: {
                 depositBank: [
-                    { required: true, message: "请填写开户银行", trigger: "blur" },
+                    { required: true, message: "请填写开户银行", trigger: "change" },
                 ],
                 accountName: [
                     { required: true, message: "请填写账户名称", trigger: "blur" },
@@ -109,7 +109,6 @@ export default {
         this.getAnchorInfo()
         this.queryBankList()
         this.getCollectionInfo()
-        this.getBankInfo()
     },
     methods: {
         getBankInfo(){
@@ -121,7 +120,7 @@ export default {
                             return this.$message.error(res.msg)
                         } 
                         this.bankInfo = res.data
-                        console.log(this.bankInfo)
+                        this.active++
                     }).catch((err) => {
                         this.$message.error(JSON.stringify(err.message))
                     });
@@ -271,7 +270,7 @@ export default {
                                 // let tabName = this.$store.state.contentTabsActiveName
                                 // this.$store.state.contentTabs = this.$store.state.contentTabs.filter(item => item.name !== tabName)
                                 // this.$router.push({path:'/anchorManagement-anchorDetails-index'})
-                                this.active++
+                                this.getBankInfo()
                             }).catch((error) => {
                                 this.$message.error(error.msg || error.error);
                             });
