@@ -174,10 +174,19 @@ export default {
         { prop: "phone", label: "手机号码" },
         { prop: "updateDate", label: "更新时间" },
       ],
+      params: { 
+        anchorId: "", //替换请求参数anchorId
+      }
     };
   },
+  computed: {
+    userId() {
+      return this.$store.state.user.id;
+    },
+  },
   methods: {
-    init(data) {
+    init(data, anchorId) {
+      if(anchorId) this.params.anchorId = anchorId
       this.page = 1;
       this.limit = 10;
       this.dialogVisible = true;
@@ -242,6 +251,7 @@ export default {
           params: {
             page: 1,
             limit: 999,
+            anchorId: this.params.anchorId ? this.params.anchorId : this.userId, //管理员操作参数为选择的主播ID
             ...this.$httpParams(this.dataForm),
           },
         })
