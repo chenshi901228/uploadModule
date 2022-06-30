@@ -286,7 +286,7 @@ export default {
       }
     },
     // 获取所有数据在本地操作置顶
-    getAllData(data) {
+    getAllData(sourceData) {
       this.dataListLoading = true;
       this.$http
         .get("/sys/playbackProduct/getProductPage", {
@@ -309,7 +309,9 @@ export default {
           this.total = res.data.total;
 
           // 给默认选中的数据赋值
-          this.defaultSelected = data.length ? JSON.parse(JSON.stringify(data)) : [];
+          if(sourceData) {
+            this.defaultSelected = sourceData.length ? JSON.parse(JSON.stringify(sourceData)) : [];
+          }
 
           this.initDataSort()
 
