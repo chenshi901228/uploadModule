@@ -5,19 +5,19 @@
     <div class="diaBox">
         <div class="diaBoxLeft">
             <div class="diaBoxLeft_title">
-                <span>主播信息</span>
-                <el-button plain type="primary" size="mini" @click="editeUserInfo">编辑</el-button>
+              <span>主播信息</span>
+              <el-button plain type="primary" size="mini" @click="editeUserInfo">编辑</el-button>
             </div>
             <div class="diaBoxLeft_mes">
                 <div class="avatar">
                     <img :src="anchorDetails.avatarUrl || require('@/assets/img/default_avatar.png')" alt="">
                     <div class="role">{{anchorDetails.userType == 2 ? "企业" : "个人"}}</div>
                 </div>
-                <div>主播昵称：{{ anchorDetails.username }}</div>
-                <div>真实姓名：{{ anchorDetails.realName }}</div>
-                <div>身份证号：{{ anchorDetails.idCard }}</div>
+                <div>主播昵称：{{ anchorDetails.username || '-' }}</div>
+                <div>真实姓名：{{ anchorDetails.realName || '-' }}</div>
+                <div>身份证号：{{ anchorDetails.idCard || '-' }}</div>
                 <div style="word-break: break-all">
-                    主播简介：{{ anchorDetails.introduce }}
+                    主播简介：{{ anchorDetails.introduce || '-' }}
                 </div>
             </div>
 
@@ -27,21 +27,21 @@
             </div>
             <!-- 企业 -->
             <div class="diaBoxLeft_mes" v-if="anchorDetails.userType == 2">
-                <div>公司名称：{{ anchorDetails.depositBank }}</div>
-                <div>统一社会信用代码：{{ anchorDetails.depositBank }}</div>
-                <div>开户银行：{{ anchorDetails.depositBank }}</div>
-                <div>账号名称：{{ anchorDetails.accountName }}</div>
-                <div>银行账号：{{ anchorDetails.bankAccount }}</div>
+                <div>公司名称：{{ anchorDetails.companyName || '-' }}</div>
+                <div>统一社会信用代码：{{ anchorDetails.companyCreditCode || '-' }}</div>
+                <div>开户银行：{{ anchorDetails.depositBank || '-' }}</div>
+                <div>账号名称：{{ anchorDetails.accountName || '-' }}</div>
+                <div>银行账号：{{ anchorDetails.bankAccount || '-' }}</div>
             </div>
             <!-- 个人 -->
             <div class="diaBoxLeft_mes" v-else>
-                <div>姓名：{{ anchorDetails.realName }}</div>
-                <div>身份证号：{{ anchorDetails.idCard }}</div>
-                <div>开户银行：{{ anchorDetails.depositBank }}</div>
-                <div>支行名称：{{ anchorDetails.branchName }}</div>
-                <div>账户名称：{{ anchorDetails.accountName }}</div>
-                <div>银行账号：{{ anchorDetails.bankAccount }}</div>
-                <div>开户行所在地：{{ anchorDetails.address }}</div>
+                <div>姓名：{{ anchorDetails.realName || '-' }}</div>
+                <div>身份证号：{{ anchorDetails.idCard || '-' }}</div>
+                <div>开户银行：{{ anchorDetails.depositBank || '-' }}</div>
+                <div>支行名称：{{ anchorDetails.branchName || '-' }}</div>
+                <div>账户名称：{{ anchorDetails.accountName || '-' }}</div>
+                <div>银行账号：{{ anchorDetails.bankAccount || '-' }}</div>
+                <div>开户行所在地：{{ anchorDetails.address || '-' }}</div>
             </div>
             <div class="diaBoxLeft_title">
                 <span>账户信息</span>
@@ -88,7 +88,7 @@
                 @click="changeTbas(5)"
                 :class="{ 'is-active': diaTbas === 5 }"
             >
-                推荐商品
+                店铺
             </div>
             <div
                 class="diaBoxRight_tabBtns"
@@ -109,7 +109,7 @@
             >
             <el-form-item label="收益类型" v-if="diaTbas === 1" prop="type">
                 <el-select
-                placeholder="收益类型"
+                placeholder="请选择"
                 style="width: 180px"
                 v-model="diaSearchForm.type"
                 clearable
@@ -121,7 +121,7 @@
             </el-form-item>
             <el-form-item label="结算时间" v-if="diaTbas === 1" prop="date">
                 <el-date-picker
-                placeholder="结算时间"
+                placeholder="请选择"
                 v-model="diaSearchForm.date"
                 type="datetimerange"
                 range-separator="至"
@@ -138,14 +138,14 @@
             >
                 <el-input
                 style="width: 180px"
-                placeholder="银行账户"
+                placeholder="请输入"
                 v-model="diaSearchForm.bankAccount"
                 clearable
                 ></el-input>
             </el-form-item>
             <el-form-item label="提现时间" v-if="diaTbas === 2" prop="date">
                 <el-date-picker
-                placeholder="提现时间"
+                placeholder="请选择"
                 v-model="diaSearchForm.date"
                 type="datetimerange"
                 range-separator="至"
@@ -161,7 +161,7 @@
                 prop="approveStatus"
             >
                 <el-select
-                placeholder="审批状态"
+                placeholder="请选择"
                 style="width: 180px"
                 v-model="diaSearchForm.approveStatus"
                 clearable
@@ -173,7 +173,7 @@
             </el-form-item>
             <el-form-item label="支付状态" v-if="diaTbas === 2" prop="payStatus">
                 <el-select
-                placeholder="支付状态"
+                placeholder="请选择"
                 style="width: 180px"
                 v-model="diaSearchForm.payStatus"
                 clearable
@@ -189,7 +189,7 @@
                 prop="userName"
             >
                 <el-input
-                placeholder="用户昵称"
+                placeholder="请输入"
                 style="width: 180px"
                 v-model="diaSearchForm.userName"
                 clearable
@@ -201,7 +201,7 @@
                 prop="productName"
             >
                 <el-input
-                placeholder="商品名称"
+                placeholder="请输入"
                 style="width: 180px"
                 v-model="diaSearchForm.productName"
                 clearable
@@ -213,7 +213,7 @@
                 prop="phone"
             >
                 <el-input
-                placeholder="手机号码"
+                placeholder="请输入"
                 style="width: 180px"
                 v-model="diaSearchForm.phone"
                 clearable
@@ -221,6 +221,7 @@
             </el-form-item>
             <el-form-item label="等级" v-if="diaTbas === 4" prop="level">
                 <el-select
+                placeholder="请选择"
                 @visible-change="getFansLevels"
                 style="width: 180px"
                 v-model="diaSearchForm.level"
@@ -236,19 +237,18 @@
             </el-form-item>
             <el-form-item label="粉丝团身份" v-if="diaTbas === 4" prop="userType">
                 <el-select
-                placeholder="粉丝团身份"
+                placeholder="请选择"
                 style="width: 180px"
                 v-model="diaSearchForm.userType"
                 clearable
                 >
-                <el-option :value="0" label="普通会员"></el-option>
-                <el-option :value="1" label="会长"></el-option>
-                <el-option :value="2" label="副会长"></el-option>
+                <el-option :value="0" label="普通用户"></el-option>
+                <el-option :value="1" label="助手"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="状态" v-if="diaTbas === 4" prop="delFlg">
                 <el-select
-                placeholder="状态"
+                placeholder="请选择"
                 style="width: 180px"
                 v-model="diaSearchForm.delFlg"
                 clearable
@@ -259,7 +259,7 @@
             </el-form-item>
             <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
                 <el-input
-                placeholder="主播昵称"
+                placeholder="请输入"
                 style="width: 180px"
                 v-model="diaSearchForm.anchorName"
                 clearable
@@ -274,7 +274,7 @@
                 @visible-change="getProductType"
                 style="width: 180px"
                 v-model="diaSearchForm.productType"
-                placeholder="商品类型"
+                placeholder="请选择"
                 clearable
                 >
                 <el-option
@@ -287,7 +287,7 @@
             </el-form-item>
             <el-form-item label="是否免费" v-if="diaTbas === 5" prop="isFree">
                 <el-select
-                placeholder="是否免费"
+                placeholder="请选择"
                 style="width: 180px"
                 v-model="diaSearchForm.isFree"
                 clearable
@@ -296,6 +296,17 @@
                 <el-option :value="1" label="是"></el-option>
                 </el-select>
             </el-form-item>
+            <!-- <el-form-item label="上架状态" v-if="diaTbas === 5">
+                <el-select
+                placeholder="请选择"
+                style="width: 180px"
+                v-model="diaSearchForm.delFlg"
+                clearable
+                >
+                <el-option :value="0" label="上架"></el-option>
+                <el-option :value="1" label="下架"></el-option>
+                </el-select>
+            </el-form-item> -->
             <el-form-item>
                 <el-button
                 size="mini"
@@ -525,7 +536,7 @@
                 >
                 <template slot-scope="scope">
                     <div>
-                    {{ scope.row.userType === 1 ? "助手" : "普通会员" }}
+                    {{ scope.row.userType === 1 ? "助手" : "普通用户" }}
                     </div>
                 </template>
                 </el-table-column>
@@ -555,8 +566,11 @@
                     <div v-if="!scope.row.anchorName && diaTbas === 4">
                     {{ scope.row.delFlg === 1 ? "取消关注" : "正常" }}
                     </div>
-                    <div v-else>
+                    <div v-else-if="diaTbas === 5">
                     {{ scope.row.delFlg === 1 ? "下架" : "上架" }}
+                    </div>
+                    <div v-else>
+                    {{ scope.row.delFlg === 1 ? "未推荐" : "已推荐" }}
                     </div>
                 </template>
                 </el-table-column>
@@ -1434,9 +1448,8 @@ export default {
     },
   },
 
-  mounted() {
+  activated(){
     this.userId = this.$store.state.user.id;
-    
     this.$http
       .get("/sys/region/tree")
       .then(({ data: res }) => {
@@ -1447,16 +1460,11 @@ export default {
         this.regionDataAll = res.data;
       })
       .catch(() => {});
-
     this.getAnchorInfo()
-
     this.getAccountAmount();
-
     this.changeTbas(1);
-
     this.queryBankList();
   },
-
   methods: {
     //改变身份
     changePower(row) {
@@ -1688,12 +1696,13 @@ export default {
           this.diaTableTitle = {
             productImage: "商品图片",
             productName: "商品名称",
-            oldPrice: "商品价格",
-            price: "销售价格",
+            oldPrice: "商品原价",
+            price: "带货价格",
             productType: "商品类型",
             isFree: "是否免费",
             id: "关联产品编号",
             updateDate: "上架时间",
+            delFlg: "上架状态",
           };
           break;
         case 6:
@@ -1702,6 +1711,7 @@ export default {
             anchorName: "主播昵称",
             phone: "手机号码",
             createDate: "推荐时间",
+            delFlg: "推荐状态",
           };
           break;
 
@@ -1773,6 +1783,7 @@ export default {
             productName: this.diaSearchForm.productName,
             productType: this.diaSearchForm.productType,
             isFree: this.diaSearchForm.isFree,
+            // delFlg:this.diaSearchForm.delFlg,
           };
           url = "/sys/wxapp/anchorProduct/listWithAnchorIdPage";
           break;
@@ -1783,7 +1794,7 @@ export default {
             anchorId: this.userId,
             phone: this.diaSearchForm.phone,
             anchorName: this.diaSearchForm.anchorName,
-            delFlg: this.diaSearchForm.delFlg,
+            // delFlg: this.diaSearchForm.delFlg,
           };
           url = "/sys/manage/anchor/recommend/listWithAnchorId";
           break;
@@ -2218,13 +2229,13 @@ export default {
     //编辑银行卡信息
     editeUserBank() {
         // 企业银行账号核验中不可编辑
-        if(this.anchorDetails.haveApplyInfo && this.anchorDetails.userType == 2) {
-            return this.$confirm("您的银行账号正在核验中，不可操作编辑", "提示", {
-                confirmButtonText: "确认",
-                showCancelButton: false,
-                showClose: false
-            }).catch(() => {})
-        }
+        // if(this.anchorDetails.haveApplyInfo && this.anchorDetails.userType == 2) {
+        //     return this.$confirm("您的银行账号正在核验中，不可操作编辑", "提示", {
+        //         confirmButtonText: "确认",
+        //         showCancelButton: false,
+        //         showClose: false
+        //     }).catch(() => {})
+        // }
 
 
         // 有未到账的提现不可编辑

@@ -10,21 +10,32 @@
             fit="cover"
             style="margin: 0px 85px 10px"
           ></el-avatar>
-          <div>主播昵称：{{ diaForm.username }}</div>
+          <div>主播昵称：{{ diaForm.username || '-' }}</div>
           <!-- <div>是否认证：{{ diaForm.nickName }}</div>
               <div>是否指导师：{{ diaForm.nickName }}</div> -->
-          <div>真实姓名：{{ diaForm.realName }}</div>
-          <div>身份证号：{{ diaForm.idCard }}</div>
-          <div>主播简介：{{ diaForm.introduce }}</div>
+          <div>真实姓名：{{ diaForm.realName || '-' }}</div>
+          <div>身份证号：{{ diaForm.idCard || '-' }}</div>
+          <div>主播简介：{{ diaForm.introduce || '-' }}</div>
         </div>
 
         <div class="diaBoxLeft_title">银行信息</div>
-        <div class="diaBoxLeft_mes">
-          <div>开户银行：{{ diaForm.depositBank }}</div>
-          <div>支行名称：{{ diaForm.branchName }}</div>
-          <div>账号名称：{{ diaForm.accountName }}</div>
-          <div>银行账号：{{ diaForm.bankAccount }}</div>
-          <div>开户行所在地：{{ diaForm.address }}</div>
+        <!-- 企业 -->
+        <div class="diaBoxLeft_mes" v-if="diaForm.userType == 2">
+            <div>公司名称：{{ diaForm.depositBank || '-' }}</div>
+            <div>统一社会信用代码：{{ diaForm.depositBank || '-' }}</div>
+            <div>开户银行：{{ diaForm.depositBank || '-' }}</div>
+            <div>账号名称：{{ diaForm.accountName || '-' }}</div>
+            <div>银行账号：{{ diaForm.bankAccount || '-' }}</div>
+        </div>
+        <!-- 个人 -->
+        <div class="diaBoxLeft_mes" v-else>
+            <div>姓名：{{ diaForm.realName || '-' }}</div>
+            <div>身份证号：{{ diaForm.idCard || '-' }}</div>
+            <div>开户银行：{{ diaForm.depositBank || '-' }}</div>
+            <div>支行名称：{{ diaForm.branchName || '-' }}</div>
+            <div>账户名称：{{ diaForm.accountName || '-' }}</div>
+            <div>银行账号：{{ diaForm.bankAccount || '-' }}</div>
+            <div>开户行所在地：{{ diaForm.address || '-' }}</div>
         </div>
         <div class="diaBoxLeft_title">账户信息</div>
         <div class="diaBoxLeft_mes">
@@ -70,7 +81,7 @@
             @click="changeTbas(5)"
             :class="{ 'is-active': diaTbas === 5 }"
           >
-            推荐商品
+            店铺
           </div>
           <div
             class="diaBoxRight_tabBtns"
@@ -217,9 +228,8 @@
               v-model="diaSearchForm.userType"
               clearable
             >
-              <el-option :value="0" label="普通会员"></el-option>
-              <el-option :value="1" label="会长"></el-option>
-              <el-option :value="2" label="副会长"></el-option>
+              <el-option :value="0" label="普通用户"></el-option>
+              <el-option :value="1" label="助手"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
@@ -255,6 +265,28 @@
               <el-option :value="1" label="是"></el-option>
             </el-select>
           </el-form-item>
+          <!-- <el-form-item label="上架状态" v-if="diaTbas === 5">
+            <el-select
+            placeholder="请选择"
+            style="width: 180px"
+            v-model="diaSearchForm.delFlg"
+            clearable
+            >
+            <el-option :value="0" label="上架"></el-option>
+            <el-option :value="1" label="下架"></el-option>
+            </el-select>
+          </el-form-item> -->
+          <!-- <el-form-item label="推荐状态" v-if="diaTbas === 6">
+            <el-select
+              placeholder="请选择"
+              style="width: 180px"
+              v-model="diaSearchForm.delFlg"
+              clearable
+              >
+              <el-option :value="0" label="已推荐"></el-option>
+              <el-option :value="1" label="未推荐"></el-option>
+            </el-select>
+          </el-form-item> -->
           <el-form-item>
             <!-- <el-button
               v-if="diaTbas === 5"
@@ -458,14 +490,28 @@
               <template slot-scope="scope">
                 <div>
                   {{
-                    scope.row.userType === 1
-                      ? "会长"
-                      : scope.row.userType === 2
-                      ? "副会长"
-                      : "普通会员"
+                    scope.row.userType === 0
+                      ? "普通用户"
+                      : scope.row.userType === 1
+                      ? "助手"
+                      : "-"
                   }}
                 </div>
               </template>
+            </el-table-column>
+            <el-table-column
+            :prop="prop"
+            :label="label"
+            :key="prop"
+            header-align="center"
+            align="center"
+            v-else-if="prop === 'level'"
+            >
+            <template slot-scope="scope">
+                <div>
+                {{ "V" + scope.row.level }}
+                </div>
+            </template>
             </el-table-column>
             <el-table-column
               :prop="prop"
@@ -479,8 +525,11 @@
                 <div v-if="!scope.row.anchorName && diaTbas === 4">
                   {{ scope.row.delFlg === 1 ? "取消关注" : "正常" }}
                 </div>
-                <div v-else>
+                <div v-else-if="diaTbas === 5">
                   {{ scope.row.delFlg === 1 ? "下架" : "上架" }}
+                </div>
+                <div v-else>
+                  {{ scope.row.delFlg === 1 ? "未推荐" : "已推荐" }}
                 </div>
               </template>
             </el-table-column>
@@ -682,16 +731,6 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.updateDate || "--" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          width="150"
-          label="上架状态"
-          prop="delFlg"
-          align="center"
-        >
-          <template slot-scope="scope">
-            <span> {{ scope.row.delFlg === 1 ? "下架" : "上架" }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -933,16 +972,16 @@ export default {
             phone: "手机号码",
             level: "用户等级",
             userType: "粉丝团身份",
-            groupName: "所在群组",
+            // groupName: "所在群组",
             createDate: "入团时间",
           };
           break;
         case 5:
           this.diaTableTitle = {
-            productImage: "商品图片",
+             productImage: "商品图片",
             productName: "商品名称",
-            oldPrice: "商品价格",
-            price: "销售价格",
+            oldPrice: "商品原价",
+            price: "带货价格",
             productType: "商品类型",
             isFree: "是否免费",
             id: "关联产品编号",
@@ -956,6 +995,7 @@ export default {
             anchorName: "主播昵称",
             phone: "手机号码",
             createDate: "推荐时间",
+            delFlg: "推荐状态",
           };
           break;
 
@@ -1022,10 +1062,10 @@ export default {
             limit: this.limit_dia,
             page: this.page_dia,
             anchorId: this.userId,
-
             productName: this.diaSearchForm.productName,
             productType: this.diaSearchForm.productType,
             isFree: this.diaSearchForm.isFree,
+            // delFlg: this.diaSearchForm.delFlg,
           };
           url = "/sys/wxapp/anchorProduct/listWithAnchorIdPage";
           break;
@@ -1036,7 +1076,7 @@ export default {
             anchorId: this.userId,
             phone: this.diaSearchForm.phone,
             anchorName: this.diaSearchForm.anchorName,
-            delFlg: this.diaSearchForm.delFlg,
+            // delFlg: this.diaSearchForm.delFlg,
           };
           url = "/sys/manage/anchor/recommend/listWithAnchorId";
           break;
