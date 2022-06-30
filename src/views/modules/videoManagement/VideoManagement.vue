@@ -238,7 +238,7 @@
             </span>
             <!-- 视频时长 -->
             <span v-else-if="item.prop == 'longTime'">
-              {{ row[item.prop] ? row[item.prop] + "分钟" : "-" }} 
+              {{ row[item.prop] ? secondToDate(row[item.prop]) : "-" }}
             </span>
             <span v-else>
               {{ row[item.prop] || "-" }}
@@ -365,7 +365,7 @@
 
 <script>
 import mixinTableModule from "@/mixins/table-module";
-import { sizeTostr, downloadFileUrl } from "@/utils/index";
+import { sizeTostr, downloadFileUrl, secondToDate } from "@/utils/index";
 export default {
   mixins: [mixinTableModule],
   data() {
@@ -485,6 +485,10 @@ export default {
     // 视频大小转换
     sizeTostr(size) {
       return sizeTostr(size);
+    },
+    // 视频时长转换
+    secondToDate(val) {
+      return secondToDate(val)
     },
     actionHandle(action, data) {
       switch (action) {

@@ -275,7 +275,7 @@ export default {
           let liveDuration = await getVideoDuration(
             this.relationLiveList[0].url
           );
-          params.longTime = Number((liveDuration / 60).toFixed(2));
+          params.longTime = Math.ceil(liveDuration)
 
           this.submitLoading = true;
 

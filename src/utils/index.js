@@ -223,3 +223,32 @@ export function getVideoDuration(url) {
     })
   }
 }
+
+
+// 秒转00：00：00
+export function secondToDate(value) {
+  let theTime = parseInt(value);// 秒
+  let middle = 0;// 分
+  let hour = 0;// 小时
+
+  if(theTime >= 60) {
+    middle = parseInt(theTime / 60);
+    theTime = parseInt(theTime % 60);
+    if(middle >= 60) {
+        hour = parseInt(middle / 60);
+        middle = parseInt(middle % 60);
+    }
+  }
+  let result = parseInt(theTime) < 10 ? `0${parseInt(theTime)}` : parseInt(theTime) + "" ;
+  if(middle > 0) {
+    result = (parseInt(middle) < 10 ? `0${parseInt(middle)}` : parseInt(middle)) + ":" + result;
+  }else {
+    result = "00" + ":" + result;
+  }
+  if(hour > 0) {
+    result = (parseInt(hour) < 10 ? `0${parseInt(hour)}` : parseInt(hour)) + ":" + result;
+  }else {
+    result = "00" + ":" + result;
+  }
+  return result;
+}
