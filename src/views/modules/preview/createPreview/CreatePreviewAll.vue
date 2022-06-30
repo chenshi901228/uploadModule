@@ -267,13 +267,11 @@
       <choose-anchor
         ref="chooseAnchor"
         @add="addAnchorConfirm"
-        :anchorId="anchorId"
       ></choose-anchor>
       <!-- 商品弹框 -->
       <choose-product
         ref="chooseProduct"
         @add="addProductConfirm"
-        :anchorId="anchorId"
       ></choose-product>
     </div>
   </el-card>
@@ -287,8 +285,8 @@ import "quill/dist/quill.core.css";
 import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import "../../../../assets/font.css";
-import ChooseAnchor from "../recommendAnchor/chooseAnchor";
-import ChooseProduct from "../cargoGoods/chooseProduct";
+import ChooseAnchor from "@/components/chooseDialog/chooseAnchor";
+import ChooseProduct from "@/components/chooseDialog/chooseProduct";
 import ComModule from "@/mixins/common-module";
 // 自定义字体大小
 let Size = Quill.import("attributors/style/size");
@@ -477,7 +475,8 @@ export default {
 
     // 推荐主播弹框
     chooseAnchor() {
-      this.$refs.chooseAnchor.init(this.ruleForm.recommendedAnchorList);
+      if(!this.ruleForm.anchorId) return this.$message.warning("请选择主播")
+      this.$refs.chooseAnchor.init(this.ruleForm.recommendedAnchorList, this.ruleForm.anchorId);
     },
 
     // 确认添加推荐主播
@@ -521,7 +520,8 @@ export default {
     },
     // 推荐商品弹框
     chooseProduct() {
-      this.$refs.chooseProduct.init(this.ruleForm.productIds);
+      if(!this.ruleForm.anchorId) return this.$message.warning("请选择主播")
+      this.$refs.chooseProduct.init(this.ruleForm.productIds, this.ruleForm.anchorId);
     },
 
     // 确认添加推荐商品
