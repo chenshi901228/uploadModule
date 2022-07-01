@@ -18,13 +18,13 @@
           <div>主播简介：{{ diaForm.introduce || '-' }}</div>
         </div>
 
-        <div class="diaBoxLeft_title">银行信息</div>
+        <div class="diaBoxLeft_title">银行账户</div>
         <!-- 企业 -->
         <div class="diaBoxLeft_mes" v-if="diaForm.userType == 2">
-            <div>公司名称：{{ diaForm.depositBank || '-' }}</div>
-            <div>统一社会信用代码：{{ diaForm.depositBank || '-' }}</div>
+            <div>公司名称：{{ diaForm.companyName || '-' }}</div>
+            <div>统一社会信用代码：{{ diaForm.companyCreditCode || '-' }}</div>
             <div>开户银行：{{ diaForm.depositBank || '-' }}</div>
-            <div>账号名称：{{ diaForm.accountName || '-' }}</div>
+            <div>账户名称：{{ diaForm.accountName || '-' }}</div>
             <div>银行账号：{{ diaForm.bankAccount || '-' }}</div>
         </div>
         <!-- 个人 -->
@@ -827,37 +827,34 @@ export default {
       fansLevelsOptions: [], //粉丝等级options
     };
   },
-
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      vm.userId = window.localStorage.getItem("hostDetailID");
-      vm.$http
-        .get(`/sys/anchor/info/getInfo/${vm.userId}`)
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return vm.$message.error(res.msg);
-          }
-          vm.diaForm = res.data;
-        })
-        .catch(() => {});
-      vm.$http
-        .get(
-          `/sys/manage/userDetail/${vm.userId}`
-        )
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return vm.$message.error(res.msg);
-          }
-          vm.diaForm = {
-            ...vm.diaForm,
-            priceIncome: res.data.priceIncome,
-            anchorWithdraw: res.data.anchorWithdraw,
-            anchorBalance: res.data.anchorBalance,
-          };
-        })
-        .catch(() => {});
-      vm.changeTbas(1);
-    });
+  activated(){
+    this.userId = window.localStorage.getItem("hostDetailID");
+    this.$http
+      .get(`/sys/anchor/info/getInfo/${this.userId}`)
+      .then(({ data: res }) => {
+        if (res.code !== 0) {
+          return this.$message.error(res.msg);
+        }
+        this.diaForm = res.data;
+      })
+      .catch(() => {});
+    this.$http
+      .get(
+        `/sys/manage/userDetail/${this.userId}`
+      )
+      .then(({ data: res }) => {
+        if (res.code !== 0) {
+          return this.$message.error(res.msg);
+        }
+        this.diaForm = {
+          ...this.diaForm,
+          priceIncome: res.data.priceIncome,
+          anchorWithdraw: res.data.anchorWithdraw,
+          anchorBalance: res.data.anchorBalance,
+        };
+      })
+      .catch(() => {});
+    this.changeTbas(1);
   },
   methods: {
     fansGroup() {

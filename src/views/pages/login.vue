@@ -87,6 +87,29 @@
         </div>
       </main>
     </div>
+    <el-dialog
+      title="选择账号"
+      :visible.sync="dialogVisible"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :show-close="false"
+      :center="true"
+      width="30%"
+      >
+      <div class="login_user">
+        <p>{{loginUserList.length&&loginUserList[0].userName}}的账号</p>
+        <div class="user_list" v-for="(item,index) in loginUserList" :key="index" :class="active==index?'active':''" @click="selectUser(item,index)">
+          <img :src="item.avatarUrl||require('@/assets/img/default_avatar.png')" alt="">
+          <div>
+            <p>{{item.userName}}</p>
+            <span>{{item.type==1?'主播':'助手'}}</span>
+          </div>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" type="primary" @click="goToHome">进入</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -115,6 +138,9 @@ export default {
       loginType:true,//true:账号密码 false：手机号验证
       btnText: "发送验证码",
       disabled: false,
+      loginUserList:[],//登录账号列表
+      dialogVisible:false,//登录账号选择弹窗
+      active:0,//登录账号选中
     }
   },
   computed: {
@@ -149,6 +175,15 @@ export default {
     this.getCaptcha()
   },
   methods: {
+    selectUser(data,index){
+      console.log(index)
+      this.active = index
+    },
+    goToHome(){
+      // if(){
+      //   this.$router.replace({ name: 'home' })
+      // }
+    },
     // 获取验证码
     getCaptcha () {
       this.dataForm.uuid = getUUID()
@@ -174,6 +209,14 @@ export default {
               return this.$message.error(res.msg)
             }
             Cookies.set('access_token', res.access_token)
+            // this.$http.get('/sys/user/getAnchorListWithLogin').then(({ data: res })=>{
+            //   console.log(res)
+            //   if(res.code!==0){
+            //     this.$message.error(res.msg)
+            //   }
+            //   this.loginUserList = res.data
+            //   this.dialogVisible = true
+            // })
             this.$router.replace({ name: 'home' })
           }).catch(() => {})
         })
@@ -274,4 +317,47 @@ export default {
     border-left: 1px solid #d8d8d8;
   }
 } 
+.login_user{
+  height: 300px;
+  overflow: auto;
+  >p{
+    border-bottom: 1px solid #ccc;
+    margin: 0;
+    padding: 10px 0;
+  }
+  .user_list{
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+    cursor: pointer;
+    >img{
+      width: 60px;
+      height: 60px;
+    }
+    >div{
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      margin-left: 10px;
+      >p{
+        margin: 0; 
+        padding: 0;
+        font-size: 16px;
+      }
+      >span{
+        font-size:14px;
+        color: #ccc;
+      }
+    }
+  }
+  .active{
+    border-bottom:2px solid #20aee5;
+    color: #20aee5;
+  }
+  &::-webkit-scrollbar {
+    width:0px;
+    height:0px;
+  }
+}
 </style>

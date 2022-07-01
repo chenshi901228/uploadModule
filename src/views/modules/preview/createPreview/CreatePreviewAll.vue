@@ -547,7 +547,7 @@ export default {
           dataForm = {
             ...dataForm,
             liveTheme: this.ruleForm.liveTheme,
-            anchorId: this.ruleForm.anchorId,
+            anchorUserId: this.ruleForm.anchorId,
             startDate: this.ruleForm.startDate,
             estimateLiveTime: this.ruleForm.estimateLiveTime,
             frontCoverUrl: this.ruleForm.frontCoverUrl,
