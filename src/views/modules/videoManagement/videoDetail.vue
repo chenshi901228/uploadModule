@@ -7,7 +7,7 @@
     </div>
     <div style="margin-bottom: 30px">
       <div>封面图：</div>
-      <el-image :src="info.frontCoverUrl"></el-image>
+      <el-image fit :src="info.frontCoverUrl"></el-image>
     </div>
     <div>
       <div>视频：</div>
@@ -19,7 +19,7 @@
         :controls="videolist.controls"
         :controlslist="videolist.controlslist"
         :webkit-playsinline="webkitplaysinline"
-        style="width: 100%; height: 100%"
+        style="width: 800px; height: 500px"
       ></video>
     </div>
     <div v-if="checkFlag && info.approveStatus === 0">
@@ -33,6 +33,8 @@
           <el-input
             size="small"
             type="textarea"
+            maxlength="100"
+            show-word-limit
             v-model="ruleForm.desc"
           ></el-input>
         </el-form-item>
@@ -140,35 +142,15 @@ export default {
     querylist() {
       this.$nextTick(() => {
         this.initVideoplayer();
-        this.fileTimelengthRecord();
       });
     },
     initVideoplayer() {
       if (!this.videoPlayer && this.$refs.video) {
         this.videoPlayer = this.$refs.video;
 
-        // 视频进度改变 -- 播放即触发
-        this.videoPlayer.addEventListener("timeupdate", (e) => {
-          // console.log(this.videoPlayer.currentTime,'currentTime') //当前播放进度
-          // console.log(this.videoPlayer.duration,'duration') //当前播放进度
-          sessionStorage.setItem("currentTime", this.videoPlayer.currentTime);
-          sessionStorage.setItem("duration", this.videoPlayer.duration);
-        });
-
         //视频暂停 --  点击暂停（退出也会触发并记录时间）
         this.videoPlayer.addEventListener("pause", (e) => {
-          // this.fileTimelengthRecord(this.videoPlayer.currentTime,this.videoPlayer.duration)
         });
-
-        // // 进度拖动
-        // this.videoPlayer.addEventListener('seeking',(e) => {
-        //   console.log(this.videoPlayer.currentTime,'seeking进行拖动')
-        // })
-
-        // // 进度拖动（进度条拖动会先 pause --> seeked--->play）
-        // this.videoPlayer.addEventListener('seeked',(e) => {
-        //   console.log(this.videoPlayer.currentTime,'seeked进行拖动')
-        // })
 
         // 视频播放 -- 点击播放
         this.videoPlayer.addEventListener("play", (e) => {});
@@ -177,43 +159,7 @@ export default {
         this.videoPlayer.addEventListener("ended", (e) => {
           console.log(this.videoPlayer.currentTime, "ended 播放完成");
         });
-
-        //   // 禁止快进
-        // let sym
-        // setInterval(() => {
-        //     let time = this.videoPlayer.currentTime
-        //     if(time-sym>1){
-        //         this.videoPlayer.currentTime=sym
-        //     }
-        //     sym=this.videoPlayer.currentTime
-        // },500)
       }
-    },
-    // 进度记录更新 - 记录当前播放附件的时长
-    fileTimelengthRecord() {
-      let stat = sessionStorage.getItem("currentTime");
-      let end = sessionStorage.getItem("duration");
-      if (stat > 0) {
-        this.ifopen();
-      } else {
-        this.videoPlayer.currentTime = 0;
-      }
-    },
-    ifopen() {
-      this.$confirm("是否从上次的记录开始播放?", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          let stat = sessionStorage.getItem("currentTime");
-          this.videoPlayer.currentTime = stat;
-          this.videoPlayer.play();
-        })
-        .catch(() => {
-          this.videoPlayer.currentTime = 0;
-          this.videoPlayer.pause();
-        });
     },
     //驳回
     resolve() {
@@ -225,6 +171,7 @@ export default {
         })
         .then(({ data: res }) => {
           if (res.code == 0) {
+            this.closeCurrentTab()
             this.$message.success("已驳回");
           } else {
             this.$message.error(res.msg);
@@ -244,6 +191,7 @@ export default {
         })
         .then(({ data: res }) => {
           if (res.code == 0) {
+            this.closeCurrentTab()
             this.$message.success("已通过");
           } else {
             this.$message.error(res.msg);
@@ -257,7 +205,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .video_box {
   margin: 0 auto;
   margin-top: 50px;
@@ -280,18 +228,18 @@ export default {
   position: absolute;
   top: 0;
   color: #fff;
-  background-color: rgb(6, 6, 6, 0.3);
+  background-color: #000;
   z-index: 2;
 }
 .resource-container:hover .video-title {
   display: block;
 }
 .video_right > p {
-  background-color: rgb(6, 6, 6, 0.3);
+  background-color: #000;
   color: #fff;
 }
 .video-active {
-  background-color: rgb(6, 6, 6, 0.3);
+  background-color: #000;
   color: aqua;
 }
 
@@ -330,6 +278,11 @@ video::-webkit-media-controls-timeline {
 /* video::-webkit-media-controls-enclosure{ 
         display: none;
     } */
+
+/deep/.el-image {
+  width: 500px;
+  height: 300px;
+}
 </style>
 
 

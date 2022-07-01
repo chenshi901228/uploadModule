@@ -11,7 +11,11 @@
       size="small"
     >
       <el-form-item label="视频主题" prop="liveTheme">
-        <el-input placeholder="请输入视频主题" style="width: 400px" v-model="dataForm.liveTheme"></el-input>
+        <el-input
+          placeholder="请输入视频主题"
+          style="width: 400px"
+          v-model="dataForm.liveTheme"
+        ></el-input>
       </el-form-item>
       <el-form-item label="视频显示" prop="showMode">
         <el-select
@@ -62,7 +66,7 @@
       </el-form-item>
     </el-form>
     <div class="footer">
-      <el-button :disabled="submitLoading" size="small" @click="visible = false"
+      <el-button :disabled="submitLoading" size="small" @click="cancelAdd"
         >取 消</el-button
       >
       <el-button
@@ -95,7 +99,6 @@ export default {
   },
   data() {
     return {
-      visible: false,
       dataForm: {
         anchorUserId: "",
         liveTheme: "",
@@ -143,7 +146,7 @@ export default {
 
     // 确认添加推荐商品
     addProductConfirm(data) {
-      console.log(data)
+      console.log(data);
       this.$refs.chooseProduct.close();
 
       this.dataForm.livePlaybackProductList = data.map((v) => {
@@ -151,11 +154,11 @@ export default {
           anchorProductId: v.anchorProductId,
           anchorId: this.dataForm.anchorUserId,
           productId: v.productId,
-        }
+        };
       });
-      this.productIds = data
+      this.productIds = data;
       // this.dataForm.livePlaybackProductList = data;
-      this.dataForm.goods = data.length ? `已选择${data.length}个商品` : ""
+      this.dataForm.goods = data.length ? `已选择${data.length}个商品` : "";
     },
     // 封面图上传
     frontCoverUploadSuccess(file) {
@@ -237,14 +240,16 @@ export default {
       }
     },
     // 取消添加
-    cancel() {
-      this.$refs.dataForm.resetFields();
-      this.dataForm.frontCoverUrl = "";
-      this.frontCoverList = [];
-      this.relationLiveList = [];
-      this.dataForm.relationLiveUrl = "";
+    cancelAdd() {
+      // this.$refs.dataForm.resetFields();
+      // this.dataForm.frontCoverUrl = "";
+      // this.frontCoverList = [];
+      // this.relationLiveList = [];
+      // this.dataForm.relationLiveUrl = "";
 
-      this.dynamicGroupOptions = [];
+      // this.dynamicGroupOptions = [];
+      // this.closeCurrentTab();
+      this.closeCurrentTab();
     },
     // 表单提交
     submit() {
@@ -275,7 +280,7 @@ export default {
           let liveDuration = await getVideoDuration(
             this.relationLiveList[0].url
           );
-          params.longTime = Math.ceil(liveDuration)
+          params.longTime = Math.ceil(liveDuration);
 
           this.submitLoading = true;
 
@@ -285,8 +290,7 @@ export default {
               if (res.code == 0) {
                 this.$message.success("添加视频成功");
                 this.submitLoading = false;
-                this.cancel();
-                this.visible = false;
+                this.closeCurrentTab();
               } else {
                 this.submitLoading = false;
                 this.$message.error(res.msg);

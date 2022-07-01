@@ -429,10 +429,11 @@ export default {
     //推荐主播
     addAnchor(row) {
       this.$router.push({
-        path: "/preview-recommendAnchor-RecommendAnchor",
+        name: "liveManagement-recommendAnchor-RecommendAnchor",
         query: { 
           liveId: row.id,
-          authEdit: row.liveState == 1 || row.liveState == 3 ? 1 : 0 //仅未开播和直播中能修改  
+          authEdit: row.liveState == 1 || row.liveState == 3 ? 1 : 0 ,//仅未开播和直播中能修改
+          anchorId:row.anchorUserId
         }
       });
     },
