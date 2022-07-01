@@ -221,7 +221,8 @@ export default {
                             // depositBank: this.bankForm.depositBank
                             //   ? this.bankForm.depositBank
                             //   : "",
-                            depositBank: this.bankForm&&this.bankForm.depositBankValue,
+                            depositBank:this.bankForm&&this.bankForm.depositBank,
+                            depositBankValue: this.bankForm&&this.bankForm.depositBankValue,
                             branchName: this.bankForm&&this.bankForm.branchName,
                             accountName: this.bankForm&&this.bankForm.accountName,
                             bankAccount: this.bankForm&&this.bankForm.bankAccount,

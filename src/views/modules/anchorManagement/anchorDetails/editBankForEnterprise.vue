@@ -120,7 +120,6 @@ export default {
                             return this.$message.error(res.msg)
                         } 
                         this.bankInfo = res.data
-                        this.active++
                     }).catch((err) => {
                         this.$message.error(JSON.stringify(err.message))
                     });
@@ -148,29 +147,30 @@ export default {
                 this.userInfo = res.data;
                 if(this.userInfo.haveApplyInfo){
                     this.active = 2
+                    this.getBankInfo()
                 }else{
                     this.active = 1
-                }
-                this.bankForm = {
-                    depositBank: this.userInfo.depositBank ? this.userInfo.depositBank : "",
-                    depositBankValue: this.userInfo.depositBankValue
-                    ? this.userInfo.depositBankValue
-                    : "",
-                    // branchName: this.userInfo.branchName ? this.userInfo.branchName : "",
-                    accountName: this.userInfo.accountName ? this.userInfo.accountName : "",
-                    bankAccount: this.userInfo.bankAccount ? this.userInfo.bankAccount : "",
-                };
+                    this.bankForm = {
+                        depositBank: this.userInfo.depositBank ? this.userInfo.depositBank : "",
+                        depositBankValue: this.userInfo.depositBankValue
+                        ? this.userInfo.depositBankValue
+                        : "",
+                        // branchName: this.userInfo.branchName ? this.userInfo.branchName : "",
+                        accountName: this.userInfo.accountName ? this.userInfo.accountName : "",
+                        bankAccount: this.userInfo.bankAccount ? this.userInfo.bankAccount : "",
+                    };
 
-                this.restaurants.forEach((v) => {
-                    if (
-                    this.userInfo.depositBank &&
-                    this.userInfo.depositBank.length !== 0 &&
-                    this.userInfo.depositBank === v.dictValue
-                    ) {
-                        this.bankForm.depositBank = v.value;
-                        this.bankForm.depositBankValue = v.dictValue;
-                    }
-                });
+                    this.restaurants.forEach((v) => {
+                        if (
+                        this.userInfo.depositBank &&
+                        this.userInfo.depositBank.length !== 0 &&
+                        this.userInfo.depositBank === v.dictValue
+                        ) {
+                            this.bankForm.depositBank = v.value;
+                            this.bankForm.depositBankValue = v.dictValue;
+                        }
+                    });
+                }
             }).catch((err) => this.$message.error(JSON.stringify(err.message)));
         },
         //获取银行列表
@@ -244,7 +244,8 @@ export default {
                         type: "warning",
                     }).then(() => {
                         this.$http.post(`sys/sysbankinfo/updateWithApply`, {
-                            depositBank: this.bankForm&&this.bankForm.depositBankValue,
+                            depositBank:this.bankForm&&this.bankForm.depositBank,
+                            depositBankValue: this.bankForm&&this.bankForm.depositBankValue,
                             // branchName: this.bankForm&&this.bankForm.branchName,
                             accountName: this.bankForm&&this.bankForm.accountName,
                             bankAccount: this.bankForm&&this.bankForm.bankAccount,
@@ -271,6 +272,7 @@ export default {
                                 // this.$store.state.contentTabs = this.$store.state.contentTabs.filter(item => item.name !== tabName)
                                 // this.$router.push({path:'/anchorManagement-anchorDetails-index'})
                                 this.getBankInfo()
+                                this.active = 2
                             }).catch((error) => {
                                 this.$message.error(error.msg || error.error);
                             });
@@ -285,7 +287,10 @@ export default {
             });
         },
         resetForm(formName){
-
+            this.$refs[formName].resetFields();
+            let tabName = this.$store.state.contentTabsActiveName
+            this.$store.state.contentTabs = this.$store.state.contentTabs.filter(item => item.name !== tabName)
+            this.$router.push({path:'/anchorManagement-anchorDetails-index'})
         }
     }
 }

@@ -30,7 +30,7 @@
                 <div>公司名称：{{ anchorDetails.companyName || '-' }}</div>
                 <div>统一社会信用代码：{{ anchorDetails.companyCreditCode || '-' }}</div>
                 <div>开户银行：{{ anchorDetails.depositBank || '-' }}</div>
-                <div>账号名称：{{ anchorDetails.accountName || '-' }}</div>
+                <div>账户名称：{{ anchorDetails.accountName || '-' }}</div>
                 <div>银行账号：{{ anchorDetails.bankAccount || '-' }}</div>
             </div>
             <!-- 个人 -->
