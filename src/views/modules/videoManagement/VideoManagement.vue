@@ -59,9 +59,6 @@
           >
             <el-option label="审核中" :value="0"></el-option>
             <el-option label="已通过" :value="1"></el-option>
-            <el-option label="已驳回" :value="2"></el-option>
-            <el-option label="审核中" :value="3"></el-option>
-            <el-option label="已通过" :value="4"></el-option>
           </el-select>
         </el-form-item>
 

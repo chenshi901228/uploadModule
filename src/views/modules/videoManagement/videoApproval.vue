@@ -274,7 +274,7 @@ export default {
   created() {},
   activated() {
     //平台只看已通过
-    this.dataForm.approveStatus = 1
+    // this.dataForm.approveStatus = 1
     this.query();
   },
   methods: {

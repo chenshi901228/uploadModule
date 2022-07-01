@@ -86,6 +86,11 @@ export default {
   },
   created() {
     this.id = this.$route.query.videoDetail.id;
+    this.$nextTick(() =>{
+      if(this.checkFlag){
+      this.query()
+    }
+    })
   },
   mounted() {
     this.querylist();
@@ -93,7 +98,7 @@ export default {
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       if (from.name === "videoManagement-videoApproval") {
-        vm.query();
+        // vm.query();
         vm.checkFlag = true;
         console.log(vm.info)
 
