@@ -59,7 +59,7 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          label="审批状态"
+          label="审核状态"
           prop="approveStatus"
           v-if="isOpen || formItemCount >= 4"
         >
@@ -73,8 +73,6 @@
             <el-option label="审核中" :value="0"></el-option>
             <el-option label="已通过" :value="1"></el-option>
             <el-option label="已驳回" :value="2"></el-option>
-            <el-option label="审核中" :value="3"></el-option>
-            <el-option label="已通过" :value="4"></el-option>
           </el-select>
         </el-form-item>
 
@@ -253,7 +251,7 @@ export default {
         anchorUser: "",
         showMode: null,
         showState: null,
-        approveStatus: 3,
+        // approveStatus: 1,
       },
 
       tableItem: [
@@ -275,6 +273,8 @@ export default {
   },
   created() {},
   activated() {
+    //平台只看已通过
+    this.dataForm.approveStatus = 1
     this.query();
   },
   methods: {

@@ -16,14 +16,21 @@
       label-width="110px"
     >
       <el-form-item label="结算比例：" prop="proportion">
-        <el-input-number
+        <!-- <el-input-number
           v-model="dataForm.proportion"
           :controls="false"
           :precision="0"
           :min="0"
           :max="99"
+          type="number"
         >
-        </el-input-number>
+        </el-input-number> -->
+        <el-input
+          v-model="dataForm.proportion"
+          :min="0"
+          :max="99"
+          type="number"
+        />
       </el-form-item>
       <div>结算比例范围：0%~99%</div>
     </el-form>
@@ -50,12 +57,7 @@ export default {
         return callback(new Error("结算比例不能为空"));
       }
       setTimeout(() => {
-        if (
-          Number.isInteger(value) &&
-          Number.isInteger(value) >= 0 &&
-          Number.isInteger(value) < 99 &&
-          /^d+$/.test(value)
-        ) {
+        if (value >= 0 && value < 99) {
           callback();
         } else {
           callback(
@@ -127,5 +129,13 @@ export default {
 <style lang="scss" scoped>
 /deep/.el-input {
   width: 200px;
+}
+
+::v-deep input::-webkit-outer-spin-button,
+::v-deep input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+}
+::v-deep input[type="number"] {
+  -moz-appearance: textfield !important;
 }
 </style>

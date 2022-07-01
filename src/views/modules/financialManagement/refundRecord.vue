@@ -217,7 +217,7 @@
                   : scope.row.refundStatus === -1
                   ? "退款失败"
                   : scope.row.refundStatus === -2
-                  ? "未退款"
+                  ? "待退款"
                   : "退款中"
               }}
             </div>

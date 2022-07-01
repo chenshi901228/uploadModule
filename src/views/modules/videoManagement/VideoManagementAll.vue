@@ -28,10 +28,26 @@
           >
           </el-input>
         </el-form-item>
+
+        <el-form-item
+          label="主播"
+          prop="anchorUser"
+          v-if="isOpen || formItemCount >= 2"
+        >
+          <el-input
+            size="small"
+            style="width: 200px"
+            v-model.trim="dataForm.anchorUser"
+            placeholder="请输入"
+            clearable
+          >
+          </el-input>
+        </el-form-item>
+
         <el-form-item
           label="视频显示"
           prop="showMode"
-          v-if="isOpen || formItemCount >= 2"
+          v-if="isOpen || formItemCount >= 3"
         >
           <el-select
             clearable
@@ -44,27 +60,6 @@
             <el-option label="竖屏" :value="0"></el-option>
           </el-select>
         </el-form-item>
-
-        <el-form-item
-          label="审核状态"
-          prop="approveStatus"
-          v-if="isOpen || formItemCount >= 3"
-        >
-          <el-select
-            clearable
-            size="small"
-            style="width: 200px"
-            v-model="dataForm.approveStatus"
-            placeholder="请选择"
-          >
-            <el-option label="审核中" :value="0"></el-option>
-            <el-option label="已通过" :value="1"></el-option>
-            <el-option label="已驳回" :value="2"></el-option>
-            <el-option label="审核中" :value="3"></el-option>
-            <el-option label="已通过" :value="4"></el-option>
-          </el-select>
-        </el-form-item>
-
         <el-form-item
           label="显示状态"
           prop="showState"
@@ -109,14 +104,6 @@
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
-            <el-button
-              size="mini"
-              plain
-              icon="el-icon-plus"
-              type="primary"
-              @click="addOrUpdateHandle"
-              >新增</el-button
-            >
             <el-button
               type="warning"
               plain
@@ -185,9 +172,17 @@
             <span v-else-if="item.prop == 'showMode'">
               {{ row.showMode ? "横屏" : "竖屏" }}
             </span>
+            <!-- 删除状态 -->
+            <span v-else-if="item.prop == 'liveState'">
+              {{ row.liveState == 0 ? "已删除" : "未删除" }}
+            </span>
             <!-- 显示状态 -->
             <span v-else-if="item.prop == 'showState'">
               {{ row.showState ? "显示" : "隐藏" }}
+            </span>
+            <!-- 备注 -->
+            <span v-else-if="item.prop == 'remark'">
+              {{ row.remark }}
             </span>
             <!-- 审核状态 -->
             <span v-else-if="item.prop == 'approveStatus'">
@@ -231,18 +226,16 @@
           <template slot-scope="{ row }">
             <el-button
               size="small"
-              icon="el-icon-video-camera"
-              style="margin-left: 10px"
+              icon="el-icon-download"
               type="text"
-              @click="viewVideo(row)"
-              >查看详情</el-button
+              @click="actionHandle('1', row)"
+              >下载视频</el-button
             >
             <el-button
               size="small"
               icon="el-icon-chat-dot-square"
               style="margin-left: 10px"
               type="text"
-              v-if="row.approveStatus !== 0"
               @click="actionHandle('2', row)"
               >评论详情</el-button
             >
@@ -251,7 +244,7 @@
               icon="el-icon-sort"
               style="margin-left: 10px"
               type="text"
-              v-if="row.approveStatus !== 0"
+              v-if="row.liveState !== 0"
               @click="showOrHide(row)"
               >{{ row.showState ? "隐藏" : "显示" }}</el-button
             >
@@ -260,12 +253,12 @@
               icon="el-icon-shopping-cart-2"
               style="margin-left: 10px"
               type="text"
-              v-if="row.approveStatus != 0"
+              v-if="row.liveState != 0"
               @click="addProduct(row)"
               >带货商品</el-button
             >
             <el-button
-              v-if="row.approveStatus !== 0"
+              v-if="row.liveState !== 0"
               size="small"
               icon="el-icon-delete"
               style="margin-left: 10px"
@@ -289,12 +282,26 @@
       </el-pagination>
     </div>
     <el-dialog title="删除" :visible.sync="dialogFormVisible">
-      <span>确认删除该短视频</span>
+      <el-form
+        :model="ruleForm"
+        :rules="rules"
+        ref="ruleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+      >
+        <el-form-item label="备注" prop="desc">
+          <el-input
+            size="small"
+            type="textarea"
+            v-model="ruleForm.desc"
+          ></el-input>
+        </el-form-item>
+      </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogFormVisible = false"
           >取 消</el-button
         >
-        <el-button size="small" type="primary" @click="confirm"
+        <el-button size="small" type="primary" @click="confirm('ruleForm')"
           >确 定</el-button
         >
       </div>
@@ -310,7 +317,7 @@ export default {
   data() {
     return {
       mixinTableModuleOptions: {
-        getDataListURL: "/sys/livePlayback/pageOwn", // 数据列表接口，API地址
+        getDataListURL: "/sys/livePlayback/page", // 数据列表接口，API地址
         exportURL: "/sys/livePlayback/export", // 导出接口，API地址
         createdIsNeed: false,
         activatedIsNeed: false,
@@ -339,12 +346,17 @@ export default {
         { prop: "addUserNum", label: "新增用户" },
         { prop: "approveStatus", label: "审核状态" },
         { prop: "showState", label: "显示状态" },
+        { prop: "liveState", label: "删除状态" },
+        { prop: "remark", label: "备注" },
         { prop: "createByName", label: "创建人" },
         { prop: "createDate", label: "创建时间" },
       ],
       dynamicGroupOptions: [], //投放人群
       getDynamicGroupLoading: false, //下拉框加载数据loading
       dialogFormVisible: false,
+      ruleForm: {
+        desc: "",
+      },
       rules: {
         desc: [{ required: true, message: "请填写备注内容", trigger: "blur" }],
       },
@@ -353,7 +365,7 @@ export default {
   },
   created() {},
   activated() {
-    this.dataForm.approveStatus = 3;
+    this.dataForm.approveStatus = 1;
     this.query();
   },
   methods: {
@@ -376,26 +388,35 @@ export default {
       this.ids = row.id;
     },
     //删除
-    confirm() {
-      let deleteURL = "";
-      deleteURL = "/sys/livePlayback/factDelete";
-      this.$http
-        .delete(deleteURL, {
-          data: { id: this.ids },
-        })
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            this.ids = "";
-            return this.$message.error(res.msg);
-          }
-          this.ids = "";
-          this.query();
-          this.$message.success("删除成功!");
-          this.dialogFormVisible = false;
-        })
-        .catch((err) => {
-          throw err;
-        });
+    confirm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          let deleteURL = "";
+          deleteURL = "/sys/livePlayback/delete";
+          this.$http
+            .delete(deleteURL, {
+              data: { id: this.ids, remark: this.ruleForm.desc },
+            })
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                this.ids = "";
+                this.ruleForm.desc = "";
+                return this.$message.error(res.msg);
+              }
+              this.ids = "";
+              this.ruleForm.desc = "";
+              this.query();
+              this.$message.success("删除成功!");
+              this.dialogFormVisible = false;
+            })
+            .catch((err) => {
+              throw err;
+            });
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
     },
     // 视频大小转换
     sizeTostr(size) {
