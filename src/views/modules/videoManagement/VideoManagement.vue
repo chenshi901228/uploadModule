@@ -310,7 +310,7 @@ export default {
   data() {
     return {
       mixinTableModuleOptions: {
-        getDataListURL: "", // 数据列表接口，API地址
+        getDataListURL: "/sys/livePlayback/pageOwn", // 数据列表接口，API地址
         exportURL: "/sys/livePlayback/export", // 导出接口，API地址
         createdIsNeed: false,
         activatedIsNeed: false,
@@ -321,7 +321,7 @@ export default {
         showMode: null,
         showState: null,
         liveState: null,
-        approveStatus: 3,
+        approveStatus: null,
       },
 
       tableItem: [
@@ -353,7 +353,6 @@ export default {
   },
   created() {},
   activated() {
-    this.mixinTableModuleOptions.getDataListURL = "/sys/livePlayback/pageOwn";
     this.dataForm.approveStatus = 3;
     this.query();
   },

@@ -38,7 +38,7 @@
             size="small"
             style="width: 200px"
             v-model.trim="dataForm.anchorUser"
-            placeholder="请输入选择"
+            placeholder="请输入"
             clearable
           >
           </el-input>
@@ -232,15 +232,6 @@
               >下载视频</el-button
             >
             <el-button
-              v-if="row.liveState !== 0"
-              size="small"
-              icon="el-icon-video-camera"
-              style="margin-left: 10px"
-              type="text"
-              @click="viewVideo(row)"
-              >查看详情</el-button
-            >
-            <el-button
               size="small"
               icon="el-icon-chat-dot-square"
               style="margin-left: 10px"
@@ -326,7 +317,7 @@ export default {
   data() {
     return {
       mixinTableModuleOptions: {
-        getDataListURL: "", // 数据列表接口，API地址
+        getDataListURL: "/sys/livePlayback/page", // 数据列表接口，API地址
         exportURL: "/sys/livePlayback/export", // 导出接口，API地址
         createdIsNeed: false,
         activatedIsNeed: false,
@@ -337,7 +328,7 @@ export default {
         showMode: null,
         showState: null,
         liveState: null,
-        approveStatus: 3,
+        approveStatus: null,
       },
 
       tableItem: [
@@ -374,7 +365,6 @@ export default {
   },
   created() {},
   activated() {
-    this.mixinTableModuleOptions.getDataListURL = "/sys/livePlayback/page";
     this.dataForm.approveStatus = 1;
     this.query();
   },

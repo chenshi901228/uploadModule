@@ -7,7 +7,7 @@
     </div>
     <div style="margin-bottom: 30px">
       <div>封面图：</div>
-      <el-image fit :src="info.frontCoverUrl"></el-image>
+      <el-image fit="contain" :src="info.frontCoverUrl && info.frontCoverUrl"></el-image>
     </div>
     <div>
       <div>视频：</div>
@@ -95,9 +95,12 @@ export default {
       if (from.name === "videoManagement-videoApproval") {
         vm.query();
         vm.checkFlag = true;
+        console.log(vm.info)
+
       } else if (from.name === "videoManagement-VideoManagement") {
         vm.info = vm.$route.query.videoDetail;
         vm.checkFlag = false;
+        console.log(vm.info)
       }
     });
   },
