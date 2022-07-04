@@ -183,7 +183,7 @@ export default {
     goToHome(){ //选择角色进入
       this.$http.post('/sys/user/chooseLoginRole',{anchorId:this.selectUserAnchorId}).then(({data:res})=>{
         if(res.code!==0){
-          this.$message.error(res.msg)
+          return this.$message.error(res.msg)
         }
         this.dialogVisible = false
         this.$router.replace({ name: 'home' })
@@ -217,13 +217,12 @@ export default {
             this.$http.get('/sys/user/getAnchorListWithLogin').then(({ data: res })=>{
               console.log(res)
               if(res.code!==0){
-                this.$message.error(res.msg)
+                return this.$message.error(res.msg)
               }
               this.loginUserList = res.data
               this.dialogVisible = true
               this.selectUserAnchorId =this.loginUserList[0].anchorId 
             })
-            // this.$router.replace({ name: 'home' })
           }).catch(() => {})
         })
       }else{
@@ -243,7 +242,15 @@ export default {
               return this.$message.error(res.msg)
             }
             Cookies.set('access_token', res.access_token)
-            this.$router.replace({ name: 'home' })
+            this.$http.get('/sys/user/getAnchorListWithLogin').then(({ data: res })=>{
+              console.log(res)
+              if(res.code!==0){
+                return this.$message.error(res.msg)
+              }
+              this.loginUserList = res.data
+              this.dialogVisible = true
+              this.selectUserAnchorId =this.loginUserList[0].anchorId 
+            })
           }).catch(() => {})
         })
       }
