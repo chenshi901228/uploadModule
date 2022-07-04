@@ -277,6 +277,7 @@ export default {
       },
       dataForm: {
         liveId: "",
+        anchorId: this.$store.state.user.id,
       },
       dialogVisible: false,
       dialogDeleteVisible: false,
@@ -413,6 +414,7 @@ export default {
         phone: "",
         state: "",
         liveId: this.$route.query.liveId,
+        anchorId: this.$store.state.user.id,
       };
       this.query();
     },

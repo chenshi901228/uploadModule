@@ -1956,6 +1956,7 @@ export default {
           params: this.$httpParams({
             anchorName: this.recommendForm.anchorName,
             anchorPhone: this.recommendForm.anchorPhone,
+            anchorId: this.userId,
           }),
         })
         .then(({ data: res }) => {

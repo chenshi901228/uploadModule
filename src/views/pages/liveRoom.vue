@@ -1548,7 +1548,8 @@ export default {
     getRecommendList() {
       let obj = {
         liveId:this.$route.query.TaskId,
-        state:1
+        state:1,
+        userId: this.userID,
       }
       let params = {...this.params,...obj}
       this.$http.get(`/sys/sysRecommendedAnchor/page`,{params}).then((res) => {

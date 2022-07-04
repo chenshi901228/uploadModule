@@ -219,9 +219,14 @@ export default {
               if(res.code!==0){
                 return this.$message.error(res.msg)
               }
-              this.loginUserList = res.data
-              this.dialogVisible = true
-              this.selectUserAnchorId =this.loginUserList[0].anchorId 
+              if(res.data && res.data.length > 0) {
+                this.loginUserList = res.data
+                this.dialogVisible = true
+                this.selectUserAnchorId =this.loginUserList[0].anchorId 
+              } else {
+                this.$router.replace({ name: 'home' })
+              }
+             
             })
           }).catch(() => {})
         })
@@ -247,9 +252,13 @@ export default {
               if(res.code!==0){
                 return this.$message.error(res.msg)
               }
-              this.loginUserList = res.data
-              this.dialogVisible = true
-              this.selectUserAnchorId =this.loginUserList[0].anchorId 
+              if(res.data && res.data.length > 0) {
+                this.loginUserList = res.data
+                this.dialogVisible = true
+                this.selectUserAnchorId =this.loginUserList[0].anchorId 
+              } else {
+                this.$router.replace({ name: 'home' })
+              }
             })
           }).catch(() => {})
         })

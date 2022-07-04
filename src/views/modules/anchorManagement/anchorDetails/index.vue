@@ -1558,7 +1558,7 @@ export default {
     },
     // 获取用户详细信息
     getAnchorInfo() {
-        this.$http.get(`/sys/anchor/info/getInfo/${this.userId}`).then(({ data: res }) => {
+        this.$http.get(`/sys/anchor/info/getInfoWithAnchor`,{params:{anchorId:this.userId}}).then(({ data: res }) => {
             if (res.code !== 0) return this.$message.error(res.msg);
 
             this.anchorDetails = {...this.anchorDetails, ...res.data};
@@ -1567,7 +1567,7 @@ export default {
     // 获取用户账户金额信息
     getAccountAmount() {
       this.$http
-        .get(`/manage/userDetail/getWithAnchor`,{params:{anchorId:this.userId}})
+        .get(`/sys/manage/userDetail/getWithAnchor`,{params:{anchorId:this.userId}})
         .then(({ data: res }) => {
           if (res.code !== 0) {
             return vm.$message.error(res.msg);
@@ -1969,6 +1969,7 @@ export default {
           params: this.$httpParams({
             anchorName: this.recommendForm.anchorName,
             anchorPhone: this.recommendForm.anchorPhone,
+            anchorId: this.userId,
           }),
         })
         .then(({ data: res }) => {
@@ -2335,9 +2336,7 @@ export default {
                     return this.$message.error(res.msg);
                   }
                   this.$http
-                    .get(
-                      `/sys/anchor/info/getInfo/${this.$store.state.user.id}`
-                    )
+                    .get(`/sys/anchor/info/getInfoWithAnchor`,{params:{anchorId:this.userId}})
                     .then(({ data: res }) => {
                       if (res.code !== 0) {
                         return this.$message.error(res.msg);
