@@ -141,6 +141,7 @@ export default {
       loginUserList:[],//登录账号列表
       dialogVisible:false,//登录账号选择弹窗
       active:0,//登录账号选中
+      selectUserAnchorId:''//选择登录账号ID
     }
   },
   computed: {
@@ -176,13 +177,17 @@ export default {
   },
   methods: {
     selectUser(data,index){
-      console.log(index)
+      this.selectUserAnchorId = data.anchorId
       this.active = index
     },
-    goToHome(){
-      // if(){
-      //   this.$router.replace({ name: 'home' })
-      // }
+    goToHome(){ //选择角色进入
+      this.$http.post('/sys/user/chooseLoginRole',{anchorId:this.selectUserAnchorId}).then(({data:res})=>{
+        if(res.code!==0){
+          this.$message.error(res.msg)
+        }
+        this.dialogVisible = false
+        this.$router.replace({ name: 'home' })
+      })
     },
     // 获取验证码
     getCaptcha () {
@@ -209,15 +214,16 @@ export default {
               return this.$message.error(res.msg)
             }
             Cookies.set('access_token', res.access_token)
-            // this.$http.get('/sys/user/getAnchorListWithLogin').then(({ data: res })=>{
-            //   console.log(res)
-            //   if(res.code!==0){
-            //     this.$message.error(res.msg)
-            //   }
-            //   this.loginUserList = res.data
-            //   this.dialogVisible = true
-            // })
-            this.$router.replace({ name: 'home' })
+            this.$http.get('/sys/user/getAnchorListWithLogin').then(({ data: res })=>{
+              console.log(res)
+              if(res.code!==0){
+                this.$message.error(res.msg)
+              }
+              this.loginUserList = res.data
+              this.dialogVisible = true
+              this.selectUserAnchorId =this.loginUserList[0].anchorId 
+            })
+            // this.$router.replace({ name: 'home' })
           }).catch(() => {})
         })
       }else{

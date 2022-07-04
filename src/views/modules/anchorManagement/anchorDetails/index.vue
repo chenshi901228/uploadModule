@@ -1558,10 +1558,10 @@ export default {
     },
     // 获取用户详细信息
     getAnchorInfo() {
-        this.$http.get(`/sys/anchor/info/getInfo/${this.userId}`).then(({ data: res }) => {
+        this.$http.get('/sys/manage/userDetail/getWithAnchor',{params:{anchorId:this.userId}}).then(({ data: res }) => {
             if (res.code !== 0) return this.$message.error(res.msg);
-
             this.anchorDetails = {...this.anchorDetails, ...res.data};
+            console.log(this.anchorDetails)
         }).catch((err) => this.$message.error(JSON.stringify(err.message)));
     },
     // 获取用户账户金额信息
