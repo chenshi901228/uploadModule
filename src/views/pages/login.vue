@@ -104,6 +104,7 @@
             <p>{{item.userName}}</p>
             <span>{{item.type==1?'主播':'助手'}}</span>
           </div>
+          <i class="el-icon-check" v-show="active==index"></i>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -353,6 +354,13 @@ export default {
     border-bottom: 1px solid #ccc;
     padding: 10px 0;
     cursor: pointer;
+    position: relative;
+    >i{
+      position: absolute;
+      right: 20px;
+      top:30px;
+      font-size: 26px;
+    }
     >img{
       width: 60px;
       height: 60px;
