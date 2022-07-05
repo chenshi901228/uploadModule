@@ -37,7 +37,7 @@
             size="small"
             style="width: 200px"
             v-model.trim="dataForm.assistant"
-            placeholder="请输入助手昵称或手机号码"
+            placeholder="请输入助手昵称"
             clearable
           >
           </el-input>
@@ -332,6 +332,7 @@
               type="text"
               size="small"
               icon="el-icon-user-solid"
+              v-if="$hasPermission('anchor:list:assistant')"
               @click="assistant(row)"
               >助手</el-button
             >

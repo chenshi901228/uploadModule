@@ -21,12 +21,12 @@
                 </div>
             </div>
 
-            <div class="diaBoxLeft_title">
+            <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:bank:info')">
                 <p>银行账户<span class="accountStatus" v-if="anchorDetails.haveApplyInfo && anchorDetails.userType == 2">核验中</span></p>
                 <el-button plain type="primary" size="mini" @click="editeUserBank">编辑</el-button>
             </div>
             <!-- 企业 -->
-            <div class="diaBoxLeft_mes" v-if="anchorDetails.userType == 2">
+            <div class="diaBoxLeft_mes" v-if="anchorDetails.userType == 2&&$hasPermission('anchor:bank:info')">
                 <div>公司名称：{{ anchorDetails.companyName || '-' }}</div>
                 <div>统一社会信用代码：{{ anchorDetails.companyCreditCode || '-' }}</div>
                 <div>开户银行：{{ anchorDetails.depositBank || '-' }}</div>
@@ -34,7 +34,7 @@
                 <div>银行账号：{{ anchorDetails.bankAccount || '-' }}</div>
             </div>
             <!-- 个人 -->
-            <div class="diaBoxLeft_mes" v-else>
+            <div class="diaBoxLeft_mes" v-else-if="anchorDetails.userType == 1&&$hasPermission('anchor:bank:info')">
                 <div>姓名：{{ anchorDetails.realName || '-' }}</div>
                 <div>身份证号：{{ anchorDetails.idCard || '-' }}</div>
                 <div>开户银行：{{ anchorDetails.depositBank || '-' }}</div>
@@ -43,11 +43,11 @@
                 <div>银行账号：{{ anchorDetails.bankAccount || '-' }}</div>
                 <div>开户行所在地：{{ anchorDetails.address || '-' }}</div>
             </div>
-            <div class="diaBoxLeft_title">
+            <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:amount:info')">
                 <span>账户信息</span>
                 <el-button plain type="primary" size="mini" @click="withdrawMoney">提现</el-button>
             </div>
-            <div class="diaBoxLeft_mes">
+            <div class="diaBoxLeft_mes" v-if="$hasPermission('anchor:amount:info')">
                 <div>累计收益：￥{{ anchorDetails.priceIncome ? anchorDetails.priceIncome : 0 }}元</div>
                 <div>已提现金额：￥{{ anchorDetails.anchorWithdraw || 0 }}元</div>
                 <div>可提现余额：￥{{ anchorDetails.anchorBalance || 0 }}元</div>
@@ -59,6 +59,7 @@
                 class="diaBoxRight_tabBtns"
                 @click="changeTbas(1)"
                 :class="{ 'is-active': diaTbas === 1 }"
+                v-if="$hasPermission('anchor:gain:list')"
             >
                 收益记录
             </div>
@@ -66,6 +67,7 @@
                 class="diaBoxRight_tabBtns"
                 @click="changeTbas(2)"
                 :class="{ 'is-active': diaTbas === 2 }"
+                v-if="$hasPermission('anchor:withdraw:list')"
             >
                 提现记录
             </div>

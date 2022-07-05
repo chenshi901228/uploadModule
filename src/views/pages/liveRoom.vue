@@ -324,7 +324,9 @@
               <!-- <div @click="openEffect">开启美颜</div>
               <div @click="closeEffect">关闭美颜</div> -->
               <!-- <div @click="deviceDialogVisible=true">设备选择</div> -->
-              <div @click="trends==1?trends=0:trends=1" v-if="!liveStatus">{{trends==1?'关闭动态':'开启动态'}}</div>
+              <div @click="trends==1?trends=0:trends=1" v-if="!liveStatus">
+                <!-- <img src="" alt=""> -->
+                {{trends==1?'关闭动态':'开启动态'}}</div>
             </div>
             <div class="header_right">
               <div class="wacth_num">
@@ -348,14 +350,6 @@
                 />
                 <p>{{ item.type=='record'&&item.status?'已录制':item.text }}</p>
               </div>
-              <div class="start_live" @click="startPlayLive" v-if="!liveStatus">
-                <img src="../../assets/img/startLive.png" alt="" />
-                <span>开始直播</span>
-              </div>
-              <div class="start_live" @click="closeLive" v-else>
-                <img src="../../assets/img/closeLive.png" alt="" />
-                <span>结束直播</span>
-              </div>
             </div>
           </div>
         </el-header>
@@ -374,22 +368,30 @@
                     >人在线
                   </p>
                   <p>·&nbsp;<span>{{ liveRoomUserinfo.liveHot || 0 }}</span>热度</p>
+                  <div class="start_live" @click="startPlayLive" v-if="!liveStatus">
+                    <img src="../../assets/img/startLive.png" alt="" />
+                    <span>开始直播</span>
+                  </div>
+                  <div class="start_live" @click="closeLive" v-else>
+                    <img src="../../assets/img/closeLive.png" alt="" />
+                    <span>结束直播</span>
+                  </div>
                 </div>
               </div>
               <div class="screenShare">
                 <Superboard 
                   :userInfo="{
-                    token: this.token,
-                    roomId: this.roomId,
-                    userId: this.userID,
-                    appID: this.appID,
+                    token,
+                    roomId,
+                    userId:userID,
+                    appID,
                   }"
                   v-if="headerNavActive == 'superboard'"
                 />
               </div>
               <div class="default" v-if="headerNavActive == 'desktopShare'" style="position:absolute;top:70px;left:10px;zIndex:2;">
                 <el-tooltip effect="dark" content="选择共享" placement="left" >
-                    <img @click="uploadDialogVisible = true" class="superboard-create" src="@/assets/icon/s_create.png" alt="">
+                  <img @click="uploadDialogVisible = true" class="superboard-create" src="@/assets/icon/s_create.png" alt="">
                 </el-tooltip>
               </div>
               <video
@@ -506,27 +508,28 @@
       </div>
     </el-dialog>
     <el-dialog
-        title="切换设备"
-        :visible.sync="deviceDialogVisible"
-        top="200px"
-        width="30%">
-          <el-select v-model="cameraId" @change="selectCamera" placeholder="请选择摄像头">
-            <el-option
-              v-for="item in camerasList"
-              :key="item.deviceID"
-              :label="item.deviceName"
-              :value="item.deviceID">
-            </el-option>
-          </el-select>
-          <el-select v-model="microphoneId" placeholder="请选择麦克风">
-            <el-option
-              v-for="item in microphonesList"
-              :key="item.deviceID"
-              :label="item.deviceName"
-              :value="item.deviceID">
-            </el-option>
-          </el-select>
+      title="切换设备"
+      :visible.sync="deviceDialogVisible"
+      top="200px"
+      width="30%">
+        <el-select v-model="cameraId" @change="selectCamera" placeholder="请选择摄像头">
+          <el-option
+            v-for="item in camerasList"
+            :key="item.deviceID"
+            :label="item.deviceName"
+            :value="item.deviceID">
+          </el-option>
+        </el-select>
+        <el-select v-model="microphoneId" placeholder="请选择麦克风">
+          <el-option
+            v-for="item in microphonesList"
+            :key="item.deviceID"
+            :label="item.deviceName"
+            :value="item.deviceID">
+          </el-option>
+        </el-select>
     </el-dialog>
+
   </div>
 </template>
 
@@ -2284,26 +2287,6 @@ p {
                 margin-left: 15px;
               }
             }
-            .start_live {
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-size: 18px;
-              color: #ffffff;
-              width: 230px;
-              height: 40px;
-              background: linear-gradient(89deg, #fa3622 0%, #fe055b 100%);
-              box-shadow: 0px 4px 10px 1px rgba(249, 46, 29, 0.4);
-              border-radius: 5px;
-              cursor: pointer;
-              > img {
-                width: 20px;
-                height: 20px;
-              }
-              > span {
-                margin-left: 10px;
-              }
-            }
           }
         }
       }
@@ -2344,6 +2327,26 @@ p {
                 font-size: 16px;
                 > p {
                   margin-right: 10px;
+                }
+                .start_live {
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  font-size: 16px;
+                  color: #ffffff;
+                  height: 30px;
+                  background: linear-gradient(89deg, #FC573A 0%, #F92C1B 100%);
+                  box-shadow: 0px 4px 10px 1px rgba(249, 46, 29, 0.4);
+                  border-radius: 5px;
+                  padding: 0 8px;
+                  cursor: pointer;
+                  > img {
+                    width: 15px;
+                    height: 16px;
+                  }
+                  > span {
+                    margin-left: 7px;
+                  }
                 }
               }
             }
