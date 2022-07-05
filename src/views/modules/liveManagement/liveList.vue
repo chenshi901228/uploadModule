@@ -417,7 +417,7 @@ export default {
     //带货商品
     addProduct(row) {
       this.$router.push({
-        path: "/preview-cargoGoods-CargoGoods",
+        path: "/liveManagement-cargoGoods-CargoGoods",
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,
@@ -433,14 +433,14 @@ export default {
         query: { 
           liveId: row.id,
           authEdit: row.liveState == 1 || row.liveState == 3 ? 1 : 0 ,//仅未开播和直播中能修改
-          anchorId:row.anchorUserId
+          anchorId: row.anchorUserId
         }
       });
     },
     //助手
     assistant(row) {
       this.$router.push({
-        path: "/preview-assistant-Assistant",
+        path: "/liveManagement-assistant-Assistant",
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,

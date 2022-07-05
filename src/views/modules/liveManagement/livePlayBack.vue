@@ -186,7 +186,7 @@
             </span>
             <!-- 视频大小 -->
             <span v-else-if="item.prop == 'videoSize'">
-              {{ sizeTostr(row[item.prop]) }}
+              {{ row[item.prop]?sizeTostr(row[item.prop]):'-' }}
             </span>
             <!-- 投放人群 -->
             <span v-else-if="item.prop == 'dynamicGroupName'">

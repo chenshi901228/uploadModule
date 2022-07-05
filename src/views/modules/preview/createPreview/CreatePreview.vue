@@ -471,7 +471,8 @@ export default {
             frontCoverUrl: this.ruleForm.frontCoverUrl,
             liveIntroduce: this.ruleForm.liveIntroduce,
             assistantIds: this.ruleForm.assistantIds,
-            frontCover: this.frontCoverList.length ? this.frontCoverList[0].url : ""
+            frontCover: this.frontCoverList.length ? this.frontCoverList[0].url : "",
+            anchorUserId: this.userId,
           };
 
           this.submitLoading = true;
