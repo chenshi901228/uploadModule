@@ -614,7 +614,7 @@ export default {
       btnText:'已确认知晓（5s）',
       videoFPS:0,//推流帧率
       videoPacketsLostRate:0,//推流丢包率
-      videoQuality:0,//推流质量 0：极好 
+      videoQuality:0,//推流质量 -1 表示未知，0 表示 极好,1 表示好，2 表示中等，3 表示 差，4 表示极差
       count:0,
       activeName: "first",
       userName: "",
@@ -809,7 +809,7 @@ export default {
       this.streamID = streamID;
       this.videoFPS = stats.video.videoFPS.toFixed(2); //视频FPS
       this.videoPacketsLostRate = stats.video.videoPacketsLostRate.toFixed(2); //视频丢包率
-      this.videoQuality = stats.video.videoQuality//视频推流质量
+      this.videoQuality = stats.video.videoQuality;//视频推流质量
     });
 
     //获取流地址
