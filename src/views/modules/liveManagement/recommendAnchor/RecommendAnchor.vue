@@ -294,6 +294,7 @@ export default {
   activated() {
     if(this.$route.query.authEdit != undefined) { //有表示来自直播列表
       this.authEdit = this.$route.query.authEdit
+      if(this.authEdit == 0) this.dataForm.state = 1  //直播列表已下播或已禁播增加查询参数state
     }else { //来自预告
       this.authEdit = 1
     }
