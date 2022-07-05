@@ -1464,7 +1464,13 @@ export default {
       .catch(() => {});
     this.getAnchorInfo()
     this.getAccountAmount();
-    this.changeTbas(1);
+    if(this.$hasPermission('anchor:gain:list')){
+      this.changeTbas(1);
+    }else if(this.$hasPermission('anchor:withdraw:list')){
+      this.changeTbas(2);
+    }else{
+      this.changeTbas(3);
+    }
     this.queryBankList();
   },
   methods: {
