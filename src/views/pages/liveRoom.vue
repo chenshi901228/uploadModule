@@ -324,9 +324,10 @@
               <!-- <div @click="openEffect">开启美颜</div>
               <div @click="closeEffect">关闭美颜</div> -->
               <!-- <div @click="deviceDialogVisible=true">设备选择</div> -->
-              <div @click="trends==1?trends=0:trends=1" v-if="!liveStatus">
-                <!-- <img src="" alt=""> -->
-                {{trends==1?'关闭动态':'开启动态'}}</div>
+              <div @click="trends==1?trends=0:trends=1" v-if="!liveStatus" class="header_nav">
+                <img :src="trends==1?require('@/assets/img/open_dynamic.png'):require('@/assets/img/close_dynamic.png')" alt="">
+                <p>{{trends==1?'关闭动态':'开启动态'}}</p>
+              </div>
             </div>
             <div class="header_right">
               <div class="wacth_num">
