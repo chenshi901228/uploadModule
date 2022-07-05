@@ -360,7 +360,7 @@
               <div class="live_menu_header">
                 <div class="live_theme">主题&nbsp;:&nbsp;{{ liveTheme }}</div>
                 <div class="online_info">
-                  <p>
+                  <!-- <p>
                     ·&nbsp;<span>{{ liveRoomUserinfo.cumulativeNum || 0 }}</span
                     >人看过
                   </p>
@@ -368,7 +368,10 @@
                     ·&nbsp;<span>{{ liveRoomUserinfo.onlineNum || 0 }}</span
                     >人在线
                   </p>
-                  <p>·&nbsp;<span>{{ liveRoomUserinfo.liveHot || 0 }}</span>热度</p>
+                  <p>·&nbsp;<span>{{ liveRoomUserinfo.liveHot || 0 }}</span>热度</p> -->
+                  <p>FPS：{{videoFPS}}</p>
+                  <p>丢包率：{{videoPacketsLostRate}}</p>
+                  <p>网络状态：正常</p>
                   <div class="start_live" @click="startPlayLive" v-if="!liveStatus">
                     <img src="../../assets/img/startLive.png" alt="" />
                     <span>开始直播</span>
@@ -530,7 +533,67 @@
           </el-option>
         </el-select>
     </el-dialog>
-
+    <el-dialog
+      :title="endLiveTitle"
+      :visible.sync="endLiveDialogVisible"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :show-close="false"
+      center
+      width="60%"
+    >
+      <el-descriptions title="直播" column="2">
+        <el-descriptions-item label="直播主题"></el-descriptions-item>
+        <el-descriptions-item label="开播时间"></el-descriptions-item>
+        <el-descriptions-item label="下播时间"></el-descriptions-item>
+        <el-descriptions-item label="直播时长"></el-descriptions-item>
+        <el-descriptions-item label="观看人数"></el-descriptions-item>
+        <el-descriptions-item label="最高在线人数"></el-descriptions-item>
+        <el-descriptions-item label="累计点赞"></el-descriptions-item>
+        <el-descriptions-item label="累计分享"></el-descriptions-item>
+        <el-descriptions-item label="礼物收益"></el-descriptions-item>
+        <el-descriptions-item label="粉丝团收益"></el-descriptions-item>
+        <el-descriptions-item label="带货销售"></el-descriptions-item>
+      </el-descriptions>
+      <el-descriptions title="主播" column="2">
+        <el-descriptions-item label="新增用户"></el-descriptions-item>
+        <el-descriptions-item label="增加粉丝"></el-descriptions-item>
+        <el-descriptions-item label="礼物收入"></el-descriptions-item>
+        <el-descriptions-item label="带货收入"></el-descriptions-item>
+        <el-descriptions-item label="粉丝团收入"></el-descriptions-item>
+      </el-descriptions>
+      <span slot="footer" class="dialog-footer">
+        <el-button type="primary" size="small" @click="confirmQuit">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="直播功能使用协议"
+      :visible.sync="livePactDialogVisible"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :show-close="false"
+      center
+      width="30%"
+    >
+      
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" :type="btnDisabled?'info':'primary'" :disabled="btnDisabled" @click="confirmLivePact">{{btnText}}</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog
+      title="直播行为规范"
+      :visible.sync="liveActionDialogVisible"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :show-close="false"
+      center
+      width="30%"
+    >
+      
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" :type="btnDisabled?'info':'primary'" :disabled="btnDisabled" @click="initLiveRoom">{{btnText}}</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -545,6 +608,13 @@ export default {
   },
   data() {
     return {
+      livePactDialogVisible:false,//直播协议弹窗
+      liveActionDialogVisible:false,//直播行为规范弹窗
+      btnDisabled:true,
+      btnText:'已确认知晓（5s）',
+      videoFPS:0,//推流帧率
+      videoPacketsLostRate:0,//推流丢包率
+      videoQuality:0,//推流质量 0：极好 
       count:0,
       activeName: "first",
       userName: "",
@@ -635,33 +705,38 @@ export default {
       },
       total:0,
       trends:1,//直播动态开启或关闭 1：开启 0：关闭
+      endLiveDialogVisible:false,//结束直播详情弹窗
+      endLiveTitle:'直播结束'
     };
   },
   created() {
-    this.$http.get('/sys/mixedflow/getLiving').then(res=>{//获取直播状态
+    console.log(navigator.connection)
+    navigator.connection.addEventListener('change', this.onConnectionChange);
+    this.$http.get('/sys/mixedflow/getLiving').then(res=>{//进入直播间获取直播状态
+      if(!res.data.code==0) return this.$message.error(res.data.msg)
       if(res.data.data){
         this.liveStatus = true
+        let connectMessageInfo = JSON.parse(
+          localStorage.getItem("connectMessageInfo")
+        ); //连麦列表状态
+        if (connectMessageInfo) {
+          this.connectMessageInfo = connectMessageInfo;
+        }
+        let isRecord = localStorage.getItem("isRecord"); //录制状态
+        if (isRecord) {
+          this.toolNav[0].status = isRecord;
+        }
+        let studentList = JSON.parse(localStorage.getItem("studentList")); //学生列表
+        if (studentList) {
+          this.studentList = studentList;
+        }
+        this.getTimUserSig();
       }else{
         this.liveStatus = false
+        this.livePactDialogVisible = true //未开播进入直播间阅读协议
+        this.doLoop(5)
       }
     })
-    if(this.liveStatus){
-      let connectMessageInfo = JSON.parse(
-        localStorage.getItem("connectMessageInfo")
-      ); //连麦列表状态
-      if (connectMessageInfo) {
-        this.connectMessageInfo = connectMessageInfo;
-      }
-      let isRecord = localStorage.getItem("isRecord"); //录制状态
-      if (isRecord) {
-        this.toolNav[0].status = isRecord;
-      }
-      let studentList = JSON.parse(localStorage.getItem("studentList")); //学生列表
-      if (studentList) {
-        this.studentList = studentList;
-      }
-    }
-    this.getTimUserSig();
   },
   computed: {},
   mounted() {
@@ -730,9 +805,11 @@ export default {
 
     this.zg.on("publishQualityUpdate", (streamID, stats) => {
       // 推流质量
-      // console.log("推流质量----", streamID, stats);
+      console.log("推流质量----", streamID, stats);
       this.streamID = streamID;
-      this.videoPacketsLostRate = stats.video.videoTransferFPS.toFixed(2);
+      this.videoFPS = stats.video.videoFPS.toFixed(2); //视频FPS
+      this.videoPacketsLostRate = stats.video.videoPacketsLostRate.toFixed(2); //视频丢包率
+      this.videoQuality = stats.video.videoQuality//视频推流质量
     });
 
     //获取流地址
@@ -786,8 +863,40 @@ export default {
         });
       }
     });
-  },
+  },  
   methods: {
+    onConnectionChange() {
+      const { rtt, downlink, effectiveType, saveData } = navigator.connection;
+      // console.log(`有效网络连接类型: ${effectiveType}`);
+      // console.log(`估算的下行速度/带宽: ${downlink}Mb/s`);
+      console.log(`估算的往返时间: ${rtt}ms`);
+      // console.log(`打开/请求数据保护模式: ${saveData}`);
+    },
+    // 协议确认倒计时
+    doLoop: function (seconds) {
+      seconds = seconds ? seconds : 5;
+      this.btnText = `已确认知晓（${seconds}s）`;
+      let countdown = setInterval(() => {
+        if (seconds > 0) {
+          this.btnText = `已确认知晓（${seconds}s）`;
+          --seconds;
+        } else {
+          this.btnText = this.livePactDialogVisible?"已确认知晓":'已确认知晓，去直播';
+          this.btnDisabled = false;
+          clearInterval(countdown);
+        }
+      }, 1000);
+    },
+    confirmLivePact(){//确认知晓直播协议
+      this.livePactDialogVisible = false
+      this.liveActionDialogVisible = true
+      this.btnDisabled = true
+      this.doLoop(5)
+    },
+    initLiveRoom(){ //初始化直播间
+      this.liveActionDialogVisible = false
+      this.getTimUserSig();
+    },
     load () {//主播推荐商品列表、直播预告列表、推荐主播列表加载
       this.params.page++
       if(this.activeName==='fourth'){
@@ -1126,7 +1235,7 @@ export default {
 
     //关闭直播
     closeLive() {
-      this.$confirm("确认关闭直播", "提示", {
+      this.$confirm("确认结束直播", "提示", {
         confirmButtonText: "确认",
         cancelButtonText: "取消",
         type: "warning"
@@ -1150,7 +1259,7 @@ export default {
               localStorage.removeItem("studentList"); //将学生列表移除
               this.tim.logout(); //退出IM
               this.tim.destroy();
-              window.close()
+              this.endLiveDialogVisible = true
             } else {
               this.$nextTick(() => {
                 // 以服务的方式调用的 Loading 需要异步关闭
@@ -1257,9 +1366,6 @@ export default {
           });
       }
       this.startLive();
-      // this.getAnchorProduct();
-      // this.getLivePreviewList();
-      // this.getRecommendList();
     },
     onSdkReady(event) {
       //监听IM sdk状态
@@ -1290,7 +1396,8 @@ export default {
                 localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
                 localStorage.removeItem("isRecord"); //将录制状态移除
                 localStorage.removeItem("studentList"); //将学生列表移除
-                window.close()
+                this.endLiveTitle = '您因违反规定已被禁播'
+                this.endLiveDialogVisible = true
               }
             });
           }
@@ -1649,6 +1756,9 @@ export default {
         JSON.stringify(this.connectMessageInfo)
       ); //将当前麦上列表存着
     },
+    confirmQuit(){//退出直播间，关闭页面
+      window.close()
+    }
   },
   destroyed() {
     if (this.livePredictionTimer) {
@@ -2317,7 +2427,7 @@ p {
                 text-overflow: ellipsis;
                 overflow: hidden;
                 white-space: nowrap;
-                width: 60%;
+                width: 35%;
                 word-break: break-all;
               }
               .online_info {
