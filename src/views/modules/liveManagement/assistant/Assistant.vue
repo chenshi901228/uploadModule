@@ -1,4 +1,4 @@
-// 推荐主播
+// 助手
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-fansLevel">
@@ -13,8 +13,8 @@
         @keyup.enter.native="getDataList"
       >
         <el-form-item
-          label="主播昵称"
-          prop="level"
+          label="助手昵称"
+          prop="username"
           v-if="isOpen || formItemCount >= 1"
         >
           <el-input
@@ -26,7 +26,7 @@
         </el-form-item>
         <el-form-item
           label="手机号码"
-          prop="level"
+          prop="phone"
           v-if="isOpen || formItemCount >= 2"
         >
           <el-input
@@ -38,13 +38,13 @@
         </el-form-item>
         <el-form-item
           label="添加状态"
-          prop="levelName"
+          prop="isAdd"
           v-if="(isOpen || formItemCount >= 3) && authEdit == 1"
         >
           <el-select
             placeholder="请选择"
             style="width: 200px"
-            v-model="dataForm.state"
+            v-model="dataForm.isAdd"
             clearable
           >
             <el-option :value="1" label="已添加"></el-option>
@@ -74,18 +74,7 @@
 
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
-          <div class="headerTool--handle-btns-left">
-            <el-button
-              type="primary"
-              plain
-              icon="el-icon-plus"
-              size="mini"
-              v-if="authEdit == 1"
-              :disabled="dataListSelections.length === 0"
-              @click="addSelect()"
-              >批量添加</el-button
-            >
-          </div>
+          <div class="headerTool--handle-btns-left"></div>
           <div class="headerTool--handle-btns-right">
             <el-form-item>
               <el-tooltip
@@ -109,39 +98,14 @@
         v-loading="dataListLoading"
         :data="dataList"
         :height="siteContentViewHeight"
-        @selection-change="dataListSelectionChangeHandle"
         style="width: 100%"
         ref="table"
       >
-        <el-table-column
-          type="selection"
-          header-align="center"
-          align="center"
-          width="50"
-          fixed="left"
-        ></el-table-column>
         <el-table-column type="index" label="序号" width="50" align="center">
         </el-table-column>
         <el-table-column
-          prop="level"
-          label="主播头像"
-          header-align="center"
-          align="center"
-        >
-          <template slot-scope="{ row }">
-            <div>
-              <img
-                style="width: 80px; height: 80px"
-                class="frontCoverImg"
-                :src="row.avatarUrl || 'https://picsum.photos/400/300?random=1'"
-                alt=""
-              />
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="username"
-          label="主播昵称"
+          prop="userName"
+          label="助手昵称"
           header-align="center"
           align="center"
         >
@@ -151,25 +115,25 @@
           label="手机号码"
           header-align="center"
           align="center"
-        ></el-table-column>
-        <el-table-column
-          prop="updateDate"
-          label="推荐时间"
-          header-align="center"
-          align="center"
         >
         </el-table-column>
         <el-table-column
-          prop="state"
+          prop="updateDate"
+          label="更新时间"
+          header-align="center"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="isAdd"
           label="添加状态"
           header-align="center"
           align="center"
           v-if="authEdit == 1"
         >
           <template slot-scope="scope">
-            {{ scope.row.state === "0" ? "未添加" : "已添加" }}
-          </template></el-table-column
-        >
+            {{ scope.row.isAdd === 1 ? "已添加" : "未添加" }}
+          </template>
+        </el-table-column>
         <el-table-column
           :label="$t('handle')"
           fixed="right"
@@ -180,28 +144,20 @@
         >
           <template slot-scope="scope">
             <el-button
+              v-if="scope.row.isAdd === 1"
               icon="el-icon-delete"
               type="text"
               size="small"
               @click="deleteSelect(scope.row)"
-              v-if="scope.row.state === '1'"
               >删除</el-button
             >
             <el-button
-              icon="el-icon-plus"
-              type="text"
-              size="small"
-              @click="addAnchor(scope.row)"
-              v-if="scope.row.state === '0'"
-              >添加</el-button
-            >
-            <el-button
-              v-if="scope.row.state === '1'"
+              v-if="scope.row.isAdd === 0"
               icon="el-icon-upload2"
               type="text"
               size="small"
-              @click="toTop(scope.row)"
-              >置顶</el-button
+              @click="add(scope.row)"
+              >添加</el-button
             >
           </template>
         </el-table-column>
@@ -224,34 +180,12 @@
         @refreshDataList="getDataList"
       ></add-or-update>
     </div>
-    <el-dialog title="批量添加" :visible.sync="dialogAddVisible" width="30%">
-      <span>确定定批量添加推荐主播?</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogAddVisible = false"
-          >取 消</el-button
-        >
-        <el-button size="small" type="primary" @click="confirmAddSelect"
-          >确 定</el-button
-        >
-      </span>
-    </el-dialog>
 
-    <el-dialog title="提醒" :visible.sync="dialogDeleteVisible" width="30%">
-      <span>确定删除该主播推荐</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogDeleteVisible = false"
-          >取 消</el-button
-        >
-        <el-button size="small" type="primary" @click="confirmDelete"
-          >确 定</el-button
-        >
-      </span>
-    </el-dialog>
-    <el-dialog title="置顶" :visible.sync="dialogVisible" width="30%">
-      <span>置顶该主播后，将展示在第一个，确认置顶</span>
+    <el-dialog title="提醒" :visible.sync="dialogVisible" width="30%">
+      <span>确定删除该助手</span>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="confirmCargo"
+        <el-button size="small" type="primary" @click="confirmDelete"
           >确 定</el-button
         >
       </span>
@@ -267,111 +201,51 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/sysRecommendedAnchor/page",
+        getDataListURL: "/sys/anchorAssistant/live/anchorAssistantWithLivePage",
         getDataListIsPage: true,
-        exportURL: "/sys/sysfanslevel/export",
-        deleteURL: "/sys/sysfanslevel",
         deleteIsBatch: true,
         createdIsNeed: false,
         activatedIsNeed: false,
       },
       dataForm: {
+        type: 2,
+        anchorId: "",
         liveId: "",
-        anchorId: this.$store.state.user.id,
       },
+      loading: false, //礼物输入下拉选择loading
+      giftOptions: [], //礼物下拉选择内容
+      fansLevelsOptions: [], //粉丝等级options
       dialogVisible: false,
-      dialogDeleteVisible: false,
-      id: "",
       ids: [],
-      dialogAddVisible: false,
-      selectAddList: [],
       authEdit: 1, //从直播列表进来是否有编辑权限：1-有，0-没有
     };
   },
   activated() {
     if(this.$route.query.authEdit != undefined) { //有表示来自直播列表
       this.authEdit = this.$route.query.authEdit
-      if(this.authEdit == 0) this.dataForm.state = 1  //直播列表已下播或已禁播增加查询参数state
     }else { //来自预告
       this.authEdit = 1
     }
     this.dataForm.liveId = this.$route.query.liveId;
+    this.dataForm.type = this.$route.query.type
+    this.dataForm.anchorId = this.$route.query.anchorId;
     this.query();
   },
   methods: {
-    //确认批量添加
-    confirmAddSelect() {
-      this.$http
-        .post("/sys/sysRecommendedAnchor", this.selectAddList)
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            this.dialogAddVisible = false;
-            this.selectAddList = [];
-            return this.$message.error(res.msg);
-          } else {
-            this.selectAddList = [];
-            this.dialogAddVisible = false;
-            this.$message.success("添加成功！");
-            this.query();
-          }
-        })
-        .catch((err) => {
-          throw err;
-        });
-    },
-    //批量添加
-    addSelect() {
-      let flag = this.dataListSelections.some((val) => {
-        return val.state === '1';
-      });
-      if (flag) {
-        this.$message.warning("请选择未添加主播！");
-      } else {
-        this.dialogAddVisible = true;
-        this.dataListSelections.forEach((v) => {
-          this.selectAddList.push({
-            liveId: this.dataForm.liveId,
-            anchorId: v.anchorId,
-          });
-        });
-      }
-    },
     //删除
     deleteSelect(row) {
-      this.ids.push(row.id);
-      this.dialogDeleteVisible = true;
-    },
-    //置顶
-    toTop(row) {
-      this.id = row.id;
+      this.ids.push(row.assistantLiveId);
       this.dialogVisible = true;
-    },
-    //添加主播
-    addAnchor(row) {
-      let list = [];
-      list.push({
-        liveId: this.dataForm.liveId,
-        anchorId: row.anchorId,
-      });
-      this.$http
-        .post("/sys/sysRecommendedAnchor", list)
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          } else {
-            this.$message.success("添加成功！");
-            this.query();
-          }
-        })
-        .catch((err) => {
-          throw err;
-        });
     },
     //确认删除
     confirmDelete() {
       this.$http
-        .delete(`/sys/sysRecommendedAnchor`, {
-          data: this.ids,
+        .delete(`/sys/anchorAssistant/live/deleteWithLive`, {
+          data: {
+            ids: this.ids,
+            liveId: this.dataForm.liveId,
+            type: this.dataForm.type,
+          },
         })
         .then(({ data: res }) => {
           this.ids = [];
@@ -379,6 +253,7 @@ export default {
           if (res.code !== 0) {
             return this.$message.error(res.msg);
           } else {
+            this.dialogVisible = false;
             this.$message.success("删除成功！");
             this.query();
           }
@@ -389,18 +264,20 @@ export default {
           throw err;
         });
     },
-    //确认置顶
-    confirmCargo() {
+    //添加
+    add(row) {
       this.$http
-        .put("/sys/sysRecommendedAnchor", {
-          id: this.id,
+        .post("/sys/anchorAssistant/live", {
+          liveId: this.dataForm.liveId,
+          anchorId: this.dataForm.anchorId,
+          weixinUserId: row.weixinUserId,
+          type: this.dataForm.type,
         })
         .then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg);
           } else {
-            this.$message.success("置顶成功！");
-            this.dialogVisible = false;
+            this.$message.success("添加成功！");
             this.query();
           }
         })
@@ -413,20 +290,14 @@ export default {
       this.dataForm = {
         username: "",
         phone: "",
-        state: "",
+        isAdd: "",
         liveId: this.$route.query.liveId,
-        anchorId: this.$store.state.user.id,
+        type: this.dataForm.type,
+        anchorId: this.$route.query.anchorId,
       };
+
       this.query();
     },
   },
 };
 </script>
-<style scoped lang="scss">
-.mod-live__liveList {
-  .frontCoverImg {
-    width: 100%;
-    height: 80px;
-  }
-}
-</style>
