@@ -133,7 +133,7 @@
               <img
                 style="width: 80px; height: 80px"
                 class="frontCoverImg"
-                :src="row.avatarUrl || 'https://picsum.photos/400/300?random=1'"
+                :src="row.avatarUrl || require('@/assets/img/default_avatar.png')"
                 alt=""
               />
             </div>
@@ -276,8 +276,11 @@ export default {
         activatedIsNeed: false,
       },
       dataForm: {
+        username: "",
+        phone: "",
+        state: "",
         liveId: "",
-        anchorId: this.$store.state.user.id,
+        anchorId: "",
       },
       dialogVisible: false,
       dialogDeleteVisible: false,
@@ -415,7 +418,7 @@ export default {
         phone: "",
         state: "",
         liveId: this.$route.query.liveId,
-        anchorId: this.$store.state.user.id,
+        anchorId: this.$route.query.anchorId,
       };
       this.query();
     },
