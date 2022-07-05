@@ -7,7 +7,7 @@
     </div>
     <div style="margin-bottom: 30px">
       <div>封面图：</div>
-      <el-image fit="contain" :src="info.frontCoverUrl && info.frontCoverUrl"></el-image>
+      <el-image v-if="info && info.frontCoverUrl" fit="contain" :src="info && info.frontCoverUrl"></el-image>
     </div>
     <div>
       <div>视频：</div>

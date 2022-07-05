@@ -594,7 +594,7 @@ export default {
     //带货商品
     addProduct(row) {
       this.$router.push({
-        path: "/preview-cargoGoods-CargoGoods",
+        path: "/liveManagement-cargoGoods-CargoGoods",
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,
@@ -605,16 +605,17 @@ export default {
     //推荐主播
     addAnchor(row) {
       this.$router.push({
-        path: "/preview-recommendAnchor-RecommendAnchor",
-        query: {
+        name: "liveManagement-recommendAnchor-RecommendAnchor",
+        query: { 
           liveId: row.id,
-        },
+          anchorId: row.anchorUserId
+        }
       });
     },
     //助手
     assistant(row) {
       this.$router.push({
-        path: "/preview-assistant-Assistant",
+        path: "/liveManagement-assistant-Assistant",
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,

@@ -493,7 +493,7 @@
               >推荐主播</el-button
             >
             <el-button
-              v-if="scope.row.liveState === 3"
+              v-if="scope.row.liveState === 3&&$hasPermission('anchor:list:assistant:preview')"
               type="text"
               size="small"
               icon="el-icon-user-solid"
