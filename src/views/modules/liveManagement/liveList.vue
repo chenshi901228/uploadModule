@@ -433,7 +433,7 @@ export default {
         query: { 
           liveId: row.id,
           authEdit: row.liveState == 1 || row.liveState == 3 ? 1 : 0 ,//仅未开播和直播中能修改
-          anchorId:row.anchorUserId
+          anchorId: row.anchorUserId
         }
       });
     },

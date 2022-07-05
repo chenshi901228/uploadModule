@@ -213,6 +213,10 @@
               <span v-else-if="item.prop == 'stock'">
                 {{ row.stock || 0 }}
               </span>
+              <!-- 已购买人数buyers+salesNum -->
+              <span v-else-if="item.prop == 'buyers'">
+                {{ calcTotalBuyers(row) }}
+              </span>
               <!-- 状态 -->
               <span v-else-if="item.prop == 'delFlg'">
                 <el-tag size="small" :type="row.delFlg === 0 ? 'success' : 'danger'">{{row.delFlg === 0 ? '上架' : '下架'}}</el-tag>
@@ -491,6 +495,10 @@ export default {
         productId: row.id,
         productName: row.productName
       } })
+    },
+    // 已购买人数总数计算
+    calcTotalBuyers(data) {
+      return parseInt(data.buyers) + parseInt(data.salesNum)
     }
   },
 };
