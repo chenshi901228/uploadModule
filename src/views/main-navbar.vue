@@ -47,7 +47,8 @@
             </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item @click.native="updatePasswordHandle()">{{ $t('updatePassword.title') }}</el-dropdown-item>
-              <el-dropdown-item  @click.native="setting">主题设置</el-dropdown-item>
+              <!-- <el-dropdown-item  @click.native="setting">主题设置</el-dropdown-item> -->
+              <el-dropdown-item  @click.native="switchAccount">切换账号</el-dropdown-item>
               <el-dropdown-item @click.native="logoutHandle()">{{ $t('logout') }}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
@@ -56,6 +57,32 @@
     </div>
     <!-- 弹窗, 修改密码 -->
     <update-password v-if="updatePasswordVisible" ref="updatePassword"></update-password>
+    <!-- 账号切换选择 -->
+    <el-dialog
+      title="选择账号"
+      :visible.sync="accountSelectVisible"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :show-close="true"
+      :center="true"
+      width="30%"
+      :append-to-body="true"
+      >
+      <div class="login_user">
+        <p>{{loginUserList.length&&loginUserList[0].userName}}的账号</p>
+        <div class="user_list" v-for="(item,index) in loginUserList" :key="index" :class="active==index?'active':''" @click="selectUser(item,index)">
+          <img :src="item.avatarUrl||require('@/assets/img/default_avatar.png')" alt="">
+          <div>
+            <p>{{item.userName}}</p>
+            <span>{{item.type==1?'主播':'助手'}}</span>
+          </div>
+          <i class="el-icon-check" v-show="active==index"></i>
+        </div>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" type="primary" @click="goToHome">进入</el-button>
+      </span>
+    </el-dialog>
   </nav>
 </template>
 
@@ -71,7 +98,11 @@ export default {
     return {
       i18nMessages: messages,
       updatePasswordVisible: false,
-      messageTip: false
+      messageTip: false,
+      accountSelectVisible: false, //账号切换弹框 
+      loginUserList: [],//登录账号列表
+      active: 0,//登录账号选中
+      selectUserAnchorId: ''//选择登录账号ID
     }
   },
   components: {
@@ -130,9 +161,93 @@ export default {
         }).catch(() => {})
       }).catch(() => {})
     },
+    // 主题设置
     setting() {
       this.$store.state.tool = !this.$store.state.tool
+    },
+    // 切换账号
+    switchAccount() {
+      this.$http.get('/sys/user/getAnchorListWithLogin').then(({ data: res })=>{
+        if(res.code!==0){
+          return this.$message.error(res.msg)
+        }
+        if(res.data && res.data.length > 0) {
+          this.loginUserList = res.data
+          this.accountSelectVisible = true
+          this.selectUserAnchorId =this.loginUserList[0].anchorId 
+        } else {
+          this.$message.info("暂无其他账号")
+        }
+      })
+    },
+    // 选择账号
+    selectUser(data,index){
+      this.selectUserAnchorId = data.anchorId
+      this.active = index
+    },
+    goToHome() {
+      this.$http.post('/sys/user/chooseLoginRole',{anchorId:this.selectUserAnchorId}).then(({data:res})=>{
+        if(res.code!==0){
+          return this.$message.error(res.msg)
+        }
+        this.accountSelectVisible = false
+        this.$store.state.contentTabs = this.$store.state.contentTabs.filter(item => item.name === 'home')
+        if(this.$store.state.contentTabsActiveName == 'home') return
+        this.$router.replace({ name: 'home' })
+      })
     }
   }
 }
 </script>
+<style lang="scss" scoped>
+.login_user{
+  height: 300px;
+  overflow: auto;
+  >p{
+    border-bottom: 1px solid #ccc;
+    margin: 0;
+    padding: 10px 0;
+  }
+  .user_list{
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+    cursor: pointer;
+    position: relative;
+    >i{
+      position: absolute;
+      right: 20px;
+      top:30px;
+      font-size: 26px;
+    }
+    >img{
+      width: 60px;
+      height: 60px;
+    }
+    >div{
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      margin-left: 10px;
+      >p{
+        margin: 0; 
+        padding: 0;
+        font-size: 16px;
+      }
+      >span{
+        font-size:14px;
+        color: #ccc;
+      }
+    }
+  }
+  .active{
+    border-bottom:2px solid #20aee5;
+    color: #20aee5;
+  }
+  &::-webkit-scrollbar {
+    width:0px;
+    height:0px;
+  }
+}
+</style>

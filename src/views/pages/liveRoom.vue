@@ -710,8 +710,8 @@ export default {
     };
   },
   created() {
-    console.log(navigator.connection)
-    navigator.connection.addEventListener('change', this.onConnectionChange);
+    // console.log(navigator.connection)
+    // navigator.connection.addEventListener('change', this.onConnectionChange);
     this.$http.get('/sys/mixedflow/getLiving').then(res=>{//进入直播间获取直播状态
       if(!res.data.code==0) return this.$message.error(res.data.msg)
       if(res.data.data){
