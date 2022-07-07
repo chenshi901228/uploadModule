@@ -54,7 +54,7 @@
           >
           </el-date-picker>
         </el-form-item>
-        <el-form-item label="预计时长" prop="estimateLiveTime">
+        <el-form-item label="预计时长(分)" prop="estimateLiveTime">
           <el-input
             style="width: 400px"
             placeholder="预计时长"

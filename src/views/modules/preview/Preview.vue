@@ -457,7 +457,7 @@
               >创建直播</el-button
             >
             <el-button
-              v-if="scope.row.liveState === 3"
+              v-if="scope.row.liveState === 3 && scope.row.appointmentState === 1"
               type="text"
               size="small"
               icon="el-icon-goods"
@@ -465,7 +465,7 @@
               >带货商品</el-button
             >
             <el-button
-              v-if="scope.row.liveState === 3"
+              v-if="scope.row.liveState === 3 && scope.row.appointmentState === 1"
               type="text"
               size="small"
               icon="el-icon-user"
@@ -475,7 +475,8 @@
             <el-button
               v-if="
                 scope.row.liveState === 3 &&
-                $hasPermission('anchor:list:assistant:preview')
+                $hasPermission('anchor:list:assistant:preview') &&
+                scope.row.appointmentState === 1
               "
               type="text"
               size="small"
@@ -497,7 +498,7 @@
             >
             <el-button
               v-if="
-                scope.row.appointmentState === 1 || scope.row.liveState === 3
+                (scope.row.appointmentState === 1 || scope.row.liveState === 3) && scope.row.showState !== 1
               "
               type="text"
               icon="el-icon-edit"
@@ -506,7 +507,7 @@
               >编辑</el-button
             >
             <el-button
-              v-if="scope.row.delFlg !== 1"
+              v-if="scope.row.delFlg !== 1 && scope.row.showState !== 1"
               type="text"
               icon="el-icon-delete"
               size="small"
@@ -609,6 +610,8 @@ export default {
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,
+          liveState: row.liveState,
+          appointmentState: row.appointmentState,
         },
       });
     },
@@ -619,6 +622,8 @@ export default {
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,
+          liveState: row.liveState,
+          appointmentState: row.appointmentState,
           type: 2,
         },
       });
