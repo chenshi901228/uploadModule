@@ -277,7 +277,7 @@ export default {
       },
       dataForm: {
         liveId: "",
-        anchorId: this.$store.state.user.id,
+        anchorId: "",
       },
       dialogVisible: false,
       dialogDeleteVisible: false,
@@ -296,6 +296,7 @@ export default {
       this.authEdit = 1
     }
     this.dataForm.liveId = this.$route.query.liveId;
+    this.dataForm.anchorId = this.$route.query.anchorId;
     this.query();
   },
   methods: {

@@ -294,6 +294,8 @@
             size="small"
             type="textarea"
             v-model="ruleForm.desc"
+            maxlength="100"
+            show-word-limit
           ></el-input>
         </el-form-item>
       </el-form>
@@ -378,7 +380,7 @@ export default {
     //查看视频详情
     viewVideo(row) {
       this.$router.push({
-        name: "videoManagement-videoDetail",
+        name: "videoManagement-videoDetailAll",
         query: { videoDetail: row },
       });
     },
@@ -467,7 +469,7 @@ export default {
     // 添加商品
     addProduct({ id, anchorUserId }) {
       this.$router.push({
-        name: "videoManagement-addProduct",
+        name: "videoManagement-addProductAll",
         query: { playbackId: id, anchorId: anchorUserId },
       });
     },

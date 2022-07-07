@@ -352,6 +352,9 @@ export default {
     },
   },
   activated() {
+    this.getPreviewDetail();
+  },
+  created() {
     this.ruleForm = {
       id: "",
       liveTheme: "",
@@ -372,9 +375,22 @@ export default {
     this.uploadUrl = `${
       window.SITE_CONFIG["apiURL"]
     }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
-    this.getPreviewDetail();
     this.userId = this.$store.state.user.id;
     this.getCoverPictureList();
+    this.ruleForm.id = this.$route.query.detailInfo.id;
+    this.ruleForm.liveTheme = this.$route.query.detailInfo.liveTheme;
+    this.ruleForm.startDate = this.$route.query.detailInfo.startDate;
+    this.ruleForm.estimateLiveTime =
+      this.$route.query.detailInfo.estimateLiveTime;
+    this.ruleForm.frontCoverUrl = this.$route.query.detailInfo.frontCoverUrl;
+    this.fileList.push(this.$route.query.detailInfo.frontCoverUrl);
+    this.ruleForm.liveIntroduce = this.$route.query.detailInfo.liveIntroduce;
+    this.ruleForm.frontCover = this.$route.query.detailInfo.frontCover
+      ? this.$route.query.detailInfo.frontCover
+      : "";
+    this.frontCoverListDefault = this.$route.query.detailInfo.frontCover
+      ? this.$route.query.detailInfo.frontCover
+      : "";
   },
   methods: {
     //获取数据
@@ -385,21 +401,30 @@ export default {
           if (res.code !== 0) {
             return this.$message.error(res.msg);
           } else {
-            this.ruleForm.id = res.data.id;
-            this.ruleForm.liveTheme = res.data.liveTheme;
-            this.ruleForm.startDate = res.data.startDate;
-            this.ruleForm.estimateLiveTime = res.data.estimateLiveTime;
-            this.ruleForm.frontCoverUrl = res.data.frontCoverUrl;
-            this.fileList.push(res.data.frontCoverUrl);
-            this.ruleForm.liveIntroduce = res.data.liveIntroduce;
+            // this.ruleForm.id = res.data.id;
+            // this.ruleForm.liveTheme = res.data.liveTheme;
+            // this.ruleForm.startDate = res.data.startDate;
+            // this.ruleForm.estimateLiveTime = res.data.estimateLiveTime;
+            // this.ruleForm.frontCoverUrl = res.data.frontCoverUrl;
+            // this.fileList.push(res.data.frontCoverUrl);
+            // this.ruleForm.liveIntroduce = res.data.liveIntroduce;
+            // this.ruleForm.frontCover = res.data.frontCover
+            //   ? res.data.frontCover
+            //   : "";
+            // this.frontCoverListDefault = res.data.frontCover
+            //   ? res.data.frontCover
+            //   : "";
             this.ruleForm.assistant = res.data.assistant;
             this.ruleForm.products = res.data.products;
-            this.ruleForm.recommendedAnchors = res.data.recommendedAnchors;
-            this.ruleForm.frontCover = res.data.frontCover
-              ? res.data.frontCover
+            let productsData = this.ruleForm.products.split(",");
+            this.ruleForm.products = productsData.length
+              ? `已选择${productsData.length}个商品`
               : "";
-            this.frontCoverListDefault = res.data.frontCover
-              ? res.data.frontCover
+
+            this.ruleForm.recommendedAnchors = res.data.recommendedAnchors;
+            let anchorData = this.ruleForm.recommendedAnchors.split(",");
+            this.ruleForm.recommendedAnchors = anchorData.length
+              ? `已选择${anchorData.length}个主播`
               : "";
 
             this.info = res.data;
@@ -457,6 +482,7 @@ export default {
         path: "/preview-recommendAnchor-RecommendAnchor",
         query: {
           liveId: this.info.id,
+          anchorId: this.info.anchorUserId,
         },
       });
     },
@@ -467,6 +493,7 @@ export default {
         query: {
           liveId: this.info.id,
           anchorId: this.info.anchorUserId,
+          type: 2,
         },
       });
     },
@@ -477,6 +504,7 @@ export default {
         query: {
           liveId: this.info.id,
           anchorId: this.info.anchorUserId,
+          type: 2,
         },
       });
     },

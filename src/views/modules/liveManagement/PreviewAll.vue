@@ -26,6 +26,18 @@
         </el-form-item>
         <el-form-item
           v-if="isOpen || formItemCount >= 2"
+          label="主播"
+          prop="anchorUser"
+        >
+          <el-input
+            style="width: 200px"
+            :clearable="true"
+            v-model="dataForm.anchorUser"
+            placeholder="请输入姓名或手机号码"
+          ></el-input>
+        </el-form-item>
+        <el-form-item
+          v-if="isOpen || formItemCount >= 3"
           label="助手"
           prop="assistant"
         >
@@ -37,7 +49,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 3"
+          v-if="isOpen || formItemCount >= 4"
           label="预计开播时间"
           prop="startDate"
         >
@@ -131,7 +143,6 @@
             <el-option label="直播中" value="1"></el-option>
             <el-option label="已禁播" value="2"></el-option>
             <el-option label="未开播" value="3"></el-option>
-            <el-option label="已删除" value="4"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
@@ -147,6 +158,21 @@
           >
             <el-option label="显示" value="1"></el-option>
             <el-option label="隐藏" value="0"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          v-if="isOpen || formItemCount >= 11"
+          label="删除状态"
+          prop="delFlg"
+        >
+          <el-select
+            style="width: 200px"
+            :clearable="true"
+            v-model="dataForm.delFlg"
+            placeholder="显示状态"
+          >
+            <el-option label="已删除" value="1"></el-option>
+            <el-option label="未删除" value="0"></el-option>
           </el-select>
         </el-form-item>
         <div class="headerTool-search-btns">
@@ -273,6 +299,14 @@
           width="120"
           label="手机号码"
           prop="anchorTel"
+          align="center"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
+          width="180"
+          label="助手"
+          prop="dynamicGroupName"
           align="center"
           show-overflow-tooltip
         >
@@ -405,6 +439,23 @@
           </template>
         </el-table-column>
         <el-table-column
+          width="100%"
+          label="删除状态"
+          prop="delFlg"
+          align="center"
+          show-overflow-tooltip
+        >
+          <template slot-scope="scope" align="center">
+            <span>{{
+              scope.row.delFlg === 1
+                ? "已删除"
+                : scope.row.delFlg === 0
+                ? "未删除"
+                : "--"
+            }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           width="180"
           label="直播间ID"
           prop="livingRoomId"
@@ -473,6 +524,9 @@
               >助手</el-button
             >
             <el-button
+              v-if="
+                scope.row.appointmentState === 1 || scope.row.liveState === 3
+              "
               type="text"
               size="small"
               icon="el-icon-edit"
@@ -481,9 +535,7 @@
             >
             <el-button
               v-if="
-                scope.row.appointmentState !== 0 &&
-                scope.row.delFlg !== 1 &&
-                scope.row.liveState === 3
+                scope.row.delFlg !== 1
               "
               type="text"
               size="small"
@@ -519,6 +571,8 @@
             size="small"
             type="textarea"
             v-model="ruleForm.desc"
+            maxlength="100"
+            show-word-limit
           ></el-input>
         </el-form-item>
       </el-form>
@@ -564,6 +618,7 @@ export default {
         showState: "",
         appointmentState: "",
         assistant: "",
+        delFlg:""
       },
       page: 1, // 当前页码
       limit: 10, // 每页数
@@ -606,10 +661,10 @@ export default {
     addAnchor(row) {
       this.$router.push({
         name: "liveManagement-recommendAnchor-RecommendAnchor",
-        query: { 
+        query: {
           liveId: row.id,
-          anchorId: row.anchorUserId
-        }
+          anchorId: row.anchorUserId,
+        },
       });
     },
     //助手
@@ -709,6 +764,7 @@ export default {
         path: "/preview-editePreview-EditePreviewAll",
         query: {
           id: row.id,
+          detailInfo: row
         },
       });
     },

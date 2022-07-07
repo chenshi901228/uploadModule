@@ -300,7 +300,7 @@ export default {
       uploadUrl: "",
       rules: {
         liveTheme: [
-          { required: true, message: "请输入直播主题", trigger: "blur" },
+          { required: true, message: "请输入直播主题", trigger: "change" },
         ],
         startDate: [
           {
@@ -310,7 +310,7 @@ export default {
           },
         ],
         estimateLiveTime: [
-          { required: true, message: "请输入预计时长", trigger: "blur" },
+          { required: true, message: "请输入预计时长", trigger: "change" },
           { validator: blurText, trigger: "blur" }, //表单验证的时候会调用的方法
         ],
         // frontCoverUrl: [
@@ -320,7 +320,7 @@ export default {
         //   { required: true, message: "请选择投放人群", trigger: "blur" },
         // ],
         liveIntroduce: [
-          { required: true, message: "请填写直播介绍", trigger: "blur" },
+          { required: true, message: "请填写直播介绍", trigger: "change" },
         ],
       },
       pickerOptions: {

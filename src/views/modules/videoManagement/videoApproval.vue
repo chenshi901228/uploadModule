@@ -281,7 +281,7 @@ export default {
     //查看视频详情
     viewVideo(row) {
       this.$router.push({
-        name: "videoManagement-videoDetail",
+        name: "videoManagement-videoDetailAll",
         query: { videoDetail: row },
       });
     },

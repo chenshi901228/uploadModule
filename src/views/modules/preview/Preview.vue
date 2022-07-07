@@ -26,21 +26,9 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          label="主播"
-          prop="anchorUser"
-          v-if="isOpen || formItemCount >= 2"
-        >
-          <el-input
-            style="width: 200px"
-            :clearable="true"
-            v-model="dataForm.anchorUser"
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-        <el-form-item
           label="助手"
           prop="assistant"
-          v-if="isOpen || formItemCount >= 3"
+          v-if="isOpen || formItemCount >= 2"
         >
           <el-input
             style="width: 200px"
@@ -52,7 +40,7 @@
         <el-form-item
           label="预计开播时间"
           prop="startDate"
-          v-if="isOpen || formItemCount >= 4"
+          v-if="isOpen || formItemCount >= 3"
         >
           <el-date-picker
             :clearable="true"
@@ -68,7 +56,7 @@
         <el-form-item
           label="实际开播时间"
           prop="factStartDate"
-          v-if="isOpen || formItemCount >= 5"
+          v-if="isOpen || formItemCount >= 4"
         >
           <el-date-picker
             :clearable="true"
@@ -84,7 +72,7 @@
         <el-form-item
           label="投放人群"
           prop="dynamicGroupName"
-          v-if="isOpen || formItemCount >= 6"
+          v-if="isOpen || formItemCount >= 5"
         >
           <el-select
             v-model="dataForm.dynamicGroupName"
@@ -105,7 +93,7 @@
         <el-form-item
           label="直播间ID"
           prop="livingRoomId"
-          v-if="isOpen || formItemCount >= 7"
+          v-if="isOpen || formItemCount >= 6"
         >
           <el-input
             style="width: 200px"
@@ -117,7 +105,7 @@
         <el-form-item
           label="预约状态"
           prop="appointmentState"
-          v-if="isOpen || formItemCount >= 8"
+          v-if="isOpen || formItemCount >= 7"
         >
           <el-select
             style="width: 200px"
@@ -132,7 +120,7 @@
         <el-form-item
           label="直播状态"
           prop="liveState"
-          v-if="isOpen || formItemCount >= 9"
+          v-if="isOpen || formItemCount >= 8"
         >
           <el-select
             style="width: 200px"
@@ -144,13 +132,12 @@
             <el-option label="直播中" value="1"></el-option>
             <el-option label="已禁播" value="2"></el-option>
             <el-option label="未开播" value="3"></el-option>
-            <el-option label="已删除" value="4"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
           label="显示状态"
           prop="showState"
-          v-if="isOpen || formItemCount >= 10"
+          v-if="isOpen || formItemCount >= 9"
         >
           <el-select
             style="width: 200px"
@@ -160,21 +147,6 @@
           >
             <el-option label="显示" value="1"></el-option>
             <el-option label="隐藏" value="0"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          label="删除状态"
-          prop="delFlg"
-          v-if="isOpen || formItemCount >= 11"
-        >
-          <el-select
-            style="width: 200px"
-            :clearable="true"
-            v-model="dataForm.delFlg"
-            placeholder="删除状态"
-          >
-            <el-option label="已删除" :value="1"></el-option>
-            <el-option label="未删除" :value="0"></el-option>
           </el-select>
         </el-form-item>
 
@@ -299,6 +271,14 @@
         >
         </el-table-column>
         <el-table-column
+          width="180"
+          label="助手"
+          prop="dynamicGroupName"
+          align="center"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
           width="100%"
           label="主播"
           prop="anchorUser"
@@ -388,7 +368,7 @@
         <el-table-column
           width="100%"
           label="预约状态"
-          prop="delFlg"
+          prop="appointmentState"
           align="center"
         >
           <template slot-scope="scope">
@@ -493,7 +473,10 @@
               >推荐主播</el-button
             >
             <el-button
-              v-if="scope.row.liveState === 3&&$hasPermission('anchor:list:assistant:preview')"
+              v-if="
+                scope.row.liveState === 3 &&
+                $hasPermission('anchor:list:assistant:preview')
+              "
               type="text"
               size="small"
               icon="el-icon-user-solid"
@@ -514,9 +497,7 @@
             >
             <el-button
               v-if="
-                scope.row.appointmentState !== 0 &&
-                scope.row.delFlg !== 1 &&
-                scope.row.liveState === 3
+                scope.row.appointmentState === 1 || scope.row.liveState === 3
               "
               type="text"
               icon="el-icon-edit"
@@ -525,11 +506,7 @@
               >编辑</el-button
             >
             <el-button
-              v-if="
-                scope.row.appointmentState !== 0 &&
-                scope.row.delFlg !== 1 &&
-                scope.row.liveState === 3
-              "
+              v-if="scope.row.delFlg !== 1"
               type="text"
               icon="el-icon-delete"
               size="small"
@@ -552,17 +529,7 @@
       </el-pagination>
     </div>
     <el-dialog title="删除" :visible.sync="dialogFormVisible">
-      <el-form
-        :model="ruleForm"
-        :rules="rules"
-        ref="ruleForm"
-        label-width="100px"
-        class="demo-ruleForm"
-      >
-        <el-form-item label="备注" prop="desc">
-          <el-input type="textarea" v-model="ruleForm.desc"></el-input>
-        </el-form-item>
-      </el-form>
+      <span>确认删除该场直播预告?</span>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogFormVisible = false"
           >取 消</el-button
@@ -593,7 +560,6 @@ export default {
       dataListLoading: false, // 数据列表，loading状态
       dataForm: {
         liveTheme: "",
-        anchorUser: "",
         startDate: "",
         // factEndDate: "",
         factStartDate: "",
@@ -602,7 +568,6 @@ export default {
         liveState: "",
         showState: "",
         appointmentState: "",
-        delFlg: "",
         assistant: "",
       },
       page: 1, // 当前页码
@@ -612,12 +577,6 @@ export default {
       dataListSelections: [], // 数据列表，多选项
       options: [],
       dialogFormVisible: false,
-      ruleForm: {
-        desc: "",
-      },
-      rules: {
-        desc: [{ required: true, message: "请填写备注内容", trigger: "blur" }],
-      },
       ids: [],
       dialogVisible: false,
       showState: 0,
@@ -637,6 +596,8 @@ export default {
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,
+          liveState: row.liveState,
+          appointmentState: row.appointmentState,
           type: 2,
         },
       });
@@ -647,6 +608,7 @@ export default {
         path: "/preview-recommendAnchor-RecommendAnchor",
         query: {
           liveId: row.id,
+          anchorId: row.anchorUserId,
         },
       });
     },
@@ -683,8 +645,6 @@ export default {
         dataObj.liveState = Number(this.dataForm.liveState);
       } else if (this.dataForm.showState) {
         dataObj.showState = Number(this.dataForm.showState);
-      } else if (this.dataForm.delFlg) {
-        dataObj.delFlg = Number(this.dataForm.delFlg);
       } else if (this.dataForm.transcribeFlg) {
         dataObj.transcribeFlg = Number(this.dataForm.transcribeFlg);
       } else if (this.dataForm.appointmentState) {
@@ -696,7 +656,7 @@ export default {
             page: this.page,
             limit: this.limit,
             ...dataObj,
-            anchorUserId: this.$store.state.user.id
+            anchorUserId: this.$store.state.user.id,
           },
         })
         .then(({ data: res }) => {
@@ -782,6 +742,7 @@ export default {
         path: "/preview-editePreview-EditePreview",
         query: {
           id: row.id,
+          detailInfo: row,
         },
       });
     },
@@ -876,8 +837,6 @@ export default {
         dataObj.liveState = Number(this.dataForm.liveState);
       } else if (this.dataForm.showState) {
         dataObj.showState = Number(this.dataForm.showState);
-      } else if (this.dataForm.delFlg) {
-        dataObj.delFlg = Number(this.dataForm.delFlg);
       } else if (this.dataForm.transcribeFlg) {
         dataObj.transcribeFlg = Number(this.dataForm.transcribeFlg);
       } else if (this.dataForm.appointmentState) {
@@ -919,33 +878,24 @@ export default {
         });
     },
     //删除
-    confirm(formName) {
-      this.$refs[formName].validate((valid) => {
-        if (valid) {
-          this.$http
-            .delete("/sys/livePreview/delete", {
-              data: { ids: this.ids, remark: this.ruleForm.desc },
-            })
-            .then(({ data: res }) => {
-              if (res.code !== 0) {
-                this.ids = [];
-                this.ruleForm.desc = "";
-                return this.$message.error(res.msg);
-              }
-              this.ids = [];
-              this.ruleForm.desc = "";
-              this.query();
-              this.$message.success("删除成功!");
-              this.dialogFormVisible = false;
-            })
-            .catch((err) => {
-              throw err;
-            });
-        } else {
-          console.log("error submit!!");
-          return false;
-        }
-      });
+    confirm() {
+      this.$http
+        .delete("/sys/livePreview/factDelete", {
+          data: { ids: this.ids },
+        })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            this.ids = [];
+            return this.$message.error(res.msg);
+          }
+          this.ids = [];
+          this.query();
+          this.$message.success("删除成功!");
+          this.dialogFormVisible = false;
+        })
+        .catch((err) => {
+          throw err;
+        });
     },
   },
 };

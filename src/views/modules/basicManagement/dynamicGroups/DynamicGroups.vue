@@ -242,7 +242,11 @@
       </div>
     </div>
 
-    <el-dialog title="添加动态组" :visible.sync="dialogFormVisible" width="600">
+    <el-dialog
+      title="添加动态组"
+      :visible.sync="dialogFormVisible"
+      width="600"
+    >
       <el-form :model="groupForm">
         <el-form-item label="动态组名称" :label-width="formLabelWidth">
           <el-input
@@ -292,8 +296,19 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="导入" :visible.sync="dialogInputVisible" width="600">
-      <div style="margin-bottom: 20px">
+    <el-dialog
+      title="导入"
+      :visible.sync="dialogInputVisible"
+      width="600"
+    >
+      <div
+        style="
+          margin-bottom: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        "
+      >
         导入模板：模板.XLS
         <span @click="dowloadXlx" style="cursor: pointer; color: #66b1ff"
           >下载</span
@@ -317,11 +332,37 @@
       >
         <el-button size="small" type="primary">+上传文件</el-button>
       </el-upload>
-      <div v-else-if="percent === 1">文件{{ uploadXlx }}正在上传</div>
-      <div v-else-if="percent === 2">
+      <div
+        style="
+          margin-bottom: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        "
+        v-else-if="percent === 1"
+      >
+        文件{{ uploadXlx }}正在上传
+      </div>
+      <div
+        style="
+          margin-bottom: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        "
+        v-else-if="percent === 2"
+      >
         文件{{ uploadXlx }}已经上传完毕，正在处理数据
       </div>
-      <div v-else-if="percent === 3">
+      <div
+        style="
+          margin-bottom: 20px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        "
+        v-else-if="percent === 3"
+      >
         <p>文件{{ uploadXlx }}已上传完毕，导入数据完成</p>
         <p style="text-align: center">{{ uploadSuccessMsg }}</p>
         <p
@@ -339,7 +380,11 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="提示" :visible.sync="dialogDeleteVisible" width="30%">
+    <el-dialog
+      title="提示"
+      :visible.sync="dialogDeleteVisible"
+      width="30%"
+    >
       <span>确认删除该动态组吗？</span>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogDeleteVisible = false"
@@ -401,7 +446,7 @@
             type="primary"
             icon="el-icon-search"
             size="mini"
-            @click="queryUserList"
+            @click="query"
             >查询</el-button
           >
         </el-form-item>
@@ -484,7 +529,12 @@
       </div>
     </el-dialog>
 
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
+    <el-dialog
+      class="delete-dislog"
+      title="提示"
+      :visible.sync="dialogVisible"
+      width="30%"
+    >
       <span>确认要移除吗？</span>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
@@ -515,7 +565,7 @@ export default {
         name: "",
       },
       groupGroups: [],
-      groupGroupsFlag:true,
+      groupGroupsFlag: true,
       groupMensPage: 1,
       groupMensLimit: 10,
       groupMensTotal: 0,
@@ -580,7 +630,7 @@ export default {
     groupGroups(n, o) {
       if (n.length >= this.groupMensTotal) {
         this.loadMoreText = "已加载全部";
-        this.groupGroupsFlag = false
+        this.groupGroupsFlag = false;
       }
     },
   },
@@ -868,10 +918,14 @@ export default {
       // this.queryUserList();
       this.dialogUserFormVisible = true;
     },
+    //查询新增的用户
+    query() {
+      this.userListPage = 1;
+      this.queryUserList();
+    },
     //获取未加入用户组
     queryUserList() {
       this.dataUserListLoading = true;
-
       this.$http
         .get("/sys/dynamicGroupUser/pageWithGroupIdNotJoin", {
           params: {
@@ -907,12 +961,14 @@ export default {
         })
         .then(({ data: res }) => {
           if (res.code !== 0) {
-            this.dialogUserFormVisible = false;
+            // this.dialogUserFormVisible = false;
             return this.$message.error(res.msg);
           }
           this.$message.success("添加成功!");
-          this.dialogUserFormVisible = false;
+          // this.dialogUserFormVisible = false;
           this.dataListSelectionUsers = [];
+          this.userListPage = 1;
+          this.queryUserList();
           this.queryPageWithGroupId(this.chooseGroupId);
         })
         .catch((err) => {
@@ -941,6 +997,7 @@ export default {
     },
     //重置
     reset() {
+      this.userListPage = 1;
       this.userForm = {
         name: "",
         tel: "",
@@ -968,12 +1025,14 @@ export default {
             })
             .then(({ data: res }) => {
               if (res.code !== 0) {
-                this.dialogUserFormVisible = false;
+                // this.dialogUserFormVisible = false;
                 return this.$message.error(res.msg);
               }
               this.$message.success("添加成功!");
-              this.dialogUserFormVisible = false;
+              // this.dialogUserFormVisible = false;
               this.dataListSelectionUsers = [];
+              this.userListPage = 1;
+              this.queryUserList();
               this.queryPageWithGroupId(this.chooseGroupId);
             })
             .catch((err) => {
@@ -995,12 +1054,14 @@ export default {
             .post("/sys/dynamicGroupUser/addBatch", list)
             .then(({ data: res }) => {
               if (res.code !== 0) {
-                this.dialogUserFormVisible = false;
+                // this.dialogUserFormVisible = false;
                 return this.$message.error(res.msg);
               }
               this.$message.success("添加成功!");
-              this.dialogUserFormVisible = false;
+              // this.dialogUserFormVisible = false;
               this.dataListSelectionUsers = [];
+              this.userListPage = 1;
+              this.queryUserList();
               this.queryPageWithGroupId(this.chooseGroupId);
             })
             .catch((err) => {
@@ -1141,36 +1202,20 @@ export default {
     background: #fff;
   }
 }
-/deep/.el-dialog__body {
+
+/deep/.upload-demo {
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-/deep/.el-dialog {
+/deep/.el-dialog{
   display: flex;
-  display: -ms-flex; /* 兼容IE */
   flex-direction: column;
-  -ms-flex-direction: column; /* 兼容IE */
   margin: 0 !important;
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  max-height: calc(100% - 30px);
-  max-width: calc(100% - 30px);
-}
-/deep/.el-dialog .el-dialog__body {
-  padding: 20px; /*这个不重要*/
-  max-height: 75vh;
-  flex: 1;
-  -ms-flex: 1 1 auto; /* 兼容IE */
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-/deep/.el-dialog__wrapper {
-  overflow: hidden; /*隐藏ie和edge中遮罩的滚动条*/
+  transform: translate(-50%,-50%);
 }
 </style>

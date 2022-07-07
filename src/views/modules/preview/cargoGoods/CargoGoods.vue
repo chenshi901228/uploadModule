@@ -248,7 +248,7 @@
         >
           <template slot-scope="scope">
             <el-button
-              v-if="scope.row.isAdd === 1"
+              v-if="scope.row.isAdd === 1 && liveState === 3 && appointmentState !== 0"
               icon="el-icon-delete"
               type="text"
               size="small"
@@ -256,7 +256,7 @@
               >删除</el-button
             >
             <el-button
-              v-if="scope.row.isAdd === 1"
+              v-if="scope.row.isAdd === 1 && liveState === 3 && appointmentState !== 0"
               icon="el-icon-upload2"
               type="text"
               size="small"
@@ -264,7 +264,7 @@
               >置顶</el-button
             >
             <el-button
-              v-if="scope.row.isAdd === 0"
+              v-if="scope.row.isAdd === 0 && liveState === 3 && appointmentState !== 0"
               icon="el-icon-plus"
               type="text"
               size="small"
@@ -355,6 +355,8 @@ export default {
       selectAddList: [],
       authEdit: 1, //从直播列表进来是否有编辑权限：1-有，0-没有
       productTypeOptions: [], //商品类型下拉选项
+      liveState:0,
+      appointmentState:0
     };
   },
   activated() {
@@ -365,8 +367,10 @@ export default {
       this.authEdit = 1
     }
     this.dataForm.liveId = this.$route.query.liveId;
-    this.dataForm.type = this.$route.query.type
+    this.dataForm.type = parseInt(this.$route.query.type)
     this.dataForm.anchorId = this.$route.query.anchorId
+    this.liveState = parseInt(this.$route.query.liveState)
+    this.appointmentState = parseInt(this.$route.query.appointmentState)
     this.query();
   },
   methods: {
