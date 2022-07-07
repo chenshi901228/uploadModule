@@ -5,7 +5,7 @@
         class="headerTool"
         :inline="true"
         :model="dataForm"
-        ref="dataForm_fans"
+        ref="dataForm"
         size="small"
         label-width="100px"
         @keyup.enter.native="getDataList"
