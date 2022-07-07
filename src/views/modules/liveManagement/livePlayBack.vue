@@ -188,6 +188,10 @@
             <span v-else-if="item.prop == 'videoSize'">
               {{ row[item.prop]?sizeTostr(row[item.prop]):'-' }}
             </span>
+            <!-- 视频时长 -->
+            <span v-else-if="item.prop == 'duration'">
+              {{ row[item.prop] ? secondToDate(row[item.prop]) : "-" }}
+            </span>
             <!-- 投放人群 -->
             <span v-else-if="item.prop == 'dynamicGroupName'">
               {{ row.dynamicGroupName || "-" }}
@@ -283,7 +287,7 @@
 
 <script>
 import mixinTableModule from "@/mixins/table-module";
-import { sizeTostr, downloadFileUrl } from "@/utils/index";
+import { sizeTostr, downloadFileUrl, secondToDate } from "@/utils/index";
 import RemarkModal from "@/components/common/remarkDialog";
 import AddOrUpdate from "./livePlayBack-add-or-update.vue";
 export default {
@@ -338,6 +342,10 @@ export default {
     this.query();
   },
   methods: {
+    // 视频时长转换
+    secondToDate(val) {
+      return secondToDate(val);
+    },
     // 视频大小转换
     sizeTostr(size) {
       return sizeTostr(size);
