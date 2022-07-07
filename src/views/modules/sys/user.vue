@@ -11,20 +11,20 @@
         label-position="right"
         @keyup.enter.native="getUserList(diaTbas)"
       >
-        <el-form-item label="用户名称">
+        <el-form-item label="用户名称" prop="nickName">
           <el-input
             v-model="dataForm.nickName"
             placeholder="请输入"
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item label="手机号码">
+        <el-form-item label="手机号码" prop="phone">
           <el-input
             v-model="dataForm.phone"
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item label="账号状态">
+        <el-form-item label="账号状态" prop="status">
           <el-select v-model="dataForm.status" clearable placeholder="请选择">
             <el-option label="正常" value="1">正常</el-option>
             <el-option label="停用" value="0">停用</el-option>
@@ -48,7 +48,7 @@
             <el-button 
               icon="el-icon-refresh" 
               size="mini" 
-              @click="resetDataForm()">{{ $t("reset") }}</el-button>
+              @click="resetDataForm(diaTbas)">{{ $t("reset") }}</el-button>
             <!-- <el-button size="mini" plain @click="open">
               <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
               {{ isOpen ? "收起" : "展开" }}
@@ -135,6 +135,7 @@
       <el-table
         :data="diaDataList"
         ref="table"
+        v-loading="dataListLoading"
         style="width: 100%"
       >
         <el-table-column
@@ -250,14 +251,6 @@ export default {
         deptId: '0',
         deptName: '',
       },
-      dataRule:{
-        username: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-        ],
-        deptName: [
-          { required: true, message: this.$t('validate.required'), trigger: 'change' }
-        ],
-      },
       dataForm: {
         nickName: "",
         phone: "",
@@ -326,6 +319,7 @@ export default {
       ],
       total:0,
       diaDataList: [],
+      dataListLoading: false,
       page: 1, // 当前页码
       limit: 10, // 每页数
       total: 0,
@@ -339,29 +333,27 @@ export default {
       vm.changeTbas(1);
     });
   },
-  computed:{
-    computed: {
-      dataRule () {
-        var validateMobile = (rule, value, callback) => {
-          if (!isMobile(value)) {
-            return callback(new Error(this.$t('validate.format', { 'attr': this.$t('user.mobile') })))
-          }
-          callback()
+  computed: {
+    dataRule () {
+      var validateMobile = (rule, value, callback) => {
+        if (!isMobile(value)) {
+          return callback(new Error(this.$t('validate.format', { 'attr': this.$t('user.mobile') })))
         }
-        return {
-          username: [
-            { required: true, message: this.$t('validate.required'), trigger: 'blur' }
-          ],
-          deptName: [
-            { required: true, message: this.$t('validate.required'), trigger: 'change' }
-          ],
-          mobile: [
-            { required: true, message: this.$t('validate.required'), trigger: 'blur' },
-            { validator: validateMobile, trigger: 'blur' }
-          ]
-        }
+        callback()
       }
-    },
+      return {
+        username: [
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+        ],
+        deptName: [
+          { required: true, message: this.$t('validate.required'), trigger: 'change' }
+        ],
+        mobile: [
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
+          { validator: validateMobile, trigger: 'blur' }
+        ]
+      }
+    }
   },
   created() {},
   methods: {
@@ -393,6 +385,7 @@ export default {
         delete this.dataForm.type
         url = '/sys/manage/weixinUser/managePage'
       }
+      this.dataListLoading = true
       this.dataForm.limit = this.limit
       this.dataForm.page = this.page
       this.$http
@@ -400,6 +393,7 @@ export default {
           params: this.dataForm,
         })
         .then(({ data: res }) => {
+          this.dataListLoading = false
           if (res.code !== 0) {
             this.diaDataList = [];
             this.total = 0;
@@ -408,7 +402,9 @@ export default {
           this.diaDataList = res.data.list;
           this.total = res.data.total;
         })
-        .catch(() => {});
+        .catch(() => {
+          this.dataListLoading = false
+        });
     },
     // 新增 / 修改
     addOrUpdateHandle (id) {
@@ -429,6 +425,11 @@ export default {
     pageCurrentChangeHandle(val) {
       this.page = val;
       this.getUserList(this.diaTbas);
+    },
+     // 重置搜索条件
+    resetDataForm(n) {
+      this.$refs.dataForm.resetFields()
+      this.getUserList(n)
     },
     forbiddenHandle(type, data) {
       let url = type
