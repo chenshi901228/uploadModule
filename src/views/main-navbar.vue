@@ -191,9 +191,7 @@ export default {
           return this.$message.error(res.msg)
         }
         this.accountSelectVisible = false
-        this.$store.state.contentTabs = this.$store.state.contentTabs.filter(item => item.name === 'home')
-        if(this.$store.state.contentTabsActiveName == 'home') return
-        this.$router.replace({ name: 'home' })
+        location.reload()
       })
     }
   }
