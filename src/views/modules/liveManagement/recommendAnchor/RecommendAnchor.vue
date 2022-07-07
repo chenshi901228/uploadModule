@@ -278,6 +278,8 @@ export default {
       dataForm: {
         username: "",
         phone: "",
+      },
+      params: {
         state: "",
         liveId: "",
         anchorId: "",
@@ -294,12 +296,12 @@ export default {
   activated() {
     if(this.$route.query.authEdit != undefined) { //有表示来自直播列表
       this.authEdit = this.$route.query.authEdit
-      if(this.authEdit == 0) this.dataForm.state = 1  //直播列表已下播或已禁播增加查询参数state
+      if(this.authEdit == 0) this.params.state = 1  //直播列表已下播或已禁播增加查询参数state
     }else { //来自预告
       this.authEdit = 1
     }
-    this.dataForm.liveId = this.$route.query.liveId;
-    this.dataForm.anchorId = this.$route.query.anchorId;
+    this.params.liveId = this.$route.query.liveId;
+    this.params.anchorId = this.$route.query.anchorId;
     this.query();
   },
   methods: {
@@ -334,7 +336,7 @@ export default {
         this.dialogAddVisible = true;
         this.dataListSelections.forEach((v) => {
           this.selectAddList.push({
-            liveId: this.dataForm.liveId,
+            liveId: this.params.liveId,
             anchorId: v.anchorId,
           });
         });
@@ -354,7 +356,7 @@ export default {
     addAnchor(row) {
       let list = [];
       list.push({
-        liveId: this.dataForm.liveId,
+        liveId: this.params.liveId,
         anchorId: row.anchorId,
       });
       this.$http
@@ -417,9 +419,6 @@ export default {
       this.dataForm = {
         username: "",
         phone: "",
-        state: "",
-        liveId: this.$route.query.liveId,
-        anchorId: this.$route.query.anchorId,
       };
       this.query();
     },

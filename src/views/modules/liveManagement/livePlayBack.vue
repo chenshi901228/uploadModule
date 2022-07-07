@@ -317,7 +317,7 @@ export default {
         { prop: "anchorUser", label: "主播" },
         { prop: "anchorTel", label: "手机号码" },
         { prop: "showMode", label: "视频显示" },
-        { prop: "longTime", label: "视频时长" },
+        { prop: "duration", label: "视频时长" },
         { prop: "videoSize", label: "视频大小" },
         { prop: "dynamicGroupName", label: "投放人群" },
         { prop: "productState", label: "生成状态" },
