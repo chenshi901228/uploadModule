@@ -18,6 +18,7 @@ export default {
       },
       // 默认属性
       dataForm: {},               // 查询条件
+      params: {}, //get请求额外参数
       dataList: [],               // 数据列表
       order: '',                  // 排序，asc／desc
       orderField: '',             // 排序，字段
@@ -113,7 +114,8 @@ export default {
             orderField: this.orderField,
             page: this.mixinViewModuleOptions.getDataListIsPage ? this.page : null,
             limit: this.mixinViewModuleOptions.getDataListIsPage ? this.limit : null,
-            ...this.$httpParams(this.dataForm)
+            ...this.$httpParams(this.dataForm),
+            ...this.$httpParams(this.params)
           }
         }
       ).then(({ data: res }) => {

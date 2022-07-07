@@ -207,7 +207,8 @@ export default {
         createdIsNeed: false,
         activatedIsNeed: false,
       },
-      dataForm: {
+      dataForm: {},
+      params: {
         type: 2,
         anchorId: "",
         liveId: "",
@@ -226,9 +227,9 @@ export default {
     }else { //来自预告
       this.authEdit = 1
     }
-    this.dataForm.liveId = this.$route.query.liveId;
-    this.dataForm.type = this.$route.query.type
-    this.dataForm.anchorId = this.$route.query.anchorId;
+    this.params.liveId = this.$route.query.liveId;
+    this.params.type = this.$route.query.type
+    this.params.anchorId = this.$route.query.anchorId;
     this.query();
   },
   methods: {
@@ -243,8 +244,8 @@ export default {
         .delete(`/sys/anchorAssistant/live/deleteWithLive`, {
           data: {
             ids: this.ids,
-            liveId: this.dataForm.liveId,
-            type: this.dataForm.type,
+            liveId: this.params.liveId,
+            type: this.params.type,
           },
         })
         .then(({ data: res }) => {
@@ -268,10 +269,10 @@ export default {
     add(row) {
       this.$http
         .post("/sys/anchorAssistant/live", {
-          liveId: this.dataForm.liveId,
-          anchorId: this.dataForm.anchorId,
+          liveId: this.params.liveId,
+          anchorId: this.params.anchorId,
           weixinUserId: row.weixinUserId,
-          type: this.dataForm.type,
+          type: this.params.type,
         })
         .then(({ data: res }) => {
           if (res.code !== 0) {
@@ -291,9 +292,6 @@ export default {
         username: "",
         phone: "",
         isAdd: "",
-        liveId: this.$route.query.liveId,
-        type: this.dataForm.type,
-        anchorId: this.$route.query.anchorId,
       };
 
       this.query();

@@ -342,10 +342,12 @@ export default {
         createdIsNeed: false,
         activatedIsNeed: false,
       },
-      dataForm: {
+      dataForm: {},
+      params: {
         liveId: "",
         type: 2,
         anchorId: "",
+        isAdd: "",
       },
       dialogVisible: false,
       dialogDeleteVisible: false,
@@ -360,13 +362,13 @@ export default {
   activated() {
     if(this.$route.query.authEdit != undefined) { //有标识来自直播列表-设置操作按钮显示
       this.authEdit = this.$route.query.authEdit
-      if(this.authEdit == 0) this.dataForm.isAdd = 1  //直播列表已下播或已禁播增加查询参数isAdd
+      if(this.authEdit == 0) this.params.isAdd = 1  //直播列表已下播或已禁播增加查询参数isAdd
     }else { //来自预告
       this.authEdit = 1
     }
-    this.dataForm.liveId = this.$route.query.liveId;
-    this.dataForm.type = this.$route.query.type
-    this.dataForm.anchorId = this.$route.query.anchorId
+    this.params.liveId = this.$route.query.liveId;
+    this.params.type = this.$route.query.type
+    this.params.anchorId = this.$route.query.anchorId
     this.query();
   },
   methods: {
@@ -394,10 +396,10 @@ export default {
     confirmAddSelect() {
       this.$http
         .post("/sys/anchorProduct/live", {
-          liveId: this.dataForm.liveId,
-          anchorId: this.dataForm.anchorId,
+          liveId: this.params.liveId,
+          anchorId: this.params.anchorId,
           productIdList: this.selectAddList,
-          type: this.dataForm.type,
+          type: this.params.type,
         })
         .then(({ data: res }) => {
           if (res.code !== 0) {
@@ -445,10 +447,10 @@ export default {
       list.push(row.id);
       this.$http
         .post("/sys/anchorProduct/live", {
-          liveId: this.dataForm.liveId,
-          anchorId: this.dataForm.anchorId,
+          liveId: this.params.liveId,
+          anchorId: this.params.anchorId,
           productIdList: list,
-          type: this.dataForm.type,
+          type: this.params.type,
         })
         .then(({ data: res }) => {
           if (res.code !== 0) {
@@ -468,8 +470,8 @@ export default {
         .delete(`/sys/anchorProduct/live/deleteWithLive`, {
           data: {
             ids: this.ids,
-            liveId: this.dataForm.liveId,
-            type: this.dataForm.type,
+            liveId: this.params.liveId,
+            type: this.params.type,
           },
         })
         .then(({ data: res }) => {
@@ -514,10 +516,6 @@ export default {
         productType: "",
         isFree: "",
         linkedProductId: "",
-        isAdd: "",
-        liveId: this.dataForm.liveId,
-        type: this.dataForm.type,
-        anchorId: this.dataForm.anchorId,
       };
 
       this.query();
