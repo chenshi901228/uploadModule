@@ -517,7 +517,9 @@
             >
             <el-button
               v-if="
-                scope.row.appointmentState === 1 || scope.row.liveState === 3
+                scope.row.appointmentState === 1 &&
+                scope.row.liveState === 3 &&
+                scope.row.showState === 0
               "
               type="text"
               size="small"
@@ -526,7 +528,9 @@
               >编辑</el-button
             >
             <el-button
-              v-if="scope.row.delFlg !== 1"
+              v-if="scope.row.appointmentState === 1 &&
+                scope.row.liveState === 3 &&
+                scope.row.showState === 0"
               type="text"
               size="small"
               icon="el-icon-delete"
