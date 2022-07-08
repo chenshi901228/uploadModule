@@ -102,7 +102,7 @@
           <img :src="item.avatarUrl||require('@/assets/img/default_avatar.png')" alt="">
           <div>
             <p>{{item.userName}}</p>
-            <span>{{item.type==1?'主播':'助手'}}</span>
+            <span>{{item.type==0?'平台':item.type==1?'主播':'助手'}}</span>
           </div>
           <i class="el-icon-check" v-show="active==index"></i>
         </div>
