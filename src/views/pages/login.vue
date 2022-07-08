@@ -179,7 +179,6 @@ export default {
   methods: {
     selectUser(data,index){
       this.selectUserAnchor = data
-      console.log(this.selectUserAnchor,'111111111')
       this.active = index
     },
     goToHome(){ //选择角色进入

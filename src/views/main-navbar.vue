@@ -74,7 +74,7 @@
           <img :src="item.avatarUrl||require('@/assets/img/default_avatar.png')" alt="">
           <div>
             <p>{{item.userName}}</p>
-            <span>{{item.type==1?'主播':'助手'}}</span>
+            <span>{{item.type==0?'平台':item.type==1?'主播':'助手'}}</span>
           </div>
           <i class="el-icon-check" v-show="active==index"></i>
         </div>
@@ -102,7 +102,7 @@ export default {
       accountSelectVisible: false, //账号切换弹框 
       loginUserList: [],//登录账号列表
       active: 0,//登录账号选中
-      selectUserAnchorId: ''//选择登录账号ID
+      selectUserAnchor:{}//选择登录账号
     }
   },
   components: {
@@ -174,7 +174,7 @@ export default {
         if(res.data && res.data.length > 0) {
           this.loginUserList = res.data
           this.accountSelectVisible = true
-          this.selectUserAnchorId =this.loginUserList[0].anchorId 
+          this.selectUserAnchor =this.loginUserList[0]
         } else {
           this.$message.info("暂无其他账号")
         }
@@ -182,11 +182,11 @@ export default {
     },
     // 选择账号
     selectUser(data,index){
-      this.selectUserAnchorId = data.anchorId
+      this.selectUserAnchor = data
       this.active = index
     },
     goToHome() {
-      this.$http.post('/sys/user/chooseLoginRole',{anchorId:this.selectUserAnchorId}).then(({data:res})=>{
+      this.$http.post('/sys/user/chooseLoginRole',{anchorId:this.selectUserAnchor.anchorId,type:this.selectUserAnchor.type}).then(({data:res})=>{
         if(res.code!==0){
           return this.$message.error(res.msg)
         }
