@@ -143,7 +143,7 @@
             style="width: 200px"
             :clearable="true"
             v-model="dataForm.showState"
-            placeholder="直播状态"
+            placeholder="显示状态"
           >
             <el-option label="显示" value="1"></el-option>
             <el-option label="隐藏" value="0"></el-option>
@@ -385,9 +385,7 @@
         >
           <template slot-scope="scope">
             <span>{{
-              scope.row.delFlg === 1
-                ? "已删除"
-                : scope.row.liveState === 0
+              scope.row.liveState === 0
                 ? "已下播"
                 : scope.row.liveState === 1
                 ? "直播中"
@@ -404,13 +402,7 @@
           align="center"
         >
           <template slot-scope="scope" align="center">
-            <span>{{
-              scope.row.delFlg === 1
-                ? "隐藏"
-                : scope.row.showState === 0
-                ? "隐藏"
-                : "显示"
-            }}</span>
+            <span>{{ scope.row.showState === 0 ? "隐藏" : "显示" }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -457,7 +449,9 @@
               >创建直播</el-button
             >
             <el-button
-              v-if="scope.row.liveState === 3 && scope.row.appointmentState === 1"
+              v-if="
+                scope.row.liveState === 3 && scope.row.appointmentState === 1
+              "
               type="text"
               size="small"
               icon="el-icon-goods"
@@ -465,7 +459,9 @@
               >带货商品</el-button
             >
             <el-button
-              v-if="scope.row.liveState === 3 && scope.row.appointmentState === 1"
+              v-if="
+                scope.row.liveState === 3 && scope.row.appointmentState === 1
+              "
               type="text"
               size="small"
               icon="el-icon-user"
@@ -498,7 +494,9 @@
             >
             <el-button
               v-if="
-                (scope.row.appointmentState === 1 || scope.row.liveState === 3) && scope.row.showState !== 1
+                (scope.row.appointmentState === 1 ||
+                  scope.row.liveState === 3) &&
+                scope.row.showState !== 1
               "
               type="text"
               icon="el-icon-edit"
