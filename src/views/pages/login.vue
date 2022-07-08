@@ -256,7 +256,7 @@ export default {
               if(res.data && res.data.length > 0) {
                 this.loginUserList = res.data
                 this.dialogVisible = true
-                this.selectUserAnchorId =this.loginUserList[0].anchorId 
+                this.selectUserAnchor =this.loginUserList[0]
               } else {
                 this.$router.replace({ name: 'home' })
               }
