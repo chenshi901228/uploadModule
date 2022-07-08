@@ -142,7 +142,7 @@ export default {
       loginUserList:[],//登录账号列表
       dialogVisible:false,//登录账号选择弹窗
       active:0,//登录账号选中
-      selectUserAnchorId:''//选择登录账号ID
+      selectUserAnchor:{}//选择登录账号
     }
   },
   computed: {
@@ -178,11 +178,11 @@ export default {
   },
   methods: {
     selectUser(data,index){
-      this.selectUserAnchorId = data.anchorId
+      this.selectUserAnchor = data
       this.active = index
     },
     goToHome(){ //选择角色进入
-      this.$http.post('/sys/user/chooseLoginRole',{anchorId:this.selectUserAnchorId}).then(({data:res})=>{
+      this.$http.post('/sys/user/chooseLoginRole',{anchorId:this.selectUserAnchor.anchorId,type:this.selectUserAnchor.type}).then(({data:res})=>{
         if(res.code!==0){
           return this.$message.error(res.msg)
         }
