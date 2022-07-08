@@ -291,6 +291,9 @@ export default {
                 this.$message.success("添加视频成功");
                 this.submitLoading = false;
                 this.closeCurrentTab();
+                this.$router.push({
+                  path:"/videoManagement-VideoManagement"
+                })
               } else {
                 this.submitLoading = false;
                 this.$message.error(res.msg);

@@ -273,7 +273,7 @@
         <el-table-column
           width="180"
           label="助手"
-          prop="dynamicGroupName"
+          prop="assistant"
           align="center"
           show-overflow-tooltip
         >
@@ -594,6 +594,14 @@ export default {
   methods: {
     //带货商品
     addProduct(row) {
+      let nowTime = new Date().getTime();
+      let time = new Date(row.startDate).getTime();
+      let timeFlg = 0
+      if ((nowTime - time) / 3600 / 1000 >= 2) {
+        timeFlg = 0;
+      } else {
+        timeFlg = 1;
+      }
       this.$router.push({
         path: "/preview-cargoGoods-CargoGoods",
         query: {
@@ -602,6 +610,7 @@ export default {
           liveState: row.liveState,
           appointmentState: row.appointmentState,
           type: 2,
+          timeFlg:timeFlg
         },
       });
     },

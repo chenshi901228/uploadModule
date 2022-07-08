@@ -306,7 +306,7 @@
         <el-table-column
           width="180"
           label="助手"
-          prop="dynamicGroupName"
+          prop="assistant"
           align="center"
           show-overflow-tooltip
         >
@@ -492,7 +492,6 @@
               >{{ scope.row.showState === 0 ? "显示" : "隐藏" }}</el-button
             >
             <el-button
-              v-if="scope.row.liveState === 3"
               type="text"
               size="small"
               icon="el-icon-goods"
@@ -500,7 +499,6 @@
               >带货商品</el-button
             >
             <el-button
-              v-if="scope.row.liveState === 3"
               type="text"
               size="small"
               icon="el-icon-user"
@@ -508,7 +506,6 @@
               >推荐主播</el-button
             >
             <el-button
-              v-if="scope.row.liveState === 3"
               type="text"
               size="small"
               icon="el-icon-user-solid"
@@ -518,8 +515,7 @@
             <el-button
               v-if="
                 scope.row.appointmentState === 1 &&
-                scope.row.liveState === 3 &&
-                scope.row.showState === 0
+                scope.row.liveState === 3
               "
               type="text"
               size="small"
