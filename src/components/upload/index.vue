@@ -5,7 +5,6 @@
             class="upload-demo" 
             list-type="picture-card"
             name="file"
-            accept="image/png,image/jpeg,image/jpg,image/gif" 
             :action="uploadUrl"
             :multiple="multiple" 
             :limit="limit" 
@@ -28,6 +27,7 @@
 
 <script>
     import Cookies from 'js-cookie'
+    import SVGA from "@/utils/svga.min.js"
     export default {
         data(){
             return {
@@ -73,13 +73,20 @@
             },
             // 图片上传之前的回调
             beforeUpload(file){
+                // 增加svga
+                let isSvga = file.name.split(".")
+                isSvga = isSvga[isSvga.length - 1].toLocaleLowerCase()
                 const isLt2M = file.size / 1024 / 1024 < 20;
                 if (!isLt2M) {
                     this.$message.error("上传图片大小不能超过 20MB!");
                 }
-                const isJPG = (file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png' || file.type === 'image/gif');
+                const isJPG = (file.type === 'image/jpeg' 
+                    || file.type === 'image/jpg'
+                    || file.type === 'image/png' 
+                    || file.type === 'image/gif'
+                    || isSvga === "svga");
                 if (!isJPG) {
-                    this.$message.error("上传头像图片格式为 jpg,jpeg,png,gif");
+                    this.$message.error("上传头像图片格式为 jpg,jpeg,png,gif,svga");
                 }
                 return isJPG && isLt2M;
             },

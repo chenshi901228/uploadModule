@@ -128,7 +128,7 @@
                     <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center">
                         <template slot-scope="{ row }">
                             <el-button icon="el-icon-document" type="text" size="small" @click="checkComment(row)">查看回复</el-button>
-                            <el-button icon="el-icon-delete" v-if="!row.delFlg && sys" type="text" size="small" @click="deleteComment(row.id)">删除</el-button>
+                            <el-button icon="el-icon-delete" v-if="!row.delFlg && sys == 1" type="text" size="small" @click="deleteComment(row.id)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
