@@ -344,7 +344,7 @@ export default {
   methods: {
     // 视频时长转换
     secondToDate(val) {
-      return secondToDate(val);
+      return secondToDate(parseInt(val) / 1000);
     },
     // 视频大小转换
     sizeTostr(size) {
