@@ -298,7 +298,7 @@
       <add-or-update
         v-if="addOrUpdateVisible"
         ref="addOrUpdate"
-        @refreshDataList="getDataList"
+        @refreshDataList="query"
       ></add-or-update>
     </div>
   </el-card>

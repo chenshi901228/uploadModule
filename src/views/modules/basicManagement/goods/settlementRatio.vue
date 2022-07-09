@@ -194,7 +194,7 @@
     <!-- 编辑 -->
     <settlementRatio-update
       ref="settlementRatioUpdate"
-      @refreshDataList="getDataList"
+      @refreshDataList="query"
     ></settlementRatio-update>
 
     <el-dialog

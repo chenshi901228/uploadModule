@@ -280,7 +280,7 @@
     <!-- 编辑 -->
     <goods-add-or-update
       ref="goodsAddOrUpdate"
-      @refreshDataList="getDataList"
+      @refreshDataList="query"
     ></goods-add-or-update>
   </div>  
 </template>
