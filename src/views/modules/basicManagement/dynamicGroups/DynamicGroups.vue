@@ -462,7 +462,7 @@
         fit
         @selection-change="userListSelectionChangeHandle"
         style="width: 100%"
-        max-height="500"
+        height="350"
       >
         <el-table-column
           type="selection"

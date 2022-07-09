@@ -558,6 +558,9 @@ export default {
               this.frontCoverList = [];
 
               this.closeCurrentTab();
+              this.$router.push({
+                path:"/preview-Preview"
+              })
             })
             .catch((err) => {
               this.submitLoading = false;

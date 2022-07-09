@@ -143,7 +143,7 @@
             style="width: 200px"
             :clearable="true"
             v-model="dataForm.showState"
-            placeholder="直播状态"
+            placeholder="显示状态"
           >
             <el-option label="显示" value="1"></el-option>
             <el-option label="隐藏" value="0"></el-option>
@@ -273,7 +273,7 @@
         <el-table-column
           width="180"
           label="助手"
-          prop="dynamicGroupName"
+          prop="assistant"
           align="center"
           show-overflow-tooltip
         >
@@ -385,9 +385,7 @@
         >
           <template slot-scope="scope">
             <span>{{
-              scope.row.delFlg === 1
-                ? "已删除"
-                : scope.row.liveState === 0
+              scope.row.liveState === 0
                 ? "已下播"
                 : scope.row.liveState === 1
                 ? "直播中"
@@ -404,13 +402,7 @@
           align="center"
         >
           <template slot-scope="scope" align="center">
-            <span>{{
-              scope.row.delFlg === 1
-                ? "隐藏"
-                : scope.row.showState === 0
-                ? "隐藏"
-                : "显示"
-            }}</span>
+            <span>{{ scope.row.showState === 0 ? "隐藏" : "显示" }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -457,7 +449,9 @@
               >创建直播</el-button
             >
             <el-button
-              v-if="scope.row.liveState === 3 && scope.row.appointmentState === 1"
+              v-if="
+                scope.row.liveState === 3 && scope.row.appointmentState === 1
+              "
               type="text"
               size="small"
               icon="el-icon-goods"
@@ -465,7 +459,9 @@
               >带货商品</el-button
             >
             <el-button
-              v-if="scope.row.liveState === 3 && scope.row.appointmentState === 1"
+              v-if="
+                scope.row.liveState === 3 && scope.row.appointmentState === 1
+              "
               type="text"
               size="small"
               icon="el-icon-user"
@@ -498,7 +494,9 @@
             >
             <el-button
               v-if="
-                (scope.row.appointmentState === 1 || scope.row.liveState === 3) && scope.row.showState !== 1
+                scope.row.appointmentState === 1 &&
+                scope.row.liveState === 3 &&
+                scope.row.showState === 0
               "
               type="text"
               icon="el-icon-edit"
@@ -507,7 +505,11 @@
               >编辑</el-button
             >
             <el-button
-              v-if="scope.row.delFlg !== 1 && scope.row.showState !== 1"
+              v-if="
+                scope.row.appointmentState === 1 &&
+                scope.row.liveState === 3 &&
+                scope.row.showState === 0
+              "
               type="text"
               icon="el-icon-delete"
               size="small"
@@ -592,6 +594,14 @@ export default {
   methods: {
     //带货商品
     addProduct(row) {
+      let nowTime = new Date().getTime();
+      let time = new Date(row.startDate).getTime();
+      let timeFlg = 0
+      if ((nowTime - time) / 3600 / 1000 >= 2) {
+        timeFlg = 0;
+      } else {
+        timeFlg = 1;
+      }
       this.$router.push({
         path: "/preview-cargoGoods-CargoGoods",
         query: {
@@ -600,6 +610,7 @@ export default {
           liveState: row.liveState,
           appointmentState: row.appointmentState,
           type: 2,
+          timeFlg:timeFlg
         },
       });
     },
