@@ -438,7 +438,7 @@ export default {
           if (data.id)
             this.$router.push({
               name: "liveManagement-livePlayBackComment",
-              query: { id: data.id, sys: 0 },
+              query: { id: data.id, sys: 1 },
             });
           break;
       }

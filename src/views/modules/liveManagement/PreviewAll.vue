@@ -514,8 +514,7 @@
             >
             <el-button
               v-if="
-                scope.row.appointmentState === 1 &&
-                scope.row.liveState === 3
+                scope.row.appointmentState === 1 && scope.row.liveState === 3
               "
               type="text"
               size="small"
@@ -524,9 +523,7 @@
               >编辑</el-button
             >
             <el-button
-              v-if="scope.row.appointmentState === 1 &&
-                scope.row.liveState === 3 &&
-                scope.row.showState === 0"
+              v-if="scope.row.liveState === 3"
               type="text"
               size="small"
               icon="el-icon-delete"
@@ -638,26 +635,37 @@ export default {
   methods: {
     //带货商品
     addProduct(row) {
+      let authEdit = 0;
+      if (row.liveState === 3 && row.appointmentState !== 0) {
+        authEdit = 1;
+      } else {
+        authEdit = 0;
+      }
+
       this.$router.push({
         path: "/liveManagement-cargoGoods-CargoGoods",
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,
-          liveState: row.liveState,
-          appointmentState: row.appointmentState,
           type: 2,
+          authEdit: authEdit,
         },
       });
     },
     //推荐主播
     addAnchor(row) {
+      let authEdit = 0;
+      if (row.liveState === 3 && row.appointmentState !== 0) {
+        authEdit = 1;
+      } else {
+        authEdit = 0;
+      }
       this.$router.push({
         name: "liveManagement-recommendAnchor-RecommendAnchor",
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,
-          liveState: row.liveState,
-          appointmentState: row.appointmentState,
+          authEdit: authEdit,
         },
       });
     },

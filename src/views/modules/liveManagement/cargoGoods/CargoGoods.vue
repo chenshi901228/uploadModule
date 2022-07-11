@@ -244,7 +244,7 @@
           header-align="center"
           align="center"
           width="150"
-          v-if="authEdit == 1 && $route.query.liveState === '3' && $route.query.appointmentState !== '0' && $route.query.timeFlg === '1'"
+          v-if="authEdit == 1"
         >
           <template slot-scope="scope">
             <el-button
@@ -363,8 +363,6 @@ export default {
     if(this.$route.query.authEdit != undefined) { //有标识来自直播列表-设置操作按钮显示
       this.authEdit = this.$route.query.authEdit
       if(this.authEdit == 0) this.params.isAdd = 1  //直播列表已下播或已禁播增加查询参数isAdd
-    }else { //来自预告
-      this.authEdit = 1
     }
     this.params.liveId = this.$route.query.liveId;
     this.params.type = this.$route.query.type
