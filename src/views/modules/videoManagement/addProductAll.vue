@@ -300,7 +300,7 @@ export default {
   methods: {
     //批量添加
     addSelect() {
-      let flg = this.dataListSelections.every((v) => {
+      let flg = this.dataListSelections.some((v) => {
         return v.isAdd === 1;
       });
 

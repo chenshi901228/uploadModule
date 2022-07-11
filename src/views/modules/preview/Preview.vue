@@ -438,9 +438,9 @@
           <template slot-scope="scope">
             <el-button
               v-if="
-                scope.row.appointmentState !== 0 &&
                 scope.row.delFlg !== 1 &&
-                scope.row.liveState === 3
+                scope.row.liveState === 3 &&
+                timeFlag(scope.row.startDate)
               "
               type="text"
               size="small"
@@ -450,7 +450,8 @@
             >
             <el-button
               v-if="
-                scope.row.liveState === 3 && scope.row.appointmentState === 1
+                scope.row.liveState === 3 &&
+                timeFlag(scope.row.startDate)
               "
               type="text"
               size="small"
@@ -460,7 +461,8 @@
             >
             <el-button
               v-if="
-                scope.row.liveState === 3 && scope.row.appointmentState === 1
+                scope.row.liveState === 3 &&
+                timeFlag(scope.row.startDate)
               "
               type="text"
               size="small"
@@ -472,7 +474,7 @@
               v-if="
                 scope.row.liveState === 3 &&
                 $hasPermission('anchor:list:assistant:preview') &&
-                scope.row.appointmentState === 1
+                timeFlag(scope.row.startDate)
               "
               type="text"
               size="small"
@@ -483,9 +485,9 @@
             <el-button
               icon="el-icon-sort"
               v-if="
-                scope.row.appointmentState !== 0 &&
                 scope.row.delFlg !== 1 &&
-                scope.row.liveState === 3
+                scope.row.liveState === 3 &&
+                timeFlag(scope.row.startDate)
               "
               type="text"
               size="small"
@@ -494,9 +496,8 @@
             >
             <el-button
               v-if="
-                scope.row.appointmentState === 1 &&
                 scope.row.liveState === 3 &&
-                scope.row.showState === 0
+                timeFlag(scope.row.startDate)
               "
               type="text"
               icon="el-icon-edit"
@@ -506,9 +507,8 @@
             >
             <el-button
               v-if="
-                scope.row.appointmentState === 1 &&
                 scope.row.liveState === 3 &&
-                scope.row.showState === 0
+                timeFlag(scope.row.startDate)
               "
               type="text"
               icon="el-icon-delete"
@@ -592,11 +592,22 @@ export default {
     this.getDynamicGroupList();
   },
   methods: {
+    timeFlag(startDate) {
+      let nowTime = new Date().getTime();
+      let time = new Date(startDate).getTime();
+      let flg = true;
+      if ((nowTime - time) / 3600 / 1000 >= 2) {
+        flg = false;
+      } else {
+        flg = true;
+      }
+      return flg;
+    },
     //带货商品
     addProduct(row) {
       let nowTime = new Date().getTime();
       let time = new Date(row.startDate).getTime();
-      let timeFlg = 0
+      let timeFlg = 0;
       if ((nowTime - time) / 3600 / 1000 >= 2) {
         timeFlg = 0;
       } else {
@@ -610,7 +621,7 @@ export default {
           liveState: row.liveState,
           appointmentState: row.appointmentState,
           type: 2,
-          timeFlg:timeFlg
+          timeFlg: timeFlg,
         },
       });
     },

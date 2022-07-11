@@ -176,7 +176,7 @@ export default {
             params: {
                 commentLiveListId: null,
             },
-            sys: 0, //0-主播管理，1-直播管理---仅直播管理可删除
+            sys: 0, //0-主播短视频管理，1-平台短视频管理---仅直播管理可删除
 
             tableItem: [
                 { prop: "commentUserName", label: "评论人" },
