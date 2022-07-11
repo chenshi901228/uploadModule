@@ -151,7 +151,7 @@
                     size="small"
                     icon="el-icon-refresh"
                     circle
-                    @click="getDataList"
+                    @click="query"
                   ></el-button>
                 </el-tooltip>
               </el-form-item>
@@ -280,7 +280,7 @@
     <!-- 编辑 -->
     <goods-add-or-update
       ref="goodsAddOrUpdate"
-      @refreshDataList="getDataList"
+      @refreshDataList="query"
     ></goods-add-or-update>
   </div>  
 </template>

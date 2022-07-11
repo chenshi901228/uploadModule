@@ -95,7 +95,7 @@
                     size="small"
                     icon="el-icon-refresh"
                     circle
-                    @click="getDataList"
+                    @click="query"
                   ></el-button>
                 </el-tooltip>
               </el-form-item>
@@ -194,7 +194,7 @@
     <!-- 编辑 -->
     <settlementRatio-update
       ref="settlementRatioUpdate"
-      @refreshDataList="getDataList"
+      @refreshDataList="query"
     ></settlementRatio-update>
 
     <el-dialog

@@ -222,7 +222,7 @@
                   size="small"
                   icon="el-icon-refresh"
                   circle
-                  @click="getDataList"
+                  @click="query"
                 ></el-button>
               </el-tooltip>
             </el-form-item>

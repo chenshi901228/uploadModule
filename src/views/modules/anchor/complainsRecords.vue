@@ -10,7 +10,7 @@
         label-width="100px"
         @keyup.enter.native="getDataList"
       >
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="nickName">
+        <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="username">
           <el-input
             style="width: 200px"
             placeholder="请输入"
@@ -26,8 +26,24 @@
             clearable
           ></el-input>
         </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 3" label="投诉主播昵称" prop="anchorUserName">
+          <el-input
+            style="width: 200px"
+            placeholder="请输入"
+            v-model="dataForm.anchorUserName"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 4" label="主播手机号码" prop="anchorPhone">
+          <el-input
+            style="width: 200px"
+            placeholder="请输入"
+            v-model="dataForm.anchorPhone"
+            clearable
+          ></el-input>
+        </el-form-item>
       
-        <el-form-item v-if="isOpen || formItemCount >= 3" label="投诉分类" prop="type">
+        <el-form-item v-if="isOpen || formItemCount >= 5" label="投诉分类" prop="type">
           <el-select 
             style="width: 200px"
             placeholder="请选择" 
@@ -37,7 +53,7 @@
             <el-option :value="2" label="直播间投诉"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 4" label="投诉标签" prop="tag">
+        <el-form-item v-if="isOpen || formItemCount >= 6" label="投诉标签" prop="tag">
           <el-select 
             style="width: 200px"
             placeholder="请选择" 
@@ -61,7 +77,7 @@
             <el-option value="其他" label="其他"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 5" label="处理状态" prop="handlingStatus">
+        <el-form-item v-if="isOpen || formItemCount >= 7" label="处理状态" prop="handlingStatus">
           <el-select
             style="width: 200px"
             placeholder="请选择"
@@ -105,7 +121,7 @@
           <div class="headerTool--handle-btns-right">
             <el-form-item>
               <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-                <el-button size="small" icon="el-icon-refresh" circle @click="getDataList"></el-button>
+                <el-button size="small" icon="el-icon-refresh" circle @click="query"></el-button>
               </el-tooltip>
             </el-form-item>
           </div>
@@ -153,6 +169,24 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="anchorUserName"
+          label="主播昵称"
+          header-align="center"
+          align="center"
+          width="150"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
+          prop="anchorPhone"
+          label="主播手机号码"
+          header-align="center"
+          align="center"
+          width="150"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
           prop="tag"
           label="投诉标签"
           header-align="center"
@@ -171,7 +205,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="contactPhone"
+          prop="phone"
           label="联系电话"
           min-width="120px"
           header-align="center"
@@ -271,9 +305,10 @@ export default {
         exportURL: "/sys/manage/complaint/export",
       },
       dataForm: {
-        nickName: "",
+        username: "",
         phone: "",
-        delFlg: "",
+        anchorUserName: "",
+        anchorPhone: "",
         handlingStatus: "",
         type: "",
         tag: "",
@@ -305,14 +340,6 @@ export default {
 
     // 重置搜索条件
     resetDataForm() {
-      this.dataForm = {
-        nickName: "",
-        phone: "",
-        delFlg: "",
-        handlingStatus: "",
-        type: "",
-        tag: "",
-      };
       this.$refs.complainsRecords.resetFields();
       this.getDataList();
     },

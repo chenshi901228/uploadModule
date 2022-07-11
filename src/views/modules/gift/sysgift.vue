@@ -120,7 +120,7 @@
                   size="small"
                   icon="el-icon-refresh"
                   circle
-                  @click="getDataList"
+                  @click="query"
                 ></el-button>
               </el-tooltip>
             </el-form-item>
@@ -167,7 +167,13 @@
           align="center"
         >
           <template slot-scope="scope">
+            <i
+              style="font-size: 30px" 
+              v-if="fileTypeIsSvga(scope.row.dynamicIcon)" 
+              class="el-icon-picture" 
+              @click="previewsVGA(scope.row)"></i>
             <img
+              v-else
               :src="
                 scope.row.dynamicIcon &&
                 (scope.row.dynamicIcon.indexOf('http:') > -1 ||
@@ -177,6 +183,7 @@
               "
               style="width: 100px; height: 100px"
             />
+            <!-- 点击查看svga -->
           </template>
         </el-table-column>
         <el-table-column
@@ -298,8 +305,10 @@
       <add-or-update
         v-if="addOrUpdateVisible"
         ref="addOrUpdate"
-        @refreshDataList="getDataList"
+        @refreshDataList="query"
       ></add-or-update>
+      <!-- 查看svga弹框 -->
+      <svga-dialog ref="svgaRef"></svga-dialog>
     </div>
   </el-card>
 </template>
@@ -307,6 +316,7 @@
 <script>
 import mixinViewModule from "@/mixins/view-module";
 import AddOrUpdate from "./sysgift-add-or-update";
+import SvgaDialog from "./svgaDialog.vue"
 import debounce from "lodash/debounce";
 
 export default {
@@ -332,8 +342,20 @@ export default {
   watch: {},
   components: {
     AddOrUpdate,
+    SvgaDialog
   },
   methods: {
+    // 判断是否是svga格式
+    fileTypeIsSvga(url) {
+      url = url.split(".")
+      url = url[url.length - 1].toLocaleLowerCase()
+      return url == "svga"
+    },
+    // 查看svga图像
+    previewsVGA(row) {
+      this.$refs.svgaRef.init(row)
+    },
+
     // 输入选择礼物
     getGiftInfo(s) {
       if (s != "") {

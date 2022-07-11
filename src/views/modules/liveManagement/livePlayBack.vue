@@ -121,7 +121,7 @@
           <div class="headerTool--handle-btns-right">
             <el-form-item>
               <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-                <el-button size="small" icon="el-icon-refresh" circle @click="getDataList"></el-button>
+                <el-button size="small" icon="el-icon-refresh" circle @click="query"></el-button>
               </el-tooltip>
             </el-form-item>
           </div>
@@ -344,7 +344,7 @@ export default {
   methods: {
     // 视频时长转换
     secondToDate(val) {
-      return secondToDate(val);
+      return secondToDate(parseInt(val) / 1000);
     },
     // 视频大小转换
     sizeTostr(size) {

@@ -85,7 +85,7 @@
           <div class="headerTool--handle-btns-right">
             <el-form-item>
               <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-                <el-button size="small" icon="el-icon-refresh" circle @click="getDataList"></el-button>
+                <el-button size="small" icon="el-icon-refresh" circle @click="query"></el-button>
               </el-tooltip>
             </el-form-item>
           </div>
@@ -141,17 +141,15 @@
           min-width="150px"
           header-align="center"
           align="center"
+        ></el-table-column>
+        <el-table-column
+          prop="num"
+          label="商品数量"
+          min-width="100px"
+          header-align="center"
+          align="center"
           show-overflow-tooltip
         ></el-table-column>
-
-        <el-table-column
-          prop="price"
-          label="销售价格"
-          header-align="center"
-          show-overflow-tooltip
-          align="center"
-        >
-        </el-table-column>
         <el-table-column
           prop="payPrice"
           label="支付金额"
@@ -159,6 +157,9 @@
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="{ row }">
+            <span>￥{{row.payPrice}}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="payType"
@@ -175,10 +176,31 @@
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="{ row }">
+            <span>￥{{row.refundPrice}}</span>
+          </template>
         </el-table-column>
+
+        <!-- <el-table-column
+          prop="price"
+          label="销售价格"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column> -->
         <el-table-column
           prop="weixinUserProductId"
           label="关联订单编号"
+          min-width="200px"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
+          prop="applyType"
+          label="申请类型"
           min-width="200px"
           header-align="center"
           align="center"

@@ -11,20 +11,20 @@
         label-position="right"
         @keyup.enter.native="getUserList(diaTbas)"
       >
-        <el-form-item label="用户名称" prop="nickName">
+        <el-form-item v-if="isOpen || formItemCount >= 1" label="用户名称" prop="nickName">
           <el-input
             v-model="dataForm.nickName"
             placeholder="请输入"
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item label="手机号码" prop="phone">
+        <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="phone">
           <el-input
             v-model="dataForm.phone"
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item label="账号状态" prop="status">
+        <el-form-item v-if="isOpen || formItemCount >= 3" label="账号状态" prop="status">
           <el-select v-model="dataForm.status" clearable placeholder="请选择">
             <el-option label="正常" value="1">正常</el-option>
             <el-option label="停用" value="0">停用</el-option>
@@ -49,10 +49,10 @@
               icon="el-icon-refresh" 
               size="mini" 
               @click="resetDataForm(diaTbas)">{{ $t("reset") }}</el-button>
-            <!-- <el-button size="mini" plain @click="open">
+            <el-button size="mini" plain @click="open">
               <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
               {{ isOpen ? "收起" : "展开" }}
-            </el-button> -->
+            </el-button>
           </el-form-item>
         </div>
         <!-- 操作按钮 -->
@@ -136,6 +136,7 @@
         :data="diaDataList"
         ref="table"
         v-loading="dataListLoading"
+        :height="siteContentViewHeight"
         style="width: 100%"
       >
         <el-table-column
@@ -323,6 +324,9 @@ export default {
       page: 1, // 当前页码
       limit: 10, // 每页数
       total: 0,
+      otherViewHeight: 0,
+      isOpen: false,
+      formItemCount: 3, //搜索栏宽度能放的formItem个数
     };
   },
   components: {
@@ -332,6 +336,14 @@ export default {
     next((vm) => {
       vm.changeTbas(1);
     });
+  },
+  watch: {
+    isOpen() {
+        this.setOtherViewHeight()
+    },
+    sidebarFold(val) {
+        this.setHeaderSearchWidth(val)
+    }
   },
   computed: {
     dataRule () {
@@ -353,10 +365,61 @@ export default {
           { validator: validateMobile, trigger: 'blur' }
         ]
       }
+    },
+    documentClientHeight: {
+      get() {
+          return this.$store.state.documentClientHeight;
+      },
+    },
+    documentClientWidth: {
+      get() {
+          return this.$store.state.documentClientWidth;
+      },
+    },
+    siteContentViewHeight() {
+      var height = this.documentClientHeight - this.otherViewHeight - ( 50 + 36 + 55 + 40 + 47 + 2 );
+      return height;
+    },
+    sidebarFold: {
+      get() {
+          return this.$store.state.sidebarFold;
+      },
     }
   },
   created() {},
+  activated() {
+    this.setOtherViewHeight()
+    this.setHeaderSearchWidth()
+
+    // 防止table刷新错位
+    if(this.$refs.table) {
+        this.$nextTick(()=>{
+        this.$refs.table.doLayout()
+        })
+    }
+  },
   methods: {
+    // 搜索栏高度设置
+    setOtherViewHeight() {
+        setTimeout(() => {
+            if(document.querySelector(".headerTool")) {
+                let h = document.querySelector(".headerTool").getBoundingClientRect().height
+                this.otherViewHeight = Math.ceil(h)
+            }
+        },150)
+    },
+    // 计算搜索栏宽度能放的formItem个数
+    setHeaderSearchWidth(val = false) {
+        setTimeout(() => {
+            let elFormWidth = this.documentClientWidth - (val ? 64 : 230) - 40
+            this.formItemCount = Math.floor(elFormWidth / 300) - 1
+        },150)
+    },
+    // 搜索栏收起/展开
+    open() {
+        this.isOpen = !this.isOpen
+        // this.resetDataForm()
+    },
     changeTbas(n){
       this.dataForm={
         nickName: "",
@@ -474,6 +537,7 @@ export default {
 <style scoped lang="scss">
 .user-type-tab{
   display: flex;
+  margin-bottom: 10px;
   .diaBoxRight_tabBtns {
     border-width: 0px;
     width: 100px;

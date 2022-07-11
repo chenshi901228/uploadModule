@@ -144,7 +144,7 @@
                   size="small"
                   icon="el-icon-refresh"
                   circle
-                  @click="getDataList"
+                  @click="query"
                 ></el-button>
               </el-tooltip>
             </el-form-item>
@@ -365,7 +365,7 @@ export default {
       if(this.authEdit == 0) this.params.isAdd = 1  //直播列表已下播或已禁播增加查询参数isAdd
     }
     this.params.liveId = this.$route.query.liveId;
-    this.params.type = this.$route.query.type
+    this.params.type = parseInt(this.$route.query.type)
     this.params.anchorId = this.$route.query.anchorId
     this.query();
   },

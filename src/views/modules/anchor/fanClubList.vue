@@ -78,7 +78,7 @@
           <div class="headerTool--handle-btns-right">
             <el-form-item>
               <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-                <el-button size="small" icon="el-icon-refresh" circle @click="getDataList"></el-button>
+                <el-button size="small" icon="el-icon-refresh" circle @click="query"></el-button>
               </el-tooltip>
             </el-form-item>
           </div>

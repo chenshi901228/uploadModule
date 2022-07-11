@@ -88,7 +88,7 @@
                   size="small"
                   icon="el-icon-refresh"
                   circle
-                  @click="getDataList"
+                  @click="query"
                 ></el-button>
               </el-tooltip>
             </el-form-item>
@@ -178,7 +178,7 @@
       <add-or-update
         v-if="addOrUpdateVisible"
         ref="addOrUpdate"
-        @refreshDataList="getDataList"
+        @refreshDataList="query"
       ></add-or-update>
     </div>
   </el-card>
