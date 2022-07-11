@@ -264,10 +264,7 @@
       </el-form>
 
       <!-- 主播弹框 -->
-      <choose-anchor
-        ref="chooseAnchor"
-        @add="addAnchorConfirm"
-      ></choose-anchor>
+      <choose-anchor ref="chooseAnchor" @add="addAnchorConfirm"></choose-anchor>
       <!-- 商品弹框 -->
       <choose-product
         ref="chooseProduct"
@@ -327,6 +324,13 @@ export default {
         this.ruleForm.estimateLiveTime = "";
       }
     };
+    const blurAnchorId = async (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error("请输入主播"));
+      }else{
+        callback();
+      }
+    };
     return {
       ruleForm: {
         liveTheme: "",
@@ -346,7 +350,7 @@ export default {
       uploadUrl: "",
       rules: {
         liveTheme: [
-          { required: true, message: "请输入直播主题", trigger: "change" },
+          { required: true, message: "请输入直播主题", trigger: "blur" },
         ],
         startDate: [
           {
@@ -356,17 +360,18 @@ export default {
           },
         ],
         estimateLiveTime: [
-          { required: true, message: "请输入预计时长", trigger: "change" },
+          { required: true, message: "请输入预计时长", trigger: "blur" },
           { validator: blurText, trigger: "blur" }, //表单验证的时候会调用的方法
         ],
         anchorId: [
-          { required: true, message: "请选择主播", trigger: "blur" },
+          // { required: true, message: "请选择主播", trigger: "blur" },
+          { required: true, validator: blurAnchorId, trigger: "change" },
         ],
         // userGroup: [
         //   { required: true, message: "请选择投放人群", trigger: "blur" },
         // ],
         liveIntroduce: [
-          { required: true, message: "请填写直播介绍", trigger: "change" },
+          { required: true, message: "请填写直播介绍", trigger: "blur" },
         ],
       },
       pickerOptions: {
@@ -427,6 +432,7 @@ export default {
       recommendedAnchorList: [],
       anchors: "",
       assistantIds: [],
+      anchorId:null
     };
     this.anchorId = this.$route.query.anchorId;
     this.getCoverPictureList();
@@ -475,8 +481,11 @@ export default {
 
     // 推荐主播弹框
     chooseAnchor() {
-      if(!this.ruleForm.anchorId) return this.$message.warning("请选择主播")
-      this.$refs.chooseAnchor.init(this.ruleForm.recommendedAnchorList, this.ruleForm.anchorId);
+      if (!this.ruleForm.anchorId) return this.$message.warning("请选择主播");
+      this.$refs.chooseAnchor.init(
+        this.ruleForm.recommendedAnchorList,
+        this.ruleForm.anchorId
+      );
     },
 
     // 确认添加推荐主播
@@ -520,8 +529,11 @@ export default {
     },
     // 推荐商品弹框
     chooseProduct() {
-      if(!this.ruleForm.anchorId) return this.$message.warning("请选择主播")
-      this.$refs.chooseProduct.init(this.ruleForm.productIds, this.ruleForm.anchorId);
+      if (!this.ruleForm.anchorId) return this.$message.warning("请选择主播");
+      this.$refs.chooseProduct.init(
+        this.ruleForm.productIds,
+        this.ruleForm.anchorId
+      );
     },
 
     // 确认添加推荐商品
@@ -589,8 +601,8 @@ export default {
               this.closeCurrentTab();
 
               this.$router.push({
-                path:"/liveManagement-PreviewAll"
-              })
+                path: "/liveManagement-PreviewAll",
+              });
             })
             .catch((err) => {
               this.submitLoading = false;

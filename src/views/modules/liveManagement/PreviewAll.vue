@@ -671,14 +671,19 @@ export default {
     },
     //助手
     assistant(row) {
+       let authEdit = 0;
+      if (row.liveState === 3) {
+        authEdit = 1;
+      } else {
+        authEdit = 0;
+      }
       this.$router.push({
         path: "/liveManagement-assistant-Assistant",
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,
-          liveState: row.liveState,
-          appointmentState: row.appointmentState,
           type: 2,
+          authEdit:authEdit
         },
       });
     },
