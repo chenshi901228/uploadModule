@@ -41,6 +41,7 @@
     "screenfull": "^4.2.1",
     "sortablejs": "^1.10.2",
     "svg-sprite-loader": "^5.0.0",
+    "svgaplayerweb": "^2.3.2",
     "tim-js-sdk": "^2.18.0",
     "tim-upload-plugin": "^1.0.4",
     "vue": "^2.6.11",
