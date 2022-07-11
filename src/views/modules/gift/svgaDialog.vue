@@ -11,7 +11,7 @@
     </el-dialog>    
 </template>
 <script>
-import SVGA from "@/utils/svga.min.js"
+import SVGA from "svgaplayerweb"
 export default {
     data() {
         return {
@@ -25,7 +25,7 @@ export default {
 
             var player = new SVGA.Player('#svgaCanvas');
             var parser = new SVGA.Parser('#svgaCanvas'); 
-            parser.load(row.dynamicIcon, (videoItem) => {
+            parser.load(row.dynamicIcon + "?t=" + new Date().getTime(), (videoItem) => {
                 player.setVideoItem(videoItem);
                 player.startAnimation();
             })

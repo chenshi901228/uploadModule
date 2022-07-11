@@ -27,7 +27,7 @@
 
 <script>
     import Cookies from 'js-cookie'
-    import SVGA from "@/utils/svga.min.js"
+    // import SVGA from "@/utils/svga.min.js"
     export default {
         data(){
             return {
