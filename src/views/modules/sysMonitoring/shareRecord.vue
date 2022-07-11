@@ -174,7 +174,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="successEvent"
           label="成功事件"
           header-align="center"
@@ -194,7 +194,7 @@
                 : "--"
             }}</span>
           </template></el-table-column
-        >
+        > -->
         <el-table-column
           prop="passiveShareUserName"
           label="被分享人"

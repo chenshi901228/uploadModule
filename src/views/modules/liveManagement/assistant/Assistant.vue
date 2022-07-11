@@ -228,7 +228,7 @@ export default {
       this.authEdit = 1
     }
     this.params.liveId = this.$route.query.liveId;
-    this.params.type = this.$route.query.type
+    this.params.type = parseInt(this.$route.query.type)
     this.params.anchorId = this.$route.query.anchorId;
     this.query();
   },

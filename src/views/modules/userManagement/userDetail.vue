@@ -78,13 +78,13 @@
           >
             粉丝团消费
           </div>
-          <div
+          <!-- <div
             class="diaBoxRight_tabBtns"
             @click="changeTbas(6)"
             :class="{ 'is-active': diaTbas === 6 }"
           >
             分享记录
-          </div>
+          </div> -->
         </div>
         <el-form
           :inline="true"

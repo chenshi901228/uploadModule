@@ -124,9 +124,8 @@ export default {
         exportHandle () {
             var params = qs.stringify({
                 'access_token': Cookies.get('access_token'),
-                page: this.page,
-                limit: this.limit,
-                ...this.$httpParams(this.dataForm)
+                ...this.$httpParams(this.dataForm),
+                ...this.$httpParams(this.params)
             })
             window.location.href = `${window.SITE_CONFIG['apiURL']}${this.mixinTableModuleOptions.exportURL}?${params}`
         },
