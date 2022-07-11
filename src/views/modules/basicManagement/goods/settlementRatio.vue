@@ -212,14 +212,20 @@
         label-width="110px"
       >
         <el-form-item label="结算比例：" prop="proportion">
-          <el-input-number
+          <!-- <el-input-number
             v-model="editeForm.proportion"
             :controls="false"
             :precision="0"
             :min="0"
             :max="99"
           >
-          </el-input-number>
+          </el-input-number> -->
+           <el-input
+            v-model="editeForm.proportion"
+            :min="0"
+            :max="99"
+            type="number"
+          />
         </el-form-item>
         <div>结算比例范围：0%~99%</div>
       </el-form>
@@ -249,6 +255,26 @@ export default {
     settlementRatioUpdate,
   },
   data() {
+    var check = (rule, value, callback) => {
+      if (!value && value !== 0) {
+        return callback(new Error("结算比例不能为空"));
+      }
+      if (!Number.isInteger(Number(value))) {
+        callback(
+          new Error(
+            "不能输入字母，中文，特殊字符，空格，小数，负数，大于99得数等"
+          )
+        );
+      } else if (value >= 0 && value <= 99) {
+        callback();
+      } else {
+        callback(
+          new Error(
+            "不能输入字母，中文，特殊字符，空格，小数，负数，大于99得数等"
+          )
+        );
+      }
+    };
     return {
       mixinTableModuleOptions: {
         getDataListURL: "/sys/productProportion/pageAnchorWithProduct", // 数据列表接口，API地址
@@ -271,17 +297,12 @@ export default {
         { prop: "updateDate", label: "更新时间", width: 180 },
       ],
       visible: false,
-      editeForm: {},
+      editeForm: {
+        proportion: null,
+      },
       submitLoading: false,
       dataRule: {
-        proportion: [
-          {
-            required: true,
-            message:
-              "不能输入字母，中文，特殊字符，空格，小数，负数，大于99得数等",
-            trigger: "blur",
-          },
-        ],
+        proportion: [{ validator: check, trigger: "blur" }],
       },
       setText: "",
     };
@@ -420,5 +441,13 @@ export default {
     color: #606266;
     line-height: 40px;
   }
+}
+
+::v-deep input::-webkit-outer-spin-button,
+::v-deep input::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+}
+::v-deep input[type="number"] {
+  -moz-appearance: textfield !important;
 }
 </style>

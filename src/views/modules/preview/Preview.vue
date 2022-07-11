@@ -449,10 +449,7 @@
               >创建直播</el-button
             >
             <el-button
-              v-if="
-                scope.row.liveState === 3 &&
-                timeFlag(scope.row.startDate)
-              "
+              v-if="scope.row.liveState === 3 && timeFlag(scope.row.startDate)"
               type="text"
               size="small"
               icon="el-icon-goods"
@@ -460,10 +457,7 @@
               >带货商品</el-button
             >
             <el-button
-              v-if="
-                scope.row.liveState === 3 &&
-                timeFlag(scope.row.startDate)
-              "
+              v-if="scope.row.liveState === 3 && timeFlag(scope.row.startDate)"
               type="text"
               size="small"
               icon="el-icon-user"
@@ -495,10 +489,7 @@
               >{{ scope.row.showState === 0 ? "显示" : "隐藏" }}</el-button
             >
             <el-button
-              v-if="
-                scope.row.liveState === 3 &&
-                timeFlag(scope.row.startDate)
-              "
+              v-if="scope.row.liveState === 3 && timeFlag(scope.row.startDate)"
               type="text"
               icon="el-icon-edit"
               size="small"
@@ -506,10 +497,7 @@
               >编辑</el-button
             >
             <el-button
-              v-if="
-                scope.row.liveState === 3 &&
-                timeFlag(scope.row.startDate)
-              "
+              v-if="scope.row.liveState === 3 && timeFlag(scope.row.startDate)"
               type="text"
               icon="el-icon-delete"
               size="small"
@@ -619,7 +607,6 @@ export default {
           liveId: row.id,
           anchorId: row.anchorUserId,
           liveState: row.liveState,
-          appointmentState: row.appointmentState,
           type: 2,
           timeFlg: timeFlg,
         },
@@ -627,26 +614,42 @@ export default {
     },
     //推荐主播
     addAnchor(row) {
+      let nowTime = new Date().getTime();
+      let time = new Date(row.startDate).getTime();
+      let timeFlg = 0;
+      if ((nowTime - time) / 3600 / 1000 >= 2) {
+        timeFlg = 0;
+      } else {
+        timeFlg = 1;
+      }
       this.$router.push({
         path: "/preview-recommendAnchor-RecommendAnchor",
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,
           liveState: row.liveState,
-          appointmentState: row.appointmentState,
+          timeFlg: timeFlg,
         },
       });
     },
     //助手
     assistant(row) {
+      let nowTime = new Date().getTime();
+      let time = new Date(row.startDate).getTime();
+      let timeFlg = 0;
+      if ((nowTime - time) / 3600 / 1000 >= 2) {
+        timeFlg = 0;
+      } else {
+        timeFlg = 1;
+      }
       this.$router.push({
         path: "/preview-assistant-Assistant",
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,
           liveState: row.liveState,
-          appointmentState: row.appointmentState,
           type: 2,
+          timeFlg: timeFlg,
         },
       });
     },

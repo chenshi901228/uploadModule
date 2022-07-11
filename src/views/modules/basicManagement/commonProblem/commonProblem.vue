@@ -308,7 +308,6 @@
             <el-image
               style="width: 146px; height: 146px; margin-right: 0"
               :src="editeUrl"
-              :preview-src-list="editeSrcList"
             >
             </el-image>
             <el-tooltip effect="dark" content="删除" placement="top">
@@ -354,7 +353,6 @@
               <i class="el-icon-plus"></i>
             </el-upload>
           </div>
-          <span>点击可看大图</span>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">

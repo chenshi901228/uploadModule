@@ -39,7 +39,7 @@
         <el-form-item
           label="添加状态"
           prop="isAdd"
-          v-if="(isOpen || formItemCount >= 3) && authEdit == 1"
+          v-if="isOpen || formItemCount >= 3"
         >
           <el-select
             placeholder="请选择"
@@ -128,7 +128,6 @@
           label="添加状态"
           header-align="center"
           align="center"
-          v-if="authEdit == 1"
         >
           <template slot-scope="scope">
             {{ scope.row.isAdd === 1 ? "已添加" : "未添加" }}
@@ -140,7 +139,7 @@
           header-align="center"
           align="center"
           width="150"
-          v-if="authEdit == 1 && $route.query.liveState === '3' && $route.query.appointmentState !== '0'"
+          v-if="$route.query.liveState === '3' && $route.query.timeFlg === '1'"
         >
           <template slot-scope="scope">
             <el-button
@@ -217,15 +216,9 @@ export default {
       fansLevelsOptions: [], //粉丝等级options
       dialogVisible: false,
       ids: [],
-      authEdit: 1, //从直播列表进来是否有编辑权限：1-有，0-没有
     };
   },
   activated() {
-    if(this.$route.query.authEdit != undefined) { //有表示来自直播列表
-      this.authEdit = this.$route.query.authEdit
-    }else { //来自预告
-      this.authEdit = 1
-    }
     this.dataForm.liveId = this.$route.query.liveId;
     this.dataForm.type = parseInt(this.$route.query.type)
     this.dataForm.anchorId = this.$route.query.anchorId;

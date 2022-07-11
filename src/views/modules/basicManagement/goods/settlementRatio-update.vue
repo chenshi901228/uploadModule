@@ -53,25 +53,29 @@
 export default {
   data() {
     var check = (rule, value, callback) => {
-      if (!value) {
+      if (!value && value !== 0) {
         return callback(new Error("结算比例不能为空"));
       }
-      setTimeout(() => {
-        if (value >= 0 && value < 99) {
-          callback();
-        } else {
-          callback(
-            new Error(
-              "不能输入字母，中文，特殊字符，空格，小数，负数，大于99得数等"
-            )
-          );
-        }
-      }, 1000);
+      if (!Number.isInteger(Number(value))) {
+        callback(
+          new Error(
+            "不能输入字母，中文，特殊字符，空格，小数，负数，大于99得数等"
+          )
+        );
+      } else if (value >= 0 && value <= 99) {
+        callback();
+      } else {
+        callback(
+          new Error(
+            "不能输入字母，中文，特殊字符，空格，小数，负数，大于99得数等"
+          )
+        );
+      }
     };
     return {
       visible: false,
       dataForm: {
-        proportion: 0,
+        proportion: null,
       },
       submitLoading: false,
       dataRule: {

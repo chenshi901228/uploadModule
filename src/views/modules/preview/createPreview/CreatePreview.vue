@@ -422,6 +422,7 @@ export default {
         this.TiLength = 0;
       } else {
         this.TiLength = e.quill.getLength() - 1;
+        this.$refs.ruleForm.clearValidate("liveIntroduce");
       }
     },
 

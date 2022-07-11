@@ -39,7 +39,7 @@
         <el-form-item
           label="添加状态"
           prop="levelName"
-          v-if="(isOpen || formItemCount >= 3) && authEdit == 1"
+          v-if="isOpen || formItemCount >= 3"
         >
           <el-select
             placeholder="请选择"
@@ -80,7 +80,6 @@
               plain
               icon="el-icon-plus"
               size="mini"
-              v-if="authEdit == 1"
               :disabled="dataListSelections.length === 0"
               @click="addSelect()"
               >批量添加</el-button
@@ -164,7 +163,6 @@
           label="添加状态"
           header-align="center"
           align="center"
-          v-if="authEdit == 1"
         >
           <template slot-scope="scope">
             {{ scope.row.state === "0" ? "未添加" : "已添加" }}
@@ -176,7 +174,7 @@
           header-align="center"
           align="center"
           width="150"
-          v-if="authEdit == 1 && $route.query.liveState === '3' && $route.query.appointmentState !== '0'"
+          v-if="$route.query.liveState === '3' && $route.query.timeFlg === '1'"
         >
           <template slot-scope="scope">
             <el-button
@@ -285,16 +283,9 @@ export default {
       ids: [],
       dialogAddVisible: false,
       selectAddList: [],
-      authEdit: 1, //从直播列表进来是否有编辑权限：1-有，0-没有
     };
   },
   activated() {
-    if(this.$route.query.authEdit != undefined) { //有表示来自直播列表
-      this.authEdit = this.$route.query.authEdit
-      if(this.authEdit == 0) this.dataForm.state = 1  //直播列表已下播或已禁播增加查询参数state
-    }else { //来自预告
-      this.authEdit = 1
-    }
     this.dataForm.liveId = this.$route.query.liveId;
     this.dataForm.anchorId = this.$route.query.anchorId;
     this.query();
