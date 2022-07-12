@@ -10,7 +10,7 @@
         </div> -->
       <div style="color:#ccc">
         <span style="color:#000">验证类型：</span>
-        {{ diaForm.updateType==1?'全量修改':diaForm.updateType==2?'修改名称':diaForm.updateType==3?'修改简介':diaForm.updateType==4?'修改头像':diaForm.updateType==5?'背景图片':diaForm.updateType==6?'银行卡信息修改':'-' }}
+        {{ diaForm.updateType==1?'主播申请':diaForm.updateType==2?'银行卡信息审批':'-' }}
       </div>
       <div class="info_type">
         <div class="type_title">

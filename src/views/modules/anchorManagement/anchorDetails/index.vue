@@ -41,7 +41,7 @@
                 <div>支行名称：{{ anchorDetails.branchName || '-' }}</div>
                 <div>账户名称：{{ anchorDetails.accountName || '-' }}</div>
                 <div>银行账号：{{ anchorDetails.bankAccount || '-' }}</div>
-                <div>开户行所在地：{{ anchorDetails.address || '-' }}</div>
+                <div>开户行所在地：{{ anchorDetails.address.slice(0,anchorDetails.address.length-1) || '-' }}</div>
             </div>
             <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:amount:info')">
                 <span>账户信息</span>
@@ -1184,11 +1184,11 @@
         </el-form-item>
         <div class="withdraw_bank_info">
           <div class="header">提现至：</div>
-          <div>开户银行：{{ anchorDetails.depositBank }}</div>
-          <div>支行名称：{{ anchorDetails.branchName }}</div>
-          <div>账号名称：{{ anchorDetails.accountName }}</div>
-          <div>银行账户：{{ anchorDetails.bankAccount }}</div>
-          <div>开户行所在地：{{ anchorDetails.address }}</div>
+          <div>开户银行：{{ anchorDetails.depositBank || '-'  }}</div>
+          <div>支行名称：{{ anchorDetails.branchName || '-'  }}</div>
+          <div>账号名称：{{ anchorDetails.accountName || '-'  }}</div>
+          <div>银行账户：{{ anchorDetails.bankAccount || '-'  }}</div>
+          <div>开户行所在地：{{ anchorDetails.address || '-' }}</div>
         </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
