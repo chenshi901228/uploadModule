@@ -122,7 +122,6 @@ router.beforeEach((to, from, next) => {
  * @param {*} pageRoutes 页面路由
  */
 function fnCurrentRouteIsPageRoute (route, pageRoutes = []) {
-  console.log(route, pageRoutes)
   var temp = []
   for (var i = 0; i < pageRoutes.length; i++) {
     if (route.path === pageRoutes[i].path) {
