@@ -52,8 +52,7 @@
             <el-option :value="2" label="修改名称"></el-option>
             <el-option :value="3" label="修改简介"></el-option>
             <el-option :value="4" label="修改头像"></el-option>
-            <el-option :value="5" label="背景图片"></el-option>
-            <el-option :value="6" label="银行卡信息修改"></el-option>
+            <el-option :value="5" label="主播二维码"></el-option>
           </el-select>
         </el-form-item>
         <!-- <el-form-item v-if="isOpen || formItemCount >= 6" label="审批状态" prop="status">
@@ -241,8 +240,7 @@
             <span v-else-if="scope.row.updateType === 2">修改名称</span>
             <span v-else-if="scope.row.updateType === 3">修改简介</span>
             <span v-else-if="scope.row.updateType === 4">修改头像</span>
-            <span v-else-if="scope.row.updateType === 5">背景图片</span>
-            <span v-else-if="scope.row.updateType === 6">银行卡信息修改</span>
+            <span v-else-if="scope.row.updateType === 5">主播二维码</span>
           </template>
         </el-table-column>
         <!-- <el-table-column

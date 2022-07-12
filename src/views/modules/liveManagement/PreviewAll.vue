@@ -523,7 +523,7 @@
               >编辑</el-button
             >
             <el-button
-              v-if="scope.row.liveState === 3"
+              v-if="scope.row.liveState === 3 && scope.row.delFlg === 0"
               type="text"
               size="small"
               icon="el-icon-delete"
@@ -671,8 +671,8 @@ export default {
     },
     //助手
     assistant(row) {
-       let authEdit = 0;
-      if (row.liveState === 3) {
+      let authEdit = 0;
+      if (row.liveState === 3 && row.appointmentState !== 0) {
         authEdit = 1;
       } else {
         authEdit = 0;

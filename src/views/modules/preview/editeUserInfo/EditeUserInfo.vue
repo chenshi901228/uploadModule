@@ -132,37 +132,44 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
+          this.$confirm('确认信息已填写无误，提交审批','提示',{
+            confirmButtonText:'确认',
+            cancelButtonText:'取消',
+          }).then(()=>{
+            if(!this.fileList.length) return this.$message.error("请上传主播头像")
+            if(!this.fileListQRcode.length) return this.$message.error("请上传主播二维码")
+            const loading = this.$loading({
+              lock: true,
+              text: '信息修改中',
+              spinner: 'el-icon-loading',
+              background: 'rgba(0, 0, 0, 0.7)'
+            });
 
-          if(!this.fileList.length) return this.$message.error("请上传主播头像")
-          if(!this.fileListQRcode.length) return this.$message.error("请上传主播二维码")
-          const loading = this.$loading({
-            lock: true,
-            text: '信息修改中',
-            spinner: 'el-icon-loading',
-            background: 'rgba(0, 0, 0, 0.7)'
-          });
-
-          let params = {
-            id: this.id,
-            ...this.ruleForm,
-            avatarUrl: this.fileList[0].response ? this.fileList[0].response.data.url : this.fileList[0].url,
-            qrCode: this.fileListQRcode[0].response ? this.fileListQRcode[0].response.data.url : this.fileListQRcode[0].url
-          }
-          this.$http.post(this.type?"sys/anchor/applyInfo/updateBaseInfoWithManage":"sys/anchor/applyInfo/updateBaseInfo", params).then(({ data: res }) => {
-            if(res.code == 0) {
-              this.$message.success("修改主播信息成功,请等待后台审核")
-              this.resetForm(formName)
-              this.fileList = []
-              this.id = null
-              this.closeCurrentTab()
-            }else {
-              this.$message.error(res.msg)
+            let params = {
+              id: this.id,
+              ...this.ruleForm,
+              avatarUrl: this.fileList[0].response ? this.fileList[0].response.data.url : this.fileList[0].url,
+              qrCode: this.fileListQRcode[0].response ? this.fileListQRcode[0].response.data.url : this.fileListQRcode[0].url
             }
-            loading.close();
-          }).catch(err => {
-            loading.close();
-            console.log(err)
+            this.$http.post(this.type?"sys/anchor/applyInfo/updateBaseInfoWithManage":"sys/anchor/applyInfo/updateBaseInfo", params).then(({ data: res }) => {
+              if(res.code == 0) {
+                this.type?this.$message.success("修改主播信息成功"):this.$message.success("修改主播信息成功,请等待后台审核")
+                this.resetForm(formName)
+                this.fileList = []
+                this.id = null
+                this.closeCurrentTab()
+              }else {
+                this.$message.error(res.msg)
+              }
+              loading.close();
+            }).catch(err => {
+              loading.close();
+              console.log(err)
+            })
+          }).catch(()=>{
+            this.$message.info('取消操作')
           })
+          
         } else {
           console.log("error submit!!");
           return false;

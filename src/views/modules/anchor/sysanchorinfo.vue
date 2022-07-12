@@ -69,12 +69,11 @@
             placeholder="请选择" 
             v-model="dataForm.updateType" 
             clearable>
-            <el-option :value="1" label="全量修改"></el-option>
-            <el-option :value="2" label="修改名称"></el-option>
-            <el-option :value="3" label="修改简介"></el-option>
+            <el-option :value="1" label="主播申请"></el-option>
+            <el-option :value="2" label="银行卡信息审批"></el-option>
+            <!-- <el-option :value="3" label="修改简介"></el-option>
             <el-option :value="4" label="修改头像"></el-option>
-            <el-option :value="5" label="背景图片"></el-option>
-            <el-option :value="6" label="银行卡信息修改"></el-option>
+            <el-option :value="5" label="主播二维码"></el-option> -->
           </el-select>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 8" label="审批状态" prop="status">
@@ -301,7 +300,7 @@
           width="120"
         >
           <template slot-scope="scope">
-            {{ scope.row.updateType==1?'全量修改':scope.row.updateType==2?'修改名称':scope.row.updateType==3?'修改简介':scope.row.updateType==4?'修改头像':scope.row.updateType==5?'背景图片':scope.row.updateType==6?'银行卡信息修改':'-' }}
+            {{ scope.row.updateType==1?'主播申请':scope.row.updateType==2?'银行卡信息审批':'-' }}
           </template>
         </el-table-column>
         <el-table-column
