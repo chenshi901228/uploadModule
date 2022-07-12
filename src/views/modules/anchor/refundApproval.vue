@@ -52,6 +52,28 @@
             placeholder="关联订单编号"
           ></el-input>
         </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 6" label="审批节点状态" prop="approveStatus">
+          <el-select 
+            v-model="dataForm.approveStatus"
+            style="width: 200px"
+            clearable
+            placeholder="请选择">
+            <el-option :value="1" label="已通过"></el-option>
+            <el-option :value="0" label="待审批"></el-option>
+            <el-option :value="-1" label="未通过"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 6" label="审批状态" prop="refundStatus">
+          <el-select 
+            v-model="dataForm.refundStatus"
+            style="width: 200px"
+            clearable
+            placeholder="请选择">
+            <el-option :value="1" label="已通过"></el-option>
+            <el-option :value="0" label="审批中"></el-option>
+            <el-option :value="-1" label="已驳回"></el-option>
+          </el-select>
+        </el-form-item>
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">
           <el-form-item>
@@ -244,20 +266,48 @@
 
         <el-table-column
           prop="approveStatus"
+          label="审批节点状态"
+          header-align="center"
+          align="center"
+          width="150px"
+          show-overflow-tooltip
+        >
+          <template slot-scope="{ row }">
+            <div>
+              <el-tag :type="
+                row.approveStatus === 1 ? 'success' 
+                : row.approveStatus === -1 ? 'danger': 'warning'">
+                {{
+                  row.approveStatus === 1
+                  ? "已通过"
+                  : row.approveStatus === -1
+                  ? "未通过"
+                  : "待审批"
+                }}
+              </el-tag>
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="refundStatus"
           label="审批状态"
           header-align="center"
           align="center"
           show-overflow-tooltip
         >
-          <template slot-scope="scope">
+          <template slot-scope="{ row }">
             <div>
-              {{
-                scope.row.approveStatus === 1
+              <el-tag :type="
+                row.refundStatus === 1 ? 'success' 
+                : row.refundStatus === -1 ? 'danger': 'warning'">
+                {{
+                  row.refundStatus === 1
                   ? "已通过"
-                  : scope.row.approveStatus === -1
-                  ? "已拒绝"
-                  : "待审批"
-              }}
+                  : row.refundStatus === -1
+                  ? "已驳回"
+                  : "审批中"
+                }}
+              </el-tag>
             </div>
           </template>
         </el-table-column>
@@ -354,9 +404,11 @@ export default {
         userPhone: "",
         productType: "",
         productName: "",
-        weixinUserProductId: ""
+        weixinUserProductId: "",
+        approveStatus: null,
+        refundStatus: null
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
       userId: "",
       dialogFormVisible: false,
       ruleForm: {
@@ -378,11 +430,6 @@ export default {
     },
     // 重置搜索条件
     resetDataForm() {
-      this.dataForm = {
-        userName: "",
-        userPhone: "",
-        refundStatus: "",
-      };
       this.$refs.refundApproval.resetFields();
       this.getDataList();
     },

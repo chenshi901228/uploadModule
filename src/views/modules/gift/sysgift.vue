@@ -167,11 +167,13 @@
           align="center"
         >
           <template slot-scope="scope">
-            <i
-              style="font-size: 30px" 
-              v-if="fileTypeIsSvga(scope.row.dynamicIcon)" 
-              class="el-icon-picture" 
-              @click="previewsVGA(scope.row)"></i>
+            <!-- 点击查看svga -->
+            <el-tooltip v-if="fileTypeIsSvga(scope.row.dynamicIcon)" effect="dark" :content="scope.row.name" placement="top">
+              <i
+                style="font-size: 30px;cursor: pointer;" 
+                class="el-icon-picture" 
+                @click="previewsVGA(scope.row)"></i>
+            </el-tooltip>
             <img
               v-else
               :src="
@@ -183,7 +185,6 @@
               "
               style="width: 100px; height: 100px"
             />
-            <!-- 点击查看svga -->
           </template>
         </el-table-column>
         <el-table-column
@@ -316,7 +317,7 @@
 <script>
 import mixinViewModule from "@/mixins/view-module";
 import AddOrUpdate from "./sysgift-add-or-update";
-import SvgaDialog from "./svgaDialog.vue"
+import SvgaDialog from "@/components/common/svgaDialog.vue"
 import debounce from "lodash/debounce";
 
 export default {
