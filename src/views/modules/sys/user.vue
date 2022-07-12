@@ -261,7 +261,7 @@ export default {
       column:[
         {
           label:'登录账号',
-          prop:'mobile'
+          prop:'username'
         },
         {
           label:'用户名称',
@@ -495,25 +495,45 @@ export default {
       this.getUserList(n)
     },
     forbiddenHandle(type, data) {
-      let url = type
+      if(this.diaTbas === 2){
+        let url = "/sys/anchor/info/updateAnchorStatus";
+        this.$http
+          .post(url, { disabledFlg: type, id: data.id, phone: data.mobile })
+          .then(({ data: res }) => {
+            if (res.code == 0) {
+              this.$message.success("操作成功");
+              this.query();
+            } else {
+              this.$message.error(res.msg);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }else{
+        let url = type
         ? "/sys/manage/weixinUser/startUsing"
         : "/sys/manage/weixinUser/forbiddenUsere";
-      this.$http
-        .put(url, { userIds: data })
-        .then(({ data: res }) => {
-          if (res.code == 0) {
-            this.$message.success("操作成功");
-            this.changeTbas(this.diaTbas)
-          } else {
-            this.$message.error(res.msg);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        this.$http
+          .put(url, { userIds: [data.id] })
+          .then(({ data: res }) => {
+            if (res.code == 0) {
+              this.$message.success("操作成功");
+              this.changeTbas(this.diaTbas)
+            } else {
+              this.$message.error(res.msg);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     },
     // 禁用，解除用户
     forbidden(row) {
+      if(this.diaTbas===2){
+        if (row.liveState == 1 && row.disabledFlg != 1) return this.$message.error("主播正在直播，无法禁用此账号");
+      }
       //单个操作
       this.$confirm(
         `确认[${row.status == 0 ? "解除" : "禁用"}]${row.realName||row.nickName}?`,
@@ -525,7 +545,7 @@ export default {
         }
       )
         .then(() => {
-          this.forbiddenHandle(row.status == 0 ? 1 : 0, [row.id]);
+          this.forbiddenHandle(row.status == 0 ? 1 : 0, row);
         })
         .catch(() => {
           this.$message.info("已取消操作");

@@ -84,24 +84,24 @@
         >
           <el-input
             style="width: 200px"
-            placeholder="邀请人号码"
+            placeholder="请选择"
             v-model="dataForm.invitePhone"
             clearable
           ></el-input>
         </el-form-item>
         <el-form-item
-          label="状态"
+          label="账号状态"
           prop="status"
           v-if="isOpen || formItemCount >= 7"
         >
           <el-select
             style="width: 200px"
-            placeholder="状态"
+            placeholder="请选择"
             v-model="dataForm.status"
             clearable
           >
-            <el-option :value="1" label="正常"></el-option>
-            <el-option :value="0" label="停用"></el-option>
+            <el-option :value="1" label="启用"></el-option>
+            <el-option :value="0" label="禁用"></el-option>
           </el-select>
         </el-form-item>
 
@@ -131,7 +131,7 @@
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
-            <el-form-item>
+            <!-- <el-form-item>
               <el-button
                 size="mini"
                 plain
@@ -141,7 +141,13 @@
                 @click="forbidden()"
                 >禁用</el-button
               >
-            </el-form-item>
+            </el-form-item> -->
+            <el-button 
+              type="warning"
+              plain
+              icon="el-icon-download" 
+              size="mini"
+              @click="exportHandle">{{ $t("export") }}</el-button>
           </div>
           <div class="headerTool--handle-btns-right">
             <el-form-item>
@@ -256,12 +262,12 @@
         <el-table-column
           show-overflow-tooltip
           prop="createDate"
-          label="状态"
+          label="账号状态"
           header-align="center"
           align="center"
         >
           <template slot-scope="scope">
-            <div>{{ scope.row.status == 0 ? "停用" : "正常" }}</div>
+            <div>{{ scope.row.status == 0 ? "禁用" : "启用" }}</div>
           </template>
         </el-table-column>
         <el-table-column
@@ -279,14 +285,14 @@
               @click="openDetail(scope.row)"
               >详情</el-button
             >
-            <el-button
+            <!-- <el-button
               icon="el-icon-close"
               type="text"
               size="small"
               v-if="!scope.row.delFlg"
               @click="forbidden(scope.row)"
               >{{ scope.row.status != 0 ? "禁用" : "解除" }}</el-button
-            >
+            > -->
           </template>
         </el-table-column>
       </el-table>
@@ -318,6 +324,7 @@ export default {
         getDataListIsPage: true,
         deleteURL: "/sys/pay/order",
         deleteIsBatch: true,
+        exportURL: "/sys/manage/weixinUser/export", // 导出接口，API地址
       },
       dataForm: {
         nickName: "",

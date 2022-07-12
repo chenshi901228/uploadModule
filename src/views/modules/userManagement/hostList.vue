@@ -86,7 +86,7 @@
             clearable
           >
             <el-option :value="1" label="禁用"></el-option>
-            <el-option :value="0" label="正常"></el-option>
+            <el-option :value="0" label="启用"></el-option>
           </el-select>
         </el-form-item>
 
