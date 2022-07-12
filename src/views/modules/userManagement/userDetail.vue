@@ -10,13 +10,13 @@
             fit="cover"
             style="margin: 0px 85px 10px"
           ></el-avatar>
-          <div>用户昵称：{{ diaForm.nickName }}</div>
-          <div>手机号码：{{diaForm.phoneNum}}</div>
+          <div>用户昵称：{{ diaForm.nickName || '-' }}</div>
+          <div>手机号码：{{diaForm.phoneNum || '-'}}</div>
           <div>是否认证：{{ diaForm.legalizeFlg === 1 ? "是" : "否" }}</div>
           <div>是否指导师：{{ diaForm.tutorFlg === 1 ? "是" : "否" }}</div>
-          <div>邀请注册：{{ diaForm.inviteUserName }}人</div>
-          <div>TA邀请人：{{ diaForm.createBy }}</div>
-          <div>注册时间：{{ diaForm.createDate }}</div>
+          <div>邀请注册：{{ diaForm.inviteUserName || 0 }}人</div>
+          <div>TA邀请人：{{ diaForm.inviteUserName || '-'}}</div>
+          <div>注册时间：{{ diaForm.createDate || '-' }}</div>
         </div>
         <div class="diaBoxLeft_title">种子账户</div>
         <div class="diaBoxLeft_mes">

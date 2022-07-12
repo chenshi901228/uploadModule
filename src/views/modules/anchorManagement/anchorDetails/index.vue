@@ -41,7 +41,7 @@
                 <div>支行名称：{{ anchorDetails.branchName || '-' }}</div>
                 <div>账户名称：{{ anchorDetails.accountName || '-' }}</div>
                 <div>银行账号：{{ anchorDetails.bankAccount || '-' }}</div>
-                <div>开户行所在地：{{ anchorDetails.address.slice(0,anchorDetails.address.length-1) || '-' }}</div>
+                <div>开户行所在地：{{ anchorDetails.address || '-' }}</div>
             </div>
             <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:amount:info')">
                 <span>账户信息</span>
@@ -2322,7 +2322,7 @@ export default {
                     this.bankForm.address.length > 0
                       ? this.bankForm.address[0]
                       : "",
-                  address: address,
+                  address: address.slice(0,anchorDetails.address.length-1),
                   city:
                     this.bankForm.address.length > 0
                       ? this.bankForm.address[1]
