@@ -573,9 +573,9 @@
       :close-on-press-escape="false"
       :show-close="false"
       center
-      width="30%"
+      width="60%"
     >
-      <div v-html="livePactInfo.introduce"></div>
+      <div style="height: 50vh;overflow-y: auto;" v-html="livePactInfo.introduce"></div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" :type="btnDisabled?'info':'primary'" :disabled="btnDisabled" @click="confirmLivePact">{{btnText}}</el-button>
       </span>
@@ -587,9 +587,9 @@
       :close-on-press-escape="false"
       :show-close="false"
       center
-      width="30%"
+      width="60%"
     >
-      <div v-html="liveActionInfo.introduce"></div>
+      <div style="height: 50vh;overflow-y: auto;" v-html="liveActionInfo.introduce"></div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" :type="btnDisabled?'info':'primary'" :disabled="btnDisabled" @click="initLiveRoom">{{btnText}}</el-button>
       </span>
