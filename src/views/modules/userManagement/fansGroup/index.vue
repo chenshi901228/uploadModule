@@ -75,10 +75,13 @@
             <template slot-scope="{row}">
               <div v-if="prop=='groupImage'">
                 <img
-                  :src="row.groupImage || require('@/assets/img/default_cover.jpg')"
+                  :src="row.groupImage"
+                  v-if="row.groupImage"
                   alt=""
                   style="width: 50px; height: 50px"
+                  @click="previewImg(row.groupImage)"
                 />
+                <span v-else>-</span>
               </div>
               <span v-else-if="prop=='delFlg'">
                 {{row.delFlg==1?'隐藏':'显示'}}
@@ -119,6 +122,15 @@
         >
       </el-pagination>
     </div>
+    <el-dialog
+      title="二维码"
+      :visible.sync="previewImgDia"
+      width="30%"
+      >
+      <div style="textAlign:center">
+        <img style="maxWidth:100%;" :src="previewImgUrl" alt="">
+      </div>
+    </el-dialog>
     <!-- 创建群组弹窗 -->
     <el-dialog
       title="创建群组"
@@ -385,6 +397,8 @@ export default {
   mixins: [mixinTableModule],
   data(){
     return{
+      previewImgDia:false,//二维码预览弹窗
+      previewImgUrl:'',
       dialogVisibleGroup:false,//创建群组弹窗
       dialogVisibleAddUser:false,//添加成员弹窗
       dialogVisibleLookUser:false,//添加成员弹窗
@@ -462,6 +476,12 @@ export default {
     this.getfansGroupList()
   },
   methods:{
+    previewImg(url){//预览
+      if(url){
+        this.previewImgUrl = url
+        this.previewImgDia = true
+      }
+    },
     //批量选择
     noJoinUserSelectionChangeHandle(val) {
       this.dataListSelectionUsers = val;

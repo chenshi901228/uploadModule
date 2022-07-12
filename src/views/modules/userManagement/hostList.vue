@@ -285,12 +285,12 @@
         </el-table-column>      
         <el-table-column
           prop="disabledFlg"
-          label="状态"
+          label="账号状态"
           header-align="center"
           align="center"
         >
           <template slot-scope="scope">
-            <el-tag size="small" :type="scope.row.disabledFlg ? 'danger' : 'success'">{{scope.row.disabledFlg ? "停用" : "正常"}}</el-tag>
+            <el-tag size="small" :type="scope.row.disabledFlg ? 'danger' : 'success'">{{scope.row.disabledFlg ? "禁用" : "启用"}}</el-tag>
           </template>
         </el-table-column>
         <el-table-column

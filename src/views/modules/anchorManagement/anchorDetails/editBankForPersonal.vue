@@ -226,7 +226,7 @@ export default {
                             branchName: this.bankForm&&this.bankForm.branchName,
                             accountName: this.bankForm&&this.bankForm.accountName,
                             bankAccount: this.bankForm&&this.bankForm.bankAccount,
-                            address: address,
+                            address: address.slice(0,address.length-1),
                             anchorInfoId: this.userId,
                             province:
                                 this.bankForm.address.length > 0
