@@ -244,7 +244,7 @@
           header-align="center"
           align="center"
           width="150"
-          v-if="authEdit == 1 && $route.query.liveState === '3' && $route.query.appointmentState !== '0' && $route.query.timeFlg === '1'"
+          v-if="authEdit == 1"
         >
           <template slot-scope="scope">
             <el-button
