@@ -496,7 +496,7 @@ export default {
         if(liveState == 3) { //未开播
           let date = new Date(startDate).getTime() - new Date().getTime()
           date = Math.ceil(date / 1000 / 60)
-          return date <= 120  //超过开播时间2小时误操作按钮权限
+          return date <= 120  //超过开播时间2小时无操作按钮权限
         }
         return liveState == 1 && type != "2" //直播中，仅有商品/主播操作权限，助手没有
       }else { //直播列表创建的直播

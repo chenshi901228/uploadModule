@@ -567,7 +567,7 @@
       </span>
     </el-dialog>
     <el-dialog
-      title="直播功能使用协议"
+      :title="livePactInfo.title || '直播功能使用协议'"
       :visible.sync="livePactDialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
@@ -575,13 +575,13 @@
       center
       width="30%"
     >
-      
+      <div v-html="livePactInfo.introduce"></div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" :type="btnDisabled?'info':'primary'" :disabled="btnDisabled" @click="confirmLivePact">{{btnText}}</el-button>
       </span>
     </el-dialog>
     <el-dialog
-      title="直播行为规范"
+      :title="liveActionInfo.title || '直播行为规范'"
       :visible.sync="liveActionDialogVisible"
       :close-on-click-modal="false"
       :close-on-press-escape="false"
@@ -589,7 +589,7 @@
       center
       width="30%"
     >
-      
+      <div v-html="liveActionInfo.introduce"></div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" :type="btnDisabled?'info':'primary'" :disabled="btnDisabled" @click="initLiveRoom">{{btnText}}</el-button>
       </span>
@@ -610,6 +610,8 @@ export default {
     return {
       livePactDialogVisible:false,//直播协议弹窗
       liveActionDialogVisible:false,//直播行为规范弹窗
+      livePactInfo: {}, //直播协议内容
+      liveActionInfo: {}, //直播行为规范内容
       btnDisabled:true,
       btnText:'已确认知晓（5s）',
       videoFPS:0,//推流帧率
@@ -732,9 +734,18 @@ export default {
         }
         this.getTimUserSig();
       }else{
-        this.liveStatus = false
-        this.livePactDialogVisible = true //未开播进入直播间阅读协议
-        this.doLoop(5)
+        this.$http.get("/sys/sysConsultativeManagement/getKey/use_live_agreement").then(({data: res}) => {
+          this.liveStatus = false
+          this.livePactDialogVisible = true //未开播进入直播间阅读协议
+          this.doLoop(5)
+          if(res.code != 0) return this.$message.error(res.msg)
+          this.livePactInfo = res.data
+        }).catch(err => {
+          this.liveStatus = false
+          this.livePactDialogVisible = true //未开播进入直播间阅读协议
+          this.doLoop(5)
+          this.$message.error(JSON.stringify(err.message))
+        })
       }
     })
   },
@@ -888,10 +899,20 @@ export default {
       }, 1000);
     },
     confirmLivePact(){//确认知晓直播协议
-      this.livePactDialogVisible = false
-      this.liveActionDialogVisible = true
-      this.btnDisabled = true
-      this.doLoop(5)
+      this.$http.get("/sys/sysConsultativeManagement/getKey/code_of_conduct_live_agreement").then(({data: res}) => {
+        this.livePactDialogVisible = false
+        this.liveActionDialogVisible = true
+        this.btnDisabled = true
+        this.doLoop(5)
+        if(res.code != 0) return this.$message.error(res.msg)
+        this.liveActionInfo = res.data
+      }).catch(err => {
+        this.livePactDialogVisible = false
+        this.liveActionDialogVisible = true
+        this.btnDisabled = true
+        this.doLoop(5)
+        this.$message.error(JSON.stringify(err.message))
+      })
     },
     initLiveRoom(){ //初始化直播间
       this.liveActionDialogVisible = false
