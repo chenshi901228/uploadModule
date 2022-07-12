@@ -892,6 +892,7 @@ export default {
         .get("/sys/livePreview/export", {
           params: {
             ...dataObj,
+            anchorUserId: this.$store.state.user.id
           },
           responseType: "blob",
         })
