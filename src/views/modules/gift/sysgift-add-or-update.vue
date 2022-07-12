@@ -26,8 +26,10 @@
         <upload
           :fileList="fileList"
           :limit="1"
-          :multiple="false"
-          @getImg="getImg"
+          :fileType="['png', 'jpg', 'jpeg']"
+          ref="uploadFile"
+          @uploadSuccess="uploadSuccess"
+          @uploadRemove="uploadRemove"
         ></upload>
       </el-form-item>
       <el-form-item label="礼物动画" prop="dynamicIcon">
@@ -35,8 +37,10 @@
         <upload
           :fileList="filePicList"
           :limit="1"
-          :multiple="false"
-          @getImg="getImgPic"
+          :fileType="['svga']"
+          ref="uploadFilePic"
+          @uploadSuccess="uploadPicSuccess"
+          @uploadRemove="uploadPicRemove"
         ></upload>
       </el-form-item>
       <!-- <el-form-item label="是否免费" prop="isFree">
@@ -66,7 +70,8 @@
 
 <script>
 import debounce from "lodash/debounce";
-import Upload from "@/components/upload/index";
+import Upload from "@/components/common/custom-upload";
+
 
 export default {
   data() {
@@ -152,14 +157,16 @@ export default {
           if (!valid) {
             return false;
           }
+          if(!this.$refs.uploadFile.isUploadAll() || !this.$refs.uploadFilePic.isUploadAll()) 
+            return this.$message.warning("还有附件正在上传，请稍后")
 
           if (!this.fileList.length)
             return this.$message.error("请上传礼物图标");
           if (!this.filePicList.length)
             return this.$message.error("请上传礼物动画");
 
-          this.dataForm.icon = this.fileList[0].response.data.url;
-          this.dataForm.dynamicIcon = this.filePicList[0].response.data.url;
+          this.dataForm.icon = this.fileList[0].url;
+          this.dataForm.dynamicIcon = this.filePicList[0].url;
 
           this.$http[!this.dataForm.id ? "post" : "put"](
             "/sys/sys/gift/",
@@ -185,12 +192,19 @@ export default {
       1000,
       { leading: true, trailing: false }
     ),
-
-    getImg(imgList) {
-      this.fileList = imgList;
+    //礼物图标上传、删除
+    uploadSuccess(file) {
+      this.fileList.push(file);
     },
-    getImgPic(imgList) {
-      this.filePicList = imgList;
+    uploadRemove(file) {
+      this.fileList = []
+    },
+      //礼物动画上传、删除
+    uploadPicSuccess(file) {
+      this.filePicList.push(file);
+    },
+    uploadPicRemove(file) {
+      this.filePicList = []
     },
   },
 };

@@ -19,7 +19,7 @@
         <i @click="deleteCount(item)" class="el-icon-delete"></i>
       </div>
       <img
-        v-if="item.type.includes('image') && item.url"
+        v-if="item.url && imgTypes.includes(getFileType(item.url))"
         :src="item.url"
         alt=""
       />
@@ -51,32 +51,40 @@
       :visible.sync="previewVisible"
     >
       <div style="display: flex; justify-content: center; -items: center">
+        <!-- 普通图片 -->
         <img
           v-if="previewInfo && imgTypes.includes(previewInfo.previewType)"
           style="max-width: 100%"
           :src="previewInfo && previewInfo.url"
           alt=""
         />
+        <!-- mp4 -->
         <video
           style="max-width: 100%"
           v-else-if="previewInfo && previewInfo.previewType == 'mp4'"
           :src="previewInfo && previewInfo.url"
           controls
         ></video>
-        <video-flv-component
+        <!-- flv格式 -->
+        <!-- <video-flv-component
           v-else
           :url="previewInfo && previewInfo.url"
-        ></video-flv-component>
+        ></video-flv-component> -->
       </div>
     </el-dialog>
+    <!-- 查看svga弹框 -->
+    <svga-dialog ref="svgaRef"></svga-dialog>
+
   </div>
 </template>
 <script>
 import VideoFlvComponent from "@/components/common/videoFlvComponent";
+import SvgaDialog from "@/components/common/svgaDialog.vue"
 import Cookies from "js-cookie";
 export default {
   components: {
     VideoFlvComponent,
+    SvgaDialog
   },
   data() {
     return {
@@ -85,7 +93,7 @@ export default {
       // 预览
       previewVisible: false,
       previewInfo: null,
-      imgTypes: ["png", "jpg", "jpeg", "webp", "gif"], //图片格式
+      imgTypes: ["png", "jpg", "jpeg", "webp", "gif"], //一般图片格式
     };
   },
   computed: {
@@ -137,15 +145,19 @@ export default {
           this.deleteUid = null;
         } else {
           //更新上传附件信息
-          this.uploadList = this.uploadList.map((i) => {
-            let t = null;
-            val.map((j) => {
-              if (i.uid == j.uid) {
-                t = { ...i, ...j };
-              }
+          if(!this.uploadList.length) { //
+            this.uploadList = val
+          }else {
+            this.uploadList = this.uploadList.map((i) => {
+              let t = null;
+              val.map((j) => {
+                if (i.uid == j.uid) {
+                  t = { ...i, ...j };
+                }
+              });
+              return t || i;
             });
-            return t || i;
-          });
+          }
         }
       } else {
         this.uploadList = [];
@@ -154,6 +166,12 @@ export default {
     },
   },
   methods: {
+    // 返回附件type
+    getFileType(url) {
+      let type = url.split(".")
+      type = type[type.length - 1].toLocaleLowerCase()
+      return type
+    },
     //限制图片尺寸
     limitFileWH(E_width, E_height, file) {
       let _this = this;
@@ -208,7 +226,7 @@ export default {
       }
 
       if (!fileType) {
-        this.$message.error(`上传格式错误（${this.fileType.join(",")}）`);
+        this.$message.error(`上传格式错误（允许${this.fileType.join(",")}）`);
         return false;
       }
 
@@ -265,7 +283,7 @@ export default {
         });
 
         this.$message.success("上传成功");
-        this.$emit("uploadSuccess", t);
+        this.$emit("uploadSuccess", t);  //返回obj
       } else {
         this.uploadList = this.uploadList.filter(
           (item) => item.uid != file.uid
@@ -277,7 +295,7 @@ export default {
     uploadError(err, file, fileList) {
       console.log(err, file, fileList);
       this.uploadList = this.uploadList.filter((item) => item.uid != file.uid);
-      this.$message.error(err);
+      this.$message.error(err.type);
     },
     // 超出上传数量
     uploadExceed() {
@@ -290,8 +308,16 @@ export default {
         let type = data.url.split(".");
         type = type[type.length - 1].toLocaleLowerCase();
 
-        this.previewInfo.previewType = type;
-        this.previewVisible = true;
+        if(type == "svga") { //预览svga
+          this.$refs.svgaRef.init({
+            name: data.name || "预览",
+            dynamicIcon: data.url
+          })
+        }else {
+          this.previewInfo.previewType = type;
+          this.previewVisible = true;
+        }
+
       }
     },
     // 删除
@@ -304,7 +330,7 @@ export default {
         .then(() => {
           this.deleteUid = file.uid;
           this.$message.success("删除成功!");
-          this.$emit("uploadRemove", file);
+          this.$emit("uploadRemove", file); //返回obj
         })
         .catch((err) => {
           console.log(err);

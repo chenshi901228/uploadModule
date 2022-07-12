@@ -497,7 +497,7 @@
               >编辑</el-button
             >
             <el-button
-              v-if="scope.row.liveState === 3 && timeFlag(scope.row.startDate)"
+              v-if="scope.row.liveState === 3 && timeFlag(scope.row.startDate) && scope.row.delFlg === 0"
               type="text"
               icon="el-icon-delete"
               size="small"
@@ -596,19 +596,24 @@ export default {
       let nowTime = new Date().getTime();
       let time = new Date(row.startDate).getTime();
       let timeFlg = 0;
+      let authEdit = 0
       if ((nowTime - time) / 3600 / 1000 >= 2) {
         timeFlg = 0;
       } else {
         timeFlg = 1;
+      }
+      if(row.liveState ===3 && timeFlg === 1){
+        authEdit = 1
+      }else{
+        authEdit = 0
       }
       this.$router.push({
         path: "/preview-cargoGoods-CargoGoods",
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,
-          liveState: row.liveState,
           type: 2,
-          timeFlg: timeFlg,
+          authEdit: authEdit,
         },
       });
     },
@@ -617,18 +622,23 @@ export default {
       let nowTime = new Date().getTime();
       let time = new Date(row.startDate).getTime();
       let timeFlg = 0;
+      let authEdit = 0
       if ((nowTime - time) / 3600 / 1000 >= 2) {
         timeFlg = 0;
       } else {
         timeFlg = 1;
+      }
+      if(row.liveState ===3 && timeFlg === 1){
+        authEdit = 1
+      }else{
+        authEdit = 0
       }
       this.$router.push({
         path: "/preview-recommendAnchor-RecommendAnchor",
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,
-          liveState: row.liveState,
-          timeFlg: timeFlg,
+          authEdit: authEdit,
         },
       });
     },
@@ -637,19 +647,24 @@ export default {
       let nowTime = new Date().getTime();
       let time = new Date(row.startDate).getTime();
       let timeFlg = 0;
+      let authEdit = 0
       if ((nowTime - time) / 3600 / 1000 >= 2) {
         timeFlg = 0;
       } else {
         timeFlg = 1;
+      }
+      if(row.liveState ===3 && timeFlg === 1){
+        authEdit = 1
+      }else{
+        authEdit = 0
       }
       this.$router.push({
         path: "/preview-assistant-Assistant",
         query: {
           liveId: row.id,
           anchorId: row.anchorUserId,
-          liveState: row.liveState,
           type: 2,
-          timeFlg: timeFlg,
+          authEdit: authEdit,
         },
       });
     },
