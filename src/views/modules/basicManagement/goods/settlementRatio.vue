@@ -317,7 +317,7 @@ export default {
   methods: {
     // 批量or单独设置
     editHandle(num) {
-      this.editeForm.proportion = 0;
+      this.editeForm.proportion = null;
 
       if (num === 1) {
         this.setText = "全部主播结算比例";
@@ -382,6 +382,7 @@ export default {
                   this.$message.success("批量修改结算比例成功");
                   this.submitLoading = false;
                   this.visible = false;
+                  this.editeForm.proportion = null
                   this.getDataList();
                 } else {
                   this.submitLoading = false;
@@ -410,6 +411,7 @@ export default {
                   this.$message.success("批量修改结算比例成功");
                   this.submitLoading = false;
                   this.visible = false;
+                  this.editeForm.proportion = null
                   this.getDataList();
                 } else {
                   this.submitLoading = false;
@@ -429,7 +431,7 @@ export default {
       this.visible = false;
       this.$message.info("取消修改");
       this.$refs.editeForm.resetFields();
-      this.editeForm = {};
+      this.editeForm.proportion = null
     },
   },
 };

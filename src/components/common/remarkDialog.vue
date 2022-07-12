@@ -5,6 +5,8 @@
             <p style="width:50px; margin:0">备注<span style="color:red">*</span></p>
             <el-input
                 type="textarea"
+                maxlength="100"
+                show-word-limit
                 :rows="6"
                 placeholder="请输入备注"
                 v-model="remark">

@@ -414,6 +414,25 @@ export default {
           throw err;
         });
     },
+
+    // 判断是否有操作按钮的权限---type:1-商品/主播，2-助手
+    isHandleAuth({ livePreviewId, liveState, startDate }, type) {
+      if(!livePreviewId) { //直播预告创建的直播
+        if(liveState == 3) { //未开播
+          let date = new Date(startDate).getTime() - new Date().getTime()
+          date = Math.ceil(date / 1000 / 60)
+          return date <= 120  //超过开播时间2小时误操作按钮权限
+        }
+        return liveState == 1 && type != "2" //直播中，仅有商品/主播操作权限，助手没有
+      }else { //直播列表创建的直播
+        if(type == "1") {
+          return liveState == 1 || liveState == 3 //直播中/未开播-针对商品或主播
+        }else {
+          return liveState == 3 //未开播--针对助手
+        }
+      }
+    },
+
     //带货商品
     addProduct(row) {
       this.$router.push({
@@ -422,7 +441,7 @@ export default {
           liveId: row.id,
           anchorId: row.anchorUserId,
           type: 1,
-          authEdit: row.liveState == 1 || row.liveState == 3 ? 1 : 0 //仅未开播和直播中能修改 
+          authEdit: this.isHandleAuth(row, "1") ? 1 : 0 
         }
       });
     },
@@ -432,7 +451,7 @@ export default {
         name: "liveManagement-recommendAnchor-RecommendAnchor",
         query: { 
           liveId: row.id,
-          authEdit: row.liveState == 1 || row.liveState == 3 ? 1 : 0 ,//仅未开播和直播中能修改
+          authEdit: this.isHandleAuth(row, "1") ? 1 : 0 ,
           anchorId: row.anchorUserId
         }
       });
@@ -445,7 +464,7 @@ export default {
           liveId: row.id,
           anchorId: row.anchorUserId,
           type: 1,
-          authEdit: row.liveState == 3 ? 1 : 0 //仅未开播能修改 
+          authEdit: this.isHandleAuth(row, "2") ? 1 : 0 
         }
       });
     },
