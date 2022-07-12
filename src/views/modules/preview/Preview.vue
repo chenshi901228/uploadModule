@@ -497,7 +497,7 @@
               >编辑</el-button
             >
             <el-button
-              v-if="scope.row.liveState === 3 && timeFlag(scope.row.startDate)"
+              v-if="scope.row.liveState === 3 && timeFlag(scope.row.startDate) && scope.row.delFlg === 0"
               type="text"
               icon="el-icon-delete"
               size="small"

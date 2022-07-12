@@ -414,18 +414,23 @@ export default {
             // this.frontCoverListDefault = res.data.frontCover
             //   ? res.data.frontCover
             //   : "";
-            this.ruleForm.assistant = res.data.assistant;
-            this.ruleForm.products = res.data.products;
-            let productsData = this.ruleForm.products.split(",");
-            this.ruleForm.products = productsData.length
-              ? `已选择${productsData.length}个商品`
-              : "";
-
-            this.ruleForm.recommendedAnchors = res.data.recommendedAnchors;
-            let anchorData = this.ruleForm.recommendedAnchors.split(",");
-            this.ruleForm.recommendedAnchors = anchorData.length
-              ? `已选择${anchorData.length}个主播`
-              : "";
+            if(res.data.assistant){
+              this.ruleForm.assistant = res.data.assistant;
+            }
+            if(res.data.products){
+              this.ruleForm.products = res.data.products;
+              let productsData = this.ruleForm.products.split(",");
+              this.ruleForm.products = productsData.length
+                ? `已选择${productsData.length}个商品`
+                : "";
+            }
+            if(res.data.recommendedAnchors){
+              this.ruleForm.recommendedAnchors = res.data.recommendedAnchors;
+              let anchorData = this.ruleForm.recommendedAnchors.split(",");
+              this.ruleForm.recommendedAnchors = anchorData.length
+                ? `已选择${anchorData.length}个主播`
+                : "";
+            }
 
             this.info = res.data;
           }
