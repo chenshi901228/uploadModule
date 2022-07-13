@@ -2322,7 +2322,7 @@ export default {
                     this.bankForm.address.length > 0
                       ? this.bankForm.address[0]
                       : "",
-                  address: address.slice(0,anchorDetails.address.length-1),
+                  address: address.slice(0,address.length-1),
                   city:
                     this.bankForm.address.length > 0
                       ? this.bankForm.address[1]

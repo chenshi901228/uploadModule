@@ -5,12 +5,13 @@
     :close-on-click-modal="false"
     :close-on-press-escape="false"
     :append-to-body="true">
-    <el-form size="smalk" :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
+    <el-form size="small" :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
       <el-form-item :label="$t('updatePassword.username')">
         <span>{{ $store.state.user.name }}</span>
       </el-form-item>
       <el-form-item prop="password" :label="$t('updatePassword.password')">
         <el-input v-model="dataForm.password" type="password" :placeholder="$t('updatePassword.password')"></el-input>
+        <span>（请输入）</span>
       </el-form-item>
       <el-form-item prop="newPassword" :label="$t('updatePassword.newPassword')">
         <el-input v-model="dataForm.newPassword" type="password" :placeholder="$t('updatePassword.newPassword')"></el-input>

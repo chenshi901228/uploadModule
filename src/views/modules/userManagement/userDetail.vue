@@ -14,7 +14,7 @@
           <div>手机号码：{{diaForm.phoneNum || '-'}}</div>
           <div>是否认证：{{ diaForm.legalizeFlg === 1 ? "是" : "否" }}</div>
           <div>是否指导师：{{ diaForm.tutorFlg === 1 ? "是" : "否" }}</div>
-          <div>邀请注册：{{ diaForm.inviteUserName || 0 }}人</div>
+          <div>邀请注册：{{ diaForm.inviteNum || 0 }}人</div>
           <div>TA邀请人：{{ diaForm.inviteUserName || '-'}}</div>
           <div>注册时间：{{ diaForm.createDate || '-' }}</div>
         </div>
@@ -24,7 +24,7 @@
             可用种子：{{ diaForm.priceBalance ? diaForm.priceBalance : 0 }}大豆
           </div>
         </div>
-        <div class="diaBoxLeft_title">账户信息</div>
+        <div class="diaBoxLeft_title">消费数据</div>
         <div class="diaBoxLeft_mes">
           <div>
             累计消费：￥{{
@@ -66,17 +66,17 @@
           </div>
           <div
             class="diaBoxRight_tabBtns"
-            @click="changeTbas(4)"
-            :class="{ 'is-active': diaTbas === 4 }"
-          >
-            加入粉丝团
-          </div>
-          <div
-            class="diaBoxRight_tabBtns"
             @click="changeTbas(5)"
             :class="{ 'is-active': diaTbas === 5 }"
           >
             粉丝团消费
+          </div>
+          <div
+            class="diaBoxRight_tabBtns"
+            @click="changeTbas(4)"
+            :class="{ 'is-active': diaTbas === 4 }"
+          >
+            加入粉丝团
           </div>
           <!-- <div
             class="diaBoxRight_tabBtns"
@@ -117,7 +117,7 @@
               <el-option :value="2" label="大于众学"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="礼物名称" v-if="diaTbas === 2" prop="name">
+          <el-form-item label="礼物" v-if="diaTbas === 2" prop="name">
             <el-input
               style="width: 180px"
               placeholder="礼物名称"
@@ -135,6 +135,22 @@
               <el-option :value="1" label="小程序端"></el-option>
               <el-option :value="2" label="大于众学"></el-option>
             </el-select>
+          </el-form-item>
+          <el-form-item label="直播主题" v-if="diaTbas === 2">
+            <el-input
+              style="width: 180px"
+              placeholder="直播主题"
+              v-model="diaSearchForm.liveTheme"
+              clearable
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="直播间ID" v-if="diaTbas === 2">
+            <el-input
+              style="width: 180px"
+              placeholder="直播间ID"
+              v-model="diaSearchForm.id"
+              clearable
+            ></el-input>
           </el-form-item>
           <el-form-item
             label="粉丝团名称"
@@ -513,6 +529,8 @@ export default {
         productId: "",
         productType: "",
         isFree: "",
+        id:"",
+        theme:"",
       };
       this.diaDataList = [];
       this.total_dia = 0;
@@ -534,6 +552,8 @@ export default {
             price: "礼物单价",
             allPrice: "消费合计",
             payType: "支付方式",
+            theme: "直播间主题",
+            id: "直播间ID",
             paySource: "消费来源",
             createDate: "创建时间",
           };
@@ -613,6 +633,8 @@ export default {
             weixinUserId: this.userId,
             paySource: this.diaSearchForm.paySource,
             name: this.diaSearchForm.name,
+            theme:this.diaSearchForm.theme,
+            id:this.diaSearchForm.id,
           };
           url = "/sys/user/consumption/selectUserGiftPage";
           break;
