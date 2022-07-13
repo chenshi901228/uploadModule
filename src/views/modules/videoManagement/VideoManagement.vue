@@ -411,7 +411,7 @@ export default {
         case "2": // 查看评论详情
           if (data.id)
             this.$router.push({
-              name: "liveManagement-livePlayBackComment",
+              name: "anchorManagement-livePlayBackComment",
               query: { id: data.id, sys: 0 },
             });
           break;
