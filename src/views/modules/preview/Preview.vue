@@ -294,13 +294,6 @@
         >
         </el-table-column>
         <el-table-column
-          width="120"
-          label="助手"
-          prop="assistant"
-          align="center"
-        >
-        </el-table-column>
-        <el-table-column
           width="150"
           label="预计开播时间"
           prop="startDate"
@@ -330,6 +323,9 @@
           prop="estimateLiveTime"
           align="center"
         >
+          <template slot-scope="scope">
+            <span>{{ scope.row.estimateLiveTime ? scope.row.estimateLiveTime + '分钟' : "--" }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           width="120"
@@ -338,7 +334,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.liveTime || "--" }}</span>
+            <span>{{ scope.row.liveTime ? scope.row.liveTime + '分钟' : "--" }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -416,7 +412,7 @@
             <span>{{ scope.row.livingRoomId || "--" }}</span>
           </template>
         </el-table-column>
-        <el-table-column width="100%" label="备注" prop="remark" align="center">
+        <el-table-column width="100%" label="备注" prop="remark" align="center" show-overflow-tooltip>
           <template slot-scope="scope">
             <span>{{ scope.row.remark || "--" }}</span>
           </template>
@@ -489,7 +485,7 @@
               >{{ scope.row.showState === 0 ? "显示" : "隐藏" }}</el-button
             >
             <el-button
-              v-if="scope.row.appointmentState === 1"
+              v-if="scope.row.appointmentState === 1 && scope.row.delFlg === 0"
               type="text"
               icon="el-icon-edit"
               size="small"

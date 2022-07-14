@@ -348,6 +348,9 @@
           align="center"
           show-overflow-tooltip
         >
+          <template slot-scope="scope">
+            <span>{{ scope.row.estimateLiveTime ? scope.row.estimateLiveTime + '分钟' : "--" }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           width="120"
@@ -357,7 +360,7 @@
           show-overflow-tooltip
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.liveTime || "--" }}</span>
+            <span>{{ scope.row.liveTime ? scope.row.liveTime + '分钟' : "--" }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -458,7 +461,7 @@
             <span>{{ scope.row.livingRoomId || "--" }}</span>
           </template>
         </el-table-column>
-        <el-table-column width="100%" label="备注" prop="remark" align="center">
+        <el-table-column width="100%" label="备注" prop="remark" align="center" show-overflow-tooltip>
           <template slot-scope="scope">
             <span>{{ scope.row.remark || "--" }}</span>
           </template>
@@ -514,7 +517,7 @@
             >
             <el-button
               v-if="
-                scope.row.appointmentState === 1 && scope.row.liveState === 3
+                scope.row.appointmentState === 1 && scope.row.liveState === 3 && scope.row.delFlg === 0
               "
               type="text"
               size="small"
