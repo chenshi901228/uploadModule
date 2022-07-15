@@ -182,7 +182,7 @@
           ></el-input>
         </el-form-item>
 
-        <el-form-item label="直播宣传图">
+        <el-form-item label="直播背景">
           <div
             class="frontCover-img-box"
             v-if="frontCoverListDefault.length !== 0"
