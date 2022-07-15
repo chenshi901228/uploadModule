@@ -183,7 +183,7 @@
                   <img
                     src="../../assets/img/isMike_icon.png"
                     alt=""
-                    v-if="!item.isTalkFlag"
+                    v-if="!item.isTalk"
                   />
                   <img src="../../assets/img/noMike_icon.png" alt="" v-else />
                 </div>
@@ -708,46 +708,13 @@ export default {
       total:0,
       trends:1,//直播动态开启或关闭 1：开启 0：关闭
       endLiveDialogVisible:false,//结束直播详情弹窗
-      endLiveTitle:'直播结束'
+      endLiveTitle:'直播结束',
     };
   },
   created() {
-    // console.log(navigator.connection)
-    // navigator.connection.addEventListener('change', this.onConnectionChange);
-    this.$http.get('/sys/mixedflow/getLiving').then(res=>{//进入直播间获取直播状态
-      if(!res.data.code==0) return this.$message.error(res.data.msg)
-      if(res.data.data){
-        this.liveStatus = true
-        let connectMessageInfo = JSON.parse(
-          localStorage.getItem("connectMessageInfo")
-        ); //连麦列表状态
-        if (connectMessageInfo) {
-          this.connectMessageInfo = connectMessageInfo;
-        }
-        let isRecord = localStorage.getItem("isRecord"); //录制状态
-        if (isRecord) {
-          this.toolNav[0].status = isRecord;
-        }
-        let studentList = JSON.parse(localStorage.getItem("studentList")); //学生列表
-        if (studentList) {
-          this.studentList = studentList;
-        }
-        this.getTimUserSig();
-      }else{
-        this.$http.get("/sys/sysConsultativeManagement/getKey/use_live_agreement").then(({data: res}) => {
-          this.liveStatus = false
-          this.livePactDialogVisible = true //未开播进入直播间阅读协议
-          this.doLoop(5)
-          if(res.code != 0) return this.$message.error(res.msg)
-          this.livePactInfo = res.data
-        }).catch(err => {
-          this.liveStatus = false
-          this.livePactDialogVisible = true //未开播进入直播间阅读协议
-          this.doLoop(5)
-          this.$message.error(JSON.stringify(err.message))
-        })
-      }
-    })
+    window.addEventListener('online', this.updateOnline);
+    window.addEventListener('offline', this.updateOnline);
+    this.init()
   },
   computed: {},
   mounted() {
@@ -876,12 +843,60 @@ export default {
     });
   },  
   methods: {
-    onConnectionChange() {
-      const { rtt, downlink, effectiveType, saveData } = navigator.connection;
-      // console.log(`有效网络连接类型: ${effectiveType}`);
-      // console.log(`估算的下行速度/带宽: ${downlink}Mb/s`);
-      console.log(`估算的往返时间: ${rtt}ms`);
-      // console.log(`打开/请求数据保护模式: ${saveData}`);
+    init(){
+      this.$http.get('/sys/mixedflow/getLiving').then(res=>{//进入直播间获取直播状态
+      if(!res.data.code==0) return this.$message.error(res.data.msg)
+        if(res.data.data){
+          this.$confirm("上次直播异常退出，重新进入", "提示", {
+            confirmButtonText: "确认",
+            cancelButtonText: "取消",
+            type: "info"
+          }).then(() => {
+            this.liveStatus = true
+            let connectMessageInfo = JSON.parse(
+              localStorage.getItem("connectMessageInfo")
+            ); //连麦列表状态
+            if (connectMessageInfo) {
+              this.connectMessageInfo = connectMessageInfo;
+            }
+            let isRecord = localStorage.getItem("isRecord"); //录制状态
+            if (isRecord) {
+              this.toolNav[0].status = isRecord;
+            }
+            this.getTimUserSig();
+          }).catch(()=>{
+            window.close()
+          })
+        }else{
+          this.$http.get("/sys/sysConsultativeManagement/getKey/use_live_agreement").then(({data: res}) => {
+            this.liveStatus = false
+            this.livePactDialogVisible = true //未开播进入直播间阅读协议
+            this.doLoop(5)
+            if(res.code != 0) return this.$message.error(res.msg)
+            this.livePactInfo = res.data
+          }).catch(err => {
+            this.liveStatus = false
+            this.livePactDialogVisible = true //未开播进入直播间阅读协议
+            this.doLoop(5)
+            this.$message.error(JSON.stringify(err.message))
+          })
+        }
+      })
+    },
+    updateOnline() {//网络状态
+      console.log(navigator.onLine)
+      if(!navigator.onLine){
+        // return this.$message.error('当前无网络连接，请检查网络')
+        return this.$confirm("当前无网络连接，请检查网络", "提示", {
+          confirmButtonText: "确认",
+          cancelButtonText: "取消",
+          type: "error"
+        }).then(() => {
+
+        }).catch(()=>{})
+      }else{
+        this.init()
+      }
     },
     // 协议确认倒计时
     doLoop: function (seconds) {
@@ -920,7 +935,13 @@ export default {
     },
     load () {//主播推荐商品列表、直播预告列表、推荐主播列表加载
       this.params.page++
-      if(this.activeName==='fourth'){
+      if(this.activeName==='third'){
+        if(this.studentList.length>=this.total){
+          return
+        }else{
+          this.getOnlineUsers()
+        }
+      }else if(this.activeName==='fourth'){
         if(this.goodsList.length>=this.total){
           return
         }else{
@@ -1037,6 +1058,10 @@ export default {
     handleClick(tab, event) {
       this.params.page=1
       switch(this.activeName){
+        case 'third' :
+          this.studentList = []
+          this.getOnlineUsers()
+          break
         case 'fourth':
           this.goodsList = []
           this.getAnchorProduct()
@@ -1057,7 +1082,7 @@ export default {
       //禁言
       this.studentList.forEach((item) => {
         if (item.userId === data.userId) {
-          if (!item.isTalkFlag) {
+          if (!item.isTalk) {
             this.sendMessage({
               type: 20,
               replyUserId: data.userId,
@@ -1068,11 +1093,7 @@ export default {
               userId: data.userId,
               isTalk: 1,
             }).then((res) => {
-              item.isTalkFlag = 1;
-              localStorage.setItem(
-                "studentList",
-                JSON.stringify(this.studentList)
-              );
+              item.isTalk = 1;
             });
           } else {
             this.sendMessage({
@@ -1085,11 +1106,7 @@ export default {
               userId: data.userId,
               isTalk: 0,
             }).then((res) => {
-              item.isTalkFlag = 0;
-              localStorage.setItem(
-                "studentList",
-                JSON.stringify(this.studentList)
-              );
+              item.isTalk = 0;
             });
           }
         }
@@ -1100,22 +1117,14 @@ export default {
         case 1:
           this.sendMessage({ type: 20, allMute: true }); //全员禁言
           this.getMuteStatus({ isAll: 1, isTalk: 1 }).then((res) => {
-            this.studentList.forEach((item) => (item.isTalkFlag = 1));
-            localStorage.setItem(
-              "studentList",
-              JSON.stringify(this.studentList)
-            );
+            this.studentList.forEach((item) => (item.isTalk = 1));
           });
 
           break;
         case 2:
           this.sendMessage({ type: 20, allMute: false }); //全员解禁
           this.getMuteStatus({ isAll: 1, isTalk: 0 }).then((res) => {
-            this.studentList.forEach((item) => (item.isTalkFlag = 0));
-            localStorage.setItem(
-              "studentList",
-              JSON.stringify(this.studentList)
-            );
+            this.studentList.forEach((item) => (item.isTalk = 0));
           });
           break;
         default:
@@ -1277,7 +1286,6 @@ export default {
               this.liveStatus = false;
               localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
               localStorage.removeItem("isRecord"); //将录制状态移除
-              localStorage.removeItem("studentList"); //将学生列表移除
               this.tim.logout(); //退出IM
               this.tim.destroy();
               this.endLiveDialogVisible = true
@@ -1416,7 +1424,6 @@ export default {
               callback: action => {
                 localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
                 localStorage.removeItem("isRecord"); //将录制状态移除
-                localStorage.removeItem("studentList"); //将学生列表移除
                 this.endLiveTitle = '您因违反规定已被禁播'
                 this.endLiveDialogVisible = true
               }
@@ -1429,25 +1436,9 @@ export default {
             }
           }
         }
-        if (item.type === "TIMGroupTipElem") {
-          console.log("item-------", item);
-          switch (item.payload.operationType) {
-            case 2: //用户离开直播间
-              let userIdArr = item.payload.operatorID.split("LIVE_FLAG_");
-              const userId = userIdArr[1];
-              const ind = this.studentList.findIndex(
-                (item) => item.userId == userId
-              );
-              this.studentList.splice(ind, 1);
-              localStorage.setItem(
-                "studentList",
-                JSON.stringify(this.studentList)
-              );
-              break;
-            default:
-              break;
-          }
-        }
+        // if (item.type === "TIMGroupTipElem") {
+          
+        // }
         if (
           this.conversation &&
           item.conversationID === this.conversation.conversationID
@@ -1458,26 +1449,6 @@ export default {
             if (applyInfo.message.type === 3) {
               console.log("提问消息");
               this.questionMessageInfo.push(applyInfo);
-            }
-            if (
-              applyInfo.message &&
-              applyInfo.message.type &&
-              applyInfo.message.type === 10
-            ) {
-              //用户进入直播间消息
-              let obj = applyInfo.message;
-              obj.userId = applyInfo.userInfo.userId;
-              obj.avatarUrl = applyInfo.userInfo.avatarUrl;
-              let arr = [];
-              this.studentList.forEach((item) => arr.push(item.userId));
-              if (arr.indexOf(applyInfo.userInfo.userId) === -1) {
-                this.studentList.push(obj);
-              }
-              localStorage.setItem(
-                "studentList",
-                JSON.stringify(this.studentList)
-              );
-              console.log("用户进入直播间消息", this.studentList);
             }
             //连麦信息
             if (
@@ -1638,6 +1609,22 @@ export default {
       // 发送消息之后清空输入框内容
       this.barrage = "";
       if (cb) cb();
+    },
+    
+    // 获取在线学生
+    getOnlineUsers() {
+      let obj = {
+        nickName:''
+      }
+      let params = {...this.params,...obj}
+      this.$http
+        .get(`/sys/mixedflow/getOnlineUsers`,{params})
+        .then((res) => {
+          console.log("在线用户列表", res.data.data);
+          let data = res.data.data.list;
+          this.goodsList = this.studentList.concat(data)
+          this.total = res.data.data.total
+        });
     },
     // 获取主播推荐商品
     getAnchorProduct() {
