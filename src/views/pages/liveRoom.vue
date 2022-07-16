@@ -594,6 +594,13 @@
         <el-button size="small" :type="btnDisabled?'info':'primary'" :disabled="btnDisabled" @click="initLiveRoom">{{btnText}}</el-button>
       </span>
     </el-dialog>
+    <video
+      autoplay
+      loop
+      id="video_custom"
+      style="width:300px;height:300px"
+      src="../../assets/myVideo.mp4"
+    ></video>
   </div>
 </template>
 
@@ -712,30 +719,44 @@ export default {
     };
   },
   created() {
-    window.addEventListener('online', this.updateOnline);
-    window.addEventListener('offline', this.updateOnline);
-    this.init()
+    
   },
   computed: {},
-  mounted() {
+  async mounted() {
     this.liveTheme = this.$route.query.liveTheme;
     // 初始化实例  Step1
     this.zg = new ZegoExpressEngine(
       this.appID,
       "wss://webliveroom467572390-api.imzego.com/ws"
     );
+    //检测设备能力
+    let checkSystemRes = await this.zg.checkSystemRequirements()
+    console.log(checkSystemRes,'55555')
+    if(!checkSystemRes.camera){
+      this.$message.warning('请先打开摄像头权限')
+      return
+    }
+    if(!checkSystemRes.microphone){
+      this.$message.warning('请先打开麦克风权限')
+      return
+    }
+
+    window.addEventListener('online', this.updateOnline);
+    window.addEventListener('offline', this.updateOnline);
+    this.init()
+
     //获取摄像头列表
     this.zg.getCameras().then(res=>{
       console.log('摄像头',res)
       this.camerasList = res
       this.cameraId = this.camerasList[0].deviceID
     })
-
+   
     //获取麦克风列表
     this.zg.getMicrophones().then(res=>{
       this.microphonesList = res
     })
-
+    
     //屏幕共享中断
     this.zg.on("screenSharingEnded",(stream)=>{
       if(!stream.active){
@@ -1186,8 +1207,11 @@ export default {
           frameRate: 15,
           bitrate: 2000,
           videoInput:this.cameraId,
-          // videoInput:"1ed4bf93db702d620a4364790dd28de7300e3b19e76420e48ed3eb9aad50212b"
         },
+        // custom: {
+        //   source:document.getElementById('video_custom'),
+        //   bitrate: 2000,
+        // },
       });
       // Step4
       this.startPublishingStream();
