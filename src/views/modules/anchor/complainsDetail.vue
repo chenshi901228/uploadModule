@@ -12,13 +12,14 @@
       <div style="display: flex; margin: 0 20px">{{ diaForm.content }}</div>
       <div style="display: flex; margin: 20px 0 10px">投诉图片：</div>
       <div style="display: flex; margin: 0 20px">
-        <img
-          v-for="(i, k) in diaForm.fileUrl"
+        <el-image 
+          v-for="(url, k) in diaForm.fileUrl"
           :key="k"
-          :src="i"
-          alt=""
           style="width: 140px; height: 80px; margin-right: 20px"
-        />
+          :src="url" 
+          fit="cover"
+          :preview-src-list="diaForm.fileUrl">
+        </el-image>
       </div>
       <div style="display: flex; margin: 20px 0 10px">
         联系方式：{{ diaForm.contactPhone }}
@@ -46,39 +47,36 @@
 </template>
 
 <script>
-import mixinViewModule from "@/mixins/view-module";
+import commonModule from "@/mixins/common-module";
 export default {
-  mixins: [mixinViewModule],
+  mixins: [commonModule],
   name: "complainsRecords_detail",
   data() {
     return {
       userId: "",
       diaForm: {},
-      mixinViewModuleOptions: {
-        createdIsNeed: false, // 此页面是否在创建时，调用查询数据列表接口？
-      },
     };
   },
-
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      vm.userId = window.localStorage.getItem("complainsDetailID");
-      vm.$http
-        .get(`/sys/manage/complaint/${vm.userId}`)
+  created() {
+    this.init()
+  },
+  methods: {
+    init() {
+      this.userId = this.$route.query.complainsDetailID
+      this.$http
+        .get(`/sys/manage/complaint/${this.userId}`)
         .then(({ data: res }) => {
           if (res.code !== 0) {
-            return vm.$message.error(res.msg);
+            return this.$message.error(res.msg);
           }
-          vm.diaForm = res.data;
-          vm.diaForm.tag = vm.diaForm.tag ? vm.diaForm.tag.split(",") : [];
-          vm.diaForm.fileUrl = vm.diaForm.fileUrl
-            ? vm.diaForm.fileUrl.split(",")
+          this.diaForm = res.data;
+          this.diaForm.tag = this.diaForm.tag ? this.diaForm.tag.split(",") : [];
+          this.diaForm.fileUrl = this.diaForm.fileUrl
+            ? this.diaForm.fileUrl.split(",")
             : [];
         })
         .catch(() => {});
-    });
-  },
-  methods: {
+    },
     // 审核
     updateCheckStatus() {
       this.$confirm(`是否处理该条投诉`, {
@@ -114,7 +112,7 @@ export default {
 .detalilBox {
   height: 100%;
   background: #fff;
-  min-height: calc(calc(100vh - 50px - 38px - 30px));
+  min-height: calc(calc(100vh - 50px - 38px));
   padding: 40px 30px;
 
   .detalilBox_top {
@@ -125,6 +123,7 @@ export default {
     height: 40px;
     text-align: right;
     padding: 0 20px;
+    margin-top: 20px;
   }
 }
 .tag {

@@ -327,10 +327,7 @@ export default {
   methods: {
     // 打开用户详情弹窗
     openDetail(data) {
-      this.$router.push({
-        name: "anchor-complainsDetail",
-      });
-      window.localStorage.setItem("complainsDetailID", data.id);
+      this.$router.push({ name: "anchor-complainsDetail", query: { complainsDetailID: data.id } });
     },
 
     forbiddenAll() {
