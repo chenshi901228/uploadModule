@@ -352,6 +352,8 @@ export default {
   activated() {
     this.dataForm.approveStatus = 3;
     this.query();
+    this.dataForm.approveStatus = "";
+
   },
   methods: {
     //新增视频
