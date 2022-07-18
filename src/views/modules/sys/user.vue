@@ -155,10 +155,16 @@
           show-overflow-tooltip
         >
           <template slot-scope="{ row }">
-            <el-tag v-if="item.prop=='status'&&row.status === 0" size="small" type="danger">{{
+            <el-tag v-if="item.prop=='status'&&row.status === 0&&diaTbas!=2" size="small" type="danger">{{
               $t("user.status0")
             }}</el-tag>
-            <el-tag v-else-if="item.prop=='status'&&row.status === 1"  size="small" type="success">{{
+            <el-tag v-else-if="item.prop=='status'&&row.status === 1&&diaTbas!=2"  size="small" type="success">{{
+              $t("user.status1")
+            }}</el-tag>
+            <el-tag v-else-if="item.prop=='disabledFlg'&&row.disabledFlg === 1" size="small" type="danger">{{
+              $t("user.status0")
+            }}</el-tag>
+            <el-tag v-else-if="item.prop=='disabledFlg'&&row.disabledFlg === 0"  size="small" type="success">{{
               $t("user.status1")
             }}</el-tag>
             <span v-else-if="item.prop=='roleStatus'">
@@ -197,9 +203,17 @@
               icon="el-icon-close"
               type="text"
               size="small"
-              v-if="!row.delFlg"
+              v-if="!row.delFlg&&diaTbas!=2"
               @click="forbidden(row)"
               >{{ row.status != 0 ? "禁用" : "解除" }}</el-button
+            >
+            <el-button
+              icon="el-icon-close"
+              type="text"
+              size="small"
+              v-if="!row.delFlg&&diaTbas===2"
+              @click="forbidden(row)"
+              >{{ row.disabledFlg != 0 ? "解除" : "禁用" }}</el-button
             >
           </template>
         </el-table-column>
@@ -318,6 +332,36 @@ export default {
           prop:'status'
         },
       ],
+      columnThree:[
+        {
+          label:'登录账号',
+          prop:'username'
+        },
+        {
+          label:'用户名称',
+          prop:'realName'
+        },
+        {
+          label:'手机号码',
+          prop:'mobile'
+        },
+        {
+          label:'用户类型',
+          prop:'roleStatus'
+        },
+        {
+          label:'用户角色',
+          prop:'roleName'
+        },
+        {
+          label:'创建时间',
+          prop:'createDate'
+        },
+        {
+          label:'账号状态',
+          prop:'disabledFlg'
+        },
+      ],
       total:0,
       diaDataList: [],
       dataListLoading: false,
@@ -430,11 +474,14 @@ export default {
       this.diaDataList = [];
       this.total = 0;
       this.page = 1;
-      if(n!=4){
-        this.tableItem = this.column
+      if(n===2){
+        this.tableItem = this.columnThree
+        this.getUserList(n);
+      }else if(n===4){
+        this.tableItem = this.columnTwo
         this.getUserList(n);
       }else{
-        this.tableItem = this.columnTwo
+        this.tableItem = this.column
         this.getUserList(n);
       }
     },
@@ -502,7 +549,7 @@ export default {
           .then(({ data: res }) => {
             if (res.code == 0) {
               this.$message.success("操作成功");
-              this.query();
+              this.getUserList(this.diaTbas);
             } else {
               this.$message.error(res.msg);
             }
@@ -519,7 +566,7 @@ export default {
           .then(({ data: res }) => {
             if (res.code == 0) {
               this.$message.success("操作成功");
-              this.changeTbas(this.diaTbas)
+              this.getUserList(this.diaTbas);
             } else {
               this.$message.error(res.msg);
             }
@@ -531,9 +578,6 @@ export default {
     },
     // 禁用，解除用户
     forbidden(row) {
-      if(this.diaTbas===2){
-        if (row.liveState == 1 && row.disabledFlg != 1) return this.$message.error("主播正在直播，无法禁用此账号");
-      }
       //单个操作
       this.$confirm(
         `确认[${row.status == 0 ? "解除" : "禁用"}]${row.realName||row.nickName}?`,
@@ -545,7 +589,11 @@ export default {
         }
       )
         .then(() => {
-          this.forbiddenHandle(row.status == 0 ? 1 : 0, row);
+          if(this.diaTbas===2){
+            this.forbiddenHandle(row.disabledFlg == 0 ? 1 : 0, row);
+          }else{
+            this.forbiddenHandle(row.status == 0 ? 1 : 0, row);
+          }
         })
         .catch(() => {
           this.$message.info("已取消操作");
