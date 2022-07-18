@@ -491,10 +491,10 @@ export default {
     },
 
     // 判断是否有操作按钮的权限---type:1-商品/主播，2-助手
-    isHandleAuth({ livePreviewId, liveState, startDate }, type) {
-      if(!livePreviewId) { //直播预告创建的直播
+    isHandleAuth({ livePreviewId, liveState, planStartDate }, type) {
+      if(livePreviewId) { //直播预告创建的直播
         if(liveState == 3) { //未开播
-          let date = new Date(startDate).getTime() - new Date().getTime()
+          let date = new Date().getTime() - new Date(planStartDate).getTime()
           date = Math.ceil(date / 1000 / 60)
           return date <= 120  //超过开播时间2小时无操作按钮权限
         }
