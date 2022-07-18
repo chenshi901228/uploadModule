@@ -51,6 +51,7 @@
             clearable>
             <el-option :value="1" label="平台投诉"></el-option>
             <el-option :value="2" label="直播间投诉"></el-option>
+            <el-option :value="3" label="主播投诉"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 6" label="投诉标签" prop="tag">
@@ -165,12 +166,12 @@
           width="120"
         >
           <template slot-scope="scope">
-            <div>{{ scope.row.type == 1 ? "平台投诉" : "直播间投诉" }}</div>
+            <div>{{ scope.row.type == 1 ? "平台投诉" : scope.row.type == 2 ? "直播间投诉" : "主播投诉" }}</div>
           </template>
         </el-table-column>
         <el-table-column
           prop="anchorUserName"
-          label="主播昵称"
+          label="投诉主播昵称"
           header-align="center"
           align="center"
           width="150"
