@@ -295,6 +295,19 @@
               header-align="center"
               align="center"
               show-overflow-tooltip
+              v-if="prop === 'payTypeUnit'"
+            >
+              <template>
+                <div>种子</div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :prop="prop"
+              :label="label"
+              :key="prop"
+              header-align="center"
+              align="center"
+              show-overflow-tooltip
               v-else-if="prop === 'payType'"
             >
               <template slot-scope="scope">
@@ -589,7 +602,7 @@ export default {
             phone: "手机号码",
             type: "消费类型",
             price: "支付金额",
-            payType: "支付方式",
+            payTypeUnit: "支付方式",
             paySource: "消费来源",
             createDate: "创建时间",
           };
