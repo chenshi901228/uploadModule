@@ -2231,7 +2231,7 @@ export default {
         qrCode:this.anchorDetails.qrCode,
       }
       this.$router.push({
-        path: "/preview-editeUserInfo-EditeUserInfo",
+        path: "/anchorManagement-anchorDetails-EditeUserInfo",
         query: { info: JSON.stringify(obj) },
       });
     },
