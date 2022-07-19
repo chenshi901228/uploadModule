@@ -64,12 +64,12 @@
         </el-form-item>
         <el-form-item
           label="关联产品编号"
-          prop="linkedProductId"
+          prop="searchProductId"
           v-if="isOpen || formItemCount >= 4"
         >
           <el-input
             size="small"
-            v-model.trim="dataForm.linkedProductId"
+            v-model.trim="dataForm.searchProductId"
             placeholder="请输入"
             clearable
           >
@@ -264,7 +264,7 @@ export default {
         productName: "",
         productType: "",
         isFree: null,
-        linkedProductId: "",
+        searchProductId: "",
         isAdd: null,
         isFeatured: null,
       },
