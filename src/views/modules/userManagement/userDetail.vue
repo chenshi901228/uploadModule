@@ -148,7 +148,7 @@
             <el-input
               style="width: 180px"
               placeholder="直播间ID"
-              v-model="diaSearchForm.id"
+              v-model="diaSearchForm.liveId"
               clearable
             ></el-input>
           </el-form-item>
@@ -234,12 +234,12 @@
           <el-form-item
             label="关联商品编号"
             v-if="diaTbas === 3"
-            prop="productId"
+            prop="linkedProductId"
           >
             <el-input
               style="width: 180px"
               placeholder="关联商品编号"
-              v-model="diaSearchForm.productId"
+              v-model="diaSearchForm.linkedProductId"
               clearable
             ></el-input>
           </el-form-item>
@@ -537,11 +537,11 @@ export default {
         phone: "",
         useStatus: "",
         productName: "",
-        productId: "",
+        linkedProductId: "",
         productType: "",
         isFree: "",
-        id:"",
-        theme:"",
+        liveId:"",
+        liveTheme:"",
       };
       this.diaDataList = [];
       this.total_dia = 0;
@@ -564,7 +564,7 @@ export default {
             allPrice: "消费合计",
             payType: "支付方式",
             liveTheme: "直播间主题",
-            id: "直播间ID",
+            liveId: "直播间ID",
             paySource: "消费来源",
             createDate: "创建时间",
           };
@@ -579,7 +579,7 @@ export default {
             payPrice: "支付金额",
             payType: "支付方式",
             consumptionSource: "消费来源",
-            productId: "关联产品编号",
+            linkedProductId: "关联产品编号",
             payDate: "购买时间",
             useStatus: "使用状态",
           };
@@ -644,8 +644,8 @@ export default {
             weixinUserId: this.userId,
             paySource: this.diaSearchForm.paySource,
             name: this.diaSearchForm.name,
-            theme:this.diaSearchForm.theme,
-            id:this.diaSearchForm.id,
+            liveTheme:this.diaSearchForm.liveTheme,
+            liveId:this.diaSearchForm.liveId,
           };
           url = "/sys/user/consumption/selectUserGiftPage";
           break;
@@ -656,7 +656,7 @@ export default {
             weixinUserId: this.userId,
             useStatus: this.diaSearchForm.useStatus,
             productName: this.diaSearchForm.productName,
-            productId: this.diaSearchForm.productId,
+            linkedProductId: this.diaSearchForm.linkedProductId,
             productType: this.diaSearchForm.productType,
             isFree: this.diaSearchForm.isFree,
           };
@@ -732,7 +732,21 @@ export default {
 
     // 主页搜索重置
     mainReset() {
-      this.$refs.searchForm.resetFields();
+      this.diaSearchForm = {
+        payType: "",
+        paySource: "",
+        name: "",
+        title: "",
+        anchorName: "",
+        phone: "",
+        useStatus: "",
+        productName: "",
+        linkedProductId: "",
+        productType: "",
+        isFree: "",
+        liveId:"",
+        liveTheme:"",
+      }
       this.queryPost_dia();
     },
 
