@@ -295,7 +295,7 @@
               header-align="center"
               align="center"
               show-overflow-tooltip
-              v-if="prop === 'payTypeUnit'"
+              v-else-if="prop === 'payTypeUnit'"
             >
               <template>
                 <div>种子</div>
@@ -323,14 +323,14 @@
               header-align="center"
               align="center"
               show-overflow-tooltip
-              v-else-if="prop === 'userTyoe'"
+              v-else-if="prop === 'userType'"
             >
               <template slot-scope="scope">
                 <div>
                   {{
-                    scope.row.userTyoe === 1
+                    scope.row.userType === 1
                       ? "会长"
-                      : scope.row.userTyoe === 2
+                      : scope.row.userType === 2
                       ? "副会长"
                       : "普通会员"
                   }}
@@ -503,10 +503,9 @@ export default {
     };
   },
 
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      vm.userId = JSON.parse(window.localStorage.getItem("userDetailData")).id;
-      vm.$http
+  activated() {
+    this.userId = JSON.parse(window.localStorage.getItem("userDetailData")).id;
+      this.$http
         .get(
           `/sys/manage/userDetail/${
             JSON.parse(window.localStorage.getItem("userDetailData")).id
@@ -514,9 +513,9 @@ export default {
         )
         .then(({ data: res }) => {
           if (res.code !== 0) {
-            return vm.$message.error(res.msg);
+            return this.$message.error(res.msg);
           }
-          vm.diaForm = {
+          this.diaForm = {
             ...res.data,
             ...JSON.parse(window.localStorage.getItem("userDetailData")),
             priceConsumption: res.data.priceRecharge + res.data.shoppingConsumption,
@@ -524,8 +523,7 @@ export default {
           };
         })
         .catch(() => {});
-      vm.changeTbas(1);
-    });
+      this.changeTbas(1);
   },
   methods: {
     changeTbas(n) {
@@ -565,7 +563,7 @@ export default {
             price: "礼物单价",
             allPrice: "消费合计",
             payType: "支付方式",
-            theme: "直播间主题",
+            liveTheme: "直播间主题",
             id: "直播间ID",
             paySource: "消费来源",
             createDate: "创建时间",
@@ -591,7 +589,7 @@ export default {
             title: "粉丝团名称",
             anchorName: "主播",
             phone: "手机号码",
-            userTyoe: "粉丝团身份",
+            userType: "粉丝团身份",
             createDate: "创建时间",
           };
           break;
