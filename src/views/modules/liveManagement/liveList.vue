@@ -441,7 +441,8 @@ export default {
           liveId: row.id,
           anchorId: row.anchorUserId,
           type: 1,
-          authEdit: this.isHandleAuth(row, "1") ? 1 : 0 
+          authEdit: this.isHandleAuth(row, "1") ? 1 : 0,
+          isAdd: this.isHandleAuth(row, "1") ? undefined : 1 
         }
       });
     },
@@ -451,8 +452,9 @@ export default {
         name: "liveManagement-recommendAnchor-RecommendAnchor",
         query: { 
           liveId: row.id,
-          authEdit: this.isHandleAuth(row, "1") ? 1 : 0 ,
-          anchorId: row.anchorUserId
+          authEdit: this.isHandleAuth(row, "1") ? 1 : 0,
+          anchorId: row.anchorUserId,
+          state: this.isHandleAuth(row, "1") ? undefined : 1
         }
       });
     },

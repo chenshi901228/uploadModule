@@ -597,10 +597,9 @@ export default {
     };
   },
 
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      vm.userId = JSON.parse(window.localStorage.getItem("userDetailData")).id;
-      vm.$http
+  activated() {
+    this.userId = JSON.parse(window.localStorage.getItem("userDetailData")).id;
+      this.$http
         .get(
           `/sys/manage/userDetail/${
             JSON.parse(window.localStorage.getItem("userDetailData")).id
@@ -608,9 +607,9 @@ export default {
         )
         .then(({ data: res }) => {
           if (res.code !== 0) {
-            return vm.$message.error(res.msg);
+            return this.$message.error(res.msg);
           }
-          vm.diaForm = {
+          this.diaForm = {
             ...res.data,
             ...JSON.parse(window.localStorage.getItem("userDetailData")),
             priceConsumption: res.data.priceRecharge + res.data.shoppingConsumption,
@@ -618,8 +617,7 @@ export default {
           };
         })
         .catch(() => {});
-      vm.changeTbas(1);
-    });
+      this.changeTbas(1);
   },
   methods: {
     confirmHandle(){//确认退款
@@ -636,7 +634,7 @@ export default {
         phone: "",
         useStatus: "",
         productName: "",
-        productId: "",
+        linkedProductId: "",
         productType: "",
         isFree: "",
         id:"",
@@ -856,7 +854,21 @@ export default {
     },
     // 主页搜索重置
     mainReset() {
-      this.$refs.searchForm.resetFields();
+      this.diaSearchForm = {
+        payType: "",
+        paySource: "",
+        name: "",
+        title: "",
+        anchorName: "",
+        phone: "",
+        useStatus: "",
+        productName: "",
+        linkedProductId: "",
+        productType: "",
+        isFree: "",
+        liveId:"",
+        liveTheme:"",
+      }
       this.queryPost_dia();
     },
 

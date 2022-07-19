@@ -10,14 +10,14 @@
         <span>{{ $store.state.user.name }}</span>
       </el-form-item>
       <el-form-item prop="password" :label="$t('updatePassword.password')">
-        <el-input v-model="dataForm.password" type="password" :placeholder="$t('updatePassword.password')"></el-input>
-        <span>（请输入）</span>
+        <el-input style="width: 300px" v-model.trim="dataForm.password" type="password" :placeholder="$t('updatePassword.password')"></el-input>
       </el-form-item>
       <el-form-item prop="newPassword" :label="$t('updatePassword.newPassword')">
-        <el-input v-model="dataForm.newPassword" type="password" :placeholder="$t('updatePassword.newPassword')"></el-input>
+        <el-input style="width: 300px" v-model.trim="dataForm.newPassword" type="password" :placeholder="$t('updatePassword.newPassword')"></el-input>
+        <span>（密码由8~16位的字母和数字组成）</span>
       </el-form-item>
       <el-form-item prop="confirmPassword" :label="$t('updatePassword.confirmPassword')">
-        <el-input v-model="dataForm.confirmPassword" type="password" :placeholder="$t('updatePassword.confirmPassword')"></el-input>
+        <el-input style="width: 300px" v-model.trim="dataForm.confirmPassword" type="password" :placeholder="$t('updatePassword.confirmPassword')"></el-input>
       </el-form-item>
     </el-form>
     <template slot="footer">
@@ -49,12 +49,22 @@ export default {
         }
         callback()
       }
+      // 验证输入的新密码
+      var validateNewPassword = (rule, value, callback) => {
+        if (value.length > 16 || value.length < 8) {
+          return callback(new Error("密码长度必须8~16字符"))
+        }else if(!value.match(/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{0,}$/)){
+          return callback(new Error("密码组成必须是字母和数字"))
+        }
+        callback()
+      }
       return {
         password: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ],
         newPassword: [
-          { required: true, message: this.$t('validate.required'), trigger: 'blur' }
+          { required: true, message: this.$t('validate.required'), trigger: 'blur' },
+          { validator: validateNewPassword, trigger: 'blur' }
         ],
         confirmPassword: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' },
