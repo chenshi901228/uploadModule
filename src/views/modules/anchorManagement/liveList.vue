@@ -516,7 +516,8 @@ export default {
           liveId: row.id,
           type: 1,
           anchorId: row.anchorUserId,
-          authEdit: this.isHandleAuth(row, "1") ? 1 : 0 
+          authEdit: this.isHandleAuth(row, "1") ? 1 : 0,
+          isAdd: this.isHandleAuth(row, "1") ? undefined : 1
         }
       });
     },
@@ -526,7 +527,8 @@ export default {
         path: "/preview-recommendAnchor-RecommendAnchor",
         query: { 
           liveId: row.id,
-          authEdit: this.isHandleAuth(row, "1") ? 1 : 0 
+          authEdit: this.isHandleAuth(row, "1") ? 1 : 0,
+          state: this.isHandleAuth(row, "1") ? undefined : 1 
         }
       });
     },

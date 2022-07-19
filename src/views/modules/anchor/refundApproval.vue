@@ -63,7 +63,7 @@
             <el-option :value="-1" label="未通过"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 6" label="审批状态" prop="refundStatus">
+        <el-form-item v-if="isOpen || formItemCount >= 6" label="审批流程状态" prop="refundStatus">
           <el-select 
             v-model="dataForm.refundStatus"
             style="width: 200px"
@@ -290,7 +290,7 @@
         </el-table-column>
         <el-table-column
           prop="refundStatus"
-          label="审批状态"
+          label="审批流程状态"
           header-align="center"
           align="center"
           show-overflow-tooltip

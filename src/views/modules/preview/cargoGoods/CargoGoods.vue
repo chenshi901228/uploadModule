@@ -172,6 +172,7 @@
           label="商品图片"
           header-align="center"
           align="center"
+          width="100"
         >
           <template slot-scope="{ row }">
             <div>
@@ -190,6 +191,7 @@
           label="商品名称"
           header-align="center"
           align="center"
+          min-width="180"
         >
         </el-table-column>
         <el-table-column
@@ -226,6 +228,8 @@
           label="关联产品编号"
           header-align="center"
           align="center"
+          width="280"
+          show-overflow-tooltip
         ></el-table-column>
         <el-table-column
           prop="isAdd"
@@ -360,10 +364,8 @@ export default {
   activated() {
     if(this.$route.query.authEdit != undefined) { //有标识来自直播列表-设置操作按钮显示
       this.authEdit = this.$route.query.authEdit
-      if(this.authEdit == 0) this.dataForm.isAdd = 1  //直播列表已下播或已禁播增加查询参数isAdd
-    }else { //来自预告
-      this.authEdit = 1
     }
+    if(this.$route.query.isAdd != undefined) this.dataForm.isAdd = this.$route.query.isAdd  //直播列表已下播或已禁播增加查询参数isAdd
     this.dataForm.liveId = this.$route.query.liveId;
     this.dataForm.type = parseInt(this.$route.query.type)
     this.dataForm.anchorId = this.$route.query.anchorId
