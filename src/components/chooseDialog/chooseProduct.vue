@@ -267,6 +267,8 @@ export default {
     setCurPageSelected() {
       this.$nextTick(() => {
         if (this.defaultSelected.length) {
+          // console.log(this.dataList)
+          if(!this.dataList.length) return 
           this.dataList.forEach((row, i) => {
             this.defaultSelected.forEach((item) => {
               if (row.id == item.id) {
@@ -343,7 +345,7 @@ export default {
     initDataSort() {
       this.$nextTick(() => {
         let data = JSON.parse(JSON.stringify(this.defaultSelected))
-        if(data.length) {
+        if(data.length && this.allDataList.length) {
           data.map((item) => {
             this.allDataList.map((j, index) => {
               if(item.id == j.id) {

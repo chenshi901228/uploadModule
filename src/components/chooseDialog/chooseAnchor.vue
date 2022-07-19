@@ -297,7 +297,7 @@ export default {
     // 初始所有数据重排序
     initDataSort() {
       let data = JSON.parse(JSON.stringify(this.defaultSelected))
-      if(data.length) {
+      if(data.length && this.allDataList.length) {
         data.map(j => {
           this.allDataList.map((item, index) => {
             if(item.anchorId == j.anchorId) {
