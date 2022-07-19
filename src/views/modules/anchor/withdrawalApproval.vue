@@ -10,7 +10,11 @@
         label-width="100px"
         @keyup.enter.native="getDataList"
       >
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="主播昵称" prop="anchorName">
+        <el-form-item
+          v-if="isOpen || formItemCount >= 1"
+          label="主播昵称"
+          prop="anchorName"
+        >
           <el-input
             style="width: 200px"
             placeholder="主播昵称"
@@ -18,7 +22,11 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="真实姓名" prop="realName">
+        <el-form-item
+          v-if="isOpen || formItemCount >= 2"
+          label="真实姓名"
+          prop="realName"
+        >
           <el-input
             style="width: 200px"
             placeholder="真实姓名"
@@ -26,7 +34,11 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 3" label="手机号码" prop="phone">
+        <el-form-item
+          v-if="isOpen || formItemCount >= 3"
+          label="手机号码"
+          prop="phone"
+        >
           <el-input
             style="width: 200px"
             placeholder="手机号码"
@@ -34,39 +46,71 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 4" label="身份证" prop="idCard">
-          <el-input
-            style="width: 200px"
-            placeholder="身份证"
-            v-model="dataForm.idCard"
-            clearable
-          ></el-input>
-        </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 5" label="审批状态" prop="approveStatus">
+        <el-form-item
+          v-if="isOpen || formItemCount >= 4"
+          label="账户类型"
+          prop="type"
+        >
           <el-select
             style="width: 200px"
-            placeholder="审批状态"
-            v-model="dataForm.approveStatus"
+            placeholder="账户类型"
+            v-model="dataForm.type"
             clearable
           >
-            <el-option :value="0" label="申请中"></el-option>
-            <el-option :value="1" label="已同意"></el-option>
+            <el-option :value="2" label="企业"></el-option>
+            <el-option :value="1" label="个人"></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item
+          v-if="isOpen || formItemCount >= 5"
+          label="提现状态"
+          prop="withdrawStatus"
+        >
+          <el-select
+            style="width: 200px"
+            placeholder="提现状态"
+            v-model="dataForm.withdrawStatus"
+            clearable
+          >
+            <el-option :value="1" label="审核中"></el-option>
+            <el-option :value="2" label="核算中"></el-option>
+            <el-option :value="3" label="到帐中"></el-option>
+            <el-option :value="4" label="已到账"></el-option>
+            <el-option :value="5" label="未到账"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item
+          v-if="isOpen || formItemCount >= 6"
+          label="提现单号"
+          prop="code"
+        >
+          <el-input
+            style="width: 200px"
+            placeholder="提现单号"
+            v-model="dataForm.code"
+            clearable
+          ></el-input>
         </el-form-item>
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">
           <el-form-item>
-            <el-button 
-              type="primary" 
-              icon="el-icon-search" 
+            <el-button
+              type="primary"
+              icon="el-icon-search"
               size="mini"
-              @click="getDataList">{{ $t("query") }}</el-button>
-            <el-button 
-              icon="el-icon-refresh" 
-              size="mini" 
-              @click="resetDataForm()">{{ $t("reset") }}</el-button>
+              @click="getDataList"
+              >{{ $t("query") }}</el-button
+            >
+            <el-button
+              icon="el-icon-refresh"
+              size="mini"
+              @click="resetDataForm()"
+              >{{ $t("reset") }}</el-button
+            >
             <el-button size="mini" plain @click="open">
-              <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              <i
+                :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
+              ></i>
               {{ isOpen ? "收起" : "展开" }}
             </el-button>
           </el-form-item>
@@ -75,18 +119,30 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button 
+              <el-button
                 type="warning"
                 plain
-                icon="el-icon-download" 
+                icon="el-icon-download"
                 size="mini"
-                @click="exportHandle">{{ $t("export") }}</el-button>
+                @click="exportHandle"
+                >{{ $t("export") }}</el-button
+              >
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
             <el-form-item>
-              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-                <el-button size="small" icon="el-icon-refresh" circle @click="query"></el-button>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="刷新"
+                placement="top"
+              >
+                <el-button
+                  size="small"
+                  icon="el-icon-refresh"
+                  circle
+                  @click="query"
+                ></el-button>
               </el-tooltip>
             </el-form-item>
           </div>
@@ -101,6 +157,18 @@
         style="width: 100%"
         ref="table"
       >
+        <el-table-column
+          prop="id"
+          label="提现单号"
+          header-align="center"
+          align="center"
+          min-width="120px"
+          show-overflow-tooltip
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.id || "--" }}</span>
+          </template></el-table-column
+        >
         <el-table-column
           prop="anchorName"
           label="主播昵称"
@@ -138,15 +206,33 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="idCard"
-          label="身份证号"
-          min-width="150px"
+          prop="userType"
+          label="账户类型"
+          min-width="120px"
           header-align="center"
           align="center"
           show-overflow-tooltip
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.idCard || "--" }}</span>
+            <span>{{
+              scope.row.userType === 1
+                ? "个人"
+                : scope.row.userType === 2
+                ? "企业"
+                : "--"
+            }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="depositBank"
+          label="开户银行"
+          min-width="120px"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.depositBank || "--" }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -159,8 +245,8 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.accountName || "--" }}</span>
-          </template></el-table-column
-        >
+          </template>
+        </el-table-column>
         <el-table-column
           prop="bankAccount"
           label="银行账号"
@@ -171,18 +257,6 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.bankAccount || "--" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          prop="depositBank"
-          label="开户银行"
-          min-width="100px"
-          header-align="center"
-          align="center"
-          show-overflow-tooltip
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.depositBank || "--" }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -221,6 +295,51 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="taxSum"
+          label="税费"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.taxSum || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="addedValueTax"
+          label="本次代征增值税"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.addedValueTax || "--" }}</span>
+          </template>
+        </el-table-column>
+
+        <el-table-column
+          prop="additionalTax"
+          label="本次代征附加税"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.additionalTax || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="personalIncomeTax"
+          label="本次代征个税"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.personalIncomeTax || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="receivedAmount"
           label="到账金额"
           header-align="center"
@@ -232,47 +351,48 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="accumulatedWithdrawalAmount"
+          label="本月累计提现金额"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.accumulatedWithdrawalAmount || "--" }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="approveStatus"
+          label="提现状态"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+          <template slot-scope="scope">
+            <span>{{
+              scope.row.approveStatus === 0
+                ? "审核中"
+                : scope.row.approveStatus === 1 && scope.row.confirmStatus === 0
+                ? "核算中"
+                : scope.row.confirmStatus === 1 && scope.row.payStatus === 0
+                ? "到帐中"
+                : scope.row.confirmStatus === 1 && scope.row.payStatus === 1
+                ? "已到账"
+                : scope.row.confirmStatus === 1 && scope.row.payStatus === -1
+                ? "未到账"
+                : "--"
+            }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="createDate"
           label="申请时间"
-          min-width="160px"
           header-align="center"
-          align="center"
           show-overflow-tooltip
+          align="center"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.createDate || "--" }}</span>
-          </template>
-        </el-table-column>
-
-        <el-table-column
-          prop="approveDate"
-          label="审批时间"
-          min-width="160px"
-          header-align="center"
-          align="center"
-          show-overflow-tooltip
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.approveDate || "--" }}</span>
-          </template></el-table-column
-        >
-        <el-table-column
-          prop="approveStatus"
-          label="审批状态"
-          header-align="center"
-          align="center"
-          show-overflow-tooltip
-        >
-          <template slot-scope="scope">
-            <div>
-              {{
-                scope.row.approveStatus === 0
-                  ? "申请中"
-                  : scope.row.approveStatus === 1
-                  ? "已同意"
-                  : "--"
-              }}
-            </div>
           </template>
         </el-table-column>
 
@@ -296,12 +416,19 @@
               v-if="scope.row.handlingStatus === 2"
               >驳回</el-button
             > -->
-            <el-button
+            <!-- <el-button
               type="text"
               size="small"
               v-if="scope.row.approveStatus === 0"
               @click="showDialog(scope.row.id)"
               >审批</el-button
+            > -->
+            <el-button
+              type="text"
+              size="small"
+              v-if="scope.row.approveStatus === 0"
+              @click="showDialog(scope.row.id)"
+              >确认</el-button
             >
           </template>
         </el-table-column>
@@ -335,12 +462,28 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="updateApproveStatus(-1)">驳 回</el-button>
+        <el-button size="small" @click="updateApproveStatus(-1)"
+          >驳 回</el-button
+        >
         <el-button size="small" type="primary" @click="updateApproveStatus(1)"
           >通 过</el-button
         >
       </div>
     </el-dialog>
+
+
+    <el-dialog title="确认" :visible.sync="dialogVisible">
+      <span>确认通过该提现申请</span>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" @click="dialogVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="small" type="primary" @click="confirm"
+          >通 过</el-button
+        >
+      </div>
+    </el-dialog>
+    
   </el-card>
 </template>
 
@@ -361,10 +504,11 @@ export default {
       },
       dataForm: {
         anchorName: "",
-        approveStatus: "",
-        idCard: "",
         phone: "",
         realName: "",
+        type: null,
+        withdrawStatus: null,
+        code: "",
       },
       dataList: [],
       userId: "",
@@ -374,6 +518,7 @@ export default {
       },
       uuid: "",
       id: "",
+      dialogVisible:false
     };
   },
   components: { Template },
@@ -386,7 +531,9 @@ export default {
     showDialog(id) {
       this.uuid = getUUID();
       this.id = id;
-      this.dialogFormVisible = true;
+      // this.dialogFormVisible = true;
+      this.dialogVisible = true;
+
     },
     // 重置搜索条件
     resetDataForm() {
@@ -428,6 +575,23 @@ export default {
             .catch(() => {});
         })
         .catch(() => {});
+    },
+    //确认
+    confirm() {
+      this.$http["put"]("/sys/finance/anchorWithdraw/updateApproveStatus", {
+            id: this.id,
+            approveStatus: 1,
+            uuid: this.uuid,
+          })
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                return this.$message.error(res.msg);
+              }
+              this.getDataList();
+              this.$message.success("操作成功");
+              this.dialogVisible = false;
+            })
+            .catch(() => {});
     },
   },
 };
