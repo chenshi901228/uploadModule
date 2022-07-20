@@ -293,6 +293,7 @@
           label="审批流程状态"
           header-align="center"
           align="center"
+          width="150px"
           show-overflow-tooltip
         >
           <template slot-scope="{ row }">
