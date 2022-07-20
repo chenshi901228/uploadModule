@@ -638,8 +638,17 @@ export default {
   methods: {
     //带货商品
     addProduct(row) {
+      let nowTime = new Date().getTime();
+      let time = new Date(row.startDate).getTime();
+      let timeFlg = 0;
+      if ((nowTime - time) / 3600 / 1000 >= 2) {
+        timeFlg = 0;
+      } else {
+        timeFlg = 1;
+      }
+
       let authEdit = 0;
-      if (row.liveState === 3 && row.appointmentState !== 0) {
+      if (row.liveState === 3 && timeFlg === 1) {
         authEdit = 1;
       } else {
         authEdit = 0;
@@ -657,8 +666,16 @@ export default {
     },
     //推荐主播
     addAnchor(row) {
+      let nowTime = new Date().getTime();
+      let time = new Date(row.startDate).getTime();
+      let timeFlg = 0;
+      if ((nowTime - time) / 3600 / 1000 >= 2) {
+        timeFlg = 0;
+      } else {
+        timeFlg = 1;
+      }
       let authEdit = 0;
-      if (row.liveState === 3 && row.appointmentState !== 0) {
+      if (row.liveState === 3 && timeFlg === 1) {
         authEdit = 1;
       } else {
         authEdit = 0;
@@ -674,8 +691,16 @@ export default {
     },
     //助手
     assistant(row) {
+      let nowTime = new Date().getTime();
+      let time = new Date(row.startDate).getTime();
+      let timeFlg = 0;
+      if ((nowTime - time) / 3600 / 1000 >= 2) {
+        timeFlg = 0;
+      } else {
+        timeFlg = 1;
+      }
       let authEdit = 0;
-      if (row.liveState === 3 && row.appointmentState !== 0) {
+      if (row.liveState === 3 && timeFlg === 1) {
         authEdit = 1;
       } else {
         authEdit = 0;

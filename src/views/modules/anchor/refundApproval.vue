@@ -63,9 +63,9 @@
             <el-option :value="-1" label="未通过"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 6" label="审批流程状态" prop="refundStatus">
+        <el-form-item v-if="isOpen || formItemCount >= 6" label="审批流程状态" prop="flowStatus">
           <el-select 
-            v-model="dataForm.refundStatus"
+            v-model="dataForm.flowStatus"
             style="width: 200px"
             clearable
             placeholder="请选择">
@@ -289,7 +289,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="refundStatus"
+          prop="flowStatus"
           label="审批流程状态"
           header-align="center"
           align="center"
@@ -298,12 +298,12 @@
           <template slot-scope="{ row }">
             <div>
               <el-tag :type="
-                row.refundStatus === 1 ? 'success' 
-                : row.refundStatus === -1 ? 'danger': 'warning'">
+                row.flowStatus === 1 ? 'success' 
+                : row.flowStatus === -1 ? 'danger': 'warning'">
                 {{
-                  row.refundStatus === 1
+                  row.flowStatus === 1
                   ? "已通过"
-                  : row.refundStatus === -1
+                  : row.flowStatus === -1
                   ? "已驳回"
                   : "审批中"
                 }}
@@ -339,7 +339,7 @@
               size="small"
               icon="el-icon-edit-outline"
               v-if="scope.row.approveStatus === 0"
-              @click="showDialog(scope.row.id)"
+              @click="showDialog(scope.row.refundReason,scope.row.id)"
               >审批</el-button
             >
           </template>
@@ -365,6 +365,9 @@
         class="demo-ruleForm"
         size="small"
       >
+        <el-form-item label="退款原因">
+          <div>{{refundReason || '--'}}</div>
+        </el-form-item>
         <el-form-item label="备注" prop="desc">
           <el-input
             placeholder="请输入,可不填"
@@ -406,7 +409,7 @@ export default {
         productName: "",
         weixinUserProductId: "",
         approveStatus: null,
-        refundStatus: null
+        flowStatus: null
       },
       dataList: [],
       userId: "",
@@ -414,7 +417,8 @@ export default {
       ruleForm: {
         desc: "",
       },
-      productTypeOptions: [] //商品类型下拉选项
+      productTypeOptions: [], //商品类型下拉选项
+      refundReason:""
     };
   },
   components: { Template },
@@ -424,7 +428,8 @@ export default {
     });
   },
   methods: {
-    showDialog(id) {
+    showDialog(refundReason,id) {
+      this.refundReason = refundReason
       this.id = id;
       this.dialogFormVisible = true;
     },
