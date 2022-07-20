@@ -192,6 +192,8 @@ export default {
             this.bgLiveList = []
 
             this.closeCurrentTab()
+            // 关闭当前页面跳回到直播列表
+            this.$router.push({ name: "anchorManagement-liveList" })
 
         },
         // 表单提交
