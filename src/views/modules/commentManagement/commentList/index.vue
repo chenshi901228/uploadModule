@@ -1,5 +1,5 @@
 
-<!-- 直播管理-评论详情 -->
+<!-- 评论管理-评论列表 -->
 
 <template>
     <div>
@@ -41,9 +41,35 @@
                         </el-input>
                     </el-form-item>
                     <el-form-item
+                        label="视频主题"
+                        prop="liveTheme"
+                        v-if="isOpen || formItemCount >= 3"
+                    >
+                        <el-input
+                            style="width: 200px"
+                            v-model.trim="dataForm.liveTheme"
+                            placeholder="请输入内容关键字"
+                            clearable
+                        >
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item
+                        label="主播"
+                        prop="anchorUser"
+                        v-if="isOpen || formItemCount >= 4"
+                    >
+                        <el-input
+                            style="width: 200px"
+                            v-model.trim="dataForm.anchorUser"
+                            placeholder="请输入昵称或手机号"
+                            clearable
+                        >
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item
                         label="删除状态"
                         prop="delFlg"
-                        v-if="isOpen || formItemCount >= 3"
+                        v-if="isOpen || formItemCount >= 5"
                     >
                         <el-select clearable style="width: 200px" v-model="dataForm.delFlg" placeholder="请选择">
                             <el-option label="已删除" :value="1"></el-option>
@@ -125,10 +151,15 @@
                             </span>
                         </template>
                     </el-table-column>
-                    <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center">
+                    <el-table-column 
+                        :label="$t('handle')" 
+                        fixed="right" 
+                        header-align="center" 
+                        align="center"
+                        width="150">
                         <template slot-scope="{ row }">
                             <el-button icon="el-icon-document" type="text" size="small" @click="checkComment(row)">查看回复</el-button>
-                            <el-button icon="el-icon-delete" v-if="!row.delFlg && sys == 1" type="text" size="small" @click="deleteComment(row.id)">删除</el-button>
+                            <el-button icon="el-icon-delete" v-if="!row.delFlg" type="text" size="small" @click="deleteComment(row.id)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -146,7 +177,8 @@
 
 
             </div>
-        </el-card>
+        </el-card>        
+        
         <!-- 备注弹框 -->
         <remark-modal ref="remarkModal" @confirm="confirmHandle" title="删除"></remark-modal>
     </div>
@@ -160,28 +192,33 @@ export default {
     components: {
         RemarkModal
     },
+    mixins: [ mixinTableModule ],
     data() {
         return {
             mixinTableModuleOptions: {
-                getDataListURL: "/sys/liveComment/getCommentByLivePlaybackId", // 数据列表接口，API地址
-                exportURL: "/sys/liveComment/exportCommentList", // 导出接口，API地址
+                getDataListURL: "/sys/liveComment/getChildCommentForManage", // 数据列表接口，API地址
+                exportURL: "/sys/liveComment/exportCommentListForManage", // 导出接口，API地址
             },
             dataForm: {
                 commentUserName: "",
                 commentValue: "",
+                liveTheme: "",
+                anchorUser: "",
                 delFlg: null,
             },
             limit: 10,
             page: 1,
             params: {
-                commentLiveListId: null,
+                fatherId: 1,
             },
-            sys: 0, //0-主播短视频管理，1-平台短视频管理---仅直播管理可删除
 
             tableItem: [
                 { prop: "commentUserName", label: "评论人" },
-                { prop: "phone", label: "手机号码" },
+                { prop: "commentUserPhone", label: "手机号码", width: 150 },
                 { prop: "commentValue", label: "评论内容" },
+                { prop: "liveTheme", label: "视频主题" },
+                { prop: "anchorUser", label: "主播昵称" },
+                { prop: "anchorTel", label: "主播手机号码", width: 150 },
                 { prop: "giveLikeNum", label: "点赞次数" },
                 { prop: "delFlg", label: "删除状态" },
                 { prop: "remark", label: "备注" },
@@ -190,16 +227,14 @@ export default {
         };
     },
     activated() {
-        this.params.commentLiveListId = this.$route.query.id;
-        this.sys = this.$route.query.sys;
         this.query()
     },
     methods: {
         // 查看回复
         checkComment(row) {
             if(row) {
-                this.$router.push({ name: "liveManagement-livePlayBackChildComment", query: { id: row.id, sys: this.sys }})
-                localStorage.setItem("livePlayBackComment", JSON.stringify(row))
+                this.$router.push({ name: "commentManagement-commentList-childComment", query: { id: row.id }})
+                localStorage.setItem("comment", JSON.stringify(row))
             }
         },
         // 删除评论

@@ -122,7 +122,7 @@
                         <template slot-scope="{ row }">
                             <!-- 删除状态 -->
                             <span v-if="item.prop == 'delFlg'">
-                                {{row.delFlg ? "已删除" : "未删除"}}
+                                <el-tag :type="row.delFlg ? 'danger' : 'success'">{{row.delFlg ? "已删除" : "未删除"}}</el-tag>
                             </span>
                             <span v-else>
                                 {{ row[item.prop] || "-" }}
