@@ -49,8 +49,7 @@
             placeholder="请选择" 
             v-model="dataForm.type" 
             clearable>
-            <el-option :value="1" label="平台投诉"></el-option>
-            <el-option :value="2" label="直播间投诉"></el-option>
+            <el-option :value="2" label="直播投诉"></el-option>
             <el-option :value="3" label="主播投诉"></el-option>
           </el-select>
         </el-form-item>
@@ -166,7 +165,7 @@
           width="120"
         >
           <template slot-scope="scope">
-            <div>{{ scope.row.type == 1 ? "平台投诉" : scope.row.type == 2 ? "直播间投诉" : "主播投诉" }}</div>
+            <div>{{ scope.row.type == 2 ? "直播投诉" : scope.row.type == 3 ? "主播投诉" : "未分类" }}</div>
           </template>
         </el-table-column>
         <el-table-column
