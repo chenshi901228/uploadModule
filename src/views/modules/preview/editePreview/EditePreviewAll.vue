@@ -16,6 +16,7 @@
             style="width: 400px"
             v-model="ruleForm.liveTheme"
             maxlength="60"
+            readonly
             show-word-limit
           ></el-input>
         </el-form-item>
@@ -414,8 +415,9 @@ export default {
     this.ruleForm.liveTheme = this.$route.query.detailInfo.liveTheme;
     this.ruleForm.anchorId = this.$route.query.detailInfo.anchorUser;
     this.getDynamicGroupList();
-    this.ruleForm.dynamicGroupIds =
-      this.$route.query.detailInfo.dynamicGroupIdsString.split(",");
+    if(this.$route.query.detailInfo.dynamicGroupIdsString){
+      this.ruleForm.dynamicGroupIds = this.$route.query.detailInfo.dynamicGroupIdsString.split(",");
+    }
     this.ruleForm.startDate = this.$route.query.detailInfo.startDate;
     this.ruleForm.estimateLiveTime =
       this.$route.query.detailInfo.estimateLiveTime;

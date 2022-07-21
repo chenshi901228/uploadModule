@@ -163,7 +163,6 @@ export default {
 
         // 确认添加推荐主播
         addAnchorConfirm(data) {
-            this.$refs.chooseAnchor.close()
 
             this.recommendedAnchorList = data
             this.dataForm.anchor = data.length ? `已选择${data.length}个主播` : ""
@@ -177,7 +176,6 @@ export default {
 
         // 确认添加推荐商品
         addProductConfirm(data) {
-            this.$refs.chooseProduct.close()
 
             this.productIds = data
             this.dataForm.product = data.length ? `已选择${data.length}个商品` : ""
@@ -192,6 +190,8 @@ export default {
             this.bgLiveList = []
 
             this.closeCurrentTab()
+            // 关闭当前页面跳回到直播列表
+            this.$router.push({ name: "anchorManagement-liveList" })
 
         },
         // 表单提交

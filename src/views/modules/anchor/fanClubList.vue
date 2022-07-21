@@ -212,9 +212,8 @@
                 v-model="dataForm_fans.userType"
                 clearable
               >
-                <el-option :value="0" label="普通会员"></el-option>
-                <el-option :value="1" label="会长"></el-option>
-                <el-option :value="2" label="副会长"></el-option>
+                <el-option :value="0" label="普通用户"></el-option>
+                <el-option :value="1" label="助手"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -246,9 +245,9 @@
           >
             <template slot-scope="scope">
               <img
-                :src="scope.row.avatarUrl"
+                :src="scope.row.avatarUrl || require('@/assets/img/default_avatar.png')"
                 alt=""
-                style="width: 75px; height: 50px"
+                style="width: 60px; height: 60px"
               />
             </template>
           </el-table-column>
@@ -286,10 +285,8 @@
               <div>
                 {{
                   scope.row.userType === 0
-                    ? "普通会员"
-                    : scope.row.userType === 1
-                    ? "会长"
-                    : "副会长"
+                    ? "普通用户"
+                    : "助手"
                 }}
               </div>
             </template>

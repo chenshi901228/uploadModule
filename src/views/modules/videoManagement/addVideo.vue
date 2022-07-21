@@ -146,8 +146,6 @@ export default {
 
     // 确认添加推荐商品
     addProductConfirm(data) {
-      console.log(data);
-      this.$refs.chooseProduct.close();
 
       this.dataForm.livePlaybackProductList = data.map((v) => {
         return {

@@ -65,7 +65,34 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 8" label="退款状态" prop="refundStatus">
+
+        <el-form-item v-if="isOpen || formItemCount >= 8" label="审批节点状态" prop="confirmStatus">
+          <el-select
+            style="width: 200px"
+            placeholder="审批节点状态"
+            v-model="dataForm.confirmStatus"
+            clearable
+          >
+            <el-option :value="0" label="申请中"></el-option>
+            <el-option :value="1" label="同意"></el-option>
+            <el-option :value="-1" label="不同意"></el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item v-if="isOpen || formItemCount >= 9" label="审批流程状态" prop="flowStatus">
+          <el-select
+            style="width: 200px"
+            placeholder="审批流程状态"
+            v-model="dataForm.flowStatus"
+            clearable
+          >
+            <el-option :value="0" label="审批中"></el-option>
+            <el-option :value="1" label="已通过"></el-option>
+            <el-option :value="-1" label="已驳回"></el-option>
+          </el-select>
+        </el-form-item>
+
+        <el-form-item v-if="isOpen || formItemCount >= 10" label="退款状态" prop="refundStatus">
           <el-select
             style="width: 200px"
             placeholder="退款状态"
@@ -170,13 +197,13 @@
         ></el-table-column>
 
         <el-table-column
-          prop="price"
-          label="销售价格"
+          prop="num"
+          label="商品数量"
+          min-width="150px"
           header-align="center"
-          show-overflow-tooltip
           align="center"
-        >
-        </el-table-column>
+          show-overflow-tooltip
+        ></el-table-column>
         <el-table-column
           prop="payPrice"
           label="支付金额"
@@ -184,6 +211,11 @@
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="{ row }">
+            <div>
+              ￥{{row.payPrice}}
+            </div>
+          </template>
         </el-table-column>
         <el-table-column
           prop="payType"
@@ -200,7 +232,61 @@
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="{ row }">
+            <div>
+              ￥{{row.refundPrice}}
+            </div>
+          </template>
         </el-table-column>
+
+        <el-table-column
+          prop="productTypeNum"
+          label="申请类型"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <div>
+              {{row.productTypeNum === 1 || row.productTypeNum === 3 ? '仅退款' : '退货退款'}}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="refundReason"
+          label="退款原因"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="confirmStatus"
+          label="审批节点状态"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <div>
+              {{row.confirmStatus === 0 ? '申请中' : row.confirmStatus === -1 ? '不同意' : row.confirmStatus === 1 ? '同意' : '--'}}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="flowStatus"
+          label="审批流程状态"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <div>
+              {{row.flowStatus === 0 ? '审批中' : row.flowStatus === -1 ? '已驳回' : row.flowStatus === 1 ? '已通过' : '--'}}
+            </div>
+          </template>
+        </el-table-column>
+        
 
         <el-table-column
           prop="refundStatus"
@@ -233,6 +319,15 @@
         >
         </el-table-column>
         <el-table-column
+          prop="approveReason"
+          label="备注"
+          min-width="180px"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
           prop="createDate"
           label="创建时间"
           min-width="160px"
@@ -252,9 +347,17 @@
               type="text"
               size="small"
               icon="el-icon-position"
-              v-if="scope.row.refundStatus === -2"
+              v-if="scope.row.flowStatus === 1 && (scope.row.refundStatus === -2 || scope.row.refundStatus === -1)"
               @click="updateApproveStatus(scope.row.id)"
               >确认退款</el-button
+            >
+            <el-button
+              v-if="scope.row.flowStatus === 0"
+              type="text"
+              size="small"
+              icon="el-icon-edit-outline"
+              @click="showDialog(scope.row.id)"
+              >审批</el-button
             >
           </template>
         </el-table-column>
@@ -271,6 +374,32 @@
       >
       </el-pagination>
     </div>
+
+    <el-dialog title="审批" :visible.sync="dialogFormVisible">
+      <el-form
+        :model="ruleForm"
+        ref="ruleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+        size="small"
+      >
+        <el-form-item label="备注" prop="desc">
+          <el-input
+            placeholder="请输入,可不填"
+            type="textarea"
+            :maxlength="100"
+            show-word-limit
+            v-model="ruleForm.desc"
+          ></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button size="small" @click="refoundApproveStatus(refundId, -1)">驳 回</el-button>
+        <el-button size="small" type="primary" @click="refoundApproveStatus(refundId, 1)"
+          >通 过</el-button
+        >
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -297,9 +426,16 @@ export default {
         weixinUserProductId: "",
         id: "",
         refundStatus: "",
+        confirmStatus:"",
+        flowStatus:""
       },
       dataList: [{ createDate: 1 }],
       userId: "",
+      dialogFormVisible:false,
+      ruleForm: {
+        desc: "",
+      },
+      refundId:""
     };
   },
   components: { Template },
@@ -341,6 +477,41 @@ export default {
               }
               this.getDataList();
               this.$message.success("操作成功");
+            })
+            .catch(() => {});
+        })
+        .catch(() => {});
+    },
+    //审批
+    showDialog(id) {
+      this.refundId = id;
+      this.dialogFormVisible = true;
+    },
+    // 确认审核
+    refoundApproveStatus(id, status) {
+      this.$confirm(
+        `是否执行 [${status == -1 ? "拒绝" : "同意"}] 操作`,
+        this.$t("prompt.title"),
+        {
+          confirmButtonText: this.$t("confirm"),
+          cancelButtonText: this.$t("cancel"),
+          type: "warning",
+        }
+      )
+        .then(() => {
+          this.$http["put"]("/sys/userRefund/updateConfirmStatus", {
+            id,
+            confirmStatus: status,
+            confirmReason: this.ruleForm.desc,
+          })
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                return this.$message.error(res.msg);
+              }
+              this.getDataList();
+              this.$message.success("操作成功");
+              this.ruleForm.desc = "";
+              this.dialogFormVisible = false;
             })
             .catch(() => {});
         })

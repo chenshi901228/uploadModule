@@ -1,10 +1,10 @@
 
-<!-- 直播管理-评论详情 -->
+<!-- 评论列表-回复详情 -->
 
 <template>
     <div>
         <el-card shadow="never" class="aui-card--fill">
-            <div class="mod-livePlayBackComment">
+            <div class="mod-comment">
                 <el-form
                     class="headerTool"
                     :inline="true"
@@ -15,9 +15,8 @@
                     @keyup.enter.native="getDataList"
                 >
                     <el-form-item
-                        label="评论人"
+                        label="回复人"
                         prop="commentUserName"
-                        v-if="isOpen || formItemCount >= 1"
                     >
                         <el-input
                             style="width: 200px"
@@ -28,9 +27,8 @@
                         </el-input>
                     </el-form-item>
                     <el-form-item
-                        label="评论内容"
+                        label="回复内容"
                         prop="commentValue"
-                        v-if="isOpen || formItemCount >= 2"
                     >
                         <el-input
                             style="width: 200px"
@@ -43,7 +41,6 @@
                     <el-form-item
                         label="删除状态"
                         prop="delFlg"
-                        v-if="isOpen || formItemCount >= 3"
                     >
                         <el-select clearable style="width: 200px" v-model="dataForm.delFlg" placeholder="请选择">
                             <el-option label="已删除" :value="1"></el-option>
@@ -89,6 +86,13 @@
                         </div>
                     </div>
                 </el-form>
+                <div v-if="commentInfo" class="commentInfo">
+                    <div class="name">
+                        <p>评论人：{{ commentInfo.commentUserName || "-"}}</p>
+                        <p>手机号码：{{ commentInfo.commentUserPhone || "-"}}</p>
+                    </div>
+                    <p class="info">{{ commentInfo.commentValue }}</p>
+                </div>
                 <el-table
                     v-loading="dataListLoading"
                     :data="dataList"
@@ -127,8 +131,8 @@
                     </el-table-column>
                     <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center">
                         <template slot-scope="{ row }">
-                            <el-button icon="el-icon-document" type="text" size="small" @click="checkComment(row)">查看回复</el-button>
-                            <el-button icon="el-icon-delete" v-if="!row.delFlg && sys == 1" type="text" size="small" @click="deleteComment(row.id)">删除</el-button>
+                            <el-button icon="el-icon-document" type="text" size="small" @click="detail(row)">回复详情</el-button>
+                            <el-button icon="el-icon-delete" v-if="!row.delFlg" type="text" size="small" @click="deleteComment(row.id)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -149,6 +153,24 @@
         </el-card>
         <!-- 备注弹框 -->
         <remark-modal ref="remarkModal" @confirm="confirmHandle" title="删除"></remark-modal>
+
+
+        <!-- 回复详情弹框 -->
+        <el-dialog
+            top="0" 
+            custom-class="custom-dialog-top"
+            title="回复详情"
+            :visible.sync="commentDetailsVisible"
+            width="30%">
+            <el-descriptions title="" :column="1" :labelStyle="{ width: '100px'}" :contentStyle="{ width: '80%' }">
+                <el-descriptions-item label="回复人">{{commentDetailsInfo && commentDetailsInfo.commentUserName || "-"}}</el-descriptions-item>
+                <el-descriptions-item label="手机号码">{{commentDetailsInfo && commentDetailsInfo.commentUserPhone || "-"}}</el-descriptions-item>
+                <el-descriptions-item label="回复详情">{{commentDetailsInfo && commentDetailsInfo.commentValue || "-"}}</el-descriptions-item>
+            </el-descriptions>
+            <span slot="footer" class="dialog-footer">
+                <el-button size="small" type="primary" @click="commentDetailsVisible = false">关 闭</el-button>
+            </span>
+        </el-dialog>
     </div>
 </template>
 
@@ -158,13 +180,13 @@ import RemarkModal from "@/components/common/remarkDialog"
 export default {
     mixins: [ mixinTableModule ],
     components: {
-        RemarkModal
+        RemarkModal,
     },
     data() {
         return {
             mixinTableModuleOptions: {
-                getDataListURL: "/sys/liveComment/getCommentByLivePlaybackId", // 数据列表接口，API地址
-                exportURL: "/sys/liveComment/exportCommentList", // 导出接口，API地址
+                getDataListURL: "/sys/liveComment/getChildCommentForManage", // 数据列表接口，API地址
+                exportURL: "/sys/liveComment/exportCommentListForManage", // 导出接口，API地址
             },
             dataForm: {
                 commentUserName: "",
@@ -174,45 +196,59 @@ export default {
             limit: 10,
             page: 1,
             params: {
-                commentLiveListId: null,
+                fatherId: null,
             },
-            sys: 0, //0-主播短视频管理，1-平台短视频管理---仅直播管理可删除
 
             tableItem: [
-                { prop: "commentUserName", label: "评论人" },
-                { prop: "phone", label: "手机号码" },
-                { prop: "commentValue", label: "评论内容" },
-                { prop: "giveLikeNum", label: "点赞次数" },
+                { prop: "commentUserName", label: "回复人" },
+                { prop: "commentUserPhone", label: "手机号码" },
+                { prop: "commentValue", label: "回复内容" },
                 { prop: "delFlg", label: "删除状态" },
                 { prop: "remark", label: "备注" },
                 { prop: "createDate", label: "创建时间", width: 180 },
             ],
+            // 回复详情弹框
+            commentDetailsVisible: false,
+            commentDetailsInfo: null,
+            commentInfo: null, //被回复的评论详情
         };
     },
-    activated() {
-        this.params.commentLiveListId = this.$route.query.id;
-        this.sys = this.$route.query.sys;
+    activated(){
+        this.params.fatherId = this.$route.query.id;
+        this.dataList = []
+        this.commentInfo = JSON.parse(localStorage.getItem("comment") || "") || null
         this.query()
     },
     methods: {
-        // 查看回复
-        checkComment(row) {
-            if(row) {
-                this.$router.push({ name: "liveManagement-livePlayBackChildComment", query: { id: row.id, sys: this.sys }})
-                localStorage.setItem("livePlayBackComment", JSON.stringify(row))
-            }
+        // 搜索栏高度设置
+        setOtherViewHeight() {
+            setTimeout(() => {
+                let h = 0
+                if(document.querySelector(".headerTool")) {
+                    h += document.querySelector(".headerTool").getBoundingClientRect().height
+                }
+                if(document.querySelector(".commentInfo")) {
+                    h += document.querySelector(".commentInfo").getBoundingClientRect().height
+                }
+                this.otherViewHeight = Math.ceil(h) + 10
+            },150)
         },
-        // 删除评论
+        // 查看回复详情
+        detail(data) {
+            if(data.id)this.commentDetailsInfo = data
+            this.commentDetailsVisible = true
+        },
+        // 删除回复
         deleteComment(id) {
             if(!id) return
             this.$refs.remarkModal.init(id)
         },
-        // 确认删除评论
+        // 确认删除回复
         confirmHandle(remark, id, cb) {
             this.$http.put("/sys/liveComment/deleteComment", { id, remark }).then(({ data: res }) => {
                 cb()
                 if(res.code == 0){
-                    this.$message.success("删除评论成功");
+                    this.$message.success("删除回复成功");
                     this.$refs.remarkModal.close()
                     this.query()
                 }else{
@@ -227,5 +263,23 @@ export default {
     },
 };
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
+    .custom-dialog-top{
+        transform: translateY(50%);
+    }
+    .commentInfo {
+        border: 1px solid #999;
+        padding: 10px;
+        margin-bottom: 10px;
+        color: #606266;
+        .name{
+            display: flex;
+            p:not(:first-child){
+                margin-left: 20px;
+            }
+        }
+        .info {
+
+        }
+    }
 </style>
