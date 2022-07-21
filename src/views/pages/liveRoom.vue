@@ -594,13 +594,13 @@
         <el-button size="small" :type="btnDisabled?'info':'primary'" :disabled="btnDisabled" @click="initLiveRoom">{{btnText}}</el-button>
       </span>
     </el-dialog>
-    <video
+    <!-- <video
       autoplay
       loop
       id="video_custom"
       style="width:300px;height:300px"
       src="../../assets/myVideo.mp4"
-    ></video>
+    ></video> -->
   </div>
 </template>
 

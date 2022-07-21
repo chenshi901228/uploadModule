@@ -10,10 +10,10 @@
         size="small"
         @keyup.enter.native="getDataList()"
       >
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="username">
+        <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="userName">
           <el-input
             style="width: 200px"
-            v-model="dataForm.username"
+            v-model="dataForm.userName"
             clearable
             placeholder="请输入"
           ></el-input>
@@ -35,6 +35,11 @@
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 4" label="商品类型" prop="productType">
+          <!-- <el-input
+          size="small"
+          v-model="dataForm.productType"
+          clearable
+        /> -->
           <el-select
             style="width: 200px"
             v-model="dataForm.productType"
@@ -45,11 +50,21 @@
           </el-select>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 5" label="支付方式" prop="payType">
+          <!-- <el-input
+            size="small"
+            v-model="dataForm.payType"
+            clearable
+          /> -->
           <el-select style="width: 200px"  v-model="dataForm.payType" clearable>
             <el-option value="微信" label="微信"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 6" label="消费来源" prop="consumptionSource">
+          <!-- <el-input
+            size="small"
+            v-model="dataForm.consumptionSource"
+            clearable
+          /> -->
           <el-select
             style="width: 200px"
             v-model="dataForm.consumptionSource"
@@ -58,6 +73,23 @@
           >
             <el-option value="小程序端" label="小程序端"></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 7" label="订单状态" prop="status">
+          <el-select style="width: 200px"  v-model="dataForm.status" clearable placeholder="请选择">
+            <el-option :value="0" label="待支付"></el-option>
+            <el-option :value="1" label="已支付"></el-option>
+            <el-option :value="2" label="已完成"></el-option>
+            <el-option :value="3" label="退款中"></el-option>
+            <el-option :value="4" label="已退款"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 8" label="关联商品编号" prop="linkedProductId">
+          <el-input
+            style="width: 200px"
+            v-model="dataForm.linkedProductId"
+            clearable
+            placeholder="请输入"
+          ></el-input>
         </el-form-item>
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">
@@ -97,21 +129,18 @@
             </el-form-item>
           </div>
         </div>
-
-
       </el-form>
-
-        <el-table
-          v-loading="dataListLoading"
-          :data="dataList"
-          @selection-change="dataListSelectionChangeHandle"
-          :height="siteContentViewHeight"
-          style="width: 100%"
-          ref="table"
-        >
+      <el-table
+        v-loading="dataListLoading"
+        :data="dataList"
+        @selection-change="dataListSelectionChangeHandle"
+        :height="siteContentViewHeight"
+        style="width: 100%"
+        ref="table"
+      >
         <el-table-column
           prop="id"
-          label="销售编号"
+          label="订单编号"
           min-width="200px"
           header-align="center"
           align="center"
@@ -162,7 +191,23 @@
         </el-table-column>
         <el-table-column
           prop="price"
+          label="商品数量"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="payPrice"
           label="支付金额"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="payPrice"
+          label="运费"
           header-align="center"
           show-overflow-tooltip
           align="center"
@@ -196,20 +241,26 @@
         </el-table-column>
         <el-table-column
           prop="statusStr"
+          label="快递单号"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
+          prop="statusStr"
           label="订单状态"
           header-align="center"
           align="center"
           show-overflow-tooltip
         >
-    
         </el-table-column>
         <el-table-column
-          prop="productId"
-          label="关联产品编号"
-          min-width="120px"
+          prop="statusStr"
+          label="物流状态"
           header-align="center"
-          show-overflow-tooltip
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
@@ -220,6 +271,15 @@
           align="center"
           show-overflow-tooltip
         ></el-table-column>
+        <el-table-column
+          prop="linkedProductId"
+          label="关联商品编号"
+          min-width="120px"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column>
       </el-table>
       <el-pagination
         background
@@ -245,18 +305,20 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/finance/user/product/orderSalePage",
+        getDataListURL: "/sys/finance/user/product/userOrderPage",
         getDataListIsPage: true,
         deleteIsBatch: true,
-        exportURL: "/sys/finance/user/product/orderSaleExport",
+        exportURL: "/sys/finance/user/product/userOrderExport",
       },
       dataForm: {
-          userName: "",
+        userName: "",
         userPhone: "",
         productName: "",
         productType: "",
         payType: "",
         consumptionSource: "",
+        status: "",
+        linkedProductId:"",
       },
       dataList: [{ createDate: 1 }],
       userId: "",
@@ -269,7 +331,6 @@ export default {
     });
   },
   methods: {
-
   },
 };
 </script>
