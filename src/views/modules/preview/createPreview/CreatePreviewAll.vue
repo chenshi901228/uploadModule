@@ -491,7 +491,6 @@ export default {
 
     // 确认添加推荐主播
     addAnchorConfirm(data) {
-      this.$refs.chooseAnchor.close();
 
       this.ruleForm.recommendedAnchorList = data;
       this.ruleForm.anchors = data.length ? `已选择${data.length}个主播` : "";
@@ -539,7 +538,6 @@ export default {
 
     // 确认添加推荐商品
     addProductConfirm(data) {
-      this.$refs.chooseProduct.close();
 
       this.ruleForm.productIds = data;
       this.ruleForm.goods = data.length ? `已选择${data.length}个商品` : "";
