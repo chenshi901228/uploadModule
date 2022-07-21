@@ -2378,8 +2378,15 @@ export default {
                 showClose: false
             }).catch(() => {})
         }
+
+        this.$router.push({
+          path:'anchorManagement-anchorDetails-withdraw',
+          query:{
+            anchorDetails:this.anchorDetails
+          }
+        })
         
-        this.dialogVisible_withdraw = true;
+        // this.dialogVisible_withdraw = true;
     },
     // 关闭提现
     closeWithdrawHandle() {
