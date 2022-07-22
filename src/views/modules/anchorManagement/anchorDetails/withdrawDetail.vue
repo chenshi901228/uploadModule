@@ -4,6 +4,24 @@
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-live__liveList">
       <el-descriptions :title="'提现单号:' + id"></el-descriptions>
+      <div class="tag">
+        <el-tag
+          :type="$route.query.withdrawStatus === '4' ? 'success' : 'info'"
+          >{{
+            $route.query.withdrawStatus === '1'
+              ? "审核中"
+              : $route.query.withdrawStatus === '2'
+              ? "核算中"
+              : $route.query.withdrawStatus === '3'
+              ? "到帐中"
+              : $route.query.withdrawStatus === '4'
+              ? "已到账"
+              : $route.query.withdrawStatus === '5'
+              ? "未到账"
+              : "--"
+          }}</el-tag
+        >
+      </div>
       <el-descriptions title="用户信息">
         <el-descriptions-item label="提现金额:">{{
           info.amount || "--"
@@ -79,7 +97,9 @@
           invoiceInfo.open_account || "--"
         }}</el-descriptions-item>
       </el-descriptions>
-      <div style="color: red;margin-bottom:10px;">注：可增值税专用发票或增值税普通发票；</div>
+      <div style="color: red; margin-bottom: 10px">
+        注：可增值税专用发票或增值税普通发票；
+      </div>
       <el-descriptions title="发票邮寄">
         <el-descriptions-item label="收件人:">{{
           invoiceAddress.recipient || "--"
@@ -94,7 +114,7 @@
           invoiceAddress.email || "--"
         }}</el-descriptions-item>
       </el-descriptions>
-      <div style="color: red;margin-bottom:10px;">
+      <div style="color: red; margin-bottom: 10px">
         注：纸质发票需邮寄至以上地址，电子发票发送邮寄即可
       </div>
       <div class="btn">
@@ -188,6 +208,11 @@ export default {
   /deep/.el-descriptions__header {
     border-left: 5px solid #409eff;
     padding-left: 5px;
+  }
+  .tag {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
   }
   /deep/.btn {
     width: 100%;

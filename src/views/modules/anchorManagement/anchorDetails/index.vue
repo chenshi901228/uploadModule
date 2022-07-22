@@ -689,7 +689,7 @@
                     type="text"
                     size="small"
                     icon="el-icon-view"
-                    @click="previewInvoice(scope.row.id)"
+                    @click="previewInvoice(scope.row.id,scope.row.withdrawStatus)"
                     >查看</el-button
                 >
                 <!-- <el-button
@@ -2631,11 +2631,12 @@ export default {
         .catch((err) => {});
     },
     //查看提现详情
-    previewInvoice(id){
+    previewInvoice(id,withdrawStatus){
       this.$router.push({
           path:'anchorManagement-anchorDetails-withdrawDetail',
           query:{
-            id:id
+            id:id,
+            withdrawStatus:withdrawStatus
           }
       })
     }
