@@ -254,7 +254,9 @@ export default {
         showCancelButton: true,
         showClose: false,
       })
-        .then(() => {})
+        .then(() => {
+          this.closeCurrentTab();
+        })
         .catch(() => {
           this.$message({
             type: "info",
@@ -271,8 +273,20 @@ export default {
         showClose: false,
       })
         .then(() => {
-          // if (this.active++ > 2) this.active = 0;
-          this.active = 3;
+          this.$http
+            .post("/sys/anchorWithdraw", {
+              amount: parseInt(this.amount),
+              uuid: getUUID(),
+            })
+            .then(({ data: res }) => {
+              if (res.code == 0) {
+                this.$message.success("申请提现成功");
+                this.active = 3;
+              } else {
+                this.$message.error(res.msg);
+              }
+            })
+            .catch((err) => {});
         })
         .catch(() => {
           this.$message({
@@ -294,7 +308,9 @@ export default {
         showCancelButton: true,
         showClose: false,
       })
-        .then(() => {})
+        .then(() => {
+          this.closeCurrentTab();
+        })
         .catch(() => {
           this.$message({
             type: "info",
@@ -305,20 +321,28 @@ export default {
     },
     //下一步
     next() {
-      // 企业银行账号核验中不可申请提现
-      if (
-        this.anchorDetails.haveApplyInfo &&
-        this.anchorDetails.userType == 2
-      ) {
-        return this.$confirm("您的银行账号正在核验中，不可申请提现", "提示", {
-          confirmButtonText: "确认",
-          showCancelButton: false,
-          showClose: false,
-        }).catch(() => {});
-      }
+      this.$refs.withdrawForm_host.validate((valid) => {
+        if (valid) {
+          // 企业银行账号核验中不可申请提现
+          if (
+            this.anchorDetails.haveApplyInfo &&
+            this.anchorDetails.userType == 2
+          ) {
+            return this.$confirm(
+              "您的银行账号正在核验中，不可申请提现",
+              "提示",
+              {
+                confirmButtonText: "确认",
+                showCancelButton: false,
+                showClose: false,
+              }
+            ).catch(() => {});
+          }
 
-      this.btnDisabled = true;
-      this.init();
+          this.btnDisabled = true;
+          this.init();
+        }
+      });
     },
     // 协议确认倒计时
     doLoop: function (seconds) {
@@ -346,52 +370,41 @@ export default {
       });
       return arr;
     },
+    //获取开票信息
+    getPaper() {
+      this.$http
+        .get(
+          "/sys/dict/data/pageWithName?page=1&limit=20&dictTypeId=1548963270769565698"
+        )
+        .then(({ data: res }) => {
+          if (res.code != 0) return this.$message.error(res.msg);
+          const data = res.data;
+          if (!data) return this.$message.error("无开票信息");
+          this.invoiceAddress = this.getInvoiceInfo(data);
+        })
+        .catch((err) => {});
+    },
+    //获取地址
+    getAddress() {
+      this.$http
+        .get(
+          "/sys/dict/data/pageWithName?page=1&limit=20&dictTypeId=1548961326764187650"
+        )
+        .then(({ data: res }) => {
+          if (res.code != 0) return this.$message.error(res.msg);
+          const data = res.data;
+          if (!data) return this.$message.error("无开票信息");
+          this.invoiceInfo = this.getInvoiceInfo(data);
+        })
+        .catch((err) => {});
+    },
     //确认知晓
     confirmLivePact() {
-      this.$refs.withdrawForm_host.validate((valid) => {
-        if (valid) {
-          this.$http
-            .get(
-              "/sys/dict/data/pageWithName?page=1&limit=20&dictTypeId=1548963270769565698"
-            )
-            .then(({ data: res }) => {
-              if (res.code != 0) return this.$message.error(res.msg);
-              const data = res.data;
-              if (!data) return this.$message.error("无开票信息");
-              this.invoiceAddress = this.getInvoiceInfo(data);
-            })
-            .catch((err) => {});
-
-          this.$http
-            .get(
-              "/sys/dict/data/pageWithName?page=1&limit=20&dictTypeId=1548961326764187650"
-            )
-            .then(({ data: res }) => {
-              if (res.code != 0) return this.$message.error(res.msg);
-              const data = res.data;
-              if (!data) return this.$message.error("无开票信息");
-              this.invoiceInfo = this.getInvoiceInfo(data);
-            })
-            .catch((err) => {});
-
-          this.$http
-            .post("/sys/anchorWithdraw", {
-              amount: parseInt(this.withdrawForm.amount),
-              uuid: getUUID(),
-            })
-            .then(({ data: res }) => {
-              if (res.code == 0) {
-                this.$message.success("申请提现成功");
-                this.amount = this.withdrawForm.amount;
-                this.livePactDialogVisible = false;
-                if (this.active++ > 2) this.active = 0;
-              } else {
-                this.$message.error(res.msg);
-              }
-            })
-            .catch((err) => {});
-        }
-      });
+      this.getPaper();
+      this.getAddress();
+      this.amount = this.withdrawForm.amount;
+      this.livePactDialogVisible = false;
+      if (this.active++ > 2) this.active = 0;
     },
     //显示协议
     init() {
