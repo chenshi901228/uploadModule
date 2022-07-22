@@ -202,7 +202,7 @@
 <script>
 import mixinViewModule from "@/mixins/view-module";
 import { addDynamicRoute } from "@/router";
-import Template from "../devtools/template.vue";
+import Template from "../../devtools/template.vue";
 export default {
   mixins: [mixinViewModule],
   data() {
@@ -233,7 +233,7 @@ export default {
     // 打开用户详情弹窗
     openDetail(data) {
       this.$router.push({
-        name: "anchor-sensitiveWordDetail",
+        name: "commentManagement-sensitiveWord-sensitiveWordDetail",
       });
       window.localStorage.setItem("sensitiveWordDetailID", data.id);
     },

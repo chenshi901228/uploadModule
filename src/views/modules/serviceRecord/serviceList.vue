@@ -10,56 +10,12 @@
         size="small"
         @keyup.enter.native="getDataList()"
       >
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="主播昵称" prop="sendUserName">
-          <el-input
-            style="width: 200px"
-            v-model="dataForm.sendUserName"
-            clearable
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="主播手机号码" prop="sendUserPhone">
-          <el-input
-            style="width: 200px"
-            v-model="dataForm.sendUserPhone"
-            clearable
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 3" label="用户昵称" prop="toUserName">
-          <el-input
-            style="width: 200px"
-            v-model="dataForm.toUserName"
-            clearable
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 4" label="用户手机号码" prop="toUserPhone">
-          <el-input
-            style="width: 200px"
-            v-model="dataForm.toUserPhone"
-            clearable
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-        <!-- 搜索重置展开按钮 -->
-        <div class="headerTool-search-btns">
-          <el-form-item>
-            <el-button 
-              type="primary" 
-              icon="el-icon-search" 
-              size="mini"
-              @click="getDataList">{{ $t("query") }}</el-button>
-            <el-button 
-              icon="el-icon-refresh" 
-              size="mini" 
-              @click="resetDataForm()">{{ $t("reset") }}</el-button>
-            <el-button size="mini" plain @click="open">
-              <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
-              {{ isOpen ? "收起" : "展开" }}
-            </el-button>
-          </el-form-item>
-        </div>
+        <el-descriptions column="4">
+          <el-descriptions-item label="主播昵称">{{info.sendUserName}}</el-descriptions-item>
+          <el-descriptions-item label="主播手机号码">{{info.sendUserPhone}}</el-descriptions-item>
+          <el-descriptions-item label="用户昵称">{{info.toUserName}}</el-descriptions-item>
+          <el-descriptions-item label="用户手机号码">{{info.toUserPhone}}</el-descriptions-item>
+        </el-descriptions>
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
@@ -91,7 +47,7 @@
       >
         <el-table-column
           prop="sendUserName"
-          label="主播昵称"
+          label="昵称"
           min-width="200px"
           header-align="center"
           align="center"
@@ -99,23 +55,15 @@
         ></el-table-column>
         <el-table-column
           prop="sendUserPhone"
-          label="主播手机号码"
+          label="手机号码"
           min-width="200px"
           header-align="center"
           align="center"
           show-overflow-tooltip
         ></el-table-column>
         <el-table-column
-            prop="toUserName"
-            label="用户昵称"
-            min-width="200px"
-            header-align="center"
-            align="center"
-            show-overflow-tooltip
-        ></el-table-column>
-        <el-table-column
-            prop="toUserPhone"
-            label="用户手机号码"
+            prop="msgContent"
+            label="聊天内容"
             min-width="200px"
             header-align="center"
             align="center"
@@ -123,7 +71,7 @@
         ></el-table-column>
         <el-table-column
           prop="createDate"
-          label="更新时间"
+          label="创建时间"
           min-width="200px"
           header-align="center"
           align="center"
@@ -158,6 +106,17 @@
         @current-change="pageCurrentChangeHandle"
       >
       </el-pagination>
+      <el-dialog
+        title="查看"
+        :visible.sync="dialogVisible"
+        width="30%"
+      >
+       <el-descriptions column="1" content-class-name="my-content">
+          <el-descriptions-item label="昵称">{{content.sendUserName}}</el-descriptions-item>
+          <el-descriptions-item label="手机号码">{{content.sendUserPhone}}</el-descriptions-item>
+          <el-descriptions-item label="聊天内容">{{content.msgContent}}</el-descriptions-item>
+        </el-descriptions>
+      </el-dialog>
     </div>
   </el-card>
 </template>
@@ -171,22 +130,28 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/imCallback/getInfoPage",
+        getDataListURL: "/sys/imCallback/getInfoDetailPage",
         getDataListIsPage: true,
         deleteIsBatch: true,
-        exportURL: "/sys/imCallback/exportList",
+        exportURL: "/sys/imCallback/exportDetailList",
       },
       dataForm: {
-        sendUserName:"",
-        sendUserPhone:"",
-        toUserName:"",
-        toUserPhone:""
+        sendUserId:JSON.parse(this.$route.query.info).sendUserId,
+        toUserId:JSON.parse(this.$route.query.info).toUserId,
       },
       dataList: [{ createDate: 1 }],
       userId: "",
+      info:{},
+      dialogVisible:false,
+      content:{},
     };
   },
   components: { Template },
+  created(){
+    let info = JSON.parse(this.$route.query.info)
+    this.info = info
+    console.log(this.info)
+  },
   mounted() {
     this.$bus.$on("change", () => {
       this.getDataList();
@@ -194,15 +159,13 @@ export default {
   },
   methods: {
     lookHandle(row){
-        this.$router.push({
-            path:"/serviceRecord-serviceList",
-            query:{info:JSON.stringify(row)}
-        })
+      this.content = row
+      this.dialogVisible = true
     }
   },
 };
 </script>
-<style  scoped>
+<style lang="scss" scoped>
 .forbiddenAllBtn {
   width: 120px;
   height: 35px;
@@ -213,5 +176,8 @@ export default {
   text-align: center;
   cursor: pointer;
   margin: 10px 0;
+}
+/deep/ .my-content{
+  width: 80%;
 }
 </style>

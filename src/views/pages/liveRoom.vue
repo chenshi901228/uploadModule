@@ -594,13 +594,13 @@
         <el-button size="small" :type="btnDisabled?'info':'primary'" :disabled="btnDisabled" @click="initLiveRoom">{{btnText}}</el-button>
       </span>
     </el-dialog>
-    <video
+    <!-- <video
       autoplay
       loop
       id="video_custom"
       style="width:300px;height:300px"
       src="../../assets/myVideo.mp4"
-    ></video>
+    ></video> -->
   </div>
 </template>
 
@@ -885,6 +885,11 @@ export default {
               this.toolNav[0].status = isRecord;
             }
             this.getTimUserSig();
+            this.$http.post("/sys/mixedflow/startEvenWheat", { //重新进入直播间发起混流任务
+              RoomId: this.roomId, //房间ID；
+            }).then((res) => {
+              console.log(res);
+            }).catch((err) => {});
           }).catch(()=>{
             window.close()
           })
@@ -1644,10 +1649,11 @@ export default {
       this.$http
         .get(`/sys/mixedflow/getOnlineUsers`,{params})
         .then((res) => {
-          console.log("在线用户列表", res.data.data);
-          let data = res.data.data.list;
-          this.goodsList = this.studentList.concat(data)
-          this.total = res.data.data.total
+          console.log("在线用户列表", res.data.list);
+          if(!res.code==0) return this.$message.error(res.msg)
+          // let data = res.data.list;
+          // this.studentList = this.studentList.concat(data)
+          // this.total = res.data.total
         });
     },
     // 获取主播推荐商品
@@ -1662,6 +1668,7 @@ export default {
       this.$http
         .get(`/sys/anchorProduct/live/pageWithLive`,{params})
         .then((res) => {
+          if(!res.data.code==0) return this.$message.error(res.data.msg)
           console.log("主播推荐商品", res.data.data);
           let data = res.data.data.list;
           data.forEach((item) => {
@@ -1801,7 +1808,7 @@ export default {
       clearTimeout(this.goodsPushTimer);
       this.goodsPushTimer = null;
     }
-    this.stopPublishingStream
+    // this.stopPublishingStream
   },
 };
 </script>
