@@ -134,7 +134,19 @@
                 </el-date-picker>
             </el-form-item>
             <el-form-item
-                label="银行账户"
+                label="提现单号"
+                v-if="diaTbas === 2"
+                prop="code"
+            >
+                <el-input
+                style="width: 180px"
+                placeholder="请输入"
+                v-model="diaSearchForm.code"
+                clearable
+                ></el-input>
+            </el-form-item>
+            <el-form-item
+                label="银行账号"
                 v-if="diaTbas === 2"
                 prop="bankAccount"
             >
@@ -147,17 +159,35 @@
             </el-form-item>
             <el-form-item label="提现时间" v-if="diaTbas === 2" prop="date">
                 <el-date-picker
-                placeholder="请选择"
-                v-model="diaSearchForm.date"
-                type="datetimerange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                >
+                  placeholder="请选择"
+                  v-model="diaSearchForm.date"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  value-format="yyyy-MM-dd">
                 </el-date-picker>
             </el-form-item>
             <el-form-item
+                label="提现状态"
+                v-if="diaTbas === 2"
+                prop="withdrawStatus"
+            >
+                <el-select
+                placeholder="请选择"
+                style="width: 180px"
+                v-model="diaSearchForm.withdrawStatus"
+                clearable
+                >
+                <el-option :value="-1" label="驳回"></el-option>
+                <el-option :value="1" label="审核中"></el-option>
+                <el-option :value="2" label="核算中"></el-option>
+                <el-option :value="3" label="到帐中"></el-option>
+                <el-option :value="4" label="已到账"></el-option>
+                <el-option :value="5" label="未到账"></el-option>
+                </el-select>
+            </el-form-item>
+            <!-- <el-form-item
                 label="审批状态"
                 v-if="diaTbas === 2"
                 prop="approveStatus"
@@ -184,7 +214,7 @@
                 <el-option :value="1" label="已支付"></el-option>
                 <el-option :value="-1" label="支付失败"></el-option>
                 </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item
                 label="用户昵称"
                 v-if="diaTbas === 3 || diaTbas === 4"
@@ -481,6 +511,53 @@
                     </div>
                 </template>
                 </el-table-column>
+
+                <el-table-column
+                :prop="prop"
+                :label="label"
+                :key="prop"
+                header-align="center"
+                align="center"
+                v-else-if="prop === 'sumTax'"
+                >
+                <template slot="header">
+                  税费
+                  <el-tooltip class="item" effect="dark" content="税费=增值税+附加税+个税" placement="bottom">
+                    <i class="el-icon-question"></i>
+                  </el-tooltip>
+                </template>
+                </el-table-column>
+
+                <el-table-column
+                :prop="prop"
+                :label="label"
+                :key="prop"
+                header-align="center"
+                align="center"
+                v-else-if="prop === 'userType' && diaTbas === 2"
+                >
+                <template slot-scope="scope">
+                    <div>
+                    {{ scope.row.userType === 1 ? "个人" : "企业" }}
+                    </div>
+                </template>
+                </el-table-column>
+
+                <el-table-column
+                :prop="prop"
+                :label="label"
+                :key="prop"
+                header-align="center"
+                align="center"
+                v-else-if="prop === 'withdrawStatus' && diaTbas === 2"
+                >
+                <template slot-scope="scope">
+                    <div>
+                    {{ scope.row.withdrawStatus === '-1' ? "--" : scope.row.withdrawStatus === '1' ? "审核中" : scope.row.withdrawStatus === '2' ? "核算中" : scope.row.withdrawStatus === '3' ? "到帐中" : scope.row.withdrawStatus === '4' ? "已到账" : scope.row.withdrawStatus === '5' ? "未到账" : "--" }}
+                    </div>
+                </template>
+                </el-table-column>
+
                 <el-table-column
                 :prop="prop"
                 :label="label"
@@ -599,22 +676,30 @@
                 "
             >
                 <template slot-scope="scope">
-                <el-button
+                <!-- <el-button
                     v-if="diaTbas === 2"
                     type="text"
                     size="small"
                     icon="el-icon-view"
                     @click="previewInvoiceImg(scope.row)"
                     >查看发票</el-button
-                >
+                > -->
                 <el-button
+                    v-if="diaTbas === 2"
+                    type="text"
+                    size="small"
+                    icon="el-icon-view"
+                    @click="previewInvoice(scope.row.id,scope.row.withdrawStatus)"
+                    >查看</el-button
+                >
+                <!-- <el-button
                     v-if="diaTbas === 2 && scope.row.approveStatus == 0"
                     type="text"
                     size="small"
                     icon="el-icon-upload2"
                     @click="updateInvoiceImg(scope.row)"
                     >重新上传</el-button
-                >
+                > -->
                 <el-button
                     v-if="diaTbas === 5"
                     type="text"
@@ -1342,6 +1427,8 @@ export default {
         approveStatus: "",
         payStatus: "",
         date: "",
+        code:"",
+        withdrawStatus:""
       },
       productForm: {
         productName: "",
@@ -1670,15 +1757,22 @@ export default {
           break;
         case 2:
           this.diaTableTitle = {
+            id: "提现单号",
             amount: "提现金额",
-            accountName: "账户姓名",
-            bankAccount: "银行账户",
+            sumTax: "税费",
+            addedValueTax: "本次代征增值税",
+            additionalTax: "本次代征附加税",
+            personalIncomeTax: "本次代征个税",
+            receivedAmount: "到账金额",
+            userType: "账户类型",
+            accountName: "账户名称",
+            bankAccount: "银行账号",
             depositBank: "开户银行",
             branchName: "支行名称",
             address: "开户行所在地",
             createDate: "提现时间",
-            approveStatus: "审批状态",
-            confirmStatus: "提现状态",
+            // approveStatus: "审批状态",
+            withdrawStatus: "提现状态",
           };
           break;
         case 3:
@@ -2536,6 +2630,16 @@ export default {
         })
         .catch((err) => {});
     },
+    //查看提现详情
+    previewInvoice(id,withdrawStatus){
+      this.$router.push({
+          path:'anchorManagement-anchorDetails-withdrawDetail',
+          query:{
+            id:id,
+            withdrawStatus:withdrawStatus
+          }
+      })
+    }
   },
 };
 </script>
