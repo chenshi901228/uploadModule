@@ -295,7 +295,7 @@ export default {
     uploadError(err, file, fileList) {
       console.log(err, file, fileList);
       this.uploadList = this.uploadList.filter((item) => item.uid != file.uid);
-      this.$message.error(err.type);
+      this.$message.error(JSON.stringify(err));
     },
     // 超出上传数量
     uploadExceed() {
