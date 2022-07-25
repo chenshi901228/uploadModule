@@ -196,7 +196,7 @@
                 icon="el-icon-plus"
                 size="mini"
                 @click="addPreview()"
-                >添加预告</el-button
+                >新增</el-button
               >
             </el-form-item>
             <el-form-item>

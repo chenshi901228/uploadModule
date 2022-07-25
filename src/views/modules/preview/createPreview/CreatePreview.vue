@@ -36,6 +36,7 @@
           <el-input
             style="width: 400px"
             placeholder="预计时长"
+            maxlength="4"
             v-model="ruleForm.estimateLiveTime"
           ></el-input>
         </el-form-item>
@@ -97,7 +98,7 @@
             <el-option
               v-for="(item, index) in assistantOptions"
               :key="index"
-              :label="item.userName"
+              :label="item.label"
               :value="item.weixinUserId"
             >
             </el-option>
@@ -589,7 +590,13 @@ export default {
           if (res.code !== 0) {
             return this.$message.error(res.msg);
           }
-          this.assistantOptions = res.data;
+          res.data.map(item => {
+            let obj = {
+              weixinUserId: item.weixinUserId,
+              label: `助手昵称：${item.userName} 手机号：${item.phone || "-"}`
+            }
+            this.assistantOptions.push(obj);
+          })
         })
         .catch((err) => {
           throw err;
