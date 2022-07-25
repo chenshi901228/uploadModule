@@ -621,7 +621,23 @@
       :visible.sync="livePreviewDialogVisible"
       top="200px"
       width="30%">
-        
+        <div class="dialog_content">
+          <div class="content_list" v-for="(item, index) in goodsList" :key="index">
+            <div class="list_top">
+              <span>{{item.sort}}</span>
+              <p>{{item.productName}}</p>
+            </div>
+            <div class="list_bottom">
+              <div class="info">
+                <span>{{item.productType}}&nbsp;|</span>
+                <p>&nbsp;{{Number(item.buyers)+Number(item.salesNum)}}人已购买</p>
+              </div>
+              <div class="push_btn" @click="pushMethod('goods', item)">
+                推送
+              </div>
+            </div>
+          </div>
+        </div>
     </el-dialog>
     <el-dialog
       title="推荐主播"
