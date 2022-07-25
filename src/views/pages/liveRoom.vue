@@ -599,17 +599,17 @@
       width="440px"
       >
         <div class="dialog_content">
-          <div class="content_list">
+          <div class="content_list" v-for="(item, index) in goodsList" :key="index">
             <div class="list_top">
-              <span>1</span>
-              <p>青少年启智训练营：如何才能找到跟孩子高效沟通的方式呢？</p>
+              <span>{{item.sort}}</span>
+              <p>{{item.productName}}</p>
             </div>
             <div class="list_bottom">
               <div class="info">
-                <span>专业课</span>
-                <p>6513人已购买</p>
+                <span>{{item.productType}}&nbsp;|</span>
+                <p>&nbsp;{{Number(item.buyers)+Number(item.salesNum)}}人已购买</p>
               </div>
-              <div class="push_btn">
+              <div class="push_btn" @click="pushMethod('goods', item)">
                 推送
               </div>
             </div>
@@ -626,9 +626,20 @@
     <el-dialog
       title="推荐主播"
       :visible.sync="recommendedAnchorDialogVisible"
-      top="200px"
-      width="30%">
-        
+      top="50px"
+      width="440px">
+        <div class="dialog_content">
+          <div class="content_list_recommend" v-for="(item, index) in recommendList" :key="index">
+            <div class="list_left"> 
+              <span>{{index+1}}</span>
+              <div class="userInfo">
+                <img :src="item.avatarUrl" alt="">
+                <span>{{item.username}}</span>
+              </div>
+            </div>
+            <div class="list_right">{{item.fansNum}}&nbsp;粉丝</div>
+          </div>
+        </div>
     </el-dialog>
   </div>
 </template>
@@ -657,7 +668,6 @@ export default {
       videoFPS:0,//推流帧率
       videoPacketsLostRate:0,//推流丢包率
       videoQuality:0,//推流质量 -1 表示未知，0 表示 极好,1 表示好，2 表示中等，3 表示 差，4 表示极差
-      count:0,
       activeName: "first",
       userName: "",
       userID: "",
@@ -1005,7 +1015,7 @@ export default {
       this.liveActionDialogVisible = false
       this.getTimUserSig();
     },
-    load () {//主播推荐商品列表、直播预告列表、推荐主播列表加载
+    load () {//在线用户列表加载
       this.params.page++
       if(this.activeName==='third'){
         if(this.studentList.length>=this.total){
@@ -1013,25 +1023,7 @@ export default {
         }else{
           this.getOnlineUsers()
         }
-      }else if(this.activeName==='fourth'){
-        if(this.goodsList.length>=this.total){
-          return
-        }else{
-          this.getAnchorProduct()
-        }
-      }else if(this.activeName==='fifth'){
-        if(this.livePreviewList.length>=this.total){
-          return
-        }else{
-          this.getLivePreviewList();
-        }
-      }else{
-        if(this.recommendList.length>=this.total){
-          return
-        }else{
-          this.getRecommendList();
-        }
-      } 
+      }
     },
     async shareDesk(){
       this.screenStream = await this.zg.createStream({ //屏幕共享流
@@ -1115,13 +1107,26 @@ export default {
       // }
       switch(type){
         case "goods":
-          this.goodsDialogVisible = true
+          this.getAnchorProduct().then(res=>{
+            if(!res.length) return this.$message.info('暂无商品')
+            this.goodsDialogVisible = true
+          })
           break
         case "livePreview":
-          this.livePreviewDialogVisible = true
+          this.params.page=1
+          this.goodsList = []
+          this.getLivePreviewList().then(res=>{
+            if(!res.length) return this.$message.info('暂无预告')
+            this.livePreviewDialogVisible = true
+          })
           break
         case "recommendedAnchor":
-          this.recommendedAnchorDialogVisible = true
+          this.params.page=1
+          this.goodsList = []
+          this.getRecommendList().then(res=>{
+            if(!res.length) return this.$message.info('暂无推荐主播')
+            this.recommendedAnchorDialogVisible = true
+          })
           break
       }
       
@@ -1172,18 +1177,6 @@ export default {
         case 'third' :
           this.studentList = []
           this.getOnlineUsers()
-          break
-        case 'fourth':
-          this.goodsList = []
-          this.getAnchorProduct()
-          break
-        case 'fifth':
-          this.livePreviewList = []
-          this.getLivePreviewList()
-          break
-        case 'sixth':
-          this.recommendList = []
-          this.getRecommendList()
           break
         default:
           break
@@ -1743,14 +1736,16 @@ export default {
     },
     // 获取主播推荐商品
     getAnchorProduct() {
-      let obj = {
+      let params = {
         liveId:this.$route.query.TaskId,
         anchorId:this.roomId,
         isAdd:1,
-        type:1
+        type:1,
+        limit:999,
+        page:1,
       }
-      let params = {...this.params,...obj}
-      this.$http
+      return new Promise((resolve,reject)=>{
+        this.$http
         .get(`/sys/anchorProduct/live/pageWithLive`,{params})
         .then((res) => {
           if(!res.data.code==0) return this.$message.error(res.data.msg)
@@ -1761,37 +1756,46 @@ export default {
               item.productTag = item.productTag.split("|");
             }
           });
-          this.goodsList = this.goodsList.concat(data)
-          this.total = res.data.data.total
-        });
+          this.goodsList = data
+          resolve(this.goodsList)
+        }).catch((err)=>{
+          
+        })
+      })
     },
     // 获取直播预约列表
     getLivePreviewList() {
-      let obj = {
+      let params = {
         liveState:3,
         appointmentState:1,
-        anchorUserId: this.$store.state.user.id
+        anchorUserId: this.$store.state.user.id,
+        limit:999,
+        page:1,
       }
-      let params = {...this.params,...obj}
-      this.$http.get(`/sys/livePreview/pageOwn`,{params}).then((res) => {
-        console.log("获取直播预约列表", res);
-        this.livePreviewList = this.livePreviewList.concat(res.data.data.list)
-        this.total = res.data.data.total
-      });
+      return new Promise((resolve,reject)=>{
+        this.$http.get(`/sys/livePreview/pageOwn`,{params}).then((res) => {
+          if(!res.data.code==0) return this.$message.error(res.data.msg)
+          this.livePreviewList = res.data.data.list
+          resolve(this.livePreviewList)
+        });
+      })
     },
     //获取主播推荐主播
     getRecommendList() {
-      let obj = {
+      let params = {
         liveId:this.$route.query.TaskId,
         state:1,
         userId: this.userID,
+        limit:999,
+        page:1,
       }
-      let params = {...this.params,...obj}
-      this.$http.get(`/sys/sysRecommendedAnchor/page`,{params}).then((res) => {
-        console.log("获取主播推荐主播", res);
-        this.recommendList = this.recommendList.concat(res.data.data.list)
-        this.total = res.data.data.total
-      });
+      return new Promise((resolve,reject)=>{
+        this.$http.get(`/sys/sysRecommendedAnchor/page`,{params}).then((res) => {
+          if(!res.data.code==0) return this.$message.error(res.data.msg)
+          this.recommendList = res.data.data.list
+          resolve(this.recommendList)
+        });
+      })
     },
     //推送商品、直播预告
     pushMethod(type, data) {
@@ -2717,23 +2721,26 @@ p {
   }
   .dialog_content{
     width: 400px;
-    height: 550px;
+    max-height: 550px;
     box-sizing: border-box;
     border-top: 1px solid #E5E5E5;
     padding: 20px 0;
+    overflow: auto;
     .content_list{
       width: 100%;
-      height: 120px;
       background: #F8F8F8;
       border-radius: 10px;
       padding: 20px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      margin-bottom: 20px;
       .list_top{
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
+        padding-left: 30px;
+        position: relative;
         >span{
           line-height: 18px;
           text-align: center;
@@ -2742,13 +2749,17 @@ p {
           background: linear-gradient(118deg, #FA3622 0%, #FF055B 100%);
           border-radius: 2px;
           padding: 1px 5px;
-          margin-right: 15px;
+          white-space: nowrap;
+          position: absolute;
+          left: 0;
+          top:0;
         }
       }
       .list_bottom{
         display: flex;
         justify-content: space-between;
         align-items: center;
+        padding-left: 30px;
         .info{
           display: flex;
           font-size: 12px;
@@ -2766,6 +2777,50 @@ p {
         }
       }
     }
+    .content_list_recommend{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      padding: 20px 0;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #F3F3F3;
+      .list_left{
+        display: flex;
+        align-items:center;
+        padding-left:30px;
+        position: relative;
+        >span{
+          line-height: 18px;
+          text-align: center;
+          color: #ffffff;
+          font-size: 12px;
+          background: linear-gradient(118deg, #FA3622 0%, #FF055B 100%);
+          border-radius: 2px;
+          padding: 1px 5px;
+          white-space: nowrap;
+          position: absolute;
+          left: 0;
+          top: calc(50% - 9px);
+        }
+        .userInfo{
+          color: #000000;
+          >img{
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+          }
+        }
+      }
+      .list_right{
+        color: #B9B9B9;
+        font-size: 12px;
+      }
+    }
+  }
+  .dialog_content::-webkit-scrollbar {
+    display: none;
   }
 }
 @keyframes live-icon-one {
