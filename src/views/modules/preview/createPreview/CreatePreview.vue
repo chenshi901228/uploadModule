@@ -479,7 +479,7 @@ export default {
             assistantIds: this.ruleForm.assistantIds,
             frontCover: this.frontCoverList.length ? this.frontCoverList[0].url : "",
             anchorUserId: this.userId,
-            trendsOpen: this.trendsOpen
+            trendsOpen: this.ruleForm.trendsOpen
           };
 
           this.submitLoading = true;
