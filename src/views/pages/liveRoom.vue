@@ -15,8 +15,26 @@
                 </div>
                 直播中
               </div>
+              <div class="no_live_status" v-else>
+                <img src="../../assets/img/black_circle.png" alt="">
+                <span>未开播</span>
+              </div>
+              <div class="record_btn" @click="recordMethod" v-if="liveStatus">
+                <img :src="isRecord ? require('../../assets/img/record.png') : require('../../assets/img/start_record.png')" alt="">
+                <span>{{isRecord?'录制中':'开始录制'}}</span>
+              </div>
             </div>
-            <p class="room_num">房间号：{{ roomId }}</p>
+            <div class="online_info">
+              <p>
+                ·&nbsp;<span>{{ liveRoomUserinfo.cumulativeNum || 0 }}</span
+                >人看过
+              </p>
+              <p>
+                ·&nbsp;<span>{{ liveRoomUserinfo.onlineNum || 0 }}</span
+                >人在线
+              </p>
+              <p>·&nbsp;<span>{{ liveRoomUserinfo.liveHot || 0 }}</span>热度</p>
+            </div>
           </div>
         </div>
         <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
@@ -164,7 +182,7 @@
               </div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="学生" name="third">
+          <el-tab-pane label="用户" name="third">
             <div class="list_content" style="height: calc(100% - 50px)">
               <div
                 class="student_content"
@@ -194,7 +212,7 @@
               <div @click="allMute(2)">全员解禁</div>
             </div>
           </el-tab-pane>
-          <el-tab-pane label="商品" name="fourth">
+          <!-- <el-tab-pane label="商品" name="fourth">
             <div class="list_content" v-infinite-scroll="load">
               <div
                 class="content"
@@ -227,8 +245,8 @@
                 </div>
               </div>
             </div>
-          </el-tab-pane>
-          <el-tab-pane label="直播预告" name="fifth">
+          </el-tab-pane> -->
+          <!-- <el-tab-pane label="直播预告" name="fifth">
             <div class="list_content" v-infinite-scroll="load">
               <div
                 class="content"
@@ -248,8 +266,8 @@
                 </div>
               </div>
             </div>
-          </el-tab-pane>
-          <el-tab-pane label="推荐主播" name="sixth">
+          </el-tab-pane> -->
+          <!-- <el-tab-pane label="推荐主播" name="sixth">
             <div class="list_content" v-infinite-scroll="load">
               <div
                 class="content"
@@ -269,7 +287,7 @@
                 </div>
               </div>
             </div>
-          </el-tab-pane>
+          </el-tab-pane> -->
         </el-tabs>
         <div class="barrage_input" v-show="activeName === 'first'">
           <input
@@ -286,7 +304,7 @@
       <el-container>
         <el-header>
           <div class="live_room_header">
-            <div class="header_left">
+            <!-- <div class="header_left">
               <el-popover
                 ref="reference"
                 placement="bottom"
@@ -321,36 +339,33 @@
                 <img :src="item.img" alt="" />
                 <p>{{ item.text }}</p>
               </div>
-              <!-- <div @click="openEffect">开启美颜</div>
-              <div @click="closeEffect">关闭美颜</div> -->
-              <!-- <div @click="deviceDialogVisible=true">设备选择</div> -->
               <div @click="trends==1?trends=0:trends=1" v-if="!liveStatus" class="header_nav">
                 <img :src="trends==1?require('@/assets/img/open_dynamic.png'):require('@/assets/img/close_dynamic.png')" alt="">
                 <p>{{trends==1?'关闭动态':'开启动态'}}</p>
               </div>
+            </div> -->
+            <!-- <div class="tool_nav" v-if="!liveStatus">
+            </div> -->
+            <div class="start_live" @click="startPlayLive" v-if="!liveStatus">
+              <img src="../../assets/img/startLive.png" alt="" />
+              <span>上课</span>
             </div>
-            <div class="header_right">
-              <div class="wacth_num">
-                <img src="../../assets/img/liveUser.png" alt="" />
-                <p>
-                  当前观看人数：<span>{{
-                    liveRoomUserinfo.onlineNum || 0
-                  }}</span
-                  >人
-                </p>
-              </div>
-              <div
-                class="tool_nav"
-                v-for="(item, index) in toolNav"
-                :key="index"
-              >
-                <img
-                  :src="item.status ? item.activeImg : item.img"
-                  alt=""
-                  @click="toolClick(item)"
-                />
-                <p>{{ item.type=='record'&&item.status?'已录制':item.text }}</p>
-              </div>
+            <div class="start_live" @click="closeLive" v-else>
+              <img src="../../assets/img/closeLive.png" alt="" />
+              <span>下课</span>
+            </div>
+            <div class="tool_nav" @click="trends==1?trends=0:trends=1">
+              <img :src="trends==1?require('@/assets/img/open_dynamic.png'):require('@/assets/img/close_dynamic.png')" alt="" @click="toolClick(item)"/>
+              <span>{{trends==1?'关闭动态':'开启动态'}}</span>
+            </div>
+            <div
+              class="tool_nav"
+              v-for="(item, index) in toolNav"
+              :key="index"
+              @click="toolClick(item.type)"
+            >
+              <img :src="item.img" alt=""/>
+              <span>{{item.text}}</span>
             </div>
           </div>
         </el-header>
@@ -360,26 +375,9 @@
               <div class="live_menu_header">
                 <div class="live_theme">主题&nbsp;:&nbsp;{{ liveTheme }}</div>
                 <div class="online_info">
-                  <!-- <p>
-                    ·&nbsp;<span>{{ liveRoomUserinfo.cumulativeNum || 0 }}</span
-                    >人看过
-                  </p>
-                  <p>
-                    ·&nbsp;<span>{{ liveRoomUserinfo.onlineNum || 0 }}</span
-                    >人在线
-                  </p>
-                  <p>·&nbsp;<span>{{ liveRoomUserinfo.liveHot || 0 }}</span>热度</p> -->
                   <p>FPS：{{videoFPS}}</p>
                   <p>丢包率：{{videoPacketsLostRate}}</p>
                   <p>网络状态：正常</p>
-                  <div class="start_live" @click="startPlayLive" v-if="!liveStatus">
-                    <img src="../../assets/img/startLive.png" alt="" />
-                    <span>开始直播</span>
-                  </div>
-                  <div class="start_live" @click="closeLive" v-else>
-                    <img src="../../assets/img/closeLive.png" alt="" />
-                    <span>结束直播</span>
-                  </div>
                 </div>
               </div>
               <div class="screenShare">
@@ -511,7 +509,7 @@
           </el-upload> -->
       </div>
     </el-dialog>
-    <el-dialog
+    <!-- <el-dialog
       title="切换设备"
       :visible.sync="deviceDialogVisible"
       top="200px"
@@ -532,7 +530,7 @@
             :value="item.deviceID">
           </el-option>
         </el-select>
-    </el-dialog>
+    </el-dialog> -->
     <el-dialog
       :title="endLiveTitle"
       :visible.sync="endLiveDialogVisible"
@@ -594,13 +592,44 @@
         <el-button size="small" :type="btnDisabled?'info':'primary'" :disabled="btnDisabled" @click="initLiveRoom">{{btnText}}</el-button>
       </span>
     </el-dialog>
-    <!-- <video
-      autoplay
-      loop
-      id="video_custom"
-      style="width:300px;height:300px"
-      src="../../assets/myVideo.mp4"
-    ></video> -->
+    <el-dialog
+      title="商品"
+      :visible.sync="goodsDialogVisible"
+      top="50px"
+      width="440px"
+      >
+        <div class="dialog_content">
+          <div class="content_list">
+            <div class="list_top">
+              <span>1</span>
+              <p>青少年启智训练营：如何才能找到跟孩子高效沟通的方式呢？</p>
+            </div>
+            <div class="list_bottom">
+              <div class="info">
+                <span>专业课</span>
+                <p>6513人已购买</p>
+              </div>
+              <div class="push_btn">
+                推送
+              </div>
+            </div>
+          </div>
+        </div>
+    </el-dialog>
+    <el-dialog
+      title="直播预告"
+      :visible.sync="livePreviewDialogVisible"
+      top="200px"
+      width="30%">
+        
+    </el-dialog>
+    <el-dialog
+      title="推荐主播"
+      :visible.sync="recommendedAnchorDialogVisible"
+      top="200px"
+      width="30%">
+        
+    </el-dialog>
   </div>
 </template>
 
@@ -617,6 +646,10 @@ export default {
     return {
       livePactDialogVisible:false,//直播协议弹窗
       liveActionDialogVisible:false,//直播行为规范弹窗
+      goodsDialogVisible:false,//商品弹窗
+      livePreviewDialogVisible:false,//直播预告弹窗
+      recommendedAnchorDialogVisible:false,//推荐主播弹窗
+
       livePactInfo: {}, //直播协议内容
       liveActionInfo: {}, //直播行为规范内容
       btnDisabled:true,
@@ -650,44 +683,55 @@ export default {
       userInfo: {}, //用户信息
       goodsPushTimer: null, //商品推送定时
       livePredictionTimer: null, //直播预告推送定时
-      headerNav: [
+      toolNav: [
+        // {
+        //   img: require("@/assets/img/nomike.png"),
+        //   activeImg: require("@/assets/img/mike.png"),
+        //   text: "麦克风",
+        //   type: "mike",
+        //   status: false,
+        // },
+        // {
+        //   img: require("@/assets/img/nocamera.png"),
+        //   activeImg: require("@/assets/img/camera.png"),
+        //   text: "摄像头",
+        //   type: "camera",
+        //   status: true,
+        // },
         {
-          img: require("@/assets/img/desktopShare.png"),
+          img: require("@/assets/img/device_icon.png"),
+          text: "切换设备",
+          type: "device",
+        },
+        {
+          img: require("@/assets/img/desktopShare_icon.png"),
           text: "桌面共享",
           type: "desktopShare",
         },
         {
-          img: require("@/assets/img/superWhiteboard.png"),
-          text: "超级白板",
+          img: require("@/assets/img/superboard_icon.png"),
+          text: "白板",
           type: "superboard",
         },
         {
-          img: require("@/assets/img/beautify.png"),
-          text: "开启美颜",
-          type: "beautify",
-        },
-      ],
-      toolNav: [
-        {
-          img: require("@/assets/img/norecord.png"),
-          activeImg: require("@/assets/img/record.png"),
-          text: "录制",
-          type: "record",
-          status: false,
+          img: require("@/assets/img/setUp_icon.png"),
+          text: "设置",
+          type: "setUp",
         },
         {
-          img: require("@/assets/img/nomike.png"),
-          activeImg: require("@/assets/img/mike.png"),
-          text: "麦克风",
-          type: "mike",
-          status: false,
+          img: require("@/assets/img/goods_icon.png"),
+          text: "商品",
+          type: "goods",
         },
         {
-          img: require("@/assets/img/nocamera.png"),
-          activeImg: require("@/assets/img/camera.png"),
-          text: "摄像头",
-          type: "camera",
-          status: true,
+          img: require("@/assets/img/livePreview_icon.png"),
+          text: "直播预告",
+          type: "livePreview",
+        },
+        {
+          img: require("@/assets/img/recommendedAnchor_icon.png"),
+          text: "推荐主播",
+          type: "recommendedAnchor",
         },
       ],
       headerNavActive: "desktopShare", //顶部导航选中,
@@ -716,6 +760,7 @@ export default {
       trends:1,//直播动态开启或关闭 1：开启 0：关闭
       endLiveDialogVisible:false,//结束直播详情弹窗
       endLiveTitle:'直播结束',
+      isRecord:false,//录制状态
     };
   },
   created() {
@@ -882,14 +927,15 @@ export default {
             }
             let isRecord = localStorage.getItem("isRecord"); //录制状态
             if (isRecord) {
-              this.toolNav[0].status = isRecord;
+              this.isRecord = isRecord;
             }
-            this.getTimUserSig();
-            this.$http.post("/sys/mixedflow/startEvenWheat", { //重新进入直播间发起混流任务
-              RoomId: this.roomId, //房间ID；
-            }).then((res) => {
-              console.log(res);
-            }).catch((err) => {});
+            this.getTimUserSig().then(res=>{
+              this.$http.post("/sys/mixedflow/startEvenWheat", { //重新进入直播间发起混流任务
+                  RoomId: this.roomId, //房间ID；
+                }).then((res) => {
+                  console.log(res);
+                }).catch((err) => {});
+            })
           }).catch(()=>{
             window.close()
           })
@@ -1022,50 +1068,89 @@ export default {
       console.log(this.trends)
       this.trends==1?this.trends=0:this.trends=1
     },
-    async toolClick(data) {
-      if (data.type === "mike") {
-        //麦克风
-        let result = await this.zg.muteMicrophone(data.status);
-        if (result) {
-          let isMicrophoneMuted = await this.zg.isMicrophoneMuted();
-          this.toolNav[1].status = !isMicrophoneMuted; //麦克风状态
-        }
-      } else if (data.type === "camera") {
-        //摄像头
-        let result = await this.zg.enableVideoCaptureDevice(
-          this.stream,
-          !data.status
-        );
-        if (result) {
-          this.toolNav[2].status = !data.status;
-        }
-      } else if (data.type === "record") {
-        //录制
-        console.log(this.liveStatus)
-        if (this.liveStatus) {
-          if (!data.status) {
-            this.$http.post("/sys/mixedflow/startRecord", {}).then((res) => {
-              if (res.data.success && res.data.msg == "success") {
-                this.$message({
-                  message: "录制已开启",
-                  type: "success",
-                });
-                this.toolNav[0].status = true;
-                localStorage.setItem("isRecord", true);
-              }
-            });
-          } else {
-            this.$message({
-              message: "录制已开启",
-              type: "warning",
-            });
-          }
+    async toolClick(type) {
+      // if (data.type === "mike") {
+      //   //麦克风
+      //   let result = await this.zg.muteMicrophone(data.status);
+      //   if (result) {
+      //     let isMicrophoneMuted = await this.zg.isMicrophoneMuted();
+      //     this.toolNav[1].status = !isMicrophoneMuted; //麦克风状态
+      //   }
+      // } else if (data.type === "camera") {
+      //   //摄像头
+      //   let result = await this.zg.enableVideoCaptureDevice(
+      //     this.stream,
+      //     !data.status
+      //   );
+      //   if (result) {
+      //     this.toolNav[2].status = !data.status;
+      //   }
+      // } else if (data.type === "record") {
+      //   //录制
+      //   console.log(this.liveStatus)
+      //   if (this.liveStatus) {
+      //     if (!isRecord) {
+      //       this.$http.post("/sys/mixedflow/startRecord", {}).then((res) => {
+      //         if (res.data.success && res.data.msg == "success") {
+      //           this.$message({
+      //             message: "录制已开启",
+      //             type: "success",
+      //           });
+      //           this.isRecord = true;
+      //           localStorage.setItem("isRecord", true);
+      //         }
+      //       });
+      //     } else {
+      //       this.$message({
+      //         message: "录制已开启",
+      //         type: "warning",
+      //       });
+      //     }
+      //   } else {
+      //     this.$message({
+      //       message: "直播暂未开启",
+      //       type: "warning",
+      //     });
+      //   }
+      // }
+      switch(type){
+        case "goods":
+          this.goodsDialogVisible = true
+          break
+        case "livePreview":
+          this.livePreviewDialogVisible = true
+          break
+        case "recommendedAnchor":
+          this.recommendedAnchorDialogVisible = true
+          break
+      }
+      
+    },
+    recordMethod(){
+      //录制
+      if (this.liveStatus) {
+        if (this.isRecord) {
+          this.$http.post("/sys/mixedflow/startRecord", {}).then((res) => {
+            if (res.data.success && res.data.msg == "success") {
+              this.$message({
+                message: "录制已开启",
+                type: "success",
+              });
+              this.isRecord = true;
+              localStorage.setItem("isRecord", true);
+            }
+          });
         } else {
           this.$message({
-            message: "直播暂未开启",
+            message: "录制已开启",
             type: "warning",
           });
         }
+      } else {
+        this.$message({
+          message: "直播暂未开启",
+          type: "warning",
+        });
       }
     },
     headerNavClick(type) {
@@ -1856,18 +1941,21 @@ p {
             display: flex;
             align-items: center;
             font-size: 18px;
-            font-weight: 600;
+            >span{
+              font-weight: 600;
+            }
             .anchor_detail_isLive {
               width: 70px;
               height: 20px;
+              background: linear-gradient(89deg, #FA3622 0%, #FE055B 100%);
+              box-shadow: 0px 4px 10px 1px rgba(249,46,29,0.4000);
+              border-radius: 10px;
               margin-left: 20px;
               font-size: 12px;
-              text-align: right;
               line-height: 20px;
-              padding-right: 10px;
-              background: linear-gradient(89deg, #fa3622 0%, #fe055b 100%);
-              box-shadow: 0px 4px 10px 1px rgba(249, 46, 29, 0.4);
-              border-radius: 2px 2px 2px 2px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
               .live_icon_custom {
                 width: 10px;
                 height: 9px;
@@ -1905,10 +1993,46 @@ p {
                 animation: live-icon-three linear 0.6s infinite;
               }
             }
+            .no_live_status{
+              width: 70px;
+              line-height: 20px;
+              background: #ffffff;
+              color: #110914;
+              font-size: 12px;
+              border-radius: 10px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              margin-left: 20px;
+              >img{
+                width: 6px;
+                height: 6px;
+                margin-right: 5px;
+              }
+            }
+            .record_btn{
+              margin-left: 20px;
+              cursor: pointer;
+              line-height: 20px;
+              >img{
+                width: 20px;
+                height: 20px;
+                margin-right: 5px;
+              }
+              >span{
+                font-size: 14px;
+                color: #ffffff;
+                font-weight: 400;
+              }
+            }
           }
-          .room_num {
-            font-size: 16px;
-            font-weight: 400;
+          >.online_info {
+            display: flex;
+            > p {
+              margin-right: 15px;
+              font-size:14px;
+              font-weight: 400;
+            }
           }
         }
       }
@@ -2367,75 +2491,46 @@ p {
           width: 100%;
           height: 100%;
           display: flex;
-          justify-content: space-between;
+          justify-content: flex-end;
           align-items: center;
-          .header_left {
-            display: flex;
-            align-items: center;
-            color: #ffffff;
-            font-size: 14px;
+          .start_live{
+            width: 230px;
+            height: 40px;
+            background: linear-gradient(89deg, #FA3622 0%, #FE055B 100%);
+            box-shadow: 0px 4px 10px 1px rgba(249,46,29,0.4000);
+            border-radius: 20px;
+            color: #FFFFFF;
+            font-size: 16px;
             font-weight: 400;
-            .header_nav {
-              width: 85px;
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-              align-items: center;
-              cursor: pointer;
-              position: relative;
-              > img {
-                width: 31px;
-                height: 28px;
-              }
-              > p {
-                margin-top: 5px;
-              }
-            }
-            .headerNavActive::after {
-              position: absolute;
-              content: "";
-              display: block;
-              width: 24px;
-              height: 4px;
-              background-color: #f92d1c;
-              border-radius: 30px;
-              bottom: -6px;
+            line-height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 45px;
+            cursor: pointer;
+            >img{
+              width: 13px;
+              height: 14px;
+              margin-right: 13px;
             }
           }
-          .header_right {
+          .tool_nav {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: flex-end;
-            .wacth_num {
-              display: flex;
-              align-items: center;
-              color: #fff;
-              font-size: 16px;
-              > img {
-                width: 16px;
-                height: 16px;
-              }
-              > p {
-                margin-left: 4px;
-                > span {
-                  font-size: 18px;
-                }
-              }
+            justify-content: space-between;
+            color: #fff;
+            margin: 0 15px;
+            cursor: pointer;
+            > img {
+              width: 28px;
+              height: 28px;
+              cursor: pointer;
             }
-            .tool_nav {
-              display: flex;
-              align-items: center;
-              color: #fff;
-              font-size: 14px;
-              margin: 0 10px;
-              > img {
-                width: 40px;
-                height: 40px;
-                cursor: pointer;
-              }
-              > p {
-                margin-left: 15px;
-              }
+            > span {
+              margin-top: 10px;
+              font-size: 16px;
+              font-weight: 400;
             }
           }
         }
@@ -2454,7 +2549,7 @@ p {
             .live_menu_header {
               width: 100%;
               height: 60px;
-              background-color: #37383c;
+              background-color: #000000;
               padding: 16px 20px;
               display: flex;
               justify-content: space-between;
@@ -2477,26 +2572,6 @@ p {
                 font-size: 16px;
                 > p {
                   margin-right: 10px;
-                }
-                .start_live {
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  font-size: 16px;
-                  color: #ffffff;
-                  height: 30px;
-                  background: linear-gradient(89deg, #FC573A 0%, #F92C1B 100%);
-                  box-shadow: 0px 4px 10px 1px rgba(249, 46, 29, 0.4);
-                  border-radius: 5px;
-                  padding: 0 8px;
-                  cursor: pointer;
-                  > img {
-                    width: 15px;
-                    height: 16px;
-                  }
-                  > span {
-                    margin-left: 7px;
-                  }
                 }
               }
             }
@@ -2635,6 +2710,61 @@ p {
             height: 50px;
             margin-bottom: 20px;
         }      
+    }
+  }
+  /deep/.el-dialog__body{
+    padding: 0 20px!important;
+  }
+  .dialog_content{
+    width: 400px;
+    height: 550px;
+    box-sizing: border-box;
+    border-top: 1px solid #E5E5E5;
+    padding: 20px 0;
+    .content_list{
+      width: 100%;
+      height: 120px;
+      background: #F8F8F8;
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      .list_top{
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        >span{
+          line-height: 18px;
+          text-align: center;
+          color: #ffffff;
+          font-size: 12px;
+          background: linear-gradient(118deg, #FA3622 0%, #FF055B 100%);
+          border-radius: 2px;
+          padding: 1px 5px;
+          margin-right: 15px;
+        }
+      }
+      .list_bottom{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        .info{
+          display: flex;
+          font-size: 12px;
+          color: #B9B9B9;
+        }
+        .push_btn{
+          width: 60px;
+          background: linear-gradient(69deg, #FA3622 0%, #FA3622 1%, #FF055B 100%);
+          border-radius: 15px;
+          color: #ffffff;
+          line-height: 30px;
+          text-align: center;
+          font-size: 14px;
+          cursor: pointer;
+        }
+      }
     }
   }
 }
