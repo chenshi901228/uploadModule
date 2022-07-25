@@ -212,82 +212,6 @@
               <div @click="allMute(2)">全员解禁</div>
             </div>
           </el-tab-pane>
-          <!-- <el-tab-pane label="商品" name="fourth">
-            <div class="list_content" v-infinite-scroll="load">
-              <div
-                class="content"
-                v-for="(item, index) in goodsList"
-                :key="index"
-              >
-                <div class="content_list">
-                  <div class="goods_info">
-                    <p class="good_name">{{ item.productName }}</p>
-                    <div class="good_pro">
-                      <span>{{ item.presenter }}</span>
-                      <span>共30讲</span>
-                      <span>￥{{ item.price }}</span>
-                    </div>
-                    <div class="good_tag">
-                      <span
-                        v-for="(data, index1) in item.productTag"
-                        :key="index1"
-                        >{{ data }}</span
-                      >
-                    </div>
-                  </div>
-                  <div class="push_btn">
-                    <div @click="pushMethod('goods', item)">推送</div>
-                    <p>
-                      <span>{{ item.buyers }}</span
-                      >人已购买
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </el-tab-pane> -->
-          <!-- <el-tab-pane label="直播预告" name="fifth">
-            <div class="list_content" v-infinite-scroll="load">
-              <div
-                class="content"
-                v-for="(item, index) in livePreviewList"
-                :key="index"
-              >
-                <div class="preview_content">
-                  <img :src="item.frontCoverUrl" alt="" />
-                  <p>{{ item.liveTheme }}</p>
-                </div>
-                <div class="preview_time">
-                  <div>
-                    <p>开播时间：{{ item.startDate }}</p>
-                    <p>预计时常：{{ item.estimateLiveTime }}分钟</p>
-                  </div>
-                  <p @click="pushMethod('preview', item)">推送</p>
-                </div>
-              </div>
-            </div>
-          </el-tab-pane> -->
-          <!-- <el-tab-pane label="推荐主播" name="sixth">
-            <div class="list_content" v-infinite-scroll="load">
-              <div
-                class="content"
-                v-for="(item, index) in recommendList"
-                :key="index"
-              >
-                <div class="recommend_content">
-                  <span>{{ index+1 }}</span>
-                  <img :src="item.avatarUrl" alt="" />
-                  <div class="anchorInfo">
-                    <span>{{ item.username }}</span>
-                    <p>
-                      粉丝：<span>{{ item.fansNum }}</span
-                      >人
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </el-tab-pane> -->
         </el-tabs>
         <div class="barrage_input" v-show="activeName === 'first'">
           <input
@@ -359,13 +283,17 @@
               <span>{{trends==1?'关闭动态':'开启动态'}}</span>
             </div>
             <div
-              class="tool_nav"
               v-for="(item, index) in toolNav"
               :key="index"
+              :class="item.type=='setUp'?'tool_nav set_up':'tool_nav'"
               @click="toolClick(item.type)"
             >
               <img :src="item.img" alt=""/>
               <span>{{item.text}}</span>
+              <div class="tool_nav_son" v-show="item.type=='setUp'&&showBtn">
+                <p @click.stop="beautifyDialog = true">美化</p>
+                <p @click.stop="streamAddressDialog = true">推流地址</p>
+              </div>
             </div>
           </div>
         </el-header>
@@ -593,6 +521,48 @@
       </span>
     </el-dialog>
     <el-dialog
+      title="美颜设置"
+      :visible.sync="beautifyDialog"
+      top="50px"
+      width="440px">
+        <div class="dialog_content">
+          <div class="beautify_set">
+              <!-- :src-object.prop="stream" -->
+            <video
+              autoplay
+              class="beautify_video"
+              v-if="beautifyDialog"
+            ></video>
+            <div class="block">
+              <span>美白</span>
+              <el-slider @input="changeWhitenIntensity" v-model="beautifyParams.whitenIntensity"></el-slider>
+            </div>
+            <div class="block">
+              <span>磨皮</span>
+              <el-slider @input="changeSmoothIntensity" v-model="beautifyParams.smoothIntensity"></el-slider>
+            </div>
+            <div class="block">
+              <span>锐化</span>
+              <el-slider @input="changeSharpenIntensity" v-model="beautifyParams.sharpenIntensity"></el-slider>
+            </div>
+            <div class="block">
+              <span>红润</span>
+              <el-slider @input="changeRosyIntensity" v-model="beautifyParams.rosyIntensity"></el-slider>
+            </div>
+          </div>
+        </div>
+    </el-dialog>
+    <el-dialog
+      title="推流地址"
+      :visible.sync="streamAddressDialog"
+      top="200px"
+      width="440px">
+        <div class="dialog_content">
+          <div class="streamAddress_content">{{streamUrl}}</div>
+          <div class="copy_btn" :data-clipboard-text="streamUrl" @click="copyFun">复制</div>
+        </div>
+    </el-dialog>
+    <el-dialog
       title="商品"
       :visible.sync="goodsDialogVisible"
       top="50px"
@@ -619,20 +589,20 @@
     <el-dialog
       title="直播预告"
       :visible.sync="livePreviewDialogVisible"
-      top="200px"
-      width="30%">
+      top="50px"
+      width="440px">
         <div class="dialog_content">
-          <div class="content_list" v-for="(item, index) in goodsList" :key="index">
+          <div class="content_list_preview" v-for="(item, index) in livePreviewList" :key="index">
             <div class="list_top">
-              <span>{{item.sort}}</span>
-              <p>{{item.productName}}</p>
+              <img :src="item.frontCoverUrl" alt="">
+              <p>{{item.liveTheme}}</p>
             </div>
             <div class="list_bottom">
               <div class="info">
-                <span>{{item.productType}}&nbsp;|</span>
-                <p>&nbsp;{{Number(item.buyers)+Number(item.salesNum)}}人已购买</p>
+                <span>开播时间：{{item.startDate}}</span>
+                <p>预计时长：{{item.estimateLiveTime}}分钟</p>
               </div>
-              <div class="push_btn" @click="pushMethod('goods', item)">
+              <div class="push_btn" @click="pushMethod('preview', item)">
                 推送
               </div>
             </div>
@@ -661,6 +631,7 @@
 </template>
 
 <script>
+import Clipboard from 'clipboard'
 import { ZegoExpressEngine } from "zego-express-engine-webrtc";
 import TIM from "tim-js-sdk";
 import Superboard from "./superboard/index.vue"; //超级白板
@@ -676,7 +647,8 @@ export default {
       goodsDialogVisible:false,//商品弹窗
       livePreviewDialogVisible:false,//直播预告弹窗
       recommendedAnchorDialogVisible:false,//推荐主播弹窗
-
+      beautifyDialog:false,//美化弹窗
+      streamAddressDialog:false,//推流地址弹窗
       livePactInfo: {}, //直播协议内容
       liveActionInfo: {}, //直播行为规范内容
       btnDisabled:true,
@@ -787,6 +759,8 @@ export default {
       endLiveDialogVisible:false,//结束直播详情弹窗
       endLiveTitle:'直播结束',
       isRecord:false,//录制状态
+      showBtn:false,
+      streamUrl:'',
     };
   },
   created() {
@@ -794,6 +768,11 @@ export default {
   },
   computed: {},
   async mounted() {
+    document.addEventListener("click",(e)=>{
+      if(e.target.className&&e.target.className.indexOf('set_up') == -1){
+        this.showBtn = false
+      }
+    })
     this.liveTheme = this.$route.query.liveTheme;
     // 初始化实例  Step1
     this.zg = new ZegoExpressEngine(
@@ -935,6 +914,18 @@ export default {
     });
   },  
   methods: {
+    copyFun(){
+      var clipboard = new Clipboard('.copy_btn')
+      clipboard.on('success', e => {
+        this.streamAddressDialog = false
+        this.$message.success("复制成功")
+        clipboard.destroy()// 释放内存
+      })
+      clipboard.on('error', e => {
+        this.$message.warning('该浏览器不支持自动复制')
+        clipboard.destroy()// 释放内存
+      })
+    },
     init(){
       this.$http.get('/sys/mixedflow/getLiving').then(res=>{//进入直播间获取直播状态
       if(!res.data.code==0) return this.$message.error(res.data.msg)
@@ -960,6 +951,7 @@ export default {
                   RoomId: this.roomId, //房间ID；
                 }).then((res) => {
                   console.log(res);
+                  this.streamUrl = res.data.data.Data.PlayInfo[0].FLV
                 }).catch((err) => {});
             })
           }).catch(()=>{
@@ -1144,8 +1136,10 @@ export default {
             this.recommendedAnchorDialogVisible = true
           })
           break
+        case "setUp":
+          this.showBtn = true
+          break
       }
-      
     },
     recordMethod(){
       //录制
@@ -1357,6 +1351,7 @@ export default {
         .post("/sys/mixedflow/anchorBroadcast", {...obj, TaskId: this.$route.query.TaskId,trends:this.trends})
         .then((res) => {
           if (res.data.data && res.data.data.Data) {
+            this.streamUrl = res.data.data.Data.PlayInfo[0].FLV
             this.liveStatus = true;
             this.joinGroup();
             this.$nextTick(() => {
@@ -1784,7 +1779,7 @@ export default {
       let params = {
         liveState:3,
         appointmentState:1,
-        anchorUserId: this.$store.state.user.id,
+        anchorUserId: this.roomId,
         limit:999,
         page:1,
       }
@@ -2539,8 +2534,10 @@ p {
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            color: #fff;
+            color: #FFFFFF;
+            font-family: Microsoft YaHei-Regular, Microsoft YaHei;
             margin: 0 15px;
+            position: relative;
             cursor: pointer;
             > img {
               width: 28px;
@@ -2551,6 +2548,20 @@ p {
               margin-top: 10px;
               font-size: 16px;
               font-weight: 400;
+            }
+            .tool_nav_son{
+              position: absolute;
+              bottom: -60px;
+              background-color: #000000;
+              width: 90px;
+              font-size: 14px;
+              color: #A2A2A2;
+              z-index: 99;
+              >p{
+                text-align: center;
+                line-height: 30px;
+                width: 100%;
+              }
             }
           }
         }
@@ -2735,13 +2746,58 @@ p {
   /deep/.el-dialog__body{
     padding: 0 20px!important;
   }
-  .dialog_content{
+  /deep/ .dialog_content{
     width: 400px;
+    min-width: 200px;
     max-height: 550px;
     box-sizing: border-box;
     border-top: 1px solid #E5E5E5;
     padding: 20px 0;
     overflow: auto;
+    .beautify_set{
+      width: 324px;
+      margin: 0 auto;
+      .beautify_video{
+        width: 100%;
+        height: 182px;
+      }
+      .block{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #000000;
+      }
+      .el-slider{
+        width: 85%;
+      }
+      .el-slider__bar{
+        background: linear-gradient(90deg, #FA3623 0%, #FE055A 100%)!important;
+      }
+      .el-slider__button{
+        border:2px solid #FA3623 !important;
+        box-shadow: 0px 0px 3px 1px rgba(250,54,35,0.4000);
+      }
+    }
+    .streamAddress_content{
+      width: 100%;
+      line-height: 45px;
+      background: #F8F8F8;
+      padding: 0 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .copy_btn{
+      width: 140px;
+      line-height: 40px;
+      background: linear-gradient(89deg, #FA3622 0%, #FE055B 100%);
+      box-shadow: 0px 4px 10px 1px rgba(249,46,29,0.4000);
+      border-radius: 20px;
+      text-align: center;
+      margin: 30px auto 0;
+      color: #ffffff;
+      cursor: pointer;
+    }
     .content_list{
       width: 100%;
       background: #F8F8F8;
@@ -2778,6 +2834,53 @@ p {
         padding-left: 30px;
         .info{
           display: flex;
+          font-size: 12px;
+          color: #B9B9B9;
+        }
+        .push_btn{
+          width: 60px;
+          background: linear-gradient(69deg, #FA3622 0%, #FA3622 1%, #FF055B 100%);
+          border-radius: 15px;
+          color: #ffffff;
+          line-height: 30px;
+          text-align: center;
+          font-size: 14px;
+          cursor: pointer;
+        }
+      }
+    }
+    .content_list_preview{
+      width: 100%;
+      background: #F8F8F8;
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      .list_top{
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        position: relative;
+        >img{
+          width: 100px;
+          height: 56px;
+          border-radius: 5px;
+          margin-right: 20px;
+        }
+        >p{
+          font-size: 16px;
+          color: #202020;
+          font-weight: 400;
+        }
+      }
+      .list_bottom{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+        .info{
           font-size: 12px;
           color: #B9B9B9;
         }
