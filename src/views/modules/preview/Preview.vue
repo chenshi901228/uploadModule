@@ -113,8 +113,8 @@
             v-model="dataForm.appointmentState"
             placeholder="预约状态"
           >
-            <el-option label="已结束" value="0"></el-option>
-            <el-option label="预约中" value="1"></el-option>
+            <el-option label="已结束" :value="0"></el-option>
+            <el-option label="预约中" :value="1"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
@@ -128,10 +128,10 @@
             v-model="dataForm.liveState"
             placeholder="直播状态"
           >
-            <el-option label="已下播" value="0"></el-option>
-            <el-option label="直播中" value="1"></el-option>
-            <el-option label="已禁播" value="2"></el-option>
-            <el-option label="未开播" value="3"></el-option>
+            <el-option label="已下播" :value="0"></el-option>
+            <el-option label="直播中" :value="1"></el-option>
+            <el-option label="已禁播" :value="2"></el-option>
+            <el-option label="未开播" :value="3"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
@@ -145,8 +145,19 @@
             v-model="dataForm.showState"
             placeholder="显示状态"
           >
-            <el-option label="显示" value="1"></el-option>
-            <el-option label="隐藏" value="0"></el-option>
+            <el-option label="显示" :value="1"></el-option>
+            <el-option label="隐藏" :value="0"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 10" label="直播动态" prop="trendsOpen">
+          <el-select
+            clearable
+            v-model="dataForm.trendsOpen"
+            placeholder="请选择"
+            style="width: 200px"
+          >
+            <el-option label="已开启" :value="1"></el-option>
+            <el-option label="已关闭" :value="0"></el-option>
           </el-select>
         </el-form-item>
 
@@ -196,7 +207,7 @@
                 icon="el-icon-plus"
                 size="mini"
                 @click="addPreview()"
-                >添加预告</el-button
+                >新增</el-button
               >
             </el-form-item>
             <el-form-item>
@@ -360,6 +371,17 @@
           prop="addUserNum"
           align="center"
         >
+        </el-table-column>
+        <el-table-column
+          width="100%"
+          label="直播动态"
+          prop="trendsOpen"
+          align="center"
+          show-overflow-tooltip
+        >
+          <template slot-scope="{ row }">
+            {{ row.trendsOpen ? "已开启" : "已关闭" }}
+          </template>
         </el-table-column>
         <el-table-column
           width="100%"
@@ -556,6 +578,7 @@ export default {
         showState: "",
         appointmentState: "",
         assistant: "",
+        trendsOpen: null
       },
       page: 1, // 当前页码
       limit: 10, // 每页数
@@ -666,13 +689,7 @@ export default {
     },
     query() {
       this.dataListLoading = true;
-      let dataObj = {};
-
-      for (const key in this.dataForm) {
-        if (this.dataForm[key] && this.dataForm[key].length !== 0) {
-          dataObj[key] = this.dataForm[key];
-        }
-      }
+      let dataObj = this.dataForm;
 
       if (this.dataForm.startDate) {
         dataObj.startDate = this.dateFormat(this.dataForm.startDate);
@@ -682,21 +699,13 @@ export default {
       // }
       else if (this.dataForm.factStartDate) {
         dataObj.factStartDate = this.dateFormat(this.dataForm.factStartDate);
-      } else if (this.dataForm.liveState) {
-        dataObj.liveState = Number(this.dataForm.liveState);
-      } else if (this.dataForm.showState) {
-        dataObj.showState = Number(this.dataForm.showState);
-      } else if (this.dataForm.transcribeFlg) {
-        dataObj.transcribeFlg = Number(this.dataForm.transcribeFlg);
-      } else if (this.dataForm.appointmentState) {
-        dataObj.appointmentState = Number(this.dataForm.appointmentState);
-      }
+      } 
       this.$http
         .get("/sys/livePreview/pageOwn", {
           params: {
             page: this.page,
             limit: this.limit,
-            ...dataObj,
+            ...this.$httpParams(dataObj),
             anchorUserId: this.$store.state.user.id,
           },
         })
@@ -858,13 +867,7 @@ export default {
     },
     //导出
     exportT() {
-      let dataObj = {};
-
-      for (const key in this.dataForm) {
-        if (this.dataForm[key].length !== 0) {
-          dataObj[key] = this.dataForm[key];
-        }
-      }
+      let dataObj = this.dataForm
 
       if (this.dataForm.startDate) {
         dataObj.startDate = this.dateFormat(this.dataForm.startDate);
@@ -874,20 +877,12 @@ export default {
       // }
       else if (this.dataForm.factStartDate) {
         dataObj.factStartDate = this.dateFormat(this.dataForm.factStartDate);
-      } else if (this.dataForm.liveState) {
-        dataObj.liveState = Number(this.dataForm.liveState);
-      } else if (this.dataForm.showState) {
-        dataObj.showState = Number(this.dataForm.showState);
-      } else if (this.dataForm.transcribeFlg) {
-        dataObj.transcribeFlg = Number(this.dataForm.transcribeFlg);
-      } else if (this.dataForm.appointmentState) {
-        dataObj.appointmentState = Number(this.dataForm.appointmentState);
-      }
+      } 
 
       this.$http
         .get("/sys/livePreview/export", {
           params: {
-            ...dataObj,
+            ...this.$httpParams(dataObj),
             anchorUserId: this.$store.state.user.id
           },
           responseType: "blob",
