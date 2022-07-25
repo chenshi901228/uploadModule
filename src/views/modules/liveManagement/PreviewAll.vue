@@ -885,13 +885,7 @@ export default {
     },
     //导出
     exportT() {
-      let dataObj = {};
-
-      for (const key in this.dataForm) {
-        if (this.dataForm[key] && this.dataForm[key].length !== 0) {
-          dataObj[key] = this.dataForm[key];
-        }
-      }
+      let dataObj = this.dataForm;
 
       if (this.dataForm.startDate) {
         dataObj.startDate = this.dateFormat(this.dataForm.startDate);
@@ -901,20 +895,12 @@ export default {
       // }
       else if (this.dataForm.factStartDate) {
         dataObj.factStartDate = this.dateFormat(this.dataForm.factStartDate);
-      } else if (this.dataForm.liveState) {
-        dataObj.liveState = Number(this.dataForm.liveState);
-      } else if (this.dataForm.showState) {
-        dataObj.showState = Number(this.dataForm.showState);
-      } else if (this.dataForm.transcribeFlg) {
-        dataObj.transcribeFlg = Number(this.dataForm.transcribeFlg);
-      } else if (this.dataForm.appointmentState) {
-        dataObj.appointmentState = Number(this.dataForm.appointmentState);
-      }
+      } 
 
       this.$http
         .get("/sys/livePreview/export", {
           params: {
-            ...dataObj,
+            ...this.$httpParams(dataObj),
           },
           responseType: "blob",
         })

@@ -63,7 +63,7 @@
                             <el-option 
                                 v-for="item in assistantOptions" 
                                 :key="item.weixinUserId"
-                                :label="item.userName"
+                                :label="item.label"
                                 :value="item.weixinUserId">
                             </el-option>
                     </el-select>
@@ -143,16 +143,25 @@ export default {
             this.bgLiveList = this.bgLiveList.filter(item => item.uid != file.uid)
         },
         // 点击助手下拉选择请求数据
-        getAssistant() {
+        getAssistant(type) {
+            if (!type) return;
             this.getAssistantLoading = true
              this.$http.get(`/sys/anchorAssistant/live/getAnchorAssistantWithLiveByAnchorId?anchorId=${this.userId}`)
                 .then(({ data: res }) => {
                     this.getAssistantLoading = false
+                    this.assistantOptions = []
                     if (res.code !== 0) return this.$message.error(res.msg);
-                    this.assistantOptions = res.data;
+                    res.data.map(item => {
+                        let obj = {
+                        weixinUserId: item.weixinUserId,
+                        label: `助手昵称：${item.userName} 手机号：${item.phone || "-"}`
+                        }
+                        this.assistantOptions.push(obj);
+                    })
                 })
                 .catch((err) => {
                     this.getAssistantLoading = false
+                    this.assistantOptions = []
                     this.$message.error(JSON.stringify(err.message))
                 });
         },

@@ -521,7 +521,7 @@ export default {
     joinLiveHandle(row) {
       let t = this.$router.resolve({
         name: "liveRoom",
-        query: { liveTheme: row.liveTheme, TaskId: row.id },
+        query: { liveTheme: row.liveTheme, TaskId: row.id, trendsOpen: row.trendsOpen },
       });
       window.open(t.href, "_blank");
     },

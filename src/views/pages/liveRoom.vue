@@ -783,7 +783,7 @@ export default {
         page:1
       },
       total:0,
-      trends:1,//直播动态开启或关闭 1：开启 0：关闭
+      trends: 1,//直播动态开启或关闭 1：开启 0：关闭
       endLiveDialogVisible:false,//结束直播详情弹窗
       endLiveTitle:'直播结束',
       isRecord:false,//录制状态
@@ -795,6 +795,7 @@ export default {
   computed: {},
   async mounted() {
     this.liveTheme = this.$route.query.liveTheme;
+    this.trends = this.$route.query.trendsOpen
     // 初始化实例  Step1
     this.zg = new ZegoExpressEngine(
       this.appID,
