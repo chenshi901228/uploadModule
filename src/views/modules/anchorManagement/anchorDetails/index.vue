@@ -382,7 +382,7 @@
                 type="primary"
                 plain
                 icon="el-icon-plus"
-                >添加主播</el-button
+                >新增主播</el-button
                 >
                 <el-button
                 size="mini"
@@ -646,7 +646,7 @@
                     {{ scope.row.delFlg === 1 ? "取消关注" : "正常" }}
                     </div>
                     <div v-else-if="diaTbas === 5">
-                    {{ scope.row.delFlg === 1 ? "下架" : "上架" }}
+                      上架
                     </div>
                     <div v-else>
                     {{ scope.row.delFlg === 1 ? "未推荐" : "已推荐" }}
@@ -802,13 +802,6 @@
             <el-option :value="1" label="是"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="关联产品编号">
-          <el-input
-            style="width: 200px"
-            v-model="productForm.id"
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
         <el-form-item>
           <el-button
             type="primary"
@@ -878,10 +871,9 @@
           <template slot-scope="{ row }">
             <div>
               <img
-                style="width: 100%; height: 60px"
-                class="productImage"
+                style="width: 100%; height: 60px; object-fit: cover;"
                 :src="
-                  row.productImage || 'https://picsum.photos/400/300?random=1'
+                  row.productImage || require('@/assets/img/default_cover.jpg')
                 "
                 alt=""
               />
@@ -898,7 +890,7 @@
             <span>{{ scope.row.productName || "--" }}</span>
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           width="120"
           label="商品价格"
           prop="oldPrice"
@@ -907,10 +899,10 @@
           <template slot-scope="scope">
             <span>{{ scope.row.oldPrice || "--" }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           width="150"
-          label="销售价格"
+          label="带货价格"
           prop="price"
           align="center"
         >
@@ -940,33 +932,12 @@
         </el-table-column>
         <el-table-column
           width="150"
-          label="关联产品编号"
-          prop="id"
-          align="center"
-          show-overflow-tooltip
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.id || "--" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          width="150"
-          label="更新时间"
-          prop="updateDate"
-          align="center"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.updateDate || "--" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          width="150"
           label="上架状态"
           prop="delFlg"
           align="center"
         >
           <template slot-scope="scope">
-            <span> {{ scope.row.delFlg === 1 ? "下架" : "上架" }}</span>
+            <span> {{ scope.row.isAdd === 1 ? "上架" : "下架" }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -1109,22 +1080,12 @@
         </el-table-column>
         <el-table-column
           width="150"
-          label="更新时间"
-          prop="updateDate"
-          align="center"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.updateDate || "--" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          width="150"
-          label="上架状态"
+          label="推荐状态"
           prop="delFlg"
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.delFlg === 0 ? "上架" : "下架" }}</span>
+            <span>{{ scope.row.delFlg === 0 ? "已推荐" : "未推荐" }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -1139,7 +1100,7 @@
               size="mini"
               type="text"
               @click="addRecommend(scope.row.recommendAnchorId)"
-              >添加</el-button
+              >推荐</el-button
             >
           </template>
         </el-table-column>
@@ -1434,7 +1395,6 @@ export default {
         productName: "",
         productType: "",
         isFree: "",
-        id: "",
       },
       // 推荐主播搜索
       recommendForm: {
@@ -1798,11 +1758,11 @@ export default {
           this.diaTableTitle = {
             productImage: "商品图片",
             productName: "商品名称",
-            oldPrice: "商品原价",
+            // oldPrice: "商品原价",
             price: "带货价格",
             productType: "商品类型",
             isFree: "是否免费",
-            id: "关联产品编号",
+            // id: "关联产品编号",
             updateDate: "上架时间",
             delFlg: "上架状态",
           };
@@ -2040,7 +2000,6 @@ export default {
             productName: this.productForm.productName,
             productType: this.productForm.productType,
             isFree: this.productForm.isFree,
-            id: this.productForm.id,
             anchorId: this.userId,
           }),
         })
@@ -2199,7 +2158,6 @@ export default {
           productName: "",
           productType: "",
           isFree: "",
-          id: "",
         };
         this.queryUserList();
       } else if (name == "recommendForm") {

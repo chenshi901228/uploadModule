@@ -83,10 +83,16 @@ export default {
         },
       },
       template: `
-        <img v-if="item.type == 'image'" :style="item.style" :src="row[item.prop] || 'https://picsum.photos/400/300?random=1'"alt=""/>
+        <img v-if="item.type == 'image'" :style="item.style" :src="row[item.prop] || defaultImg(item.defaultImg)"alt=""/>
         <span v-else-if="item.type == 'string'">{{item.render ? item.render() : ""}}</span>
         <span v-else>{{row[item.prop] || "-"}}</span>
       `,
+      methods: {
+        // 默认图片处理
+        defaultImg(img) {
+          return img || 'https://picsum.photos/400/300?random=1'
+        }
+      }
     },
   },
   props: {

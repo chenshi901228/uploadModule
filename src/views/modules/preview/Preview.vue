@@ -264,10 +264,9 @@
           <template slot-scope="{ row }">
             <div>
               <img
-                style="width: '100%'; height: '100%'"
                 class="frontCoverImg"
                 :src="
-                  row.frontCoverUrl || 'https://picsum.photos/400/300?random=1'
+                  row.frontCoverUrl || require('@/assets/img/default_cover.jpg')
                 "
                 alt=""
               />
@@ -287,21 +286,6 @@
           prop="assistant"
           align="center"
           show-overflow-tooltip
-        >
-        </el-table-column>
-        <el-table-column
-          width="100%"
-          label="主播"
-          prop="anchorUser"
-          align="center"
-          show-overflow-tooltip
-        >
-        </el-table-column>
-        <el-table-column
-          width="120"
-          label="手机号码"
-          prop="anchorTel"
-          align="center"
         >
         </el-table-column>
         <el-table-column
@@ -349,10 +333,11 @@
           </template>
         </el-table-column>
         <el-table-column
-          width="100%"
+          width="120"
           label="投放人群"
           prop="dynamicGroupName"
           align="center"
+          show-overflow-tooltip
         >
           <template slot-scope="scope">
             <span>{{ scope.row.dynamicGroupName || "--" }}</span>
@@ -424,7 +409,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          width="100%"
+          width="180"
           label="直播间ID"
           prop="livingRoomId"
           align="center"
@@ -432,11 +417,6 @@
         >
           <template slot-scope="scope">
             <span>{{ scope.row.livingRoomId || "--" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column width="100%" label="备注" prop="remark" align="center" show-overflow-tooltip>
-          <template slot-scope="scope">
-            <span>{{ scope.row.remark || "--" }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -521,6 +501,13 @@
               size="small"
               @click="handleDelete(scope.$index, scope.row)"
               >删除</el-button
+            >
+            <el-button
+              type="text"
+              icon="el-icon-view"
+              size="small"
+              @click="checkRemark(scope.row)"
+              >查看备注</el-button
             >
           </template>
         </el-table-column>
@@ -934,6 +921,13 @@ export default {
           throw err;
         });
     },
+    // 查看备注
+    checkRemark({ remark }) {
+      this.$alert(remark || '', '查看备注', {
+        confirmButtonText: '确定',
+        callback: action => {}
+      });
+    }
   },
 };
 </script>
@@ -942,6 +936,7 @@ export default {
   .frontCoverImg {
     width: 100%;
     height: 80px;
+    object-fit: cover;
   }
 }
 

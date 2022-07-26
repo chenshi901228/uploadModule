@@ -5,11 +5,12 @@
         class="headerTool"
         size="small"
         :inline="true"
+        ref="groupNameForm"
         :model="groupNameForm"
         @keyup.enter.native="getfansGroupList()"
         label-width="100px"
       >
-        <el-form-item label="群组名称">
+        <el-form-item label="群组名称" prop="groupName">
           <el-input
             clearable
             style="width: 200px"
@@ -17,7 +18,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item label="显示状态">
+        <el-form-item label="显示状态" prop="delFlg">
           <el-select v-model="groupNameForm.delFlg" clearable>
             <el-option :value="0" label="显示"></el-option>
             <el-option :value="1" label="隐藏"></el-option>
@@ -34,7 +35,7 @@
             <el-button 
               icon="el-icon-refresh" 
               size="mini" 
-              @click="reset('main')">{{ $t("reset") }}</el-button>
+              @click="reset('groupNameForm')">{{ $t("reset") }}</el-button>
             <!-- <el-button size="mini" plain @click="open">
               <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
               {{ isOpen ? "收起" : "展开" }}
@@ -57,16 +58,17 @@
           <div class="headerTool--handle-btns-right">
             <el-form-item>
               <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-                <el-button size="small" icon="el-icon-refresh" circle @click="getfansGroupList"></el-button>
+                <el-button size="small" icon="el-icon-refresh" circle @click="query"></el-button>
               </el-tooltip>
             </el-form-item>
           </div>
         </div>
       </el-form>
       <el-table
-        v-loading="dataUserListLoading"
+        v-loading="dataListLoading"
         :data="fansGroupList"
         fit
+        ref="table"
         style="width: 100%"
         :height="siteContentViewHeight"
       >
@@ -118,9 +120,9 @@
       </el-table>
       <el-pagination
           background
-          :current-page="groupNameForm.page"
+          :current-page="page"
           :page-sizes="[10, 20, 50, 100]"
-          :page-size="groupNameForm.limit"
+          :page-size="limit"
           :total="total"
           layout="total, sizes, prev, pager, next, jumper"
           @size-change="pageSizeChangeHandle"
@@ -141,23 +143,32 @@
     <el-dialog
       title="创建群组"
       :visible.sync="dialogVisibleGroup"
+      @close="cancelCreateGroup"
       width="30%"
       >
       <el-form ref="createGroupform" :model="createGroup" :rules="createGroupRules" label-width="80px">
         <el-form-item label="群组名称" prop="groupName">
-          <el-input v-model="createGroup.groupName"></el-input>
+          <el-input v-model="createGroup.groupName" maxlength="16" show-word-limit></el-input>
         </el-form-item>
         <el-form-item label="群二维码" required>
-          <upload :fileList="fileList" :limit="1" :multiple="false" @getImg="getImg"></upload>
+          <upload
+            :fileList="fileList"
+            :limit="1"
+            :fileType="['png', 'jpg', 'jpeg']"
+            ref="uploadFile"
+            @uploadSuccess="uploadSuccess"
+            @uploadRemove="uploadRemove"
+          ></upload>
+          <span>群二维码大小限制为300px*300px</span>
         </el-form-item>
         <el-form-item style="textAlign:right;">
-          <el-button size="small" @click="dialogVisibleGroup = false">取 消</el-button>
-          <el-button size="small" type="primary" @click="confirmCreateGroup">确 定</el-button>
+          <el-button size="small" @click="cancelCreateGroup">取 消</el-button>
+          <el-button :disabled="submitLoading" :loading="submitLoading" size="small" type="primary" @click="confirmCreateGroup">确 定</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
     <!-- 添加成员弹窗 -->
-    <el-dialog
+    <!-- <el-dialog
       title="添加成员"
       :visible.sync="dialogVisibleAddUser"
       width="70%"
@@ -277,9 +288,9 @@
           @current-change="noJoinFansCurrentChange"
         >
       </el-pagination>
-    </el-dialog>
+    </el-dialog> -->
     <!-- 查看成员弹窗 -->
-    <el-dialog
+    <!-- <el-dialog
       title="群组成员"
       :visible.sync="dialogVisibleLookUser"
       width="70%"
@@ -391,12 +402,12 @@
           @current-change="hasJoinFansCurrentChange"
         >
       </el-pagination>
-    </el-dialog>
+    </el-dialog> -->
   </el-card>
 </template>
 
 <script>
-import Upload from "@/components/upload/index";
+import Upload from "@/components/common/custom-upload";
 import mixinTableModule from "@/mixins/table-module";
 export default {
   mixins: [mixinTableModule],
@@ -404,21 +415,31 @@ export default {
     Upload
   },
   data(){
+    var validateGroupName = (rule, value, callback) => {
+      if (value && !value.match(/^[\u4E00-\u9FA5A-Za-z0-9]{0,}$/)) {
+        return callback(new Error("限制16位汉字、字母或数字"))
+      }
+      callback()
+    }
     return{
       previewImgDia:false,
       previewImgUrl:'',
       dialogVisibleGroup:false,//创建群组弹窗
-      dialogVisibleAddUser:false,//添加成员弹窗
-      dialogVisibleLookUser:false,//添加成员弹窗
-      dataUserListLoading:false,
-      noJoinUserListLoading:false,
-      hasJoinUserListLoading:false,
-      dataListSelectionUsers:[],
+      dataListLoading:false,
+      submitLoading: false, //创建群组loading
+      // dialogVisibleAddUser:false,//添加成员弹窗
+      // dialogVisibleLookUser:false,//添加成员弹窗
+      // noJoinUserListLoading:false,
+      // hasJoinUserListLoading:false,
+      // dataListSelectionUsers:[],
       groupNameForm:{
         groupName:'',
         delFlg:'',
-        limit:10,
-        page:1,
+      },
+      limit:10,
+      page:1,
+      total: 0,//群组条数
+      params: {
         anchorId:'',
       },
       diaTableTitle:{
@@ -427,7 +448,6 @@ export default {
         delFlg:"显示状态",
         createDate:"创建时间",
       },
-      total: 0,//群组条数
       fansGroupList:[],
       createGroup:{
         groupName:'',
@@ -435,54 +455,55 @@ export default {
       createGroupRules:{
         groupName: [
           { required: true, message: "请输入群组名称", trigger: "blur" },
+          { validator: validateGroupName, trigger: 'change' }
         ],
       },
-      noJoinFansUserForm:{//未加入群组的粉丝团成员查询
-        nickName:'',
-        phone:'',
-        level:'',
-        userType:'',
-        limit:10,
-        page:1,
-        anchorId:this.$route.query.anchorId,
-      },
-      noJoinFansUserList:[],
-      noJoinFansUserTotal:0,//未加入群组的粉丝团成员总数
-      noJoinColumns:{
-        avatarUrl:"用户头像",
-        nickName:"用户昵称",
-        phone:"手机号码",
-        level:"用户等级",
-        userType:"粉丝团身份",
-        createDate:"入群时间",
-      },
-      groupId:'',//群组ID
-      hasJoinFansUserForm:{//未加入群组的粉丝团成员查询
-        groupId:'',
-        nickName:'',
-        phone:'',
-        level:'',
-        userType:'',
-        limit:10,
-        page:1,
-      },
-      hasJoinFansUserList:[],
-      hasJoinFansUserTotal:0,//未加入群组的粉丝团成员总数
-      hasJoinColumns:{
-        avatarUrl:"用户头像",
-        nickName:"用户昵称",
-        phone:"手机号码",
-        level:"用户等级",
-        userType:"粉丝团身份",
-        createDate:"入群时间",
-      },
-      fansLevelsOptions: [], //粉丝等级options
-      currentGroupName: "", //当前查看的群组
+      // noJoinFansUserForm:{//未加入群组的粉丝团成员查询
+      //   nickName:'',
+      //   phone:'',
+      //   level:'',
+      //   userType:'',
+      //   limit:10,
+      //   page:1,
+      //   anchorId:this.$route.query.anchorId,
+      // },
+      // noJoinFansUserList:[],
+      // noJoinFansUserTotal:0,//未加入群组的粉丝团成员总数
+      // noJoinColumns:{
+      //   avatarUrl:"用户头像",
+      //   nickName:"用户昵称",
+      //   phone:"手机号码",
+      //   level:"用户等级",
+      //   userType:"粉丝团身份",
+      //   createDate:"入群时间",
+      // },
+      // groupId:'',//群组ID
+      // hasJoinFansUserForm:{//未加入群组的粉丝团成员查询
+      //   groupId:'',
+      //   nickName:'',
+      //   phone:'',
+      //   level:'',
+      //   userType:'',
+      //   limit:10,
+      //   page:1,
+      // },
+      // hasJoinFansUserList:[],
+      // hasJoinFansUserTotal:0,//未加入群组的粉丝团成员总数
+      // hasJoinColumns:{
+      //   avatarUrl:"用户头像",
+      //   nickName:"用户昵称",
+      //   phone:"手机号码",
+      //   level:"用户等级",
+      //   userType:"粉丝团身份",
+      //   createDate:"入群时间",
+      // },
+      // fansLevelsOptions: [], //粉丝等级options
+      // currentGroupName: "", //当前查看的群组
       fileList:[],
     }
   },
   activated(){
-    this.groupNameForm.anchorId=this.$route.query.anchorId
+    this.params.anchorId=this.$route.query.anchorId
     this.getfansGroupList()
   },
   methods:{
@@ -492,52 +513,53 @@ export default {
         this.previewImgDia = true
       }
     },
-    // 头像上传
-    getImg(imgList) {
-      console.log(imgList)
-      this.fileList = imgList;
+    // 二维码上传
+    uploadSuccess(file) {
+        this.fileList.push(file)
+    },
+    uploadRemove(file) {
+        this.fileList = this.fileList.filter(item => item.uid != file.uid)
     },
     //批量选择
-    noJoinUserSelectionChangeHandle(val) {
-      this.dataListSelectionUsers = val;
-    },
+    // noJoinUserSelectionChangeHandle(val) {
+    //   this.dataListSelectionUsers = val;
+    // },
     // 分页, 每页条数
     pageSizeChangeHandle(val) {
-      this.groupNameForm.page = 1;
-      this.groupNameForm.limit = val;
-      this.getfansGroupList();
+      this.page = 1;
+      this.limit = val;
+      this.query();
     },
     // 分页, 当前页
     pageCurrentChangeHandle(val) {
-      this.groupNameForm.page = val;
-      this.getfansGroupList();
+      this.page = val;
+      this.query();
     },
     //未加入群组的粉丝列表分页
-    noJoinFansPageSizeChange(val){
-      this.noJoinFansUserForm.page = 1;
-      this.noJoinFansUserForm.limit = val;
-      this.getNoJoinFansUserList();
-    },
-    //未加入群组的粉丝列表分页
-    noJoinFansCurrentChange(val){
-      this.noJoinFansUserForm.page = val;
-      this.getNoJoinFansUserList();
-    },
-    //已经加入群组的粉丝列表分页
-    hasJoinFansPageSizeChange(val){
-      this.hasJoinFansUserForm.page = 1;
-      this.hasJoinFansUserForm.limit = val;
-      this.getHasJoinFansUserList();
-    },
-    //已经加入群组的粉丝列表分页
-    hasJoinFansCurrentChange(val){
-      this.hasJoinFansUserForm.page = val;
-      this.getHasJoinFansUserList();
-    },
-    //获取群组列表
-    getfansGroupList(){
+    // noJoinFansPageSizeChange(val){
+    //   this.noJoinFansUserForm.page = 1;
+    //   this.noJoinFansUserForm.limit = val;
+    //   this.getNoJoinFansUserList();
+    // },
+    // //未加入群组的粉丝列表分页
+    // noJoinFansCurrentChange(val){
+    //   this.noJoinFansUserForm.page = val;
+    //   this.getNoJoinFansUserList();
+    // },
+    // //已经加入群组的粉丝列表分页
+    // hasJoinFansPageSizeChange(val){
+    //   this.hasJoinFansUserForm.page = 1;
+    //   this.hasJoinFansUserForm.limit = val;
+    //   this.getHasJoinFansUserList();
+    // },
+    // //已经加入群组的粉丝列表分页
+    // hasJoinFansCurrentChange(val){
+    //   this.hasJoinFansUserForm.page = val;
+    //   this.getHasJoinFansUserList();
+    // },
+    query() {
       this.dataListLoading = true;
-      this.$http.get('/sys/weixinfansgroup/page', {params:this.groupNameForm}).then(({ data: res }) => {
+      this.$http.get('/sys/weixinfansgroup/page', { params: {...this.$httpParams(this.groupNameForm),...this.params} }).then(({ data: res }) => {
         this.dataListLoading = false;
         if (res.code !== 0) {
           this.fansGroupList = [];
@@ -550,21 +572,43 @@ export default {
         this.dataListLoading = false;
       })
     },
+    //获取群组列表
+    getfansGroupList(){
+      this.page = 1
+      this.query()
+    },
+    // 取消创建群组
+    cancelCreateGroup() {
+      this.dialogVisibleGroup = false
+      this.createGroup.groupName = ""
+      this.fileList = []
+    },
     //创建群组
     confirmCreateGroup(){
       this.$refs.createGroupform.validate((valid) => {
         if (valid) {
           if(!this.fileList.length){
-            this.$message.error('请上传群组二维码')
-            return
+            return this.$message.error('请上传群组二维码')
           }
-          this.$http.post('/sys/weixinfansgroup',{anchorId: this.$route.query.anchorId,groupName:this.createGroup.groupName,groupImage:this.fileList[0].response ? this.fileList[0].response.data.url : this.fileList[0].url}).then(({ data: res })=>{
-            if (res.code !== 0) {
-              return this.$message.error(res.msg);
-            }
+          if(!this.$refs.uploadFile.isUploadAll()){
+            return this.$message.error("有附件正在上传中")
+          }
+
+          this.submitLoading = true
+          let params = {
+            anchorId: this.$route.query.anchorId,
+            groupName: this.createGroup.groupName,
+            groupImage: this.fileList[0].url
+          }
+          this.$http.post('/sys/weixinfansgroup', params).then(({ data: res })=>{
+            this.submitLoading = false
+            if (res.code !== 0) return this.$message.error(res.msg)
+            this.cancelCreateGroup()
             this.getfansGroupList()
-            this.dialogVisibleGroup = false
-          }).catch(err=>{})
+          }).catch(err => {
+            this.submitLoading = false
+            console.error(err)
+          })
         } else {
           console.log('error submit!!');
           return false;
@@ -572,52 +616,41 @@ export default {
       });
     },
     // 获取粉丝等级
-    getFansLevels(type) {
-      if(!type) return
-      this.$http.get("/sys/sysfanslevel/getLevelList").then(({data: res}) => {
-        if(res.code == 0) {
-          this.fansLevelsOptions = res.data
-        }else {
-          this.fansLevelsOptions = []
-          return this.$message.error(res.msg)
-        }
-      }).catch(err => {
-        this.fansLevelsOptions = []
-        this.$message.error(JSON.stringify(err))
-      })
-    },
+    // getFansLevels(type) {
+    //   if(!type) return
+    //   this.$http.get("/sys/sysfanslevel/getLevelList").then(({data: res}) => {
+    //     if(res.code == 0) {
+    //       this.fansLevelsOptions = res.data
+    //     }else {
+    //       this.fansLevelsOptions = []
+    //       return this.$message.error(res.msg)
+    //     }
+    //   }).catch(err => {
+    //     this.fansLevelsOptions = []
+    //     this.$message.error(JSON.stringify(err))
+    //   })
+    // },
     //重置
-    reset(name){
-      this.groupNameForm.groupName = ''
-      this.hasJoinFansUserForm.nickName = ''
-      this.hasJoinFansUserForm.phone = ''
-      this.hasJoinFansUserForm.level = ''
-      this.hasJoinFansUserForm.userType = ''
-      this.noJoinFansUserForm.nickName = ''
-      this.noJoinFansUserForm.phone = ''
-      this.noJoinFansUserForm.level = ''
-      this.noJoinFansUserForm.userType = ''
-      if(name == "main") {
-        this.getfansGroupList()
-      }else if(name == "add") {
-        this.getNoJoinFansUserList()
-      }else if(name == "get") {
-        this.getHasJoinFansUserList()
-      }
+    reset(formName){
+      this.$refs[formName].resetFields()
+      this.getfansGroupList()
     },
     //添加成员
-    handleAddUser(i, row){
-      this.groupId = row.id
-      this.dialogVisibleAddUser = true
-      this.getNoJoinFansUserList()
-    },
+    // handleAddUser(i, row){
+    //   this.groupId = row.id
+    //   this.dialogVisibleAddUser = true
+    //   this.getNoJoinFansUserList()
+    // },
     //显示、隐藏
     handleLookUser(i, row){
       // this.groupId = row.id
       // this.currentGroupName = row.groupName
       // this.dialogVisibleLookUser = true
       // this.getHasJoinFansUserList()
-      this.$confirm(`是否${row.delFlg==1?'显示':'隐藏'}该群组?`, '提示', {
+
+      let msg = row.delFlg == 1 ? "确认显示该群组，显示后，用户在小程序可在小程序扫码加入该群组" : "确认隐藏该群组，隐藏后，用户在小程序将看不到该群组"
+
+      this.$confirm(msg, row.delFlg == 1 ? '显示' : '隐藏', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -628,7 +661,7 @@ export default {
               type: 'success',
               message: '修改成功'
             }); 
-            this.getfansGroupList()
+            this.query()
           }else{
             this.$message({
               type: 'error',
@@ -644,79 +677,79 @@ export default {
       });
     },
     //查看加入群的粉丝
-    getHasJoinFansUserList(){
-      this.hasJoinFansUserForm.groupId = this.groupId
-      this.$http.get('/sys/weixinfansgroup/getPeople',{params:this.$httpParams(this.hasJoinFansUserForm)}).then(({data:res})=>{
-        // console.log(res)
-        if (res.code !== 0) {
-          this.hasJoinFansUserList = [];
-          this.hasJoinFansUserTotal = 0;
-          return this.$message.error(res.msg);
-        }
-        this.hasJoinFansUserList = res.data.list;
-        this.hasJoinFansUserTotal = res.data.total;
-      }).catch(err=>{
-      })
-    },
+    // getHasJoinFansUserList(){
+    //   this.hasJoinFansUserForm.groupId = this.groupId
+    //   this.$http.get('/sys/weixinfansgroup/getPeople',{params:this.$httpParams(this.hasJoinFansUserForm)}).then(({data:res})=>{
+    //     // console.log(res)
+    //     if (res.code !== 0) {
+    //       this.hasJoinFansUserList = [];
+    //       this.hasJoinFansUserTotal = 0;
+    //       return this.$message.error(res.msg);
+    //     }
+    //     this.hasJoinFansUserList = res.data.list;
+    //     this.hasJoinFansUserTotal = res.data.total;
+    //   }).catch(err=>{
+    //   })
+    // },
     //未加群的粉丝
-    getNoJoinFansUserList(){
-      this.$http.get('/sys/weixinfansgroup/getAnchorFans',{params:this.$httpParams(this.noJoinFansUserForm)}).then(({data:res})=>{
-        // console.log(res)
-        if (res.code !== 0) {
-          this.noJoinFansUserList = [];
-          this.noJoinFansUserTotal = 0;
-          return this.$message.error(res.msg);
-        }
-        this.noJoinFansUserList = res.data.list;
-        this.noJoinFansUserTotal = res.data.total;
-      }).catch(err=>{
-      })
-    },
+    // getNoJoinFansUserList(){
+    //   this.$http.get('/sys/weixinfansgroup/getAnchorFans',{params:this.$httpParams(this.noJoinFansUserForm)}).then(({data:res})=>{
+    //     // console.log(res)
+    //     if (res.code !== 0) {
+    //       this.noJoinFansUserList = [];
+    //       this.noJoinFansUserTotal = 0;
+    //       return this.$message.error(res.msg);
+    //     }
+    //     this.noJoinFansUserList = res.data.list;
+    //     this.noJoinFansUserTotal = res.data.total;
+    //   }).catch(err=>{
+    //   })
+    // },
     //添加进入群组
-    addUserJoinGroup(i,row){
-      let userIds = [], data = {}
+    // addUserJoinGroup(i,row){
+    //   let userIds = [], data = {}
 
-      if(!row) { //批量添加
-        if(!this.dataListSelectionUsers.length) return this.$message.warning("请勾选要添加的成员")
-        this.dataListSelectionUsers.forEach(item=>{
-          userIds.push(item.weixinUserId)
-        })
-        data = {
-          id:this.groupId,
-          userIds,
-        }
-      }else { //单个添加
-        data = {
-          id:this.groupId,
-          userIds: [row.weixinUserId],
-        }
-      }
-      this.$http.post(`/sys/weixinfansgroup/addPeople`,data).then(({ data: res })=>{
-        if (res.code !== 0) {
-          return this.$message.error(res.msg);
-        }
-        this.$message({message:'添加成功',type:'success'})
-        this.dialogVisibleAddUser = false
-        this.getfansGroupList()
-      }).catch(err=>{})
-    },
+    //   if(!row) { //批量添加
+    //     if(!this.dataListSelectionUsers.length) return this.$message.warning("请勾选要添加的成员")
+    //     this.dataListSelectionUsers.forEach(item=>{
+    //       userIds.push(item.weixinUserId)
+    //     })
+    //     data = {
+    //       id:this.groupId,
+    //       userIds,
+    //     }
+    //   }else { //单个添加
+    //     data = {
+    //       id:this.groupId,
+    //       userIds: [row.weixinUserId],
+    //     }
+    //   }
+    //   this.$http.post(`/sys/weixinfansgroup/addPeople`,data).then(({ data: res })=>{
+    //     if (res.code !== 0) {
+    //       return this.$message.error(res.msg);
+    //     }
+    //     this.$message({message:'添加成功',type:'success'})
+    //     this.dialogVisibleAddUser = false
+    //     this.getfansGroupList()
+    //   }).catch(err=>{})
+    // },
     //移除群组成员
-    removeUserJoinGroup(i,row){
-      let userIds = []
-      userIds.push(row.weixinUserId)
-      let data = {
-        id:this.groupId,
-        userIds,
-      }
-      this.$http.post(`/sys/weixinfansgroup/deletePeople`,data).then(({ data: res })=>{
-        if (res.code !== 0) {
-          return this.$message.error(res.msg);
-        }
-        this.$message({message:'移除成功',type:'success'})
-        this.dialogVisibleLookUser = false
-        this.getfansGroupList()
-      }).catch(err=>{})
-    }
+    // removeUserJoinGroup(i,row){
+    //   let userIds = []
+    //   userIds.push(row.weixinUserId)
+    //   let data = {
+    //     id:this.groupId,
+    //     userIds,
+    //   }
+    //   this.$http.post(`/sys/weixinfansgroup/deletePeople`,data).then(({ data: res })=>{
+    //     if (res.code !== 0) {
+    //       return this.$message.error(res.msg);
+    //     }
+    //     this.$message({message:'移除成功',type:'success'})
+    //     this.dialogVisibleLookUser = false
+    //     this.getfansGroupList()
+    //   }).catch(err=>{})
+    // }
   }
 }
 </script>

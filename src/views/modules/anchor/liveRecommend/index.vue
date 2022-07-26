@@ -135,7 +135,7 @@
                     <template slot-scope="{ row }">
                         <!-- 封面图 -->
                         <div v-if="item.prop == 'frontCoverUrl'">
-                            <img class="frontCoverImg" :src="row.frontCoverUrl || 'https://picsum.photos/400/300?random=1'" alt="" />
+                            <img class="frontCoverImg" :src="row.frontCoverUrl || require('@/assets/img/default_cover.jpg')" alt="" />
                         </div>
                         <span v-else-if="item.prop == 'liveType'">{{row.liveType == 1 ? "直播列表" : "直播预告"}}</span>
                         <span v-else>{{row[item.prop]}}</span>
