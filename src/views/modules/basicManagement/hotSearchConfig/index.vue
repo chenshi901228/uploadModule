@@ -152,6 +152,7 @@
                             type="text"
                             size="small"
                             icon="el-icon-sort-down"
+                            v-if="row.num != dataList.length"
                             @click="upOrDownHandle(row, -1)">下移</el-button>
                         <el-button
                             type="text"
