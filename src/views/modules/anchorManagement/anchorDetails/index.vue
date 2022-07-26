@@ -278,17 +278,6 @@
                 <el-option :value="1" label="助手"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="状态" v-if="diaTbas === 4" prop="delFlg">
-                <el-select
-                placeholder="请选择"
-                style="width: 180px"
-                v-model="diaSearchForm.delFlg"
-                clearable
-                >
-                <el-option :value="0" label="正常"></el-option>
-                <el-option :value="1" label="取消关注"></el-option>
-                </el-select>
-            </el-form-item>
             <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
                 <el-input
                 placeholder="请输入"
@@ -642,10 +631,7 @@
                 v-else-if="prop === 'delFlg'"
                 >
                 <template slot-scope="scope">
-                    <div v-if="!scope.row.anchorName && diaTbas === 4">
-                    {{ scope.row.delFlg === 1 ? "取消关注" : "正常" }}
-                    </div>
-                    <div v-else-if="diaTbas === 5">
+                    <div v-if="diaTbas === 5">
                       上架
                     </div>
                     <div v-else>
@@ -1333,6 +1319,7 @@
         :model="powerform"
         ref="powerform"
         :rules="dataRule"
+        size="small"
       >
         <el-form-item label="粉丝团身份" label-width="120px" prop="power">
           <el-select v-model="powerform.power" placeholder="请选择">
@@ -1342,8 +1329,8 @@
       </el-form>
       <div v-else-if="userType === 1">确定取消粉丝团助手身份？</div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="changePowerVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmChangePower">确 定</el-button>
+        <el-button size="small" @click="changePowerVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="confirmChangePower">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -1748,10 +1735,10 @@ export default {
             avatarUrl: "用户头像",
             userName: "用户昵称",
             phone: "手机号码",
+            intimacyNum: "亲密度",
             level: "用户等级",
             userType: "粉丝团身份",
             createDate: "入团时间",
-            delFlg: "状态",
           };
           break;
         case 5:
@@ -1832,7 +1819,6 @@ export default {
             level: this.diaSearchForm.level,
             userName: this.diaSearchForm.userName,
             userType: this.diaSearchForm.userType,
-            delFlg: this.diaSearchForm.delFlg,
           };
           url =
             "/sys/manage/weixinUser/anchor/fans/achorFansWeixinUserInfoPage";
