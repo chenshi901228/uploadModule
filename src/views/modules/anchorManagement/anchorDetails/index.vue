@@ -16,7 +16,7 @@
                 <div>主播昵称：{{ anchorDetails.username || '-' }}</div>
                 <div>真实姓名：{{ anchorDetails.realName || '-' }}</div>
                 <div>身份证号：{{ anchorDetails.idCard || '-' }}</div>
-                <div style="word-break: break-all">
+                <div style="word-break: break-all;max-height: 150px;overflow: auto;">
                     主播简介：{{ anchorDetails.introduce || '-' }}
                 </div>
             </div>
