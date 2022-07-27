@@ -774,7 +774,7 @@ export default {
       }
     })
     this.liveTheme = this.$route.query.liveTheme;
-    if(this.$rou.query.trendsOpente != undefined) this.trends = this.$rou.query.trendsOpente
+    if(this.$route.query.trendsOpente != undefined) this.trends = this.$route.query.trendsOpente
     // 初始化实例  Step1
     this.zg = new ZegoExpressEngine(
       this.appID,
