@@ -62,7 +62,7 @@ export default {
             console.log(this.fileList)
             data = JSON.parse(JSON.stringify(data || ""))
             this.formData = data ? data : {}
-            if(data) setTimeout(() => this.fileList.push({name: data.classify, url: data.pictureUrl}), 200)
+            if(data) this.fileList.push({name: data.classify, url: data.pictureUrl})
             this.show = true
         },
         //分类图标上传、删除

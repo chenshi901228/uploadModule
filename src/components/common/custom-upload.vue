@@ -135,33 +135,36 @@ export default {
     },
   },
   watch: {
-    fileList(val) {
-      if (val.length) {
-        if (this.deleteUid) {
-          //删除附件
-          this.uploadList = this.uploadList.filter(
-            (item) => item.uid != this.deleteUid
-          );
-          this.deleteUid = null;
-        } else {
-          //更新上传附件信息
-          if(!this.uploadList.length) { //
-            this.uploadList = val
-          }else {
-            this.uploadList = this.uploadList.map((i) => {
-              let t = null;
-              val.map((j) => {
-                if (i.uid == j.uid) {
-                  t = { ...i, ...j };
-                }
+    fileList: {
+      immediate: true,
+      handler(val) {
+        if (val.length) {
+          if (this.deleteUid) {
+            //删除附件
+            this.uploadList = this.uploadList.filter(
+              (item) => item.uid != this.deleteUid
+            );
+            this.deleteUid = null;
+          } else {
+            //更新上传附件信息
+            if(!this.uploadList.length) { //
+              this.uploadList = val
+            }else {
+              this.uploadList = this.uploadList.map((i) => {
+                let t = null;
+                val.map((j) => {
+                  if (i.uid == j.uid) {
+                    t = { ...i, ...j };
+                  }
+                });
+                return t || i;
               });
-              return t || i;
-            });
+            }
           }
+        } else {
+          this.uploadList = [];
+          this.deleteUid = null;
         }
-      } else {
-        this.uploadList = [];
-        this.deleteUid = null;
       }
     },
   },
