@@ -233,7 +233,7 @@
 
 <script>
 import mixinTableModule from "@/mixins/table-module";
-import AddOrUpdate from "./problem-add-or-update.vue"
+import AddOrUpdate from "./classify-add-or-update.vue"
 
 export default {
   mixins: [mixinTableModule],
@@ -329,24 +329,39 @@ export default {
       this.$confirm("该分类的问题列表也会删除，确认删除？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: 'warning'
+        showClose: false,
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true;
+            instance.confirmButtonText = '删除中...';
+            if(row) { //操作删除
+              this.ids.push(row.id);
+            }else { //批量删除
+              this.dataListSelections.forEach((v) => {
+                this.ids.push(v.id);
+              });
+            } 
+            this.$http.delete(`/sys/sysFrequentlyQuestions`, {
+              data: this.ids,
+            }).then(({ data: res }) => {
+              instance.confirmButtonLoading = false;
+              done()
+              if (res.code !== 0) return this.$message.error(res.msg)
+              this.$message.success("删除成功")
+              this.ids = [];
+              this.query();
+            }).catch((err) => {
+              instance.confirmButtonLoading = false;
+              done()
+              this.$message.error(JSON.stringify(err))
+            });
+          } else {
+            done();
+          }
+        }
       }).then(() => {
-        if(row) { //操作删除
-          this.ids.push(row.id);
-        }else { //批量删除
-          this.dataListSelections.forEach((v) => {
-            this.ids.push(v.id);
-          });
-        } 
-        this.$http.delete(`/sys/sysFrequentlyQuestions`, {
-          data: this.ids,
-        }).then(({ data: res }) => {
-          if (res.code !== 0) return this.$message.error(res.msg)
-          this.ids = [];
-          this.query();
-        }).catch((err) => {
-          throw err;
-        });
+        
       }).catch(() => this.$message.info("取消删除"))
     },
     // 新增/编辑
