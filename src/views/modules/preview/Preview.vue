@@ -923,11 +923,11 @@ export default {
     },
     // 查看备注
     checkRemark({ remark }) {
-      this.$alert(remark || '', '查看备注', {
-        confirmButtonText: '确定',
+      this.$alert(remark || '暂无备注', '查看备注', {
+        confirmButtonText: '关闭',
         callback: action => {}
       });
-    }
+    },
   },
 };
 </script>

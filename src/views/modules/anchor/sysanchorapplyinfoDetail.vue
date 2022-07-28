@@ -50,9 +50,12 @@
       <div style="display: flex; margin: 20px 0 10px">
        <span style="width:100px;text-align:right;margin:0 10px">是否是指导师：</span> {{ diaForm.tutorFlg === 1 ? "认证" : "未认证" }}
       </div> -->
-      <div style="display: flex; margin: 20px 0 10px">
+      <div v-if="diaForm.status != 0" style="display: flex; margin: 20px 0 10px">
+       <span style="width:100px;text-align:right;margin:0 10px">备注：{{diaForm.remark}}</span>
+      </div>
+      <div v-if="diaForm.status == 0" style="display: flex; margin: 20px 0 10px">
        <span style="width:100px;text-align:right;margin:0 10px">备注：</span>
-       <el-input show-word-limit type="textarea" maxlength="100" placeholder="请输入，可不填" v-model="diaForm.remark" :disabled="diaForm.status != 0"/>
+       <el-input show-word-limit type="textarea" maxlength="100" placeholder="请输入，可不填" v-model="diaForm.remark"/>
       </div>
     </div>
 

@@ -247,7 +247,7 @@
           align="center"
           show-overflow-tooltip
         ></el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="refundReason"
           label="退款原因"
           show-overflow-tooltip
@@ -262,7 +262,7 @@
           min-width="160px"
           header-align="center"
           align="center"
-        ></el-table-column>
+        ></el-table-column> -->
 
         <el-table-column
           prop="approveStatus"
@@ -343,6 +343,13 @@
               @click="showDialog(scope.row.refundReason,scope.row.id)"
               >审批</el-button
             >
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-edit-outline"
+              @click="showDialogWithRemark(scope.row.refundReason,scope.row.approveReason)"
+              >查看</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -386,6 +393,27 @@
         >
       </div>
     </el-dialog>
+
+    <el-dialog title="查看" :visible.sync="dialogFormWithRemarkVisible">
+      <el-form
+        :model="ruleForm"
+        ref="ruleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+        size="small"
+      >
+        <el-form-item label="退款原因">
+          <div>{{refundReason || '--'}}</div>
+        </el-form-item>
+        <el-form-item label="备注" prop="desc">
+          <div>{{remarkWithDialogForm || '--'}}</div>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormWithRemarkVisible = false">关 闭</el-button>
+      </div>
+    </el-dialog>
+
   </el-card>
 </template>
 
@@ -415,11 +443,13 @@ export default {
       dataList: [],
       userId: "",
       dialogFormVisible: false,
+      dialogFormWithRemarkVisible: false,
       ruleForm: {
         desc: "",
       },
       productTypeOptions: [], //商品类型下拉选项
-      refundReason:""
+      refundReason:"",
+      remarkWithDialogForm:"",
     };
   },
   components: { Template },
@@ -433,6 +463,11 @@ export default {
       this.refundReason = refundReason
       this.id = id;
       this.dialogFormVisible = true;
+    },
+    showDialogWithRemark(refundReason,remark) {
+      this.refundReason = refundReason;
+      this.remarkWithDialogForm = remark;
+      this.dialogFormWithRemarkVisible = true;
     },
     // 重置搜索条件
     resetDataForm() {

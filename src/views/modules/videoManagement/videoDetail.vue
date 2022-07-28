@@ -1,6 +1,33 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
-    <div style="margin-bottom: 30px">视频主题：{{ info.liveTheme }}</div>
+    <el-row>
+      <el-col :span="12">视频主题：{{ info.liveTheme }}</el-col>
+      <el-col :span="12">主 播：{{ info.anchorUser }}</el-col>
+      <el-col :span="24">视频显示：{{ info.showMode === 0 ? "竖屏" : "横屏" }}</el-col>
+      <el-col :span="12">封面图：
+      <el-image
+      :preview-src-list="srcList"
+      v-if="info && info.frontCoverUrl"
+      :src="info && info.frontCoverUrl"
+      style="width: 200px; height: 200px">
+      </el-image>
+      </el-col>
+      <el-col :span="12">视频：
+      <video
+        ref="video"
+        id="video"
+        :src="info.relationLiveUrl"
+        :autoplay="videolist.autoplay"
+        :controls="videolist.controls"
+        :controlslist="videolist.controlslist"
+        :webkit-playsinline="webkitplaysinline"
+        style="width: 200px; height: 200px"
+      ></video>
+      </el-col>
+      <el-col v-if="!(checkFlag && info.approveStatus === 0)" :span="24">备注：{{ info.remark }}</el-col>
+    </el-row>
+
+    <!-- <div style="margin-bottom: 30px">视频主题：{{ info.liveTheme }}</div>
     <div style="margin-bottom: 30px">主 播：{{ info.anchorUser }}</div>
     <div style="margin-bottom: 30px">
       视频显示：{{ info.showMode === 0 ? "竖屏" : "横屏" }}
@@ -21,15 +48,15 @@
         :webkit-playsinline="webkitplaysinline"
         style="width: 800px; height: 500px"
       ></video>
-    </div>
+    </div> -->
     <div v-if="checkFlag && info.approveStatus === 0">
       <el-form
         :model="ruleForm"
         ref="ruleForm"
-        label-width="100px"
+        label-width="60px"
         class="demo-ruleForm"
       >
-        <el-form-item label="备注" prop="desc">
+        <el-form-item label="备注：" prop="desc">
           <el-input
             size="small"
             type="textarea"
@@ -57,6 +84,7 @@ export default {
   data() {
     return {
       info: {},
+      srcList: [],
       videolist: {
         autoplay: false, // 自动播放
         controls: "controls", //操作
@@ -105,6 +133,9 @@ export default {
       } else if (from.name === "videoManagement-VideoManagement") {
         vm.info = vm.$route.query.videoDetail;
         vm.checkFlag = false;
+        if(vm.info && vm.info.frontCoverUrl) {
+            vm.srcList = [vm.info.frontCoverUrl]
+        }
         console.log(vm.info)
       }
     });
@@ -123,6 +154,9 @@ export default {
         .then(({ data: res }) => {
           if (res.code == 0) {
             this.info = res.data;
+            if(this.info && this.info.frontCoverUrl) {
+                this.srcList = [this.info.frontCoverUrl]
+            }
           } else {
             this.$message.error(res.msg);
             this.$router.push({
@@ -214,6 +248,9 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.el-col{
+   margin-bottom: 30px;
+}
 .video_box {
   margin: 0 auto;
   margin-top: 50px;

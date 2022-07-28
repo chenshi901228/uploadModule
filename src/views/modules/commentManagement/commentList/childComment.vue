@@ -132,6 +132,13 @@
                     <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center">
                         <template slot-scope="{ row }">
                             <el-button icon="el-icon-document" type="text" size="small" @click="detail(row)">回复详情</el-button>
+                            <el-button
+                            type="text"
+                            icon="el-icon-view"
+                            size="small"
+                            @click="checkRemark(row)"
+                            >查看备注</el-button
+                            >
                             <el-button icon="el-icon-delete" v-if="!row.delFlg" type="text" size="small" @click="deleteComment(row.id)">删除</el-button>
                         </template>
                     </el-table-column>
@@ -204,7 +211,7 @@ export default {
                 { prop: "commentUserPhone", label: "手机号码" },
                 { prop: "commentValue", label: "回复内容" },
                 { prop: "delFlg", label: "删除状态" },
-                { prop: "remark", label: "备注" },
+                // { prop: "remark", label: "备注" },
                 { prop: "createDate", label: "创建时间", width: 180 },
             ],
             // 回复详情弹框
@@ -259,6 +266,13 @@ export default {
                 this.$refs.remarkModal.close()
                 throw err
             })
+        },
+        // 查看备注
+        checkRemark({ remark }) {
+            this.$alert(remark || '暂无备注', '查看备注', {
+                confirmButtonText: '关闭',
+                callback: action => {}
+            });
         },
     },
 };

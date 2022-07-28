@@ -286,7 +286,7 @@
             {{ scope.row.status === 0 ? "" : scope.row.updateDate }}
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           show-overflow-tooltip
           prop="remark"
           label="备注"
@@ -294,7 +294,7 @@
           align="center"
           width="180"
         >
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           show-overflow-tooltip
           prop="status"

@@ -368,6 +368,13 @@
               @click="assistant(row)"
               >助手</el-button
             >
+            <el-button
+              type="text"
+              icon="el-icon-view"
+              size="small"
+              @click="checkRemark(row)"
+              >查看备注</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -437,7 +444,7 @@ export default {
         { prop: "showState", label: "显示状态" },
         { prop: "fromPreview", label: "是否创建预告" },
         { prop: "livingRoomId", label: "直播间ID", width: 180 },
-        { prop: "remark", label: "备注" },
+        // { prop: "remark", label: "备注" },
         { prop: "createDate", label: "创建时间", width: 180 },
       ],
 
@@ -578,6 +585,13 @@ export default {
           anchorId: row.anchorUserId,
           authEdit: this.isHandleAuth(row, "2") ? 1 : 0 
         }
+      });
+    },
+    // 查看备注
+    checkRemark({ remark }) {
+      this.$alert(remark || '暂无备注', '查看备注', {
+        confirmButtonText: '关闭',
+        callback: action => {}
       });
     },
   },

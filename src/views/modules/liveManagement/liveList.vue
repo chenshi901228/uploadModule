@@ -307,6 +307,13 @@
               @click="assistant(row)"
               >助手</el-button
             >
+            <el-button
+              type="text"
+              icon="el-icon-view"
+              size="small"
+              @click="checkRemark(row)"
+              >查看备注</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -502,6 +509,13 @@ export default {
           type: 1,
           authEdit: this.isHandleAuth(row, "2") ? 1 : 0 
         }
+      });
+    },
+    // 查看备注
+    checkRemark({ remark }) {
+      this.$alert(remark || '暂无备注', '查看备注', {
+        confirmButtonText: '关闭',
+        callback: action => {}
       });
     },
   },

@@ -157,7 +157,10 @@
           </div>
         </div>
       </div>
-      <div>
+      <div v-if="diaForm.status != 0">
+        <span>备注：{{diaForm.remark}}</span>
+      </div>
+      <div v-if="diaForm.status == 0">
         <span>备注：</span>
         <el-input
           show-word-limit
@@ -165,7 +168,6 @@
           maxlength="100"
           placeholder="请输入，可不填"
           v-model="diaForm.remark"
-          :disabled="diaForm.status != 0"
         />
       </div>
     </div>

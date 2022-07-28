@@ -195,7 +195,7 @@
           show-overflow-tooltip
         >
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="content"
           label="投诉内容"
           header-align="center"
@@ -203,7 +203,7 @@
           align="center"
           width="150"
         >
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="phone"
           label="联系电话"
@@ -220,14 +220,14 @@
           align="center"
         >
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="solution"
           label="处理方案"
           header-align="center"
           show-overflow-tooltip
           align="center"
         >
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="handler"
           label="处理人"

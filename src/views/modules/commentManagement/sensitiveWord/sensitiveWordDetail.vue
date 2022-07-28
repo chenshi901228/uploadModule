@@ -36,8 +36,8 @@
       <div style="display: flex; margin: 20px 0 10px">审核内容：</div>
       <div style="display: flex; margin: 0 20px">{{ diaForm.content }}</div>
 
-      <div style="display: flex; margin: 20px 0 10px">审核备注：</div>
-      <div style="display: flex; margin: 0 20px">
+      <div style="display: flex; margin: 20px 0 10px">审核备注：{{ diaForm.remark }}</div>
+      <div style="display: flex; margin: 0 20px" v-if="diaForm.checkStatus === 2">
         <el-input
           v-model="diaForm.remark"
           type="textarea"
@@ -49,19 +49,17 @@
       </div>
     </div>
 
-    <div class="detalilBox_bottom">
+    <div class="detalilBox_bottom" v-if="diaForm.checkStatus === 2">
       <el-button
         size="small"
         type=""
         @click="updateCheckStatus(4)"
-        v-if="diaForm.checkStatus === 2"
         >驳回</el-button
       >
       <el-button
         size="small"
         type="primary"
         @click="updateCheckStatus(1)"
-        v-if="diaForm.checkStatus === 2"
         >通过</el-button
       >
     </div>

@@ -252,14 +252,14 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="refundReason"
           label="退款原因"
           header-align="center"
           show-overflow-tooltip
           align="center"
         >
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="confirmStatus"
           label="审批节点状态"
@@ -318,7 +318,7 @@
           align="center"
         >
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="approveReason"
           label="备注"
           min-width="180px"
@@ -326,7 +326,7 @@
           show-overflow-tooltip
           align="center"
         >
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="createDate"
           label="创建时间"
@@ -340,7 +340,7 @@
           fixed="right"
           header-align="center"
           align="center"
-          width="100"
+          width="150"
         >
           <template slot-scope="scope">
             <el-button
@@ -358,6 +358,13 @@
               icon="el-icon-edit-outline"
               @click="showDialog(scope.row.id)"
               >审批</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-edit-outline"
+              @click="showDialogWithRemark(scope.row)"
+              >查看</el-button
             >
           </template>
         </el-table-column>
@@ -400,6 +407,29 @@
         >
       </div>
     </el-dialog>
+
+    <el-dialog title="查看" :visible.sync="dialogFormWithRemarkVisible">
+      <el-form
+        :model="ruleForm"
+        ref="ruleForm"
+        label-width="100px"
+        class="demo-ruleForm"
+        size="small"
+      >
+        <el-form-item label="退款原因">
+          <div>{{infoWithDialogForm.refundReason || '--'}}</div>
+        </el-form-item>
+        <el-form-item label="运营备注" prop="desc">
+          <div>{{infoWithDialogForm.approveReason || '--'}}</div>
+        </el-form-item>
+        <el-form-item label="财务备注" prop="desc">
+          <div>{{infoWithDialogForm.confirmReason || '--'}}</div>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormWithRemarkVisible = false">关 闭</el-button>
+      </div>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -435,7 +465,9 @@ export default {
       ruleForm: {
         desc: "",
       },
-      refundId:""
+      refundId:"",
+      dialogFormWithRemarkVisible: false,
+      infoWithDialogForm: {}
     };
   },
   components: { Template },
@@ -486,6 +518,10 @@ export default {
     showDialog(id) {
       this.refundId = id;
       this.dialogFormVisible = true;
+    },
+    showDialogWithRemark(remarkInfo) {
+      this.infoWithDialogForm = remarkInfo;
+      this.dialogFormWithRemarkVisible = true;
     },
     // 确认审核
     refoundApproveStatus(id, status) {

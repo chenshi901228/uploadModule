@@ -266,6 +266,13 @@
               @click="deleteVideo(row)"
               >删除</el-button
             >
+            <el-button
+              type="text"
+              icon="el-icon-view"
+              size="small"
+              @click="checkRemark(row)"
+              >查看备注</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -349,7 +356,7 @@ export default {
         { prop: "approveStatus", label: "审核状态" },
         { prop: "showState", label: "显示状态" },
         { prop: "liveState", label: "删除状态" },
-        { prop: "remark", label: "备注" },
+        // { prop: "remark", label: "备注" },
         { prop: "createByName", label: "创建人" },
         { prop: "createDate", label: "创建时间" },
       ],
@@ -471,6 +478,13 @@ export default {
       this.$router.push({
         name: "videoManagement-addProductAll",
         query: { playbackId: id, anchorId: anchorUserId },
+      });
+    },
+    // 查看备注
+    checkRemark({ remark }) {
+      this.$alert(remark || '暂无备注', '查看备注', {
+        confirmButtonText: '关闭',
+        callback: action => {}
       });
     },
   },

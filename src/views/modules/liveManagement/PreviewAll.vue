@@ -555,6 +555,13 @@
               @click="handleDelete(scope.$index, scope.row)"
               >删除</el-button
             >
+            <el-button
+              type="text"
+              icon="el-icon-view"
+              size="small"
+              @click="checkRemark(scope.row)"
+              >查看备注</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -959,6 +966,13 @@ export default {
         .catch((err) => {
           throw err;
         });
+    },
+    // 查看备注
+    checkRemark({ remark }) {
+      this.$alert(remark || '暂无备注', '查看备注', {
+        confirmButtonText: '关闭',
+        callback: action => {}
+      });
     },
   },
 };

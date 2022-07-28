@@ -24,8 +24,9 @@
       <div style="display: flex; margin: 20px 0 10px">
         联系方式：{{ diaForm.contactPhone }}
       </div>
-      <div style="display: flex; margin: 20px 0 10px">处理方案：</div>
-      <div style="display: flex; margin: 0 20px">
+      <div v-if="diaForm.handlingStatus == 1" style="display: flex; margin: 20px 0 10px">处理方案：{{diaForm.solution}}</div>
+      <div v-if="diaForm.handlingStatus != 1" style="display: flex; margin: 20px 0 10px">处理方案：</div>
+      <div v-if="diaForm.handlingStatus != 1" style="display: flex; margin: 0 20px">
         <el-input
           v-model="diaForm.solution"
           type="textarea"
