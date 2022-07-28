@@ -1,6 +1,7 @@
 <!-- 新增/编辑常见问题分类 -->
 <template>
     <el-dialog 
+        top="20px"
         :title="formData.id ? '编辑' : '新增'" 
         :visible.sync="show" 
         :close-on-click-modal="false"
@@ -52,14 +53,13 @@ export default {
             fileList: [],
             formRule: {
                 classify: [{ required: true, message: "请输入问题分类", trigger: "blur"}],
-                pictureUrl: [{ required: true, message: "请上传分类图标" }],
+                pictureUrl: [{ required: true, message: "请上传分类图标", trigger: "change" }],
             },
             submitLoading: false,
         }
     },
     methods: {
         init(data) {
-            console.log(this.fileList)
             data = JSON.parse(JSON.stringify(data || ""))
             this.formData = data ? data : {}
             if(data) this.fileList.push({name: data.classify, url: data.pictureUrl})
