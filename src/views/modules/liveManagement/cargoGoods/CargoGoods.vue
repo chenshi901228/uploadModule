@@ -362,8 +362,8 @@ export default {
   activated() {
     if(this.$route.query.authEdit != undefined) { //有标识来自直播列表-设置操作按钮显示
       this.authEdit = this.$route.query.authEdit
-      if(this.authEdit == 0) this.params.isAdd = 1  //直播列表已下播或已禁播增加查询参数isAdd
     }
+    if(this.$route.query.isAdd != undefined) this.params.isAdd = this.$route.query.isAdd  //直播列表已下播或已禁播增加查询参数isAdd
     this.params.liveId = this.$route.query.liveId;
     this.params.type = parseInt(this.$route.query.type)
     this.params.anchorId = this.$route.query.anchorId

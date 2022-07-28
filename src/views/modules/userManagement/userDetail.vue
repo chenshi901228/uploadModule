@@ -11,7 +11,7 @@
             style="margin: 0px 85px 10px"
           ></el-avatar>
           <div>用户昵称：{{ diaForm.nickName || '-' }}</div>
-          <div>手机号码：{{diaForm.phoneNum || '-'}}</div>
+          <div>手机号码：{{diaForm.phone || '-'}}</div>
           <div>是否认证：{{ diaForm.legalizeFlg === 1 ? "是" : "否" }}</div>
           <div>是否指导师：{{ diaForm.tutorFlg === 1 ? "是" : "否" }}</div>
           <div>邀请注册：{{ diaForm.inviteNum || 0 }}人</div>
@@ -66,6 +66,13 @@
           </div>
           <div
             class="diaBoxRight_tabBtns"
+            @click="changeTbas(6)"
+            :class="{ 'is-active': diaTbas === 6 }"
+          >
+            书籍记录
+          </div>
+          <div
+            class="diaBoxRight_tabBtns"
             @click="changeTbas(5)"
             :class="{ 'is-active': diaTbas === 5 }"
           >
@@ -78,13 +85,6 @@
           >
             加入粉丝团
           </div>
-          <!-- <div
-            class="diaBoxRight_tabBtns"
-            @click="changeTbas(6)"
-            :class="{ 'is-active': diaTbas === 6 }"
-          >
-            分享记录
-          </div> -->
         </div>
         <el-form
           :inline="true"
@@ -98,7 +98,7 @@
           <el-form-item label="支付方式" v-if="diaTbas === 1" prop="payType">
             <el-select
               style="width: 180px"
-              placeholder="支付方式"
+              placeholder="请选择"
               v-model="diaSearchForm.payType"
               clearable
             >
@@ -109,7 +109,7 @@
           <el-form-item label="充值来源" v-if="diaTbas === 1" prop="paySource">
             <el-select
               style="width: 180px"
-              placeholder="充值来源"
+              placeholder="请选择"
               v-model="diaSearchForm.paySource"
               clearable
             >
@@ -120,7 +120,7 @@
           <el-form-item label="礼物" v-if="diaTbas === 2" prop="name">
             <el-input
               style="width: 180px"
-              placeholder="礼物名称"
+              placeholder="请输入"
               v-model="diaSearchForm.name"
               clearable
             ></el-input>
@@ -128,7 +128,7 @@
           <el-form-item label="消费来源" v-if="diaTbas === 2" prop="paySource">
             <el-select
               style="width: 180px"
-              placeholder="消费来源"
+              placeholder="请输入"
               v-model="diaSearchForm.paySource"
               clearable
             >
@@ -139,7 +139,7 @@
           <el-form-item label="直播主题" v-if="diaTbas === 2">
             <el-input
               style="width: 180px"
-              placeholder="直播主题"
+              placeholder="请输入"
               v-model="diaSearchForm.liveTheme"
               clearable
             ></el-input>
@@ -147,8 +147,8 @@
           <el-form-item label="直播间ID" v-if="diaTbas === 2">
             <el-input
               style="width: 180px"
-              placeholder="直播间ID"
-              v-model="diaSearchForm.id"
+              placeholder="请输入"
+              v-model="diaSearchForm.liveId"
               clearable
             ></el-input>
           </el-form-item>
@@ -159,7 +159,7 @@
           >
             <el-input
               style="width: 180px"
-              placeholder="粉丝团名称"
+              placeholder="请输入"
               v-model="diaSearchForm.title"
               clearable
             ></el-input>
@@ -171,7 +171,7 @@
           >
             <el-input
               style="width: 180px"
-              placeholder="主播昵称"
+              placeholder="请输入"
               v-model="diaSearchForm.anchorName"
               clearable
             ></el-input>
@@ -183,8 +183,20 @@
           >
             <el-input
               style="width: 180px"
-              placeholder="手机号码"
+              placeholder="请输入"
               v-model="diaSearchForm.phone"
+              clearable
+            ></el-input>
+          </el-form-item>
+          <el-form-item
+            label="订单编号"
+            v-if="diaTbas === 3 || diaTbas === 6"
+            prop="id"
+          >
+            <el-input
+              style="width: 180px"
+              placeholder="请输入"
+              v-model="diaSearchForm.id"
               clearable
             ></el-input>
           </el-form-item>
@@ -195,7 +207,7 @@
           >
             <el-input
               style="width: 180px"
-              placeholder="商品名称"
+              placeholder="请输入"
               v-model="diaSearchForm.productName"
               clearable
             ></el-input>
@@ -209,7 +221,7 @@
               @visible-change="getProductType"
               style="width: 180px"
               v-model="diaSearchForm.productType"
-              placeholder="商品类型"
+              placeholder="请选择"
               clearable
             >
               <el-option
@@ -223,7 +235,7 @@
           <el-form-item label="是否免费" v-if="diaTbas === 3" prop="isFree">
             <el-select
               style="width: 180px"
-              placeholder="是否免费"
+              placeholder="请选择"
               v-model="diaSearchForm.isFree"
               clearable
             >
@@ -232,14 +244,60 @@
             </el-select>
           </el-form-item>
           <el-form-item
+            label="订单状态"
+            v-if="diaTbas === 6"
+            prop="status"
+          >
+            <el-select
+              style="width: 180px"
+              placeholder="请选择"
+              v-model="diaSearchForm.status"
+              clearable
+            >
+              <el-option :value="-1" label="待支付"></el-option>
+              <el-option :value="1" label="已支付"></el-option>
+              <el-option :value="2" label="已完成"></el-option>
+              <el-option :value="3" label="退款中"></el-option>
+              <el-option :value="4" label="已退款"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item
+            label="物流单号"
+            v-if="diaTbas === 6"
+            prop="courierNumber"
+          >
+            <el-input
+              style="width: 180px"
+              placeholder="请输入"
+              v-model="diaSearchForm.courierNumber"
+              clearable
+            ></el-input>
+          </el-form-item>
+          <el-form-item
+            label="物流状态"
+            v-if="diaTbas === 6"
+            prop="logisticsStatus"
+          >
+            <el-select
+              style="width: 180px"
+              placeholder="请选择"
+              v-model="diaSearchForm.logisticsStatus"
+              clearable
+            >
+              <el-option :value="0" label="待发货"></el-option>
+              <el-option :value="1" label="待收货"></el-option>
+              <el-option :value="2" label="已收货"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item
             label="关联商品编号"
-            v-if="diaTbas === 3"
-            prop="productId"
+            v-if="diaTbas === 3 || diaTbas === 6"
+            prop="linkedProductId"
           >
             <el-input
               style="width: 180px"
               placeholder="关联商品编号"
-              v-model="diaSearchForm.productId"
+              v-model="diaSearchForm.linkedProductId"
               clearable
             ></el-input>
           </el-form-item>
@@ -254,12 +312,12 @@
               <el-option :value="1" label="已使用"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item v-if="diaTbas !== 6">
+          <el-form-item>
             <el-button
               type="primary"
               size="mini"
               icon="el-icon-search"
-              @click="queryPost_dia()"
+              @click="queryChaxun()"
               >{{ $t("query") }}</el-button
             >
             <el-button size="mini" icon="el-icon-refresh" @click="mainReset"
@@ -269,7 +327,6 @@
         </el-form>
         <el-table
           :data="diaDataList"
-          style="width: 100%"
           height="calc(calc(100vh - 50px - 36px - 30px - 45px - 90px - 47px) - 2px)"
         >
           <template v-for="(label, prop) in diaTableTitle">
@@ -295,7 +352,7 @@
               header-align="center"
               align="center"
               show-overflow-tooltip
-              v-if="prop === 'payTypeUnit'"
+              v-else-if="prop === 'payTypeUnit'"
             >
               <template>
                 <div>种子</div>
@@ -308,11 +365,11 @@
               header-align="center"
               align="center"
               show-overflow-tooltip
-              v-else-if="prop === 'payType'"
+              v-else-if="prop === 'payType'&&diaTbas!=3&&diaTbas!=6"
             >
               <template slot-scope="scope">
                 <div>
-                  {{ scope.row.paySource === 1 ? "微信" : "支付宝" }}
+                  {{ scope.row.payType === 1 ? "微信" : "支付宝" }}
                 </div>
               </template>
             </el-table-column>
@@ -323,16 +380,16 @@
               header-align="center"
               align="center"
               show-overflow-tooltip
-              v-else-if="prop === 'userTyoe'"
+              v-else-if="prop === 'userType'"
             >
               <template slot-scope="scope">
                 <div>
                   {{
-                    scope.row.userTyoe === 1
-                      ? "会长"
-                      : scope.row.userTyoe === 2
-                      ? "副会长"
-                      : "普通会员"
+                    scope.row.userType === 0
+                      ? "普通用户"
+                      : scope.row.userType === 1
+                      ? "助手"
+                      : "-"
                   }}
                 </div>
               </template>
@@ -450,11 +507,30 @@
               :key="prop"
               header-align="center"
               align="center"
+              min-width="120"
               show-overflow-tooltip
               v-else
             >
             </el-table-column>
           </template>
+          <el-table-column
+              v-if="diaTbas===3 || diaTbas===6"
+              :label="$t('handle')"
+              fixed="right"
+              width="120px"
+              header-align="center"
+              align="center"
+            >
+              <template slot-scope="scope">
+                <el-button
+                  type="text"
+                  icon="el-icon-edit-outline"
+                  size="small"
+                  @click="applyRefund(scope.row)"
+                  >申请退款</el-button
+                >
+              </template>
+            </el-table-column>
         </el-table>
         <el-pagination
           background
@@ -469,6 +545,23 @@
         </el-pagination>
       </div>
     </div>
+    <el-dialog title="申请退款" :visible.sync="dialogVisible" width="30%">
+        <div class="dialog" style="display:flex;">
+            <p style="width:80px; margin:0">退款原因</p>
+            <el-input
+                type="textarea"
+                maxlength="100"
+                show-word-limit
+                :rows="6"
+                placeholder="请输入"
+                v-model="remark">
+            </el-input>
+        </div>
+        <span slot="footer" class="dialog-footer">
+            <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+            <el-button size="small" type="primary" @click="confirmHandle">确 定</el-button>
+        </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -477,6 +570,7 @@ export default {
   name: "LiveWebmanageUserdetail",
   data() {
     return {
+      dialogVisible:false,
       userId: "",
       diaForm: {},
       diaTbas: 1,
@@ -503,10 +597,9 @@ export default {
     };
   },
 
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      vm.userId = JSON.parse(window.localStorage.getItem("userDetailData")).id;
-      vm.$http
+  activated() {
+    this.userId = JSON.parse(window.localStorage.getItem("userDetailData")).id;
+      this.$http
         .get(
           `/sys/manage/userDetail/${
             JSON.parse(window.localStorage.getItem("userDetailData")).id
@@ -514,9 +607,9 @@ export default {
         )
         .then(({ data: res }) => {
           if (res.code !== 0) {
-            return vm.$message.error(res.msg);
+            return this.$message.error(res.msg);
           }
-          vm.diaForm = {
+          this.diaForm = {
             ...res.data,
             ...JSON.parse(window.localStorage.getItem("userDetailData")),
             priceConsumption: res.data.priceRecharge + res.data.shoppingConsumption,
@@ -524,10 +617,12 @@ export default {
           };
         })
         .catch(() => {});
-      vm.changeTbas(1);
-    });
+      this.changeTbas(1);
   },
   methods: {
+    confirmHandle(){//确认退款
+
+    },
     changeTbas(n) {
       this.diaTbas = n;
       this.diaSearchForm = {
@@ -539,11 +634,16 @@ export default {
         phone: "",
         useStatus: "",
         productName: "",
-        productId: "",
+        linkedProductId: "",
         productType: "",
         isFree: "",
         id:"",
-        theme:"",
+        liveTheme:"",
+        liveId:"",
+        status:"",
+        courierNumber:"",
+        logisticsStatus:"",
+        linkedProductId:"",
       };
       this.diaDataList = [];
       this.total_dia = 0;
@@ -565,24 +665,24 @@ export default {
             price: "礼物单价",
             allPrice: "消费合计",
             payType: "支付方式",
-            theme: "直播间主题",
-            id: "直播间ID",
+            liveTheme: "直播间主题",
+            liveId: "直播间ID",
             paySource: "消费来源",
             createDate: "创建时间",
           };
           break;
         case 3:
           this.diaTableTitle = {
-            productImage: "商品图片",
-            productName: "商品名称",
+            id: "订单编号",
             productType: "商品类型",
-            isFree: "是否免费",
+            productName: "商品名称",
             price: "销售价格",
             payPrice: "支付金额",
             payType: "支付方式",
             consumptionSource: "消费来源",
             productId: "关联产品编号",
-            payDate: "购买时间",
+            payDate: "下单时间",
+            useStatus: "订单状态",
             useStatus: "使用状态",
           };
           break;
@@ -591,7 +691,7 @@ export default {
             title: "粉丝团名称",
             anchorName: "主播",
             phone: "手机号码",
-            userTyoe: "粉丝团身份",
+            userType: "粉丝团身份",
             createDate: "创建时间",
           };
           break;
@@ -609,16 +709,22 @@ export default {
           break;
         case 6:
           this.diaTableTitle = {
-            shareType: "分享类型",
-            shareUrl: "页面路由",
-            createDate: "创建时间",
-            shareState: "分享状态",
-            successEvent: "成功事件",
-            passiveShareUserName: "被分享人",
-            passiveShareUserTel: "手机号码",
+            id: "订单编号",
+            productType: "商品类型",
+            productName: "商品名称",
+            price: "销售价格",
+            productNum: "商品数量",
+            payPrice: "支付金额",
+            freight:"运费",
+            payType: "支付方式",
+            consumptionSource: "消费来源",
+            payDate: "下单时间",
+            courierNumber: "快递单号",
+            statusStr: "订单状态",
+            logisticsStatus: "物流状态",
+            linkedProductId: "关联商品编号",
           };
           break;
-
         default:
           break;
       }
@@ -646,8 +752,8 @@ export default {
             weixinUserId: this.userId,
             paySource: this.diaSearchForm.paySource,
             name: this.diaSearchForm.name,
-            theme:this.diaSearchForm.theme,
-            id:this.diaSearchForm.id,
+            liveTheme:this.diaSearchForm.liveTheme,
+            liveId:this.diaSearchForm.liveId,
           };
           url = "/sys/user/consumption/selectUserGiftPage";
           break;
@@ -658,9 +764,10 @@ export default {
             weixinUserId: this.userId,
             useStatus: this.diaSearchForm.useStatus,
             productName: this.diaSearchForm.productName,
-            productId: this.diaSearchForm.productId,
+            linkedProductId: this.diaSearchForm.linkedProductId,
             productType: this.diaSearchForm.productType,
             isFree: this.diaSearchForm.isFree,
+            id:this.diaSearchForm.id,
           };
           url = "/sys/management/user/product/userOrderWithDetailPage";
           break;
@@ -690,9 +797,14 @@ export default {
           data = {
             limit: this.limit_dia,
             page: this.page_dia,
-            shareUserId: this.userId,
+            weixinUserId: this.userId,
+            id:this.diaSearchForm.id,
+            status:this.diaSearchForm.status,
+            courierNumber:this.diaSearchForm.courierNumber,
+            logisticsStatus:this.diaSearchForm.logisticsStatus,
+            linkedProductId:this.diaSearchForm.linkedProductId
           };
-          url = "/sys/liveShare/page";
+          url = "/sys/management/user/product/userOrderWithBooksDetailPage";
           break;
 
         default:
@@ -731,10 +843,32 @@ export default {
           this.$message.error(JSON.stringify(err));
         });
     },
-
+    applyRefund(row){//申请退款
+      console.log(row)
+      this.dialogVisible = true
+    },
+    queryChaxun(){
+      this.page_dia = 1;
+      this.limit_dia = 10;
+      this.queryPost_dia();
+    },
     // 主页搜索重置
     mainReset() {
-      this.$refs.searchForm.resetFields();
+      this.diaSearchForm = {
+        payType: "",
+        paySource: "",
+        name: "",
+        title: "",
+        anchorName: "",
+        phone: "",
+        useStatus: "",
+        productName: "",
+        linkedProductId: "",
+        productType: "",
+        isFree: "",
+        liveId:"",
+        liveTheme:"",
+      }
       this.queryPost_dia();
     },
 

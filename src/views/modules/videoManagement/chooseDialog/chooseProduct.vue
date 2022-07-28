@@ -76,15 +76,15 @@
       <!-- 操作按钮 -->
       <div class="headerTool-handle-btns">
         <div class="headerTool--handle-btns-left">
-          <!-- <el-form-item>
-                        <el-button
-                            type="primary"
-                            plain
-                            icon="el-icon-plus"
-                            size="mini"
-                            :disabled="!dataListSelections.length"
-                            @click="add()">批量添加</el-button>
-                    </el-form-item> -->
+        <el-form-item>
+          <el-button
+            type="primary"
+            plain
+            icon="el-icon-plus"
+            size="mini"
+            :disabled="!dataListSelections.length"
+            @click="add()">批量添加</el-button>
+        </el-form-item>
         </div>
       </div>
     </el-form>
@@ -106,8 +106,7 @@
       v-loading="dataListLoading"
       :data="dataList"
       ref="table"
-      @select="selectRow"
-      @select-all="selectAll"
+      @selection-change="dataListSelectionChangeHandle"
       height="360px"
       style="width: 100%"
     >
@@ -172,6 +171,22 @@
             @click="setTop(row)"
             >置顶</el-button
           >
+          <el-button
+            icon="el-icon-plus"
+            type="text"
+            size="small"
+            v-if="!row._isSelected"
+            @click="add(row)"
+            >添加</el-button
+          >
+          <el-button
+            icon="el-icon-delete"
+            type="text"
+            size="small"
+            v-if="row._isSelected"
+            @click="deleteSelect(row)"
+            >删除</el-button
+          >
         </template>
       </el-table-column>
     </el-table>
@@ -210,6 +225,7 @@ export default {
       total: 0, // 总条数
       dataListLoading: false, // 数据列表，loading状态
       defaultSelected: [], //默认选中的数据
+      dataListSelections: [], //表格选中数据
       tableItem: [
         { prop: "productImage", label: "商品图片" },
         { prop: "productName", label: "商品名称" },
@@ -256,35 +272,25 @@ export default {
       this.allDataList.unshift(row)
 
 
+      this.$message.success("置顶成功")
 
       this.query()
 
     },
-    // 设置默认选中的行
-    setCurPageSelected() {
-      this.$nextTick(() => {
-        if (this.defaultSelected.length) {
-          this.dataList.forEach((row, i) => {
-            this.defaultSelected.forEach((item) => {
-              if (row.productId == item.productId) {
-                this.$refs.table.toggleRowSelection(row, true);
-                // 数据列表是否选中设为true
-                row["_isSelected"] = true
-              }
-            });
+    // 设置默认选中数据
+    setHadSelected() {
+      if (this.defaultSelected.length) {
+        this.allDataList.forEach((row, i) => {
+          this.defaultSelected.forEach((item) => {
+            if (row.productId == item.productId) {
+              // 数据列表是否选中设为true
+              row["_isSelected"] = true
+            }
           });
-        } else {
-          this.$refs.table.clearSelection();
-        }
-      });
-
-      // 防止table刷新错位
-      if (this.$refs.table) {
-        this.$nextTick(() => {
-          this.$refs.table.doLayout();
         });
-      }
+      } 
     },
+
     // 获取所有数据在本地操作置顶
     getAllData(sourceData) {
       this.dataListLoading = true;
@@ -305,17 +311,18 @@ export default {
             this.total = 0;
             return this.$message.error(res.msg);
           }
-          this.allDataList = res.data.list;
+          this.allDataList = res.data.list
           this.total = res.data.total;
-
           // 给默认选中的数据赋值
           if(sourceData) {
             this.defaultSelected = sourceData.length ? JSON.parse(JSON.stringify(sourceData)) : [];
           }
+          
 
-          this.initDataSort()
+          this.setHadSelected()
 
           this.query()
+
         })
         .catch((err) => {
           this.dataListLoading = false;
@@ -325,29 +332,50 @@ export default {
 
     // 获取数据列表
     query() {
+
       this.dataListLoading = true;
+      
+      this.initDataSort()
 
       setTimeout(() => {
         this.dataList = this.allDataList.slice((this.page - 1) * this.limit, this.page * this.limit);
         this.dataListLoading = false;
-        this.setCurPageSelected();
+
+        // 防止table刷新错位
+        if (this.$refs.table) {
+          this.$nextTick(() => {
+            this.$refs.table.doLayout();
+          });
+        }
       }, 200)
     },
 
     // 初始所有数据重排序
     initDataSort() {
-      let data = JSON.parse(JSON.stringify(this.defaultSelected))
-      if(data.length) {
-        data.map(j => {
-          this.allDataList.map((item, index) => {
-            if(item.productId == j.productId) {
-              this.allDataList.splice(index, 1)
-            }
-          })
+      this.$nextTick(() => {
+        let data = JSON.parse(JSON.stringify(this.defaultSelected))
+        let allData = JSON.parse(JSON.stringify(this.allDataList))
+
+        // 找出所有数据中包含默认选中的数据
+        data = allData.filter(item => {
+          return data.some(j => j.productId == item.productId)
         })
-        this.allDataList.unshift(...data)
-      }
+
+        // 去掉所有数据中相同的并添加到数组头部
+        allData = allData.filter(item => {
+          return !data.some(j => j.productId == item.productId)
+        })
+
+        // 由于新返回的默认选中的数据未设置选中-重新设置选中
+        data.map(item => item["_isSelected"] = true)
+
+        allData.unshift(...data)
+
+        this.allDataList = allData
+      })
     },
+
+
     // 下拉获取商品类型
     getProductType(type) {
       if (!type) return;
@@ -368,7 +396,41 @@ export default {
     },
     // 选择添加
     add(row) {
-      this.$emit("add", this.defaultSelected);
+      if(row) { //单个添加
+        this.allDataList.forEach(item => {
+          if(item.productId == row.productId) {
+            item["_isSelected"] = true
+            this.defaultSelected.push(item)
+          }
+        })
+
+      }else { //批量添加
+
+        // 多选如果有已经选中的给出提示
+        let haveSelected = this.dataListSelections.some(item => item._isSelected)
+        if(haveSelected) return this.$message.warning("选项中包含有已被添加的选项")
+
+        // 创建临时变量
+        let arr = JSON.parse(JSON.stringify([...this.defaultSelected, ...this.dataListSelections]));
+
+        // 全选时，合并数据去重
+        for (let i = 0; i < arr.length; i++) {
+          for (let j = i + 1; j < arr.length; j++) {
+            if (arr[i].productId == arr[j].productId) {
+              arr.splice(i, 1);
+              j--;
+            }
+          }
+        }
+
+        this.defaultSelected = arr
+        
+      }
+      this.$message.success("添加成功")
+      
+      this.query()
+
+      
     },
     // 点击删除
     deleteSelect(data) {
@@ -379,9 +441,8 @@ export default {
       })
         .then(() => {
           // 取消选中行
-          this.dataList.forEach((row) => {
+          this.allDataList.forEach((row) => {
             if (row.productId == data.productId) {
-              this.$refs.table.toggleRowSelection(row, false);
               // 数据列表是否选中设为false
               row["_isSelected"] = false
             }
@@ -390,85 +451,17 @@ export default {
           this.defaultSelected = this.defaultSelected.filter(
             (item) => item.productId != data.productId
           );
+
+          this.$message.success("删除成功")
+
+
+          this.query()
         })
         .catch(() => this.$message.info("取消操作"));
     },
-    // 手动选中行变化
-    selectRow(selection, row) {
-      // 判断是选中还是取消选中
-      let isSelected =
-        selection.filter((item) => item.productId == row.productId).length == 1;
-      if (isSelected) {
-        //选中-添加数据
-        this.defaultSelected.push(row);
-
-        // 数据列表是否选中设为true
-        this.dataList.forEach(item => {
-          if(item.productId == row.productId) {
-            item["_isSelected"] = true
-          }
-        })
-      } else {
-        //删除数据
-        this.defaultSelected = this.defaultSelected.filter(
-          (item) => item.productId != row.productId
-        );
-
-        // 数据列表是否选中设为false
-        this.dataList.forEach(item => {
-          if(item.productId == row.productId) {
-            item["_isSelected"] = false
-          }
-        })
-      }
-    },
-    // 手动勾选全选
-    selectAll(selection) {
-      if (selection.length) {
-        //全部选中
-        if (!this.defaultSelected.length) {
-          this.defaultSelected = selection;
-        } else {
-          // 创建临时变量
-          let arr = JSON.parse(JSON.stringify([...this.defaultSelected, ...selection]));
-
-          // 全选时，合并数据去重
-          for (let i = 0; i < arr.length; i++) {
-            for (let j = i + 1; j < arr.length; j++) {
-              if (arr[i].productId == arr[j].productId) {
-                arr.splice(i, 1);
-                j--;
-              }
-            }
-          }
-
-          this.defaultSelected = arr;
-        }
-
-
-        // 数据列表是否选中设为true
-        this.dataList.forEach(item => {
-          item["_isSelected"] = true
-        })
-      } else {
-        //全部取消
-        // 创建临时变量
-        let data = JSON.parse(JSON.stringify(this.defaultSelected));
-
-        this.dataList.map((item) => {
-          data.map((val, index) => {
-            if (item.productId == val.productId) {
-              data.splice(index, 1);
-            }
-          });
-        });
-        this.defaultSelected = data;
-
-        // 数据列表是否选中设为false
-        this.dataList.forEach(item => {
-          item["_isSelected"] = false
-        })
-      }
+    // 多选
+    dataListSelectionChangeHandle (val) {
+      this.dataListSelections = val
     },
     // 分页, 每页条数
     pageSizeChangeHandle(val) {
@@ -494,8 +487,7 @@ export default {
     // 关闭
     close() {
       this.$refs.dataForm.resetFields();
-      this.$refs.table.clearSelection();
-      this.defaultSelected = []
+      is.$emit("add", this.defaultSelected);
       this.dialogVisible = false;
     },
   },

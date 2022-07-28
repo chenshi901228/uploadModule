@@ -76,7 +76,7 @@
                 size="mini"
                 icon="el-icon-plus"
                 plain
-                @click="upImgDialog = true"
+                @click="addOrUpdate()"
                 >新增</el-button
               >
             </el-form-item>
@@ -192,7 +192,7 @@
               type="text"
               size="small"
               icon="el-icon-edit-outline"
-              @click="handle(row)"
+              @click="addOrUpdate(row)"
               >编辑</el-button
             >
             <el-button
@@ -206,7 +206,7 @@
               type="text"
               size="small"
               icon="el-icon-delete"
-              @click="handleDelete(row)"
+              @click="deleteProblem(row)"
               >删除</el-button
             >
           </template>
@@ -223,168 +223,23 @@
         @current-change="pageCurrentChangeHandle"
       >
       </el-pagination>
-    </div>
-    <el-dialog title="新增" :visible.sync="upImgDialog" width="30%">
-      <el-form
-        :model="imgForm"
-        ref="imgForm"
-        label-width="100px"
-        class="demo-ruleForm"
-      >
-        <el-form-item label="问题分类" prop="name" required>
-          <el-input maxlength="10" v-model="imgForm.name" show-word-limit></el-input>
-        </el-form-item>
-        <el-form-item label="上传" prop="img" required>
-          <el-upload
-            :action="uploadUrl"
-            list-type="picture-card"
-            :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove"
-            :on-success="handleSuccess"
-            :on-exceed="handleExceed1"
-            :limit="1"
-            ref="upload"
-            :class="imgForm.img.length !== 0 ? 'hide_box' : ''"
-          >
-            <i class="el-icon-plus"></i>
-          </el-upload>
-        </el-form-item>
-        <el-form-item>
-          <div>
-            图片大小必须小于2M,支持bmp、png、jpg、jpeg格式,尺寸为80px*80px
-          </div>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="upImgDialog = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="upImgMethod"
-          >确 定</el-button
-        >
-      </span>
-    </el-dialog>
-    <el-dialog :visible.sync="dialogImageVisible">
-      <img width="100%" :src="dialogImageUrl" alt="" />
-    </el-dialog>
 
-    <el-dialog title="查看封面图" :visible.sync="showImgDialog" width="30%">
-      <el-form
-        :model="bigImgForm"
-        ref="imgForm"
-        label-width="100px"
-        class="demo-ruleForm"
-      >
-        <el-form-item label="上传" prop="img">
-          <el-image
-            style="width: 146px; height: 146px"
-            :src="bigUrl"
-            :preview-src-list="srcList"
-          >
-          </el-image>
-          <span>点击可看大图</span>
-        </el-form-item>
-        <el-form-item label="封面图名称" prop="name">
-          <el-input disabled v-model="bigImgForm.name"></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="showImgDialog = false">取 消</el-button>
-      </span>
-    </el-dialog>
-    <el-dialog title="编辑封面图" :visible.sync="editeImgDialog" width="30%">
-      <el-form
-        :model="editeImgForm"
-        ref="imgForm"
-        label-width="100px"
-        class="demo-ruleForm"
-      >
-        <el-form-item label="问题分类" prop="name">
-          <el-input maxlength="10" v-model="editeImgForm.name" show-word-limit></el-input>
-        </el-form-item>
-        <el-form-item label="上传" prop="img">
-          <div
-            v-if="editeUrl.length !== 0"
-            style="position: relative; display: inline-block"
-          >
-            <el-image
-              style="width: 146px; height: 146px; margin-right: 0"
-              :src="editeUrl"
-            >
-            </el-image>
-            <el-tooltip effect="dark" content="删除" placement="top">
-              <!-- <i
-                class="el-icon-close"
-                @click="remove"
-                style="
-                  position: absolute;
-                  right: 5px;
-                  top: 5px;
-                  font-size: 12px;
-                  color: #fff;
-                  cursor: pointer;
-                "
-              ></i> -->
-              <img
-                @click="remove"
-                src="@/assets/img/close.png"
-                style="
-                  position: absolute;
-                  right: 5px;
-                  top: 5px;
-                  font-size: 12px;
-                  color: #fff;
-                  cursor: pointer;
-                "
-                alt=""
-              />
-            </el-tooltip>
-          </div>
-          <div v-if="editeUrl.length === 0">
-            <el-upload
-              :action="uploadUrl"
-              list-type="picture-card"
-              :on-preview="handlePictureCardPreview2"
-              :on-remove="handleRemove2"
-              :on-success="handleSuccess2"
-              :on-exceed="handleExceed2"
-              :limit="1"
-              ref="upload2"
-              :class="editeImgForm.img.length !== 0 ? 'hide_box' : ''"
-            >
-              <i class="el-icon-plus"></i>
-            </el-upload>
-          </div>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="editeImgDialog = false"
-          >取 消</el-button
-        >
-        <el-button size="small" type="primary" @click="editeImgMethod"
-          >确 定</el-button
-        >
-      </span>
-    </el-dialog>
-    <el-dialog :visible.sync="dialogEditeImageVisible">
-      <img width="100%" :src="dialogEditeImageUrl" alt="" />
-    </el-dialog>
-    <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
-      <span>该分类的问题列表也会删除，确认删除？</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="confirmShowState"
-          >确 定</el-button
-        >
-      </span>
-    </el-dialog>
+
+      <!-- 新增/更新问题分类 -->
+      <add-or-update ref="addOrUpdate" @refreshData="getDataList"></add-or-update>
+    </div>
   </el-card>
 </template>
 
 <script>
 import mixinTableModule from "@/mixins/table-module";
-import Cookies from "js-cookie";
+import AddOrUpdate from "./classify-add-or-update.vue"
 
 export default {
   mixins: [mixinTableModule],
+  components: {
+    AddOrUpdate
+  },
   data() {
     return {
       mixinTableModuleOptions: {
@@ -400,31 +255,6 @@ export default {
         { prop: "classify", label: "问题分类" },
         { prop: "createDate", label: "创建时间" },
       ],
-      upImgDialog: false,
-      dialogImageUrl: "",
-      dialogImageVisible: false,
-      uploadUrl: "",
-      imgForm: {
-        img: "",
-        name: "",
-      },
-      showImgDialog: false,
-      bigUrl: "",
-      srcList: [],
-      bigImgForm: {
-        img: "",
-        name: "",
-      },
-      editeImgDialog: false,
-      editeImgForm: {
-        img: "",
-        name: "",
-      },
-      editeUrl: "",
-      editeSrcList: [],
-      dialogEditeImageVisible: false,
-      dialogEditeImageUrl: "",
-      editeId: "",
       allProblem: [],
       ids: [],
       dialogVisible: false,
@@ -433,24 +263,9 @@ export default {
       sortId: "",
     };
   },
-  created() {
-    this.uploadUrl = `${
-      window.SITE_CONFIG["apiURL"]
-    }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
-  },
   activated() {
     this.query();
     this.getAllProblem();
-  },
-  watch: {
-    upImgDialog(n, o) {
-      if (!n) {
-        this.imgForm = {
-          img: "",
-          name: "",
-        };
-      }
-    },
   },
   methods: {
     //排序
@@ -510,179 +325,49 @@ export default {
         });
     },
     //批量删除
-    deleteProblem() {
-      this.dialogVisible = true;
-      this.dataListSelections.forEach((v) => {
-        this.ids.push(v.id);
-      });
-    },
-    handleExceed1(file, fileList) {
-      if (fileList.length >= 1) {
-        this.$message.warning("只能上传一张！");
-      }
-    },
-    handleExceed2(file, fileList) {
-      if (fileList.length >= 1) {
-        this.$message.warning("只能上传一张！");
-      }
-    },
-    //编辑图片
-    editeImgMethod() {
-      if (this.editeImgForm.img === "") {
-        this.$message.warning("上传图片不能为空！");
-      } else if (this.editeImgForm.name === "") {
-        this.$message.warning("名字不能为空！");
-      } else {
-        this.$http
-          .put("/sys/sysFrequentlyQuestions", {
-            classify: this.editeImgForm.name,
-            pictureUrl: this.editeImgForm.img,
-            id: this.editeId,
-          })
-          .then(({ data: res }) => {
-            if (res.code !== 0) {
-              return this.$message.error(res.msg);
-            } else {
-              this.editeImgDialog = false;
-              this.editeImgForm.img = "";
-              this.editeImgForm.name = "";
-              this.editeUrl = "";
-              this.query();
-            }
-          })
-          .catch((err) => {
-            throw err;
-          });
-      }
-    },
-    remove() {
-      this.$confirm("确认删除图片", "提示", {
+    deleteProblem(row) {
+      this.$confirm("该分类的问题列表也会删除，确认删除？", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          this.editeUrl = "";
-          this.editeImgForm.img = "";
-          this.editeSrcList = [];
-          this.$message.success("删除成功");
-        })
-        .catch(() => {
-          this.$message.info("取消删除");
-        });
-    },
-    handleRemove2(file, fileList) {
-      this.editeImgForm.img = "";
-    },
-    handlePictureCardPreview2(file) {
-      this.dialogEditeImageUrl = file.url;
-      this.dialogEditeImageVisible = true;
-    },
-    handleSuccess2(response, file, fileList) {
-      this.editeImgForm.img = response.data.url;
-    },
-    handleRemove(file, fileList) {
-      this.imgForm.img = "";
-    },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogImageVisible = true;
-    },
-    handleSuccess(response, file, fileList) {
-      this.imgForm.img = response.data.url;
-    },
-    //查看封面图
-    showImg(index, row) {
-      this.showImgDialog = true;
-      this.$http
-        .get(`/sys/livecoverpicture/${row.id}`)
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          }
-          this.bigUrl = res.data.coverUrl;
-          this.bigImgForm.name = res.data.coverName;
-          this.srcList.push(res.data.coverUrl);
-        })
-        .catch((err) => {
-          throw err;
-        });
-    },
-    //上传封面图
-    upImg() {
-      this.upImgDialog = true;
-    },
-    //上传图片
-    upImgMethod() {
-      if (this.imgForm.img === "") {
-        this.$message.warning("上传图片不能为空！");
-      } else if (this.imgForm.name === "") {
-        this.$message.warning("名字不能为空！");
-      } else {
-        this.$http
-          .post("/sys/sysFrequentlyQuestions", {
-            classify: this.imgForm.name,
-            pictureUrl: this.imgForm.img,
-          })
-          .then(({ data: res }) => {
-            if (res.code !== 0) {
-              return this.$message.error(res.msg);
-            } else {
-              this.upImgDialog = false;
-              this.imgForm.name = "";
-              this.$refs["upload"].clearFiles();
+        showClose: false,
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true;
+            instance.confirmButtonText = '删除中...';
+            if(row) { //操作删除
+              this.ids.push(row.id);
+            }else { //批量删除
+              this.dataListSelections.forEach((v) => {
+                this.ids.push(v.id);
+              });
+            } 
+            this.$http.delete(`/sys/sysFrequentlyQuestions`, {
+              data: this.ids,
+            }).then(({ data: res }) => {
+              instance.confirmButtonLoading = false;
+              done()
+              if (res.code !== 0) return this.$message.error(res.msg)
+              this.$message.success("删除成功")
+              this.ids = [];
               this.query();
-            }
-          })
-          .catch((err) => {
-            throw err;
-          });
-      }
-    },
-    //编辑
-    handle(row) {
-      this.editeImgDialog = true;
-      this.editeId = row.id;
-
-      this.$http
-        .get(`/sys/sysFrequentlyQuestions/${row.id}`)
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
-          }
-          this.editeUrl = res.data.pictureUrl;
-          this.editeImgForm.img = this.editeUrl;
-          this.editeImgForm.name = res.data.classify;
-          this.editeSrcList.push(res.data.coverUrl);
-        })
-        .catch((err) => {
-          throw err;
-        });
-    },
-    //删除
-    handleDelete(row) {
-      this.dialogVisible = true;
-      this.ids.push(row.id);
-    },
-    //确认删除
-    confirmShowState() {
-      this.$http
-        .delete(`/sys/sysFrequentlyQuestions`, {
-          data: this.ids,
-        })
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return this.$message.error(res.msg);
+            }).catch((err) => {
+              instance.confirmButtonLoading = false;
+              done()
+              this.$message.error(JSON.stringify(err))
+            });
           } else {
-            this.ids = [];
-            this.dialogVisible = false;
-            this.query();
+            done();
           }
-        })
-        .catch((err) => {
-          throw err;
-        });
+        }
+      }).then(() => {
+        
+      }).catch(() => this.$message.info("取消删除"))
     },
+    // 新增/编辑
+    addOrUpdate(row) {
+      this.$refs.addOrUpdate.init(row)
+    }
   },
 };
 </script>

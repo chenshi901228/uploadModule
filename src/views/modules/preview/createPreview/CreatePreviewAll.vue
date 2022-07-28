@@ -56,6 +56,7 @@
         </el-form-item>
         <el-form-item label="预计时长(分)" prop="estimateLiveTime">
           <el-input
+            maxlength="4"
             style="width: 400px"
             placeholder="预计时长"
             v-model="ruleForm.estimateLiveTime"
@@ -120,7 +121,7 @@
             <el-option
               v-for="(item, index) in assistantOptions"
               :key="index"
-              :label="item.userName"
+              :label="item.label"
               :value="item.weixinUserId"
             >
             </el-option>
@@ -249,6 +250,13 @@
           <div>
             格式限制：jpg/jpeg/png,建议图片尺寸不小于630px×347px，大小不得超过2M
           </div>
+        </el-form-item>
+
+        <el-form-item label="直播动态" prop="trendsOpen">
+          <el-radio-group v-model="ruleForm.trendsOpen">
+            <el-radio :label="1">开启动态</el-radio>
+            <el-radio :label="0">关闭动态</el-radio>
+          </el-radio-group>
         </el-form-item>
 
         <el-form-item>
@@ -432,7 +440,8 @@ export default {
       recommendedAnchorList: [],
       anchors: "",
       assistantIds: [],
-      anchorId:null
+      anchorId: null,
+      trendsOpen: 1,
     };
     this.anchorId = this.$route.query.anchorId;
     this.getCoverPictureList();
@@ -491,7 +500,6 @@ export default {
 
     // 确认添加推荐主播
     addAnchorConfirm(data) {
-      this.$refs.chooseAnchor.close();
 
       this.ruleForm.recommendedAnchorList = data;
       this.ruleForm.anchors = data.length ? `已选择${data.length}个主播` : "";
@@ -539,7 +547,6 @@ export default {
 
     // 确认添加推荐商品
     addProductConfirm(data) {
-      this.$refs.chooseProduct.close();
 
       this.ruleForm.productIds = data;
       this.ruleForm.goods = data.length ? `已选择${data.length}个商品` : "";
@@ -570,6 +577,7 @@ export default {
             frontCover: this.frontCoverList.length
               ? this.frontCoverList[0].url
               : "",
+            trendsOpen: this.ruleForm.trendsOpen
           };
 
           this.submitLoading = true;
@@ -595,6 +603,7 @@ export default {
                 recommendedAnchorList: [],
                 anchors: "",
                 assistantIds: [],
+                trendsOpen: 1
               };
               this.ruleForm.frontCoverUrl = this.defaultImg[0];
               this.frontCoverList = [];
@@ -687,7 +696,13 @@ export default {
             if (res.code !== 0) {
               return this.$message.error(res.msg);
             }
-            this.assistantOptions = res.data;
+            res.data.map(item => {
+              let obj = {
+                weixinUserId: item.weixinUserId,
+                label: `助手昵称：${item.userName} 手机号：${item.phone || "-"}`
+              }
+              this.assistantOptions.push(obj);
+            })
           })
           .catch((err) => {
             throw err;

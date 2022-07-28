@@ -16,7 +16,7 @@
                 <div>主播昵称：{{ anchorDetails.username || '-' }}</div>
                 <div>真实姓名：{{ anchorDetails.realName || '-' }}</div>
                 <div>身份证号：{{ anchorDetails.idCard || '-' }}</div>
-                <div style="word-break: break-all">
+                <div style="word-break: break-all;max-height: 150px;overflow: auto;">
                     主播简介：{{ anchorDetails.introduce || '-' }}
                 </div>
             </div>
@@ -134,7 +134,19 @@
                 </el-date-picker>
             </el-form-item>
             <el-form-item
-                label="银行账户"
+                label="提现单号"
+                v-if="diaTbas === 2"
+                prop="code"
+            >
+                <el-input
+                style="width: 180px"
+                placeholder="请输入"
+                v-model="diaSearchForm.code"
+                clearable
+                ></el-input>
+            </el-form-item>
+            <el-form-item
+                label="银行账号"
                 v-if="diaTbas === 2"
                 prop="bankAccount"
             >
@@ -147,17 +159,35 @@
             </el-form-item>
             <el-form-item label="提现时间" v-if="diaTbas === 2" prop="date">
                 <el-date-picker
-                placeholder="请选择"
-                v-model="diaSearchForm.date"
-                type="datetimerange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                >
+                  placeholder="请选择"
+                  v-model="diaSearchForm.date"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  value-format="yyyy-MM-dd">
                 </el-date-picker>
             </el-form-item>
             <el-form-item
+                label="提现状态"
+                v-if="diaTbas === 2"
+                prop="withdrawStatus"
+            >
+                <el-select
+                placeholder="请选择"
+                style="width: 180px"
+                v-model="diaSearchForm.withdrawStatus"
+                clearable
+                >
+                <el-option :value="-1" label="驳回"></el-option>
+                <el-option :value="1" label="审核中"></el-option>
+                <el-option :value="2" label="核算中"></el-option>
+                <el-option :value="3" label="到帐中"></el-option>
+                <el-option :value="4" label="已到账"></el-option>
+                <el-option :value="5" label="未到账"></el-option>
+                </el-select>
+            </el-form-item>
+            <!-- <el-form-item
                 label="审批状态"
                 v-if="diaTbas === 2"
                 prop="approveStatus"
@@ -184,7 +214,7 @@
                 <el-option :value="1" label="已支付"></el-option>
                 <el-option :value="-1" label="支付失败"></el-option>
                 </el-select>
-            </el-form-item>
+            </el-form-item> -->
             <el-form-item
                 label="用户昵称"
                 v-if="diaTbas === 3 || diaTbas === 4"
@@ -246,17 +276,6 @@
                 >
                 <el-option :value="0" label="普通用户"></el-option>
                 <el-option :value="1" label="助手"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="状态" v-if="diaTbas === 4" prop="delFlg">
-                <el-select
-                placeholder="请选择"
-                style="width: 180px"
-                v-model="diaSearchForm.delFlg"
-                clearable
-                >
-                <el-option :value="0" label="正常"></el-option>
-                <el-option :value="1" label="取消关注"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
@@ -352,7 +371,7 @@
                 type="primary"
                 plain
                 icon="el-icon-plus"
-                >添加主播</el-button
+                >新增主播</el-button
                 >
                 <el-button
                 size="mini"
@@ -481,6 +500,53 @@
                     </div>
                 </template>
                 </el-table-column>
+
+                <el-table-column
+                :prop="prop"
+                :label="label"
+                :key="prop"
+                header-align="center"
+                align="center"
+                v-else-if="prop === 'sumTax'"
+                >
+                <template slot="header">
+                  税费
+                  <el-tooltip class="item" effect="dark" content="税费=增值税+附加税+个税" placement="bottom">
+                    <i class="el-icon-question"></i>
+                  </el-tooltip>
+                </template>
+                </el-table-column>
+
+                <el-table-column
+                :prop="prop"
+                :label="label"
+                :key="prop"
+                header-align="center"
+                align="center"
+                v-else-if="prop === 'userType' && diaTbas === 2"
+                >
+                <template slot-scope="scope">
+                    <div>
+                    {{ scope.row.userType === 1 ? "个人" : "企业" }}
+                    </div>
+                </template>
+                </el-table-column>
+
+                <el-table-column
+                :prop="prop"
+                :label="label"
+                :key="prop"
+                header-align="center"
+                align="center"
+                v-else-if="prop === 'withdrawStatus' && diaTbas === 2"
+                >
+                <template slot-scope="scope">
+                    <div>
+                    {{ scope.row.withdrawStatus === '-1' ? "--" : scope.row.withdrawStatus === '1' ? "审核中" : scope.row.withdrawStatus === '2' ? "核算中" : scope.row.withdrawStatus === '3' ? "到帐中" : scope.row.withdrawStatus === '4' ? "已到账" : scope.row.withdrawStatus === '5' ? "未到账" : "--" }}
+                    </div>
+                </template>
+                </el-table-column>
+
                 <el-table-column
                 :prop="prop"
                 :label="label"
@@ -565,11 +631,8 @@
                 v-else-if="prop === 'delFlg'"
                 >
                 <template slot-scope="scope">
-                    <div v-if="!scope.row.anchorName && diaTbas === 4">
-                    {{ scope.row.delFlg === 1 ? "取消关注" : "正常" }}
-                    </div>
-                    <div v-else-if="diaTbas === 5">
-                    {{ scope.row.delFlg === 1 ? "下架" : "上架" }}
+                    <div v-if="diaTbas === 5">
+                      上架
                     </div>
                     <div v-else>
                     {{ scope.row.delFlg === 1 ? "未推荐" : "已推荐" }}
@@ -599,22 +662,30 @@
                 "
             >
                 <template slot-scope="scope">
-                <el-button
+                <!-- <el-button
                     v-if="diaTbas === 2"
                     type="text"
                     size="small"
                     icon="el-icon-view"
                     @click="previewInvoiceImg(scope.row)"
                     >查看发票</el-button
-                >
+                > -->
                 <el-button
+                    v-if="diaTbas === 2"
+                    type="text"
+                    size="small"
+                    icon="el-icon-view"
+                    @click="previewInvoice(scope.row.id,scope.row.withdrawStatus)"
+                    >查看</el-button
+                >
+                <!-- <el-button
                     v-if="diaTbas === 2 && scope.row.approveStatus == 0"
                     type="text"
                     size="small"
                     icon="el-icon-upload2"
                     @click="updateInvoiceImg(scope.row)"
                     >重新上传</el-button
-                >
+                > -->
                 <el-button
                     v-if="diaTbas === 5"
                     type="text"
@@ -717,13 +788,6 @@
             <el-option :value="1" label="是"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="关联产品编号">
-          <el-input
-            style="width: 200px"
-            v-model="productForm.id"
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
         <el-form-item>
           <el-button
             type="primary"
@@ -793,10 +857,9 @@
           <template slot-scope="{ row }">
             <div>
               <img
-                style="width: 100%; height: 60px"
-                class="productImage"
+                style="width: 100%; height: 60px; object-fit: cover;"
                 :src="
-                  row.productImage || 'https://picsum.photos/400/300?random=1'
+                  row.productImage || require('@/assets/img/default_cover.jpg')
                 "
                 alt=""
               />
@@ -813,7 +876,7 @@
             <span>{{ scope.row.productName || "--" }}</span>
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           width="120"
           label="商品价格"
           prop="oldPrice"
@@ -822,10 +885,10 @@
           <template slot-scope="scope">
             <span>{{ scope.row.oldPrice || "--" }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           width="150"
-          label="销售价格"
+          label="带货价格"
           prop="price"
           align="center"
         >
@@ -855,33 +918,12 @@
         </el-table-column>
         <el-table-column
           width="150"
-          label="关联产品编号"
-          prop="id"
-          align="center"
-          show-overflow-tooltip
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.id || "--" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          width="150"
-          label="更新时间"
-          prop="updateDate"
-          align="center"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.updateDate || "--" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          width="150"
           label="上架状态"
           prop="delFlg"
           align="center"
         >
           <template slot-scope="scope">
-            <span> {{ scope.row.delFlg === 1 ? "下架" : "上架" }}</span>
+            <span> {{ scope.row.isAdd === 1 ? "上架" : "下架" }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -1024,22 +1066,12 @@
         </el-table-column>
         <el-table-column
           width="150"
-          label="更新时间"
-          prop="updateDate"
-          align="center"
-        >
-          <template slot-scope="scope">
-            <span>{{ scope.row.updateDate || "--" }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column
-          width="150"
-          label="上架状态"
+          label="推荐状态"
           prop="delFlg"
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.delFlg === 0 ? "上架" : "下架" }}</span>
+            <span>{{ scope.row.delFlg === 0 ? "已推荐" : "未推荐" }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -1054,7 +1086,7 @@
               size="mini"
               type="text"
               @click="addRecommend(scope.row.recommendAnchorId)"
-              >添加</el-button
+              >推荐</el-button
             >
           </template>
         </el-table-column>
@@ -1287,6 +1319,7 @@
         :model="powerform"
         ref="powerform"
         :rules="dataRule"
+        size="small"
       >
         <el-form-item label="粉丝团身份" label-width="120px" prop="power">
           <el-select v-model="powerform.power" placeholder="请选择">
@@ -1296,8 +1329,8 @@
       </el-form>
       <div v-else-if="userType === 1">确定取消粉丝团助手身份？</div>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="changePowerVisible = false">取 消</el-button>
-        <el-button type="primary" @click="confirmChangePower">确 定</el-button>
+        <el-button size="small" @click="changePowerVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="confirmChangePower">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -1342,12 +1375,13 @@ export default {
         approveStatus: "",
         payStatus: "",
         date: "",
+        code:"",
+        withdrawStatus:""
       },
       productForm: {
         productName: "",
         productType: "",
         isFree: "",
-        id: "",
       },
       // 推荐主播搜索
       recommendForm: {
@@ -1670,15 +1704,22 @@ export default {
           break;
         case 2:
           this.diaTableTitle = {
+            id: "提现单号",
             amount: "提现金额",
-            accountName: "账户姓名",
-            bankAccount: "银行账户",
+            sumTax: "税费",
+            addedValueTax: "本次代征增值税",
+            additionalTax: "本次代征附加税",
+            personalIncomeTax: "本次代征个税",
+            receivedAmount: "到账金额",
+            userType: "账户类型",
+            accountName: "账户名称",
+            bankAccount: "银行账号",
             depositBank: "开户银行",
             branchName: "支行名称",
             address: "开户行所在地",
             createDate: "提现时间",
-            approveStatus: "审批状态",
-            confirmStatus: "提现状态",
+            // approveStatus: "审批状态",
+            withdrawStatus: "提现状态",
           };
           break;
         case 3:
@@ -1694,21 +1735,21 @@ export default {
             avatarUrl: "用户头像",
             userName: "用户昵称",
             phone: "手机号码",
+            intimacyNum: "亲密度",
             level: "用户等级",
             userType: "粉丝团身份",
             createDate: "入团时间",
-            delFlg: "状态",
           };
           break;
         case 5:
           this.diaTableTitle = {
             productImage: "商品图片",
             productName: "商品名称",
-            oldPrice: "商品原价",
+            // oldPrice: "商品原价",
             price: "带货价格",
             productType: "商品类型",
             isFree: "是否免费",
-            id: "关联产品编号",
+            // id: "关联产品编号",
             updateDate: "上架时间",
             delFlg: "上架状态",
           };
@@ -1778,7 +1819,6 @@ export default {
             level: this.diaSearchForm.level,
             userName: this.diaSearchForm.userName,
             userType: this.diaSearchForm.userType,
-            delFlg: this.diaSearchForm.delFlg,
           };
           url =
             "/sys/manage/weixinUser/anchor/fans/achorFansWeixinUserInfoPage";
@@ -1946,7 +1986,6 @@ export default {
             productName: this.productForm.productName,
             productType: this.productForm.productType,
             isFree: this.productForm.isFree,
-            id: this.productForm.id,
             anchorId: this.userId,
           }),
         })
@@ -2105,7 +2144,6 @@ export default {
           productName: "",
           productType: "",
           isFree: "",
-          id: "",
         };
         this.queryUserList();
       } else if (name == "recommendForm") {
@@ -2231,7 +2269,7 @@ export default {
         qrCode:this.anchorDetails.qrCode,
       }
       this.$router.push({
-        path: "/preview-editeUserInfo-EditeUserInfo",
+        path: "/anchorManagement-anchorDetails-EditeUserInfo",
         query: { info: JSON.stringify(obj) },
       });
     },
@@ -2378,8 +2416,15 @@ export default {
                 showClose: false
             }).catch(() => {})
         }
+
+        this.$router.push({
+          path:'anchorManagement-anchorDetails-withdraw',
+          query:{
+            anchorDetails:this.anchorDetails
+          }
+        })
         
-        this.dialogVisible_withdraw = true;
+        // this.dialogVisible_withdraw = true;
     },
     // 关闭提现
     closeWithdrawHandle() {
@@ -2529,6 +2574,16 @@ export default {
         })
         .catch((err) => {});
     },
+    //查看提现详情
+    previewInvoice(id,withdrawStatus){
+      this.$router.push({
+          path:'anchorManagement-anchorDetails-withdrawDetail',
+          query:{
+            id:id,
+            withdrawStatus:withdrawStatus
+          }
+      })
+    }
   },
 };
 </script>

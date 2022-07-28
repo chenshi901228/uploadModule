@@ -123,7 +123,7 @@ export default {
                     this.mixinTableModuleOptions.getDataListURL = "/sys/liveList/selectPageForLiveRecommend"
                     // table选项
                     this.tableItem = [
-                        { prop: "frontCoverUrl", width: 140, label: "直播宣传图", type: "image", style: { width: "100px", height: "60px" } },
+                        { prop: "frontCoverUrl", width: 140, label: "直播宣传图", type: "image", defaultImg: require('@/assets/img/default_cover.jpg'), style: { width: "100px", height: "60px", objectFit: 'cover' } },
                         { prop: "liveTheme", label: "直播主题" },
                         { prop: "anchorUser", label: "主播" },
                         { prop: "anchorTel", label: "手机号码" },
@@ -144,7 +144,7 @@ export default {
                 case "preview": 
                     this.mixinTableModuleOptions.getDataListURL = "/sys/livePreview/selectLiveListPageForLiveRecommend"
                     this.tableItem = [
-                        { prop: "frontCoverUrl", width: 140, label: "直播宣传图", type: "image", style: { width: "100px", height: "60px" } },
+                        { prop: "frontCoverUrl", width: 140, label: "直播宣传图", type: "image", defaultImg: require('@/assets/img/default_cover.jpg'), style: { width: "100px", height: "60px", objectFit: 'cover' } },
                         { prop: "liveTheme", label: "直播主题" },
                         { prop: "anchorUser", label: "主播" },
                         { prop: "anchorTel", label: "手机号码" },

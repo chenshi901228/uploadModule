@@ -89,6 +89,21 @@
             >
             </el-input>
           </el-form-item>
+          <el-form-item
+            label="上架状态"
+            prop="delFlg"
+            v-if="isOpen || formItemCount >= 5"
+          >
+            <el-select
+              style="width: 200px"
+              clearable
+              v-model="dataForm.delFlg"
+              placeholder="请选择"
+            >
+              <el-option label="已下架" :value="1"></el-option>
+              <el-option label="已上架" :value="0"></el-option>
+            </el-select>
+          </el-form-item>
 
           <div class="headerTool-search-btns">
             <el-form-item>
@@ -219,7 +234,7 @@
               </span>
               <!-- 状态 -->
               <span v-else-if="item.prop == 'delFlg'">
-                <el-tag size="small" :type="row.delFlg === 0 ? 'success' : 'danger'">{{row.delFlg === 0 ? '上架' : '下架'}}</el-tag>
+                <el-tag size="small" :type="row.delFlg === 0 ? 'success' : 'danger'">{{row.delFlg === 0 ? '已上架' : '已下架'}}</el-tag>
               </span>
               <span v-else>
                 {{ row[item.prop] || "-" }}
@@ -304,6 +319,7 @@ export default {
         productType: "",
         isFree: null,
         linkedProductId: "",
+        delFlg: null
       },
 
       tableItem: [
@@ -406,7 +422,7 @@ export default {
           //未勾选任何选项
           return this.$message.warning("请先选择商品");
         } else {
-          this.$confirm("此操作将下架选中商品, 是否继续?", "提示", {
+          this.$confirm("确认下架该商品？", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning",
@@ -421,7 +437,7 @@ export default {
         }
       } else {
         //单个操作
-        this.$confirm("确认下架?", "提示", {
+        this.$confirm("确认下架该商品？", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           type: "warning",

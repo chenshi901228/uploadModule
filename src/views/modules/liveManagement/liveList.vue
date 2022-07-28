@@ -117,6 +117,28 @@
               <el-option label="隐藏" :value="0"></el-option>
             </el-select>
           </el-form-item>
+          <el-form-item v-if="isOpen || formItemCount >= 10" label="是否创建预告" prop="fromPreview">
+            <el-select
+              clearable
+              v-model="dataForm.fromPreview"
+              placeholder="请选择"
+              style="width: 200px"
+            >
+              <el-option label="是" :value="1"></el-option>
+              <el-option label="否" :value="0"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item v-if="isOpen || formItemCount >= 11" label="直播动态" prop="trendsOpen">
+            <el-select
+              clearable
+              v-model="dataForm.trendsOpen"
+              placeholder="请选择"
+              style="width: 200px"
+            >
+              <el-option label="已开启" :value="1"></el-option>
+              <el-option label="已关闭" :value="0"></el-option>
+            </el-select>
+          </el-form-item>
           
           <!-- 搜索重置展开按钮 -->
           <div class="headerTool-search-btns">
@@ -200,6 +222,10 @@
             <span v-else-if="item.prop == 'showMode'">
               {{ row.showMode ? "横屏" : "竖屏" }}
             </span>
+            <!-- 直播动态 -->
+            <span v-else-if="item.prop == 'trendsOpen'">
+              {{ row.trendsOpen ? "已开启" : "已关闭" }}
+            </span>
             <!-- 是否录制 -->
             <span v-else-if="item.prop == 'transcribeFlg'">
               {{ row.transcribeFlg ? "是" : "否" }}
@@ -219,6 +245,10 @@
             <!-- 显示状态 -->
             <span v-else-if="item.prop == 'showState'">
               {{ row.showState ? "显示" : "隐藏" }}
+            </span>
+            <!-- 是否创建预告 -->
+            <span v-else-if="item.prop == 'fromPreview'">
+              {{ row.fromPreview == 0 ? "否" : "是" }}
             </span>
             <!-- 直播间ID -->
             <span
@@ -326,6 +356,8 @@ export default {
         transcribeFlg: null,
         liveState: null,
         showState: null,
+        fromPreview: null,
+        trendsOpen: null
       },
 
       tableItem: [
@@ -347,9 +379,11 @@ export default {
         { prop: "interactionNum", label: "互动次数" },
         { prop: "shareNum", label: "分享次数" },
         { prop: "addUserNum", label: "新增用户" },
+        { prop: "trendsOpen", label: "直播动态" },
         { prop: "transcribeFlg", label: "是否录制" },
         { prop: "liveState", label: "直播状态" },
         { prop: "showState", label: "显示状态" },
+        { prop: "fromPreview", label: "是否创建预告" },
         { prop: "livingRoomId", label: "直播间ID", width: 180 },
         { prop: "remark", label: "备注" },
         { prop: "createDate", label: "创建时间", width: 180 },
@@ -416,10 +450,10 @@ export default {
     },
 
     // 判断是否有操作按钮的权限---type:1-商品/主播，2-助手
-    isHandleAuth({ livePreviewId, liveState, startDate }, type) {
-      if(!livePreviewId) { //直播预告创建的直播
+    isHandleAuth({ livePreviewId, liveState, planStartDate }, type) {
+      if(livePreviewId) { //直播预告创建的直播
         if(liveState == 3) { //未开播
-          let date = new Date(startDate).getTime() - new Date().getTime()
+          let date = new Date().getTime() - new Date(planStartDate).getTime()
           date = Math.ceil(date / 1000 / 60)
           return date <= 120  //超过开播时间2小时无操作按钮权限
         }
@@ -441,7 +475,8 @@ export default {
           liveId: row.id,
           anchorId: row.anchorUserId,
           type: 1,
-          authEdit: this.isHandleAuth(row, "1") ? 1 : 0 
+          authEdit: this.isHandleAuth(row, "1") ? 1 : 0,
+          isAdd: this.isHandleAuth(row, "1") ? undefined : 1 
         }
       });
     },
@@ -451,8 +486,9 @@ export default {
         name: "liveManagement-recommendAnchor-RecommendAnchor",
         query: { 
           liveId: row.id,
-          authEdit: this.isHandleAuth(row, "1") ? 1 : 0 ,
-          anchorId: row.anchorUserId
+          authEdit: this.isHandleAuth(row, "1") ? 1 : 0,
+          anchorId: row.anchorUserId,
+          state: this.isHandleAuth(row, "1") ? undefined : 1
         }
       });
     },

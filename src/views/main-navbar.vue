@@ -187,11 +187,16 @@ export default {
     },
     goToHome() {
       this.$http.post('/sys/user/chooseLoginRole',{anchorId:this.selectUserAnchor.anchorId,type:this.selectUserAnchor.type}).then(({data:res})=>{
-        if(res.code!==0){
-          return this.$message.error(res.msg)
-        }
+        if(res.code !== 0) return this.$message.error(res.msg)
         this.accountSelectVisible = false
-        location.reload()
+
+        this.$store.state.contentTabs = this.$store.state.contentTabs.filter(item => item.name === 'home')
+        if(this.$store.state.contentTabsActiveName == 'home') return
+        this.$router.push({ name: 'home' })
+
+        setTimeout(() => {
+          location.reload()
+        }, 500)
       })
     }
   }

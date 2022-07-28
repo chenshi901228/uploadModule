@@ -1,163 +1,217 @@
-<!-- 主播客服 -->
 <template>
-    <el-card shadow="never" class="aui-card--fill">
-        <div class="anchor-service" :style="{ 'height': siteContentViewHeight + 'px' }">
-            <div class="message-list">
-                <div class="message-list-search">
-                    <el-input
-                        :maxlength="10"
-                        placeholder="请输入内容"
-                        prefix-icon="el-icon-search"
-                        v-model.trim="searchParams"
-                        clearable>
-                    </el-input>
-                </div>
-                <!-- 会话列表 -->
-                <message-list 
-                    :messageListLoading="messageListLoading"
-                    :conversationList="filterConversationList" 
-                    @conversationSelect="conversationSelect"></message-list>
-            </div>
-            <!-- 消息列表 -->
-            <message-content 
-                :conversation="conversation" 
-                :tim="tim"></message-content>
+  <el-card shadow="never" class="aui-card--fill">
+    <div class="mod-pay__order">
+      <el-form
+        class="headerTool"
+        :inline="true"
+        :model="dataForm"
+        ref="dataForm"
+        label-width="100px"
+        size="small"
+        @keyup.enter.native="getDataList()"
+      >
+        <el-form-item v-if="isOpen || formItemCount >= 1" label="主播昵称" prop="sendUserName">
+          <el-input
+            style="width: 200px"
+            v-model="dataForm.sendUserName"
+            clearable
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 2" label="主播手机号码" prop="sendUserPhone">
+          <el-input
+            style="width: 200px"
+            v-model="dataForm.sendUserPhone"
+            clearable
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 3" label="用户昵称" prop="toUserName">
+          <el-input
+            style="width: 200px"
+            v-model="dataForm.toUserName"
+            clearable
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 4" label="用户手机号码" prop="toUserPhone">
+          <el-input
+            style="width: 200px"
+            v-model="dataForm.toUserPhone"
+            clearable
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <!-- 搜索重置展开按钮 -->
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button 
+              type="primary" 
+              icon="el-icon-search" 
+              size="mini"
+              @click="getDataList">{{ $t("query") }}</el-button>
+            <el-button 
+              icon="el-icon-refresh" 
+              size="mini" 
+              @click="resetDataForm()">{{ $t("reset") }}</el-button>
+            <el-button size="mini" plain @click="open">
+              <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button>
+          </el-form-item>
         </div>
-    </el-card>
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
+              <el-button 
+                type="warning"
+                plain
+                icon="el-icon-download" 
+                size="mini"
+                @click="exportHandle">{{ $t("export") }}</el-button>
+            </el-form-item>
+          </div>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                <el-button size="small" icon="el-icon-refresh" circle @click="query"></el-button>
+              </el-tooltip>
+            </el-form-item>
+          </div>
+        </div>
+      </el-form>
+      <el-table
+        v-loading="dataListLoading"
+        :data="dataList"
+        @selection-change="dataListSelectionChangeHandle"
+        :height="siteContentViewHeight"
+        style="width: 100%"
+        ref="table"
+      >
+        <el-table-column
+          prop="sendUserName"
+          label="主播昵称"
+          min-width="200px"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        ></el-table-column>
+        <el-table-column
+          prop="sendUserPhone"
+          label="主播手机号码"
+          min-width="200px"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        ></el-table-column>
+        <el-table-column
+            prop="toUserName"
+            label="用户昵称"
+            min-width="200px"
+            header-align="center"
+            align="center"
+            show-overflow-tooltip
+        ></el-table-column>
+        <el-table-column
+            prop="toUserPhone"
+            label="用户手机号码"
+            min-width="200px"
+            header-align="center"
+            align="center"
+            show-overflow-tooltip
+        ></el-table-column>
+        <el-table-column
+          prop="createDate"
+          label="更新时间"
+          min-width="200px"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        ></el-table-column>
+        <el-table-column
+          :label="$t('handle')"
+          fixed="right"
+          header-align="center"
+          align="center"
+          width="200"
+        >
+          <template slot-scope="{ row }">
+            <el-button
+              type="text"
+              size="small"
+              icon="el-icon-view"
+              @click="lookHandle(row)"
+              >查看</el-button
+            >
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        background
+        :current-page="page"
+        :page-sizes="[10, 20, 50, 100]"
+        :page-size="limit"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="pageSizeChangeHandle"
+        @current-change="pageCurrentChangeHandle"
+      >
+      </el-pagination>
+    </div>
+  </el-card>
 </template>
+
 <script>
-import TIM from 'tim-js-sdk';
-import TIMUploadPlugin from 'tim-upload-plugin';
-import MessageList from "./component/message-list.vue"
-import MessageContent from "./component/message-content.vue"
+import mixinViewModule from "@/mixins/view-module";
+import { addDynamicRoute } from "@/router";
+import Template from "../devtools/template.vue";
 export default {
-    components: {
-        MessageList,
-        MessageContent
-    },
-    computed: {
-        documentClientHeight: {
-            get() {
-                return this.$store.state.documentClientHeight;
-            },
-        },
-        siteContentViewHeight() {
-            var height = this.documentClientHeight - ( 50 + 38 + 40 + 2 );
-            return height;
-        },
-        filterConversationList() {
-            return this.conversationList.filter(item => {
-                if(!this.searchParams) return true
-                return item.userProfile.nick.includes(this.searchParams)
-            })
-        }
-    },
-    mounted() {
-        this.loginIM()
-    },
-    destroyed() {
-        if(this.tim) {
-            this.tim.logout()
-            this.tim.destroy().then(() => {
-                console.log('sdk destroyed');
-            })
-        }
-    },
-    data() {
-        return {
-            searchParams: "", //搜索内容
-            tim: null,
-            conversationList: [], //会话列表
-            messageListLoading: false, //会话列表加载loading
-            conversation: null, //当前消息
-        }
-    },
-    methods: {
-        // 登录im
-        async loginIM() {
-            let res = await this.$http.get("/sys/manage/tencentCloudIm/getTxCloudUserSig");
-
-            let userId = res.data.data.liveUserId && res.data.data.liveUserId;
-            let userSig = res.data.data.userSig && res.data.data.userSig;
-
-
-            let options = {
-                SDKAppID: 1400341701 
-            };
-            this.tim = TIM.create(options); // SDK 实例通常用 tim 表示
-            this.tim.setLogLevel(0); // 普通级别，日志量较多，接入时建议使用
-            // tim.setLogLevel(1); // release 级别，SDK 输出关键信息，生产环境时建议使用
-            this.tim.registerPlugin({'tim-upload-plugin': TIMUploadPlugin});
-
-            // 登录IM
-            let promise = this.tim.login({userID: userId, userSig: userSig});
-
-            promise.then((imResponse) => {
-                console.log("login success:", imResponse.data); // 登录成功
-                if (imResponse.data.repeatLogin === true) {
-                    // 标识帐号已登录，本次登录操作为重复登录。v2.5.1 起支持
-                    console.log(imResponse.data.errorInfo);
-                    this.getConversationList()
-                }
-                
-            }).catch((imError) => {
-                this.$message.error( 'login error:' + imError ); // 登录失败的相关信息
-            });
-
-            // sdk ready 拉取会话列表
-            this.tim.on(TIM.EVENT.SDK_READY, (event) => {
-                if (event.name === "sdkStateReady") {
-                    this.getConversationList()
-                }
-            });
-            // 会话列表更新
-            this.tim.on(TIM.EVENT.CONVERSATION_LIST_UPDATED, (event) => {
-                console.log('TUI-conversation | onConversationListUpdated  |ok')
-                this.conversationList = event.data
-            });
-        },
-        getConversationList() {
-            // 拉取会话列表
-            this.messageListLoading = true
-            let promise = this.tim.getConversationList();
-            promise.then((imResponse) => {
-                this.messageListLoading = false
-                console.log(`TUI-conversation | getConversationList | getConversationList-length: ${imResponse.data.conversationList.length}`)
-                this.conversationList = imResponse.data.conversationList; // 会话列表，用该列表覆盖原有的会话列表
-                console.log(imResponse.data.conversationList)
-            }).catch((imError) => {
-                console.warn('getConversationList error:', imError); // 获取会话列表失败的相关信息
-                this.messageListLoading = false
-            });
-        },
-        // 选中某个会话拉取消息列表
-        conversationSelect(conversation) {
-            this.conversation = conversation
-        },
+  mixins: [mixinViewModule],
+  data() {
+    return {
+      mixinViewModuleOptions: {
+        getDataListURL: "/sys/imCallback/getInfoPage",
+        getDataListIsPage: true,
+        deleteIsBatch: true,
+        exportURL: "/sys/imCallback/exportList",
+      },
+      dataForm: {
+        sendUserName:"",
+        sendUserPhone:"",
+        toUserName:"",
+        toUserPhone:""
+      },
+      dataList: [{ createDate: 1 }],
+      userId: "",
+    };
+  },
+  components: { Template },
+  mounted() {
+    this.$bus.$on("change", () => {
+      this.getDataList();
+    });
+  },
+  methods: {
+    lookHandle(row){
+        this.$router.push({
+            path:"/serviceRecord-serviceList",
+            query:{info:JSON.stringify(row)}
+        })
     }
-
-}
+  },
+};
 </script>
-<style lang="scss">
-    .anchor-service {
-        display: flex;
-        .message-list {
-            width: 30%;
-            height: 100%;
-            // background: pink;
-            padding-right: 10px;
-            display: flex;
-            flex-direction: column;
-            ul {
-                margin: 0;
-                padding: 0;
-                display: flex;
-                flex-direction: column;
-                li {
-                    list-style: none;
-                }
-            }
-        }
-
-    }
+<style  scoped>
+.forbiddenAllBtn {
+  width: 120px;
+  height: 35px;
+  background: #409eff;
+  border-radius: 5px;
+  color: #fff;
+  line-height: 35px;
+  text-align: center;
+  cursor: pointer;
+  margin: 10px 0;
+}
 </style>

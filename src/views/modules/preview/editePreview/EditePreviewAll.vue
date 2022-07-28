@@ -7,18 +7,29 @@
         :model="ruleForm"
         :rules="rules"
         ref="ruleForm"
+        size="small"
         label-width="110px"
         class="demo-ruleForm"
       >
         <el-form-item label="直播主题" prop="liveTheme">
           <el-input
+            style="width: 400px"
             v-model="ruleForm.liveTheme"
             maxlength="60"
+            readonly
             show-word-limit
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="主播" prop="anchorId">
+          <el-input
+            readonly
+            style="width: 400px"
+            v-model="ruleForm.anchorId"
           ></el-input>
         </el-form-item>
         <el-form-item label="预计开播时间" prop="startDate">
           <el-date-picker
+            style="width: 400px"
             v-model="ruleForm.startDate"
             type="datetime"
             placeholder="预计开播时间"
@@ -29,7 +40,10 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="预计时长(分)" prop="estimateLiveTime">
-          <el-input v-model="ruleForm.estimateLiveTime"></el-input>
+          <el-input
+            style="width: 400px"
+            v-model="ruleForm.estimateLiveTime"
+          ></el-input>
         </el-form-item>
         <el-form-item label="直播宣传图" prop="frontCoverUrl" class="img-item">
           <div v-if="showDefaultImg" class="img-box-content">
@@ -89,6 +103,24 @@
             readonly
             clearable
           ></el-input>
+        </el-form-item>
+        <el-form-item label="投放人群" prop="dynamicGroupIds">
+          <el-select
+            style="width: 400px"
+            v-model="ruleForm.dynamicGroupIds"
+            filterable
+            multiple
+            placeholder="请选择"
+            :clearable="true"
+          >
+            <el-option
+              v-for="(item, index) in options"
+              :key="index"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item
           class="quill-editor"
@@ -284,6 +316,8 @@ export default {
         products: "",
         recommendedAnchors: "",
         frontCover: "",
+        anchorId: "",
+        dynamicGroupIds: [],
       },
       dialogImageUrl: "",
       showDefaultImg: false,
@@ -305,12 +339,9 @@ export default {
           { required: true, message: "请输入预计时长", trigger: "blur" },
           { validator: blurText, trigger: "blur" }, //表单验证的时候会调用的方法
         ],
-        // frontCoverUrl: [
-        //   { required: true, message: "请选择直播宣传图", trigger: "change" },
-        // ],
-        // userGroup: [
-        //   { required: true, message: "请选择投放人群", trigger: "blur" },
-        // ],
+        anchorId: [
+          { required: true, message: "请输入主播", trigger: "blur" },
+        ],
         liveIntroduce: [
           { required: true, message: "请填写活动形式", trigger: "blur" },
         ],
@@ -337,6 +368,7 @@ export default {
       frontCoverList: [],
       frontCoverListDefault: "",
       info: {},
+      options: [],
     };
   },
   watch: {
@@ -354,7 +386,7 @@ export default {
   activated() {
     this.getPreviewDetail();
   },
-  created(){
+  created() {
     this.ruleForm = {
       id: "",
       liveTheme: "",
@@ -366,6 +398,8 @@ export default {
       products: "",
       recommendedAnchors: "",
       frontCover: "",
+      anchorId: "",
+      dynamicGroupIds: [],
     };
     this.dialogImageUrl = "";
     this.showDefaultImg = false;
@@ -379,6 +413,11 @@ export default {
     this.getCoverPictureList();
     this.ruleForm.id = this.$route.query.detailInfo.id;
     this.ruleForm.liveTheme = this.$route.query.detailInfo.liveTheme;
+    this.ruleForm.anchorId = this.$route.query.detailInfo.anchorUser;
+    this.getDynamicGroupList();
+    if(this.$route.query.detailInfo.dynamicGroupIdsString){
+      this.ruleForm.dynamicGroupIds = this.$route.query.detailInfo.dynamicGroupIdsString.split(",");
+    }
     this.ruleForm.startDate = this.$route.query.detailInfo.startDate;
     this.ruleForm.estimateLiveTime =
       this.$route.query.detailInfo.estimateLiveTime;
@@ -414,19 +453,18 @@ export default {
             // this.frontCoverListDefault = res.data.frontCover
             //   ? res.data.frontCover
             //   : "";
-            
-            
-            if(res.data.assistant){
+
+            if (res.data.assistant) {
               this.ruleForm.assistant = res.data.assistant;
             }
-            if(res.data.products){
+            if (res.data.products) {
               this.ruleForm.products = res.data.products;
               let productsData = this.ruleForm.products.split(",");
               this.ruleForm.products = productsData.length
                 ? `已选择${productsData.length}个商品`
                 : "";
             }
-            if(res.data.recommendedAnchors){
+            if (res.data.recommendedAnchors) {
               this.ruleForm.recommendedAnchors = res.data.recommendedAnchors;
               let anchorData = this.ruleForm.recommendedAnchors.split(",");
               this.ruleForm.recommendedAnchors = anchorData.length
@@ -500,7 +538,7 @@ export default {
         query: {
           liveId: this.info.id,
           anchorId: this.info.anchorUserId,
-          type:2
+          type: 2,
         },
       });
     },
@@ -511,7 +549,7 @@ export default {
         query: {
           liveId: this.info.id,
           anchorId: this.info.anchorUserId,
-          type:2
+          type: 2,
         },
       });
     },
@@ -529,6 +567,7 @@ export default {
             estimateLiveTime: this.ruleForm.estimateLiveTime,
             frontCoverUrl: this.ruleForm.frontCoverUrl,
             liveIntroduce: this.ruleForm.liveIntroduce,
+            dynamicGroupIds: this.ruleForm.dynamicGroupIds,
           };
           if (
             this.frontCoverList.length !== 0 &&
@@ -566,8 +605,8 @@ export default {
 
               this.closeCurrentTab();
               this.$router.push({
-                path:"/liveManagement-PreviewAll"
-              })
+                path: "/liveManagement-PreviewAll",
+              });
             })
             .catch((err) => {
               this.submitLoading = false;
@@ -645,6 +684,24 @@ export default {
     dateIfAddZero: function (time) {
       return time < 10 ? "0" + time : time;
     },
+    //获取投放人群
+    getDynamicGroupList() {
+      if (this.$route.query.detailInfo.anchorUserId && this.$route.query.detailInfo.anchorUserId.length !== 0) {
+        this.$http
+          .get(
+            `/sys/dynamicGroup/getAllDynamicGroupList?anchorId=${this.$route.query.detailInfo.anchorUserId}`
+          )
+          .then(({ data: res }) => {
+            if (res.code !== 0) {
+              return this.$message.error(res.msg);
+            }
+            this.options = res.data;
+          })
+          .catch((err) => {
+            throw err;
+          });
+      }
+    },
   },
 };
 </script>
@@ -654,10 +711,10 @@ export default {
     width: 100%;
     height: 80px;
   }
-  /deep/.el-input {
-    width: 300px;
-    padding-right: 50px;
-  }
+  // /deep/.el-input {
+  //   width: 300px;
+  //   padding-right: 50px;
+  // }
 
   /deep/.frontCover-img-box {
     .frontCover-box {

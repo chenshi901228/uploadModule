@@ -7,18 +7,22 @@
         :model="ruleForm"
         :rules="rules"
         ref="ruleForm"
+        size="small"
         label-width="110px"
         class="demo-ruleForm"
       >
         <el-form-item label="直播主题" prop="liveTheme">
           <el-input
+            style="width: 400px"
             v-model="ruleForm.liveTheme"
             maxlength="60"
+            readonly
             show-word-limit
           ></el-input>
         </el-form-item>
         <el-form-item label="预计开播时间" prop="startDate">
           <el-date-picker
+            style="width: 400px"
             v-model="ruleForm.startDate"
             type="datetime"
             placeholder="预计开播时间"
@@ -29,7 +33,7 @@
           </el-date-picker>
         </el-form-item>
         <el-form-item label="预计时长(分)" prop="estimateLiveTime">
-          <el-input v-model="ruleForm.estimateLiveTime"></el-input>
+          <el-input style="width: 400px" v-model="ruleForm.estimateLiveTime"></el-input>
         </el-form-item>
         <el-form-item label="直播宣传图" prop="frontCoverUrl" class="img-item">
           <div v-if="showDefaultImg" class="img-box-content">
@@ -653,10 +657,10 @@ export default {
     width: 100%;
     height: 80px;
   }
-  /deep/.el-input {
-    width: 300px;
-    padding-right: 50px;
-  }
+  // /deep/.el-input {
+  //   width: 300px;
+  //   padding-right: 50px;
+  // }
 
   /deep/.frontCover-img-box {
     .frontCover-box {

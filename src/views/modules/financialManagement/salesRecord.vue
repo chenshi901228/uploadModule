@@ -15,7 +15,7 @@
             style="width: 200px"
             v-model="dataForm.username"
             clearable
-            placeholder="用户昵称"
+            placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
@@ -23,7 +23,7 @@
             style="width: 200px"
             v-model="dataForm.userPhone"
             clearable
-            placeholder="手机号码"
+            placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 3" label="商品名称" prop="productName">
@@ -31,34 +31,33 @@
             style="width: 200px"
             v-model="dataForm.productName"
             clearable
-            placeholder="商品名称"
+            placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 4" label="商品类型" prop="productType">
-          <el-input
+          <el-select
             style="width: 200px"
             v-model="dataForm.productType"
             clearable
-            placeholder="商品类型"
-          />
+            placeholder="请选择"
+          >
+            <el-option value="专业课" label="专业课"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 5" label="支付方式" prop="payType">
-          <el-input
-            style="width: 200px"
-            v-model="dataForm.payType"
-            clearable
-            placeholder="支付方式"
-          />
-          
+          <el-select style="width: 200px"  v-model="dataForm.payType" clearable>
+            <el-option value="微信" label="微信"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 6" label="消费来源" prop="consumptionSource">
-          <el-input
+          <el-select
             style="width: 200px"
             v-model="dataForm.consumptionSource"
             clearable
-            placeholder="消费来源"
-          />
-        
+            placeholder="请选择"
+          >
+            <el-option value="小程序端" label="小程序端"></el-option>
+          </el-select>
         </el-form-item>
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">

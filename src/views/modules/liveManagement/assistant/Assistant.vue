@@ -224,8 +224,6 @@ export default {
   activated() {
     if(this.$route.query.authEdit != undefined) { //有表示来自直播列表
       this.authEdit = this.$route.query.authEdit
-    }else { //来自预告
-      this.authEdit = 1
     }
     this.params.liveId = this.$route.query.liveId;
     this.params.type = parseInt(this.$route.query.type)

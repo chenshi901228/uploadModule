@@ -415,7 +415,7 @@ export default {
         type:'platform'
       }
       this.$router.push({
-        path: "/preview-editeUserInfo-EditeUserInfo",
+        path: "/userManagement-editeUserInfo-EditeUserInfo",
         query: { info: JSON.stringify(obj) },
       });
     },

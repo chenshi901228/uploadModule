@@ -87,9 +87,11 @@ export default {
                 ],
                 accountName: [
                     { required: true, message: "请填写账户名称", trigger: "blur" },
+                    { max: 20, message: '最大输入20位', trigger: 'blur' }
                 ],
                 bankAccount: [
                     { required: true, message: "请填写银行账户", trigger: "blur" },
+                    { max: 20, message: '最大输入20位', trigger: 'blur' }
                 ],
             },
             bankForm: {}, //银行账户信息
