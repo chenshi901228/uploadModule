@@ -47,6 +47,10 @@
             placeholder="商品类型"
           >
             <el-option value="专业课" label="专业课"></el-option>
+            <el-option value="服务课" label="服务课"></el-option>
+            <el-option value="线下课" label="线下课"></el-option>
+            <el-option value="权益卡" label="权益卡"></el-option>
+            <el-option value="书籍" label="书籍"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 5" label="支付方式" prop="payType">
