@@ -327,6 +327,7 @@
         </el-form>
         <el-table
           :data="diaDataList"
+          ref="table"
           height="calc(calc(100vh - 50px - 36px - 30px - 45px - 90px - 47px) - 2px)"
         >
           <template v-for="(label, prop) in diaTableTitle">
@@ -523,6 +524,7 @@
             >
               <template slot-scope="scope">
                 <el-button
+                  v-if="scope.row.status == 1 || scope.row.status == 2"
                   type="text"
                   icon="el-icon-edit-outline"
                   size="small"
@@ -550,7 +552,7 @@
             <p style="width:80px; margin:0">退款原因</p>
             <el-input
                 type="textarea"
-                maxlength="100"
+                maxlength="150"
                 show-word-limit
                 :rows="6"
                 placeholder="请输入"
@@ -822,6 +824,8 @@ export default {
           }
           this.diaDataList = res.data.list;
           this.total_dia = res.data.total;
+
+          if(this.$refs.table) this.$refs.table.doLayout()
         })
         .catch(() => {});
     },
