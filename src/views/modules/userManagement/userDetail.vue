@@ -596,6 +596,7 @@ export default {
       limit_dia: 10, // 每页数
       total_dia: 0,
       productTypeOptions: [], //商品类型下拉选项
+      remark: ""
     };
   },
 
@@ -622,7 +623,7 @@ export default {
       this.changeTbas(1);
   },
   methods: {
-    confirmHandle(){//确认退款
+    confirmHandle() {//确认退款
 
     },
     changeTbas(n) {

@@ -74,6 +74,9 @@
         <el-button type="primary" size="small" @click="confirm">通过</el-button>
       </div>
     </div>
+    <!-- 审核状态图片 -->
+    <img v-if="statusImg" class="statusImg" :src="statusImg" alt="">
+    
   </el-card>
 </template>
 
@@ -122,6 +125,15 @@ export default {
   },
   mounted() {
     this.querylist();
+  },
+  computed: {
+    // 审核状态图片
+    statusImg() {
+      if(this.info && this.info.approveStatus == 0) return require("@/assets/icon/icon_applying.png")
+      if(this.info && this.info.approveStatus == 1) return require("@/assets/icon/icon_agree.png")
+      if(this.info && this.info.approveStatus == 2) return require("@/assets/icon/icon_reject.png")
+      return ""
+    }
   },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
@@ -248,6 +260,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.statusImg {
+  width: 100px;
+  height: 100px;
+  position: fixed;
+  top: 150px;
+  right: 100px;
+}
 .el-col{
    margin-bottom: 30px;
 }
