@@ -1647,6 +1647,8 @@ export default {
             amount: "收益金额",
             type: "收益类型",
             detail: "收益描述",
+            productType: "商品类型",
+            weixinUserName: "购买人",
             createDate: "结算时间",
           };
           break;
@@ -1720,8 +1722,8 @@ export default {
             page: this.page_dia,
             anchorId: this.userId,
             type: this.diaSearchForm.type,
-            startDate: this.diaSearchForm.date[0],
-            endDate: this.diaSearchForm.date[1],
+            startDate: this.diaSearchForm.date && this.diaSearchForm.date[0] || '',
+            endDate: this.diaSearchForm.date && this.diaSearchForm.date[1] || '',
           };
           url = "/sys/anchorGain/page";
           break;
@@ -1733,8 +1735,8 @@ export default {
             bankAccount: this.diaSearchForm.bankAccount,
             approveStatus: this.diaSearchForm.approveStatus,
             payStatus: this.diaSearchForm.payStatus,
-            startDate: this.diaSearchForm.date[0],
-            endDate: this.diaSearchForm.date[1],
+            startDate: this.diaSearchForm.date && this.diaSearchForm.date[0] || '',
+            endDate: this.diaSearchForm.date && this.diaSearchForm.date[1] || '',
           };
           url = "/sys/anchorWithdraw/page";
           break;

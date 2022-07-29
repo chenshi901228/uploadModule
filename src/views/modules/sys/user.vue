@@ -215,6 +215,14 @@
               @click="forbidden(row)"
               >{{ row.disabledFlg != 0 ? "解除" : "禁用" }}</el-button
             >
+             <el-button
+              v-if="$hasPermission('sys:user:update')&&diaTbas===1"
+              type="text"
+              size="mini"
+              icon="el-icon-edit"
+              @click="resetPassword(row.id)"
+              >重置密码</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -599,6 +607,39 @@ export default {
           this.$message.info("已取消操作");
         });
     },
+
+    resetPassword(id) {
+      //单个操作
+      this.$confirm(
+        `是否确认重置密码?`,
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      )
+      .then(() => {
+        let url = "/sys/user/resetPassword"
+        this.$http
+          .post(url, { id })
+          .then(({ data: res }) => {
+            if (res.code == 0) {
+              this.$message.success("操作成功");
+              this.getUserList(this.diaTbas);
+            } else {
+              this.$message.error(res.msg);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch(() => {
+        this.$message.info("已取消操作");
+      });
+    },
+
   },
 };
 </script>

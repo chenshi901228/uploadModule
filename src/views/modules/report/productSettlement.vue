@@ -10,23 +10,8 @@
         size="small"
         @keyup.enter.native="getDataList()"
       >
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="username">
-          <el-input
-            style="width: 200px"
-            v-model="dataForm.username"
-            clearable
-            placeholder="请输入"
-          ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
-          <el-input
-            style="width: 200px"
-            v-model="dataForm.userPhone"
-            clearable
-            placeholder="请输入"
-          ></el-input>
-        </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 3" label="商品名称" prop="productName">
+        <el-form-item v-if="isOpen || formItemCount >= 1" label="商品名称" prop="productName">
           <el-input
             style="width: 200px"
             v-model="dataForm.productName"
@@ -34,7 +19,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 4" label="商品类型" prop="productType">
+        <el-form-item v-if="isOpen || formItemCount >= 2" label="商品类型" prop="productType">
           <el-select
             style="width: 200px"
             v-model="dataForm.productType"
@@ -48,21 +33,7 @@
             <el-option value="书籍" label="书籍"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 5" label="支付方式" prop="payType">
-          <el-select style="width: 200px"  v-model="dataForm.payType" clearable>
-            <el-option value="微信" label="微信"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 6" label="消费来源" prop="consumptionSource">
-          <el-select
-            style="width: 200px"
-            v-model="dataForm.consumptionSource"
-            clearable
-            placeholder="请选择"
-          >
-            <el-option value="小程序端" label="小程序端"></el-option>
-          </el-select>
-        </el-form-item>
+        
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">
           <el-form-item>
@@ -101,44 +72,60 @@
             </el-form-item>
           </div>
         </div>
-
-
       </el-form>
-
-        <el-table
-          v-loading="dataListLoading"
-          :data="dataList"
-          @selection-change="dataListSelectionChangeHandle"
-          :height="siteContentViewHeight"
-          style="width: 100%"
-          ref="table"
-        >
+      <el-table
+        v-loading="dataListLoading"
+        :data="dataList"
+        @selection-change="dataListSelectionChangeHandle"
+        :height="siteContentViewHeight"
+        style="width: 100%"
+        ref="table"
+      >
         <el-table-column
-          prop="id"
-          label="销售编号"
+          prop="productName"
+          label="商品名称"
           min-width="200px"
           header-align="center"
           align="center"
           show-overflow-tooltip
         ></el-table-column>
         <el-table-column
-          prop="userName"
-          label="用户昵称"
+          prop="oldPrice"
+          label="商品价格"
           header-align="center"
           align="center"
-          min-width="120px"
+          min-width="100px"
           show-overflow-tooltip
         ></el-table-column>
 
         <el-table-column
-          prop="userPhone"
-          label="手机号码"
+          prop="price"
+          label="销售价格"
+          min-width="100px"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
+          prop="num"
+          label="商品数量"
+          min-width="80px"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
+          prop="payPrice"
+          label="商品总价"
           min-width="120px"
           header-align="center"
           align="center"
           show-overflow-tooltip
         >
         </el-table-column>
+
         <el-table-column
           prop="productType"
           label="商品类型"
@@ -148,8 +135,8 @@
         >
         </el-table-column>
         <el-table-column
-          prop="productName"
-          label="商品名称"
+          prop="proportion"
+          label="主播结算比例（%）"
           min-width="150px"
           header-align="center"
           align="center"
@@ -157,32 +144,36 @@
         ></el-table-column>
 
         <el-table-column
-          prop="price"
-          label="销售价格"
+          prop="anchorAmount"
+          label="主播结算"
+          min-width="100px"
           header-align="center"
           show-overflow-tooltip
           align="center"
         >
         </el-table-column>
         <el-table-column
-          prop="price"
-          label="支付金额"
+          prop="platformProportion"
+          label="平台结算比例（%）"
+          min-width="150px"
           header-align="center"
           show-overflow-tooltip
           align="center"
         >
         </el-table-column>
         <el-table-column
-          prop="payType"
-          label="支付方式"
+          prop="platformAmount"
+          label="平台结算"
+          min-width="100px"
           header-align="center"
           show-overflow-tooltip
           align="center"
         >
         </el-table-column>
         <el-table-column
-          prop="consumptionSource"
-          label="消费来源"
+          prop="id"
+          label="关联订单编号"
+          min-width="170px"
           header-align="center"
           show-overflow-tooltip
           align="center"
@@ -190,40 +181,14 @@
         </el-table-column>
 
         <el-table-column
-          prop="payDate"
-          label="支付完成时间"
-          min-width="160px"
-          header-align="center"
-          align="center"
-          show-overflow-tooltip
-        >
-        </el-table-column>
-        <el-table-column
-          prop="statusStr"
-          label="订单状态"
-          header-align="center"
-          align="center"
-          show-overflow-tooltip
-        >
-    
-        </el-table-column>
-        <el-table-column
-          prop="productId"
-          label="关联产品编号"
-          min-width="120px"
-          header-align="center"
-          show-overflow-tooltip
-          align="center"
-        >
-        </el-table-column>
-        <el-table-column
           prop="createDate"
-          label="下单时间"
+          label="创建时间"
           min-width="160px"
           header-align="center"
           align="center"
           show-overflow-tooltip
-        ></el-table-column>
+        >
+        </el-table-column>
       </el-table>
       <el-pagination
         background
@@ -249,20 +214,16 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/finance/user/product/orderSalePage",
+        getDataListURL: "/sys/management/user/product/productSettlementReport",
         getDataListIsPage: true,
         deleteIsBatch: true,
-        exportURL: "/sys/finance/user/product/orderSaleExport",
+        exportURL: "/sys/management/user/product/productSettlementReportExport",
       },
       dataForm: {
-          userName: "",
-        userPhone: "",
         productName: "",
         productType: "",
-        payType: "",
-        consumptionSource: "",
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [{}],
       userId: "",
     };
   },
@@ -273,7 +234,6 @@ export default {
     });
   },
   methods: {
-
   },
 };
 </script>
