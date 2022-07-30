@@ -32,7 +32,10 @@ export default {
             this.getInfo()
         },
         getInfo() {
-            this.$http.get(`/sys/weixinuserproductlogistics/${this.info.id}`).then(({data: res}) => {
+
+            let url = "/sys/weixinuserproductlogistics/"
+
+            this.$http.get(`/sys/weixinuserproductlogistics/queryLogisticsProgress/${this.info.id}`).then(({data: res}) => {
                 if(res.code != 0) return this.$message.error(res.msg)
 
 
