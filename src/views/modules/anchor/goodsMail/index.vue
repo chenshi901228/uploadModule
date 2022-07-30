@@ -194,13 +194,13 @@
                             type="text"
                             size="small"
                             icon="el-icon-shopping-cart-full"
-                            @click="mailInfo(row)">物流信息</el-button>
+                            @click="mailInfo(row, 1)">物流信息</el-button>
                         <el-button
                             v-if="row.logisticsStatus != 0"
                             type="text"
                             size="small"
                             icon="el-icon-document"
-                            @click="mailInfo(row)">电子面单</el-button>
+                            @click="mailInfo(row, 2)">电子面单</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -285,9 +285,9 @@ export default {
         mailGoods(row) {
             this.$refs.mailGoods.init(row)
         },
-        // 物流信息/电子面单
-        mailInfo(row) {
-            this.$refs.mailInfo.init(row)
+        // 1-物流信息/2-电子面单
+        mailInfo(row, type) {
+            this.$refs.mailInfo.init(row, type)
         },
 
     },
