@@ -327,6 +327,7 @@
         </el-form>
         <el-table
           :data="diaDataList"
+          v-loading="dataListLoading"
           ref="table"
           height="calc(calc(100vh - 50px - 36px - 30px - 45px - 90px - 47px) - 2px)"
         >
@@ -508,6 +509,29 @@
               :key="prop"
               header-align="center"
               align="center"
+              v-else-if="prop === 'logisticsStatus'"
+              show-overflow-tooltip
+            >
+              <template slot-scope="scope">
+                <div>
+                  {{
+                    scope.row.logisticsStatus === 0
+                      ? "待发货"
+                      : scope.row.logisticsStatus === 1
+                      ? "待收货"
+                      : scope.row.logisticsStatus === 2
+                      ? "已收货"
+                      : "-"
+                  }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column
+              :prop="prop"
+              :label="label"
+              :key="prop"
+              header-align="center"
+              align="center"
               min-width="120"
               show-overflow-tooltip
               v-else
@@ -547,7 +571,13 @@
         </el-pagination>
       </div>
     </div>
-    <el-dialog title="申请退款" :visible.sync="dialogVisible" width="30%">
+    <el-dialog 
+      title="申请退款" 
+      :visible.sync="dialogVisible" 
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      @close="closeRefundDialog"
+      width="30%">
         <div class="dialog" style="display:flex;">
             <p style="width:80px; margin:0">退款原因</p>
             <el-input
@@ -556,18 +586,19 @@
                 show-word-limit
                 :rows="6"
                 placeholder="请输入"
-                v-model="remark">
+                v-model="refundReason">
             </el-input>
         </div>
         <span slot="footer" class="dialog-footer">
             <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-            <el-button size="small" type="primary" @click="confirmHandle">确 定</el-button>
+            <el-button :disabled="refundLoading" :loading="refundLoading" size="small" type="primary" @click="confirmHandle">确 定</el-button>
         </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
+import { getUUID } from "@/utils";
 export default {
   name: "LiveWebmanageUserdetail",
   data() {
@@ -585,6 +616,7 @@ export default {
         phone: "",
       },
       diaDataList: [],
+      dataListLoading: false,
       diaTableTitle: {
         price: "充值大豆",
         amount: "支付金额",
@@ -596,7 +628,8 @@ export default {
       limit_dia: 10, // 每页数
       total_dia: 0,
       productTypeOptions: [], //商品类型下拉选项
-      remark: ""
+      refundReason: "",
+      refundLoading: false,
     };
   },
 
@@ -623,9 +656,6 @@ export default {
       this.changeTbas(1);
   },
   methods: {
-    confirmHandle() {//确认退款
-
-    },
     changeTbas(n) {
       this.diaTbas = n;
       this.diaSearchForm = {
@@ -813,11 +843,13 @@ export default {
         default:
           break;
       }
+      this.dataListLoading = true
       this.$http
         .get(url, {
           params: data,
         })
         .then(({ data: res }) => {
+          this.dataListLoading = false
           if (res.code !== 0) {
             this.diaDataList = [];
             this.total_dia = 0;
@@ -828,7 +860,9 @@ export default {
 
           if(this.$refs.table) this.$refs.table.doLayout()
         })
-        .catch(() => {});
+        .catch(() => {
+          this.dataListLoading = false
+        });
     },
     // 下拉获取商品类型
     getProductType(type) {
@@ -849,8 +883,33 @@ export default {
         });
     },
     applyRefund(row){//申请退款
-      console.log(row)
+    // 书籍申请退款
+      if(this.diaTbas == 3) return this.$message.warning("暂支持书籍退款")
+      this.refundInfo = row
       this.dialogVisible = true
+    },
+    // 取消退款申请
+    closeRefundDialog() {
+      this.refundInfo = {}
+      this.refundLoading = false
+      this.refundReason = ""
+    },
+    confirmHandle() {//确认退款
+      this.refundLoading = true
+      this.$http.post("/sys/management/user/product/startRefundApply", {
+        id: this.refundInfo.id,
+        refundReason: this.refundReason,
+        uuid: getUUID()
+      }).then(({data: res}) => {
+        this.refundLoading = false
+        if(res.code != 0) return this.$message.error(res.msg)
+        this.$message.success("申请退款成功，请等待审核")
+        this.dialogVisible = false
+        this.queryPost_dia()
+      }).catch(err => {
+        this.refundLoading = false
+        this.$message.error(JSON.stringify(err))
+      })
     },
     queryChaxun(){
       this.page_dia = 1;
