@@ -1,36 +1,102 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-job__schedule">
-      <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
-        <el-form-item>
-          <el-input v-model="dataForm.beanName" :placeholder="$t('schedule.beanName')" clearable></el-input>
+      <el-form 
+        class="headerTool"
+        :inline="true"
+        :model="dataForm"
+        ref="dataForm"
+        size="small"
+        label-width="100px"
+        @keyup.enter.native="getDataList()">
+        <el-form-item :label="$t('schedule.beanName')" prop="beanName">
+          <el-input 
+            style="width: 200px"
+            v-model="dataForm.beanName" 
+            :placeholder="$t('schedule.beanName')" 
+            clearable></el-input>
         </el-form-item>
-        <el-form-item>
-          <el-button @click="getDataList()">{{ $t('query') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button v-if="$hasPermission('sys:schedule:save')" type="primary" @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button v-if="$hasPermission('sys:schedule:delete')" type="danger" @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button v-if="$hasPermission('sys:schedule:pause')" type="danger" @click="pauseHandle()">{{ $t('schedule.pauseBatch') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button v-if="$hasPermission('sys:schedule:resume')" type="danger" @click="resumeHandle()">{{ $t('schedule.resumeBatch') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button v-if="$hasPermission('sys:schedule:run')" type="danger" @click="runHandle()">{{ $t('schedule.runBatch') }}</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button v-if="$hasPermission('sys:schedule:log')" type="success" @click="logHandle()">{{ $t('schedule.log') }}</el-button>
-        </el-form-item>
+        <!-- 搜索重置展开按钮 -->
+        <div class="headerTool-search-btns">
+          <el-form-item>
+            <el-button 
+              type="primary" 
+              icon="el-icon-search" 
+              size="mini"
+              @click="getDataList">{{ $t("query") }}</el-button>
+            <el-button 
+              icon="el-icon-refresh" 
+              size="mini" 
+              @click="resetDataForm()">{{ $t("reset") }}</el-button>
+            <!-- <el-button size="mini" plain @click="open">
+              <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button> -->
+          </el-form-item>
+        </div>
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <el-form-item>
+              <el-button
+                size="mini"
+                v-if="$hasPermission('sys:schedule:save')" 
+                type="primary"
+                icon="el-icon-plus" 
+                @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
+              <el-button
+                size="mini"
+                v-if="$hasPermission('sys:schedule:delete')" 
+                type="danger" 
+                icon="el-icon-delete"
+                @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
+              <el-button
+                size="mini"
+                v-if="$hasPermission('sys:schedule:pause')" 
+                type="danger" 
+                icon="el-icon-video-pause"
+                @click="pauseHandle()">{{ $t('schedule.pauseBatch') }}</el-button>
+              <el-button
+                size="mini"
+                v-if="$hasPermission('sys:schedule:resume')" 
+                type="danger" 
+                icon="el-icon-refresh-left"
+                @click="resumeHandle()">{{ $t('schedule.resumeBatch') }}</el-button>
+              <el-button
+                size="mini"
+                v-if="$hasPermission('sys:schedule:run')" 
+                type="danger" 
+                icon="el-icon-play"
+                @click="runHandle()">{{ $t('schedule.runBatch') }}</el-button>
+              <el-button
+                size="mini"
+                v-if="$hasPermission('sys:schedule:log')" 
+                type="success"
+                icon="el-icon-document" 
+                @click="logHandle()">{{ $t('schedule.log') }}</el-button>
+
+              <!-- <el-button 
+                type="warning"
+                plain
+                icon="el-icon-download" 
+                size="mini"
+                @click="exportHandle">{{ $t("export") }}</el-button> -->
+            </el-form-item>
+          </div>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                <el-button size="small" icon="el-icon-refresh" circle @click="query"></el-button>
+              </el-tooltip>
+            </el-form-item>
+          </div>
+        </div>
       </el-form>
       <el-table
+        ref="table"
         v-loading="dataListLoading"
         :data="dataList"
-        border
+        :height="siteContentViewHeight"
         @selection-change="dataListSelectionChangeHandle"
         @sort-change="dataListSortChangeHandle"
         style="width: 100%;">

@@ -1,17 +1,16 @@
 <template>
-  <el-dialog :visible.sync="visible" :title="$t('schedule.log')" :close-on-click-modal="false" :close-on-press-escape="false" width="75%">
-    <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
+  <el-dialog top="20px" :visible.sync="visible" :title="$t('schedule.log')" :close-on-click-modal="false" :close-on-press-escape="false" width="75%">
+    <el-form size="small" :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
         <el-input v-model="dataForm.jobId" :placeholder="$t('schedule.jobId')" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">{{ $t('query') }}</el-button>
+        <el-button size="small" @click="getDataList()">{{ $t('query') }}</el-button>
       </el-form-item>
     </el-form>
     <el-table
       v-loading="dataListLoading"
       :data="dataList"
-      border
       @sort-change="dataListSortChangeHandle"
       height="460"
       style="width: 100%;">
