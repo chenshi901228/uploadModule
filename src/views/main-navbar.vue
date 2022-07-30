@@ -46,7 +46,8 @@
               <i class="el-icon-arrow-down"></i>
             </span>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item @click.native="updatePasswordHandle()">{{ $t('updatePassword.title') }}</el-dropdown-item>
+              <el-dropdown-item @click.native="userInfoDetailHandle()">个人中心</el-dropdown-item>
+              <!-- <el-dropdown-item @click.native="updatePasswordHandle()">{{ $t('updatePassword.title') }}</el-dropdown-item> -->
               <!-- <el-dropdown-item  @click.native="setting">主题设置</el-dropdown-item> -->
               <el-dropdown-item  @click.native="switchAccount">切换账号</el-dropdown-item>
               <el-dropdown-item @click.native="logoutHandle()">{{ $t('logout') }}</el-dropdown-item>
@@ -144,6 +145,10 @@ export default {
       this.$nextTick(() => {
         this.$refs.updatePassword.init()
       })
+    },
+    // 个人中心
+    userInfoDetailHandle () {
+      this.$router.push({ name: 'sys-userDetail' })
     },
     // 退出
     logoutHandle () {

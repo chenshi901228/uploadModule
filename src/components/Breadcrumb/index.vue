@@ -34,6 +34,7 @@ export default {
     getBreadcrumb() {
       // only show routes with meta.title
       if(this.$route.name == "home") return this.levelList = [{ path: '/home', meta: { title: '首页' }}]
+      if(this.$route.name == "sys-userDetail") return this.levelList = [{ path: '/sys-userDetail', meta: { title: '个人中心' }}]
       let matched = this.$route.matched.filter(item => item.meta && item.meta.title)
       const first = matched[0]
 
