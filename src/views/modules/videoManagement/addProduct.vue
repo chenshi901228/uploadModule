@@ -152,7 +152,6 @@
       <el-table
         v-loading="dataListLoading"
         :data="dataList"
-        border
         @selection-change="dataListSelectionChangeHandle"
         :height="siteContentViewHeight"
         style="width: 100%"
@@ -173,7 +172,7 @@
           :prop="item.prop"
           :label="item.label"
           :width="item.width || 120"
-          show-overflow-tooltip
+          :show-overflow-tooltip="item.prop == 'productName' ? false : true"
         >
           <template slot-scope="{ row }">
             <!-- 封面图 -->
@@ -219,16 +218,17 @@
           min-width="160"
         >
           <template slot-scope="{ row }">
-            <el-button type="text" @click="addOrDelete(row)">{{
+            <el-button size="small" :icon="row.isAdd ? 'el-icon-delete' : 'el-icon-plus'" type="text" @click="addOrDelete(row)">{{
               row.isAdd ? "删除" : "添加"
             }}</el-button>
-            <el-button type="text" v-if="row.isAdd" @click="setMain(row)">{{
+            <el-button size="small" :icon="row.isFeatured ? 'el-icon-refresh-right' : 'el-icon-upload2'" type="text" v-if="row.isAdd" @click="setMain(row)">{{
               row.isFeatured ? "取消置顶" : "置顶"
             }}</el-button>
           </template>
         </el-table-column>
       </el-table>
       <el-pagination
+        background
         :current-page="page"
         :page-sizes="[10, 20, 50, 100]"
         :page-size="limit"
