@@ -66,7 +66,7 @@
                 size="mini"
                 v-if="$hasPermission('sys:schedule:run')" 
                 type="danger" 
-                icon="el-icon-play"
+                icon="el-icon-video-play"
                 @click="runHandle()">{{ $t('schedule.runBatch') }}</el-button>
               <el-button
                 size="mini"
