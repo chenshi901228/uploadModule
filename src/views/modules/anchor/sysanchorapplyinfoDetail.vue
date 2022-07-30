@@ -32,15 +32,28 @@
         <span style="width:100px;text-align:right;margin:0 10px">主播简介：</span> <span style="word-break: break-all;max-width:800px;">{{ diaForm.introduce  || '-' }}</span>
       </div>
       <div style="display: flex; margin: 20px 0 10px; align-items: center;">
-       <span style="width:100px;text-align:right;margin:0 10px">主播头像：</span> <img :src="
-                diaForm.avatarUrl ||
-                'https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/default_avatar.png'
-              " style="width:60px;height:60px" alt="">
+       <span style="width:100px;text-align:right;margin:0 10px">主播头像：</span> 
+       <el-image 
+          style="width: 60px; height: 60px"
+          :src="diaForm.avatarUrl" 
+          :preview-src-list="[diaForm.avatarUrl]">
+          <div slot="error" class="image-slot">
+            <span v-if="diaForm.avatarUrl">加载失败</span>
+            <span v-else>暂无图片</span>
+          </div>
+        </el-image>
       </div>
       <div style="display: flex; margin: 20px 0 10px; align-items: center;">
-       <span style="width:100px;text-align:right;margin:0 10px">主播二维码：</span> <img :src="
-                diaForm.qrCode || '-'
-              " style="width:60px;height:60px" alt="">
+        <span style="width:100px;text-align:right;margin:0 10px">主播二维码：</span> 
+        <el-image 
+          style="width: 60px; height: 60px"
+          :src="diaForm.qrCode" 
+          :preview-src-list="[diaForm.qrCode]">
+          <div slot="error" class="image-slot">
+            <span v-if="diaForm.qrCode">加载失败</span>
+            <span v-else>暂无图片</span>
+          </div>
+        </el-image>
       </div>
       <!-- <div style="display: flex; margin: 20px 0 10px">主播介绍：</div>
       <div style="display: flex; margin: 0 20px">{{ diaForm.introduce }}</div> -->
@@ -75,6 +88,9 @@
         >通过</el-button
       >
     </div>
+
+    <!-- 审核状态图片 -->
+    <img v-if="statusImg" class="statusImg" :src="statusImg" alt="">
   </div>
 </template>
 
@@ -99,6 +115,15 @@ export default {
         window.localStorage.getItem("sysanchorapplyinfoDetailData")
       );
     });
+  },
+  computed: {
+    // 审核状态图片
+    statusImg() {
+      if(this.diaForm && this.diaForm.status == 0) return require("@/assets/icon/icon_applying.png")
+      if(this.diaForm && this.diaForm.status == 1) return require("@/assets/icon/icon_agree.png")
+      if(this.diaForm && this.diaForm.status == -1) return require("@/assets/icon/icon_reject.png")
+      return ""
+    }
   },
   methods: {
     // 审核
@@ -135,21 +160,41 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .detalilBox {
   height: 100%;
   background: #fff;
-  min-height: calc(calc(100vh - 50px - 38px - 30px));
+  min-height: calc(100vh - 50px - 38px);
   padding: 20px 30px;
 
-  .detalilBox_top {
-    height: calc(calc(100vh - 240px));
-    overflow: auto;
+
+  .statusImg {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 10px;
+    right: 100px;
   }
+
+  .image-slot {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f7fa;
+    font-size: 12px;
+  }
+
+  // .detalilBox_top {
+  //   height: calc(100vh - 190px);
+  //   overflow: auto;
+  // }
   .detalilBox_bottom {
     height: 40px;
     text-align: right;
     padding: 0 20px;
+    margin-top: 20px;
   }
 }
 .tag {

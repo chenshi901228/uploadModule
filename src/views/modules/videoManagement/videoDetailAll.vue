@@ -28,6 +28,73 @@
       <el-col v-if="!(checkFlag && info.approveStatus === 0)" :span="24">备注：{{ info.remark }}</el-col>
     </el-row>
 
+    <el-table
+      v-loading="dataListLoading"
+      :data="dataList"
+      max-height="400"
+      fit
+      style="width: 100%"
+    >
+      <el-table-column
+        header-align="center"
+        align="center"
+        v-for="item in tableItem"
+        :key="item.prop"
+        :prop="item.prop"
+        :label="item.label"
+        :show-overflow-tooltip="item.prop == 'productName' ? false : true"
+      >
+        <template slot-scope="{ row, $index }">
+          <!-- 序号 -->
+          <span v-if="item.prop == 'index'">{{$index + 1}}</span>
+          <!-- 封面图 -->
+          <div v-else-if="item.prop == 'productImage'">
+            <img
+              class="frontCoverImg"
+              :src="
+                row.productImage || require('@/assets/img/default_cover.jpg')
+              "
+              alt=""
+            />
+          </div>
+          <!-- 商品价格 -->
+          <span v-else-if="item.prop == 'oldPrice'">
+            ￥{{ row.oldPrice }}
+          </span>
+          <!-- 销售价格 -->
+          <span v-else-if="item.prop == 'price'"> ￥{{ row.price }} </span>
+          <!-- 是否添加 -->
+          <span v-else-if="item.prop == 'isAdd'">
+            {{ row.isAdd ? "已添加" : "未添加" }}
+          </span>
+          <!-- 是否主推 -->
+          <!-- <span v-else-if="item.prop == 'isFeatured'">
+            {{ row.isFeatured ? "已主推" : "未主推" }}
+          </span> -->
+          <!-- 是否免费 -->
+          <span v-else-if="item.prop == 'isFree'">
+            <el-tag size="small" :type="row.isFree ? 'success' : 'danger'">{{
+              row.isFree ? "是" : "否"
+            }}</el-tag>
+          </span>
+          <span v-else>
+            {{ row[item.prop] || "-" }}
+          </span>
+        </template>
+      </el-table-column>
+    </el-table>
+    <el-pagination
+      background
+      :current-page="page"
+      :page-sizes="[10, 20, 50, 100]"
+      :page-size="limit"
+      :total="total"
+      layout="total, sizes, prev, pager, next, jumper"
+      @size-change="pageSizeChangeHandle"
+      @current-change="pageCurrentChangeHandle"
+    >
+    </el-pagination>
+
     <!-- <div style="margin-bottom: 30px">视频主题：{{ info.liveTheme }}</div>
     <div style="margin-bottom: 30px">主 播：{{ info.anchorUser }}</div>
     <div style="margin-bottom: 30px">
@@ -50,7 +117,7 @@
         style="width: 800px; height: 500px"
       ></video>
     </div> -->
-    <div v-if="checkFlag && info.approveStatus === 0">
+    <div v-if="checkFlag && info.approveStatus === 0" style="margin-top: 20px">
       <el-form
         :model="ruleForm"
         ref="ruleForm"
@@ -76,6 +143,8 @@
       </div>
     </div>
 
+    
+
 
     <!-- 审核状态图片 -->
     <img v-if="statusImg" class="statusImg" :src="statusImg" alt="">
@@ -89,6 +158,7 @@ export default {
   mixins: [mixinTableModule],
   data() {
     return {
+      dataListLoading: false,
       info: {},
       srcList: [],
       videolist: {
@@ -116,10 +186,34 @@ export default {
       },
       checkFlag: false,
       id: "",
+      page: 1, // 当前页码
+      limit: 10, // 每页数
+      total: 0, // 总条数
+      dataList: [], //商品列表
+      tableItem: [
+        { prop: "index", label: "序号" },
+        { prop: "productImage", label: "商品图片" },
+        { prop: "productName", label: "商品名称"},
+        { prop: "oldPrice", label: "商品价格" },
+        { prop: "price", label: "销售价格" },
+        { prop: "productType", label: "商品类型" },
+        { prop: "isFree", label: "是否免费" },
+        { prop: "linkedProductId", label: "关联产品编号" },
+        // { prop: "updateDate", label: "上架时间", width: 180 },
+        // { prop: "isAdd", label: "添加状态" },
+        // { prop: "isFeatured", label: "主推状态" },
+      ],
+      params: {
+        isAdd: 1,
+        anchorId: "",
+        playbackId: ""
+      }
     };
   },
   created() {
-    this.id = this.$route.query.videoDetail.id;
+    this.id = this.$route.query.videoDetail.id
+    this.params.playbackId = this.$route.query.videoDetail.id
+    this.params.anchorId = this.$route.query.videoDetail.anchorUserId
     this.$nextTick(() =>{
       if(this.checkFlag){
       this.query()
@@ -128,6 +222,7 @@ export default {
   },
   mounted() {
     this.querylist();
+    this.getVideoProductList()
   },
   computed: {
     // 审核状态图片
@@ -182,6 +277,35 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+    // 获取短视频商品列表
+    getVideoProductList() {
+      this.dataListLoading = true
+      this.$http.get("/sys/playbackProduct/getProductPage", { params: { page: this.page, limit: this.limit, ...this.params} }).then(({ data: res }) => {
+        this.dataListLoading = false
+        if(res.code != 0) {
+          this.dataList = [];
+          this.total = 0;
+          return this.$message.error(res.msg)
+        }
+        this.dataList = res.data.list
+        this.total = res.data.total
+      })
+      .catch((err) => {
+        this.dataListLoading = false
+        console.log(err);
+      });
+    },
+     // 分页, 每页条数
+    pageSizeChangeHandle(val) {
+      this.page = 1
+      this.limit = val
+      this.getVideoProductList()
+    },
+    // 分页, 当前页
+    pageCurrentChangeHandle(val) {
+      this.page = val
+      this.getVideoProductList()
     },
     //审批离开
     getOut() {
@@ -266,9 +390,14 @@ export default {
 .statusImg {
   width: 100px;
   height: 100px;
-  position: fixed;
-  top: 150px;
+  position: absolute;
+  top: 10px;
   right: 100px;
+}
+.frontCoverImg {
+  width: 100px;
+  height: 60px;
+  object-fit: cover;
 }
 .el-col{
    margin-bottom: 30px;
