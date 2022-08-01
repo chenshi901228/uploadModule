@@ -1,3 +1,6 @@
+
+<!-- 分享记录 -->
+
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-pay__order">
