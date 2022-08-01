@@ -21,7 +21,7 @@
               </div>
               <div class="record_btn" @click="recordMethod" v-if="liveStatus">
                 <img :src="isRecord ? require('../../assets/img/record.png') : require('../../assets/img/start_record.png')" alt="">
-                <span>{{isRecord?'录制中':'开始录制'}}</span>
+                <span>{{isRecord&&!pauseRecord?'暂停录制':isRecord&&pauseRecord?'恢复录制':'开始录制'}}</span>
               </div>
             </div>
             <div class="online_info">
@@ -330,7 +330,13 @@
                 :src-object.prop="stream"
                 class="push_video"
                 :style="{width:'100%',height:'calc(100% - 60px)'}"
-              ></video>
+              >
+              </video>
+              <div class="device_set">
+                <div v-for="(item,index) in deviceNav" :key="index">
+                    <img :src="item.status?item.activeImg:item.img" alt=""  @click="changeDevice(item)"/>
+                </div>
+              </div>
             </div>
             <div class="connect_list">
               <div
@@ -437,12 +443,12 @@
           </el-upload> -->
       </div>
     </el-dialog>
-    <!-- <el-dialog
-      title="切换设备"
+    <el-dialog
+      title="设备检测"
       :visible.sync="deviceDialogVisible"
-      top="200px"
-      width="30%">
-        <el-select v-model="cameraId" @change="selectCamera" placeholder="请选择摄像头">
+      top="50px"
+      width="440px">
+        <!-- <el-select v-model="cameraId" @change="selectCamera" placeholder="请选择摄像头">
           <el-option
             v-for="item in camerasList"
             :key="item.deviceID"
@@ -457,8 +463,172 @@
             :label="item.deviceName"
             :value="item.deviceID">
           </el-option>
-        </el-select>
-    </el-dialog> -->
+        </el-select> -->
+        <div class="dialog_content">
+          <div class="device_step">
+            <div>
+              <img src="../../assets/img/check_camera_yes.png" alt="">
+              <img v-if="cameraError" class="camera_error" src="../../assets/img/check_error.png" alt="">
+              <span>摄像头检测</span>
+            </div>
+            <img class="step_line" src="../../assets/img/check_step_line.png" alt="">
+            <div>
+              <img v-if="checkStep>=2" src="../../assets/img/check_mike_active.png" alt="">
+              <img v-else src="../../assets/img/check_mike.png" alt="">
+              <img v-if="micError&&checkStep>=2" class="camera_error" src="../../assets/img/check_error.png" alt="">
+              <span>麦克风检测</span>
+            </div>
+            <img class="step_line" src="../../assets/img/check_step_line.png" alt="">
+            <div>
+              <img v-if="checkStep===3" src="../../assets/img/check_over_active.png" alt="">
+              <img v-else src="../../assets/img/check_over.png" alt="">
+              <img v-if="checkStep===3&&cameraError || checkStep===3&&micError" class="camera_error" src="../../assets/img/check_error.png" alt="">
+              <span>检测结果</span>
+            </div>
+          </div>
+          <div class="check_camera" v-show="checkStep===1">
+            <div class="camera_device">
+              <span>摄像头</span>
+              <el-select size="mini" v-model="cameraId" @change="selectCamera" placeholder="请选择摄像头">
+                <el-option
+                  v-for="item in camerasList"
+                  :key="item.deviceID"
+                  :label="item.deviceName"
+                  :value="item.deviceID">
+                </el-option>
+              </el-select>
+            </div>
+            <div class="preview">
+              <span>预览</span>
+              <video
+                autoplay
+                class="check_camera_video"
+                :src-object.prop="checkStream"
+              ></video>
+            </div>
+            <div class="tip">
+              <span></span>
+              <el-tooltip placement="top-end">
+                <div slot="content">
+                  1.在浏览器“允许”使用摄像头<br/>
+                  2.在系统“允许”使用摄像头<br/>
+                  3.请确认摄像头已正确连接并开启<br/>
+                  4.请确认摄像头没有被其他软件占用多行信息<br/>
+                </div>
+                <div class="tip_title">
+                  <img src="../../assets/img/check_question_icon.png" alt="">
+                  <span>问题排查</span>
+                </div>
+              </el-tooltip>
+            </div>
+            <p class="question">您是否可以看到摄像头的画面</p>
+          </div>
+          <div class="check_mike" v-show="checkStep===2">
+            <div class="mic_device">
+              <span>麦克风</span>
+               <el-select size="mini" v-model="microphoneId" @change="selectMic" placeholder="请选择麦克风">
+                <el-option
+                  v-for="item in microphonesList"
+                  :key="item.deviceID"
+                  :label="item.deviceName"
+                  :value="item.deviceID">
+                </el-option>
+              </el-select>
+            </div>
+            <div class="soundWaves_num">
+              <div class="under_div">
+                <span v-for="i in 26" :key="i"></span>
+              </div>
+              <div class="top_div">
+                <span v-for="k in soundWaves" :key="k"></span>
+              </div>
+            </div>
+            <div class="soundWaves_line">
+              <span>音量</span>
+              <el-slider disabled v-model="soundWaves"></el-slider>
+              <span>{{soundWaves}}</span>
+            </div>
+            <div class="tip">
+              <span></span>
+              <el-tooltip placement="top-end">
+                <div slot="content">
+                  1.在浏览器“允许”使用麦克风<br/>
+                  2.在系统“允许”使用麦克风<br/>
+                  3.请确认麦克风已正确连接并开启<br/>
+                  4.请确认麦克风没有被其他软件占用多行信息<br/>
+                </div>
+                <div class="tip_title">
+                  <img src="../../assets/img/check_question_icon.png" alt="">
+                  <span>问题排查</span>
+                </div>
+              </el-tooltip>
+            </div>
+            <p class="question">从1数到5，您是否可以看到音量条的波动？</p>
+          </div>
+          <div class="check_result" v-show="checkStep===3">
+            <div class="device_result">
+              <span>摄像头检测</span>
+              <p v-if="!cameraError" class="success">
+                正常
+                <i class="el-icon-success"></i>
+              </p>
+              <p v-else class="error">
+                异常
+                <i class="el-icon-error"></i>
+              </p>
+            </div>
+            <div class="tip" v-if="cameraError">
+              <span></span>
+              <el-tooltip placement="top-end">
+                <div slot="content">
+                  1.在浏览器“允许”使用摄像头<br/>
+                  2.在系统“允许”使用摄像头<br/>
+                  3.请确认摄像头已正确连接并开启<br/>
+                  4.请确认摄像头没有被其他软件占用多行信息<br/>
+                </div>
+                <div class="tip_title">
+                  <img src="../../assets/img/check_question_icon.png" alt="">
+                  <span>问题排查</span>
+                </div>
+              </el-tooltip>
+            </div>
+            <div class="device_result">
+              <span>麦克风检测</span>
+              <p v-if="!micError" class="success">
+                正常
+                <i class="el-icon-success"></i>
+              </p>
+              <p v-else class="error">
+                异常
+                <i class="el-icon-error"></i>
+              </p>
+            </div>
+            <div class="tip" v-if="micError">
+              <span></span>
+              <el-tooltip placement="top-end">
+                <div slot="content">
+                  1.在浏览器“允许”使用麦克风<br/>
+                  2.在系统“允许”使用麦克风<br/>
+                  3.请确认麦克风已正确连接并开启<br/>
+                  4.请确认麦克风没有被其他软件占用多行信息<br/>
+                </div>
+                <div class="tip_title">
+                  <img src="../../assets/img/check_question_icon.png" alt="">
+                  <span>问题排查</span>
+                </div>
+              </el-tooltip>
+            </div>
+          </div>
+          <div class="check_btn">
+              <div @click="checkError">
+                {{checkStep===3?'重新检测':'无法看到'}}
+              </div>
+              <div @click="addStep">
+                {{checkStep===3?'加入直播间':'可以看到'}}
+              </div>
+            </div>
+        </div>
+    </el-dialog>
     <el-dialog
       :title="endLiveTitle"
       :visible.sync="endLiveDialogVisible"
@@ -663,6 +833,7 @@ export default {
       zg: {},
       tim: null, //IM实例
       token: "",
+      checkStream:{},//选择设备时摄像头的流
       stream: {},//摄像头流
       screenStream:{},//屏幕共享流
       roomId: "",
@@ -681,21 +852,24 @@ export default {
       userInfo: {}, //用户信息
       goodsPushTimer: null, //商品推送定时
       livePredictionTimer: null, //直播预告推送定时
+      deviceNav:[
+        {
+          img: require("@/assets/img/nomike.png"),
+          activeImg: require("@/assets/img/mike.png"),
+          text: "麦克风",
+          type: "mike",
+          status: true,
+        },
+        {
+          img: require("@/assets/img/nocamera.png"),
+          activeImg: require("@/assets/img/camera.png"),
+          text: "摄像头",
+          type: "camera",
+          status: true,
+        },
+      ],
       toolNav: [
-        // {
-        //   img: require("@/assets/img/nomike.png"),
-        //   activeImg: require("@/assets/img/mike.png"),
-        //   text: "麦克风",
-        //   type: "mike",
-        //   status: false,
-        // },
-        // {
-        //   img: require("@/assets/img/nocamera.png"),
-        //   activeImg: require("@/assets/img/camera.png"),
-        //   text: "摄像头",
-        //   type: "camera",
-        //   status: true,
-        // },
+        
         {
           img: require("@/assets/img/device_icon.png"),
           text: "切换设备",
@@ -759,12 +933,16 @@ export default {
       endLiveDialogVisible:false,//结束直播详情弹窗
       endLiveTitle:'直播结束',
       isRecord:false,//录制状态
+      pauseRecord:false,//录制暂停状态
       showBtn:false,
       streamUrl:'',
+      checkStep:1,
+      cameraError:false,
+      micError:false,
+      soundWaves:0,//音浪大小
     };
   },
   created() {
-    
   },
   computed: {},
   async mounted() {
@@ -800,14 +978,15 @@ export default {
     this.zg.getCameras().then(res=>{
       console.log('摄像头',res)
       this.camerasList = res
-      this.cameraId = this.camerasList[0].deviceID
+      // this.cameraId = this.camerasList[0].deviceID
     })
    
     //获取麦克风列表
     this.zg.getMicrophones().then(res=>{
       this.microphonesList = res
     })
-    
+    //开启麦克风音浪检测
+    this.zg.setSoundLevelDelegate(true,1000)
     //屏幕共享中断
     this.zg.on("screenSharingEnded",(stream)=>{
       if(!stream.active){
@@ -913,6 +1092,11 @@ export default {
         });
       }
     });
+    //监听本地预览流麦克风音浪大小
+    this.zg.on('capturedSoundLevelUpdate',(res)=>{
+      this.soundWaves = Math.round(res)
+      console.log(this.soundWaves,565665655655988)
+    })
   },  
   methods: {
     copyFun(){
@@ -929,24 +1113,22 @@ export default {
     },
     init(){
       this.$http.get('/sys/mixedflow/getLiving').then(res=>{//进入直播间获取直播状态
-      if(!res.data.code==0) return this.$message.error(res.data.msg)
-        if(res.data.data){
+        if(!res.data.code==0) return this.$message.error(res.data.msg)
+        if(res.data.data.liveId){
           this.$confirm("上次直播异常退出，重新进入", "提示", {
             confirmButtonText: "确认",
             cancelButtonText: "取消",
             type: "info"
           }).then(() => {
             this.liveStatus = true
-            let connectMessageInfo = JSON.parse(
-              localStorage.getItem("connectMessageInfo")
-            ); //连麦列表状态
-            if (connectMessageInfo) {
-              this.connectMessageInfo = connectMessageInfo;
-            }
-            let isRecord = localStorage.getItem("isRecord"); //录制状态
-            if (isRecord) {
-              this.isRecord = isRecord;
-            }
+            this.isRecord = res.data.data.startRecord==1
+            this.pauseRecord = res.data.data.pauseRecord==1
+            // let connectMessageInfo = JSON.parse(
+            //   localStorage.getItem("connectMessageInfo")
+            // ); //连麦列表状态
+            // if (connectMessageInfo) {
+            //   this.connectMessageInfo = connectMessageInfo;
+            // }
             this.getTimUserSig().then(res=>{
               this.$http.post("/sys/mixedflow/startEvenWheat", { //重新进入直播间发起混流任务
                   RoomId: this.roomId, //房间ID；
@@ -1062,58 +1244,41 @@ export default {
     uploadFile({file}){
       console.log(file)
     },
-    selectCamera(value){
+    selectCamera(value){ //选择摄像头
+      console.log(value,111111111)
       this.cameraId = value
+      this.checkCamera()
+    },
+    async selectMic(value){//选择麦克风
+      console.log(value,2222222)
+      this.microphoneId = value
+      let res = await this.zg.useAudioDevice(this.stream,String(this.value))
+      console.log(res,22222222555601)
     },
     changeTrends(){
       console.log(this.trends)
       this.trends==1?this.trends=0:this.trends=1
     },
+    async changeDevice(data){
+      if (data.type === "mike") {
+        //麦克风
+        let result = await this.zg.muteMicrophone(data.status);
+        if (result) {
+          let isMicrophoneMuted = await this.zg.isMicrophoneMuted();
+          this.deviceNav[0].status = !isMicrophoneMuted; //麦克风状态
+        }
+      } else if (data.type === "camera") {
+        //摄像头
+        let result = await this.zg.enableVideoCaptureDevice(
+          this.stream,
+          !data.status
+        );
+        if (result) {
+          this.deviceNav[1].status = !data.status;
+        }
+      }
+    },
     async toolClick(type) {
-      // if (data.type === "mike") {
-      //   //麦克风
-      //   let result = await this.zg.muteMicrophone(data.status);
-      //   if (result) {
-      //     let isMicrophoneMuted = await this.zg.isMicrophoneMuted();
-      //     this.toolNav[1].status = !isMicrophoneMuted; //麦克风状态
-      //   }
-      // } else if (data.type === "camera") {
-      //   //摄像头
-      //   let result = await this.zg.enableVideoCaptureDevice(
-      //     this.stream,
-      //     !data.status
-      //   );
-      //   if (result) {
-      //     this.toolNav[2].status = !data.status;
-      //   }
-      // } else if (data.type === "record") {
-      //   //录制
-      //   console.log(this.liveStatus)
-      //   if (this.liveStatus) {
-      //     if (!isRecord) {
-      //       this.$http.post("/sys/mixedflow/startRecord", {}).then((res) => {
-      //         if (res.data.success && res.data.msg == "success") {
-      //           this.$message({
-      //             message: "录制已开启",
-      //             type: "success",
-      //           });
-      //           this.isRecord = true;
-      //           localStorage.setItem("isRecord", true);
-      //         }
-      //       });
-      //     } else {
-      //       this.$message({
-      //         message: "录制已开启",
-      //         type: "warning",
-      //       });
-      //     }
-      //   } else {
-      //     this.$message({
-      //       message: "直播暂未开启",
-      //       type: "warning",
-      //     });
-      //   }
-      // }
       switch(type){
         case "goods":
           this.getAnchorProduct().then(res=>{
@@ -1140,28 +1305,62 @@ export default {
         case "setUp":
           this.showBtn = true
           break
+        case "device":
+          this.deviceDialogVisible = true
+          break
       }
     },
     recordMethod(){
       //录制
       if (this.liveStatus) {
-        if (this.isRecord) {
-          this.$http.post("/sys/mixedflow/startRecord", {}).then((res) => {
-            if (res.data.success && res.data.msg == "success") {
+        if(!this.isRecord&&!this.pauseRecord){
+          this.$http.post("/sys/mixedflow/startRecord", {}).then(res=>{
+            if(res.data.code===0){
+              this.isRecord = true //开启录制状态
               this.$message({
                 message: "录制已开启",
                 type: "success",
               });
-              this.isRecord = true;
-              localStorage.setItem("isRecord", true);
+            }else{
+              this.$message({
+                message: res.data.msg,
+                type: "error",
+              });
             }
-          });
-        } else {
-          this.$message({
-            message: "录制已开启",
-            type: "warning",
-          });
+          })
+        }else if(this.isRecord&&!this.pauseRecord){ //暂停录制
+          this.$http.post("/sys/mixedflow/pauseRecord", {}).then(res=>{
+            console.log(res)
+            if(res.data.code===0){
+              this.pauseRecord = true //暂停录制状态
+              this.$message({
+                message: "录制已暂停",
+                type: "success",
+              });
+            }else{
+              this.$message({
+                message: res.data.msg,
+                type: "error",
+              });
+            }
+          })
+        }else if(this.isRecord&&this.pauseRecord){ //恢复录制
+          this.$http.post("/sys/mixedflow/resumeRecord", {}).then(res=>{
+            if(res.data.code===0){
+              this.pauseRecord = false //恢复录制状态
+              this.$message({
+                message: "已重新开启录制",
+                type: "success",
+              });
+            }else{
+              this.$message({
+                message: res.data.msg,
+                type: "error",
+              });
+            }
+          })
         }
+
       } else {
         this.$message({
           message: "直播暂未开启",
@@ -1248,6 +1447,40 @@ export default {
     },
     async getMuteStatus(obj) {
       let res = await this.$http.post("/sys/mixedflow/userMute", obj);
+    },
+    async checkCamera(){
+      // 创建流和渲染
+      this.checkStream = await this.zg.createStream({ //摄像头
+        camera: {
+          videoQuality: 4,
+          width: parseInt(document.getElementById('videoEle').getBoundingClientRect().width * 1),
+          height: parseInt(document.getElementById('videoEle').getBoundingClientRect().height * 1),
+          frameRate: 15,
+          bitrate: 2000,
+          videoInput:this.cameraId,
+        },
+      });
+    },
+    checkError(){
+      if(this.checkStep<3){
+        if(this.checkStep===1){
+          this.cameraError = true
+        }else if(this.checkStep===2){
+          this.micError = true
+        }
+        this.checkStep++
+      }else{
+        this.checkStep=1
+        this.cameraError = false
+        this.micError = false
+      }
+    },
+    addStep(){
+      if(this.checkStep<3){
+        this.checkStep++
+      }else{
+
+      }
     },
     // 获取token的方法
     getTokenFun(appID, userID) {
@@ -1404,7 +1637,6 @@ export default {
               this.$message({ message: "直播已关闭", type: "success" });
               this.liveStatus = false;
               localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
-              localStorage.removeItem("isRecord"); //将录制状态移除
               this.tim.logout(); //退出IM
               this.tim.destroy();
               this.endLiveDialogVisible = true
@@ -1542,7 +1774,6 @@ export default {
               confirmButtonText: '确定',
               callback: action => {
                 localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
-                localStorage.removeItem("isRecord"); //将录制状态移除
                 this.endLiveTitle = '您因违反规定已被禁播'
                 this.endLiveDialogVisible = true
               }
@@ -2627,8 +2858,27 @@ p {
               position: absolute;
               bottom: 0;
               right: 0;
+              z-index: 1;
               // width: 100%;
               // height: calc(100% - 60px);
+            }
+            .device_set{
+              position: absolute;
+              bottom: 10px;
+              right: 10px;
+              z-index: 2;
+              display: flex;
+              width: 90px;
+              height: 40px;
+              align-items: center;
+              justify-content: space-between;
+              >div{
+                cursor: pointer;
+                >img{
+                  width: 40px;
+                  height: 40px;
+                }
+              }
             }
           }
           .connect_list {
@@ -2749,12 +2999,267 @@ p {
   }
   /deep/ .dialog_content{
     width: 400px;
-    min-width: 200px;
     max-height: 550px;
     box-sizing: border-box;
     border-top: 1px solid #E5E5E5;
     padding: 20px 0;
     overflow: auto;
+    .device_step{
+      width: 100%;
+      height: 90px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      .step_line{
+        width: 28px;
+        height: 6px;
+      }
+      >div{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+        >img{
+          width: 50px;
+          height: 50px;
+        }
+        >span{
+          color:#000000;
+          font-size: 14px;
+        }
+        .camera_error{
+          width: 18px;
+          height: 18px;
+          position: absolute;
+          bottom: 25px;
+          right: 15px;
+        }
+      }
+    }
+    .check_camera{
+      margin-top: 30px;
+      .camera_device{
+        >span{
+          color: #000;
+          width: 45px;
+          text-align: right;
+          font-size: 14px;
+        }
+        .el-select{
+          margin-left: 20px;
+          width: 234px;
+        }
+      }
+      .preview{
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        margin-top: 20px;
+        >span{
+          color: #000;
+          width: 45px;
+          text-align: right;
+          font-size: 14px;
+        }
+        .check_camera_video{
+          margin-left: 20px;
+          width: 234px;
+          height: 132px;
+          background: #000000;
+        }
+      }
+      .tip{
+        margin-top: 10px;
+        font-size: 12px;
+        color: #ABABAB;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        .tip_title{
+          display: flex;
+          align-items: center;
+          >span{
+            margin-left: 2px;
+          }
+        }
+      }
+      .question{
+        color: #000000;
+        font-size: 14px;
+        text-align: center;
+        margin-top: 20px;
+      }
+    }
+    .check_mike{
+      .mic_device{
+        >span{
+          color: #000;
+          width: 45px;
+          text-align: right;
+          font-size: 14px;
+        }
+        .el-select{
+          margin-left: 20px;
+          width: 234px;
+        }
+      }
+      .soundWaves_num{
+        display: flex;
+        width: 234px;
+        position: relative;
+        margin: 20px 0px 0px 65px;
+        .under_div{
+          width: 100%;
+          >span{
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background-color: #F8F8F8;
+            border-radius: 2px;
+            margin-right: 5px;
+          }
+        }
+        .top_div{
+          width: 100%;
+          position: absolute;
+          left: 0;
+          overflow: hidden;
+          height: 20px;
+          >span{
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: #FA3523;
+            border-radius: 2px;
+            margin-right: 5px;
+          }
+        }
+      }
+      .soundWaves_line{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 234px;
+        margin-left:65px;
+        .el-slider{
+          width: 75%;
+        }
+        .el-slider__bar{
+          background: linear-gradient(90deg, #FA3623 0%, #FE055A 100%)!important;
+        }
+        .el-slider__button{
+          border:2px solid #FA3623 !important;
+          box-shadow: 0px 0px 3px 1px rgba(250,54,35,0.4000);
+        }
+      }
+      .preview{
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        margin-top: 20px;
+        >span{
+          color: #000;
+          width: 45px;
+          text-align: right;
+          font-size: 14px;
+        }
+        .check_camera_video{
+          margin-left: 20px;
+          width: 234px;
+          height: 132px;
+          background: #000000;
+        }
+      }
+      .tip{
+        margin-top: 10px;
+        font-size: 12px;
+        color: #ABABAB;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        .tip_title{
+          display: flex;
+          align-items: center;
+          >span{
+            margin-left: 2px;
+          }
+        }
+      }
+      .question{
+        color: #000000;
+        font-size: 14px;
+        text-align: center;
+        margin-top: 20px;
+      }
+    }
+    .check_result{
+      .device_result{
+        width: 300px;
+        height: 45px;
+        background: #F8F8F8;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 10px;
+        align-items: center;
+        color: #000000;
+        font-size: 14px;
+        margin-bottom: 10px;
+        .success{
+          color: #02C100;
+        }
+        .error{
+          color: #FA3523;
+        }
+      }
+      .tip{
+        width: 300px;
+        margin:0 auto 10px;
+        font-size: 12px;
+        color: #ABABAB;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        .tip_title{
+          display: flex;
+          align-items: center;
+          >span{
+            margin-left: 2px;
+          }
+        }
+      }
+    }
+    
+    .check_btn{
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+      >div{
+        width: 140px;
+        line-height: 40px;
+        text-align: center;
+        font-size: 14px;
+        border-radius: 20px;
+        cursor: pointer;
+      }
+      >div:first-child{
+        background: #F8F8F8;
+        color: #ABABAB;
+        margin-right: 20px;
+      }
+      >div:nth-child(2){
+        color: #FFFFFF;
+        background: linear-gradient(89deg, #FA3622 0%, #FE055B 100%);
+        box-shadow: 0px 4px 10px 1px rgba(249,46,29,0.4000);
+      }
+    }
     .beautify_set{
       width: 324px;
       margin: 0 auto;

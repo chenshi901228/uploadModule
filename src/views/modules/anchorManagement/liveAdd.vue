@@ -243,7 +243,7 @@ export default {
                         // 是否有正在直播
                         let { data: living } = await this.$http.get('/sys/mixedflow/getLiving')
     
-                        if(living.data){
+                        if(living.data.liveId){
                             this.$message.warning("当前正在直播中！")
                             this.submitLoading = false
                             return       
