@@ -43,36 +43,42 @@
                 v-if="$hasPermission('sys:schedule:save')" 
                 type="primary"
                 icon="el-icon-plus" 
+                plain
                 @click="addOrUpdateHandle()">{{ $t('add') }}</el-button>
               <el-button
                 size="mini"
                 v-if="$hasPermission('sys:schedule:delete')" 
                 type="danger" 
                 icon="el-icon-delete"
+                plain
                 @click="deleteHandle()">{{ $t('deleteBatch') }}</el-button>
               <el-button
                 size="mini"
                 v-if="$hasPermission('sys:schedule:pause')" 
                 type="danger" 
                 icon="el-icon-video-pause"
+                plain
                 @click="pauseHandle()">{{ $t('schedule.pauseBatch') }}</el-button>
               <el-button
                 size="mini"
                 v-if="$hasPermission('sys:schedule:resume')" 
                 type="danger" 
                 icon="el-icon-refresh-left"
+                plain
                 @click="resumeHandle()">{{ $t('schedule.resumeBatch') }}</el-button>
               <el-button
                 size="mini"
                 v-if="$hasPermission('sys:schedule:run')" 
                 type="danger" 
                 icon="el-icon-video-play"
+                plain
                 @click="runHandle()">{{ $t('schedule.runBatch') }}</el-button>
               <el-button
                 size="mini"
                 v-if="$hasPermission('sys:schedule:log')" 
                 type="success"
                 icon="el-icon-document" 
+                plain
                 @click="logHandle()">{{ $t('schedule.log') }}</el-button>
 
               <!-- <el-button 
