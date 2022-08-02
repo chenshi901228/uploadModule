@@ -184,6 +184,11 @@
           </el-tab-pane>
           <el-tab-pane label="用户" name="third">
             <div class="list_content" style="height: calc(100% - 50px)">
+              <el-input
+                placeholder="输入搜索内容"
+                suffix-icon="el-icon-search"
+                v-model="serachUser">
+              </el-input>
               <div
                 class="student_content"
                 v-for="(item, index) in studentList"
@@ -193,8 +198,8 @@
                   <span>{{ index + 1 }}</span>
                   <img :src="item.avatarUrl" alt="" />
                   <div class="anchorInfo">
-                    <span>{{ item.text }}</span>
-                    <p>{{ item.ownIntimacy }}<span>亲密度</span></p>
+                    <span>{{ item.nickName }}</span>
+                    <p>{{ item.intimacy }}<span>亲密度</span></p>
                   </div>
                 </div>
                 <div class="right" @click="muteMthod(item)">
@@ -228,48 +233,6 @@
       <el-container>
         <el-header>
           <div class="live_room_header">
-            <!-- <div class="header_left">
-              <el-popover
-                ref="reference"
-                placement="bottom"
-                width="400"
-                popper-class="live_room_popover"
-                trigger="click">
-                <div class="block">
-                  <span class="demonstration">磨皮</span>
-                  <el-slider @input="changeSmoothIntensity" v-model="beautifyParams.smoothIntensity"></el-slider>
-                </div>
-                <div class="block">
-                  <span class="demonstration">美白</span>
-                  <el-slider @input="changeWhitenIntensity" v-model="beautifyParams.whitenIntensity"></el-slider>
-                </div>
-                <div class="block">
-                  <span class="demonstration">红润</span>
-                  <el-slider @input="changeRosyIntensity" v-model="beautifyParams.rosyIntensity"></el-slider>
-                </div>
-                <div class="block">
-                  <span class="demonstration">锐化</span>
-                  <el-slider @input="changeSharpenIntensity" v-model="beautifyParams.sharpenIntensity"></el-slider>
-                </div>
-              </el-popover>
-              <div
-                class="header_nav"
-                v-for="(item, index) in headerNav"
-                :class="[headerNavActive == item.type ? 'headerNavActive' : '']"
-                :key="index"
-                @click="headerNavClick(item.type)"
-                v-popover:reference
-              >
-                <img :src="item.img" alt="" />
-                <p>{{ item.text }}</p>
-              </div>
-              <div @click="trends==1?trends=0:trends=1" v-if="!liveStatus" class="header_nav">
-                <img :src="trends==1?require('@/assets/img/open_dynamic.png'):require('@/assets/img/close_dynamic.png')" alt="">
-                <p>{{trends==1?'关闭动态':'开启动态'}}</p>
-              </div>
-            </div> -->
-            <!-- <div class="tool_nav" v-if="!liveStatus">
-            </div> -->
             <div class="start_live" @click="startPlayLive" v-if="!liveStatus">
               <img src="../../assets/img/startLive.png" alt="" />
               <span>上课</span>
@@ -278,7 +241,7 @@
               <img src="../../assets/img/closeLive.png" alt="" />
               <span>下课</span>
             </div>
-            <div class="tool_nav" @click="trends==1?trends=0:trends=1">
+            <div class="tool_nav" @click="trends==1?trends=0:trends=1" v-if="!liveStatus">
               <img :src="trends==1?require('@/assets/img/open_dynamic.png'):require('@/assets/img/close_dynamic.png')" alt="" @click="toolClick(item)"/>
               <span>{{trends==1?'关闭动态':'开启动态'}}</span>
             </div>
@@ -308,7 +271,7 @@
                   <p>网络状态：正常</p>
                 </div>
               </div>
-              <div class="screenShare">
+              <div class="screenShare" v-if="superboardShow">
                 <Superboard 
                   :userInfo="{
                     token,
@@ -316,13 +279,8 @@
                     userId:userID,
                     appID,
                   }"
-                  v-if="headerNavActive == 'superboard'"
                 />
-              </div>
-              <div class="default" v-if="headerNavActive == 'desktopShare'" style="position:absolute;top:70px;left:10px;zIndex:2;">
-                <el-tooltip effect="dark" content="选择共享" placement="left" >
-                  <img @click="uploadDialogVisible = true" class="superboard-create" src="@/assets/icon/s_create.png" alt="">
-                </el-tooltip>
+                <div class="quit_board" @click="quitBoard">退出白板</div>
               </div>
               <video
                 autoplay
@@ -419,51 +377,10 @@
       </el-container>
     </el-container>
     <el-dialog
-      title="请选择共享方式"
-      :visible.sync="uploadDialogVisible"
-      top="200px"
-      width="30%">
-      <div class="createWrap">
-          <div class="createWrap-btn" @click="shareDesk" style="margin-right: 30px;">
-              <img class="icon" src="@/assets/icon/s_normal.png" alt="">
-              <span>共享桌面</span>
-              <img class="actived" src="@/assets/icon/s_selected.png" alt="">
-          </div>
-          <!-- <el-upload
-              action=""
-              :limit="1"
-              :file-list="fileList"
-              :http-request="uploadFile"
-              :show-file-list="false">
-              <div class="createWrap-btn">
-                  <img class="icon" src="@/assets/icon/s_file.png" alt="">
-                  <span>视频直播</span>
-                  <img class="actived" src="@/assets/icon/s_selected.png" alt="">
-              </div>
-          </el-upload> -->
-      </div>
-    </el-dialog>
-    <el-dialog
       title="设备检测"
       :visible.sync="deviceDialogVisible"
       top="50px"
       width="440px">
-        <!-- <el-select v-model="cameraId" @change="selectCamera" placeholder="请选择摄像头">
-          <el-option
-            v-for="item in camerasList"
-            :key="item.deviceID"
-            :label="item.deviceName"
-            :value="item.deviceID">
-          </el-option>
-        </el-select>
-        <el-select v-model="microphoneId" placeholder="请选择麦克风">
-          <el-option
-            v-for="item in microphonesList"
-            :key="item.deviceID"
-            :label="item.deviceName"
-            :value="item.deviceID">
-          </el-option>
-        </el-select> -->
         <div class="dialog_content">
           <div class="device_step">
             <div>
@@ -697,12 +614,19 @@
       width="440px">
         <div class="dialog_content">
           <div class="beautify_set">
-              <!-- :src-object.prop="stream" -->
             <video
               autoplay
+              :src-object.prop="stream"
               class="beautify_video"
               v-if="beautifyDialog"
             ></video>
+            <div class="checkd_btn">
+              <el-checkbox v-model="checked" @change="changeEffect">开启美颜</el-checkbox>
+              <div class="checkd_reset" @click="resetEffect">
+                <i class="el-icon-refresh-left"></i>
+                <span>恢复</span>
+              </div>
+            </div>
             <div class="block">
               <span>美白</span>
               <el-slider @input="changeWhitenIntensity" v-model="beautifyParams.whitenIntensity"></el-slider>
@@ -848,7 +772,8 @@ export default {
       recommendList: [], //主播推荐主播列表
       barrage: "",
       questionMessageInfo: [], //提问消息
-      studentList: [],
+      studentList: [],//在线用户列表
+      serachUser:"",
       userInfo: {}, //用户信息
       goodsPushTimer: null, //商品推送定时
       livePredictionTimer: null, //直播预告推送定时
@@ -907,13 +832,14 @@ export default {
         },
       ],
       headerNavActive: "desktopShare", //顶部导航选中,
+      superboardShow:false,//超级白板
       liveStatus: false, //直播状态
       liveTheme: "", //直播主题
       beautifyParams:{ //美颜参数
-        smoothIntensity:0,
-        whitenIntensity:0,
-        rosyIntensity:0,
-        sharpenIntensity:0
+        smoothIntensity:50,
+        whitenIntensity:50,
+        rosyIntensity:50,
+        sharpenIntensity:50
       },
       videoWith:'',
       videoHeight:'',
@@ -922,7 +848,6 @@ export default {
       deviceDialogVisible:false,//切换设备弹窗
       cameraId:'',//摄像头设备
       microphoneId:'',//麦克风设备
-      uploadDialogVisible:false,//共享桌面
       fileList:[],
       params:{
         limit:10,
@@ -940,6 +865,7 @@ export default {
       cameraError:false,
       micError:false,
       soundWaves:0,//音浪大小
+      checked:false,//是否开启美颜
     };
   },
   created() {
@@ -1232,7 +1158,6 @@ export default {
         this.$http.post('/sys/mixedflow/openDesktopSharing',{RoomId:this.roomId,StreamId:'shareDesk'+this.roomId}).then(res=>{
           console.log(res)
           if(res.data.code == 0){
-            this.uploadDialogVisible = false
             this.$message({
               message:'共享开启成功',
               type:'success'
@@ -1245,19 +1170,20 @@ export default {
       console.log(file)
     },
     selectCamera(value){ //选择摄像头
-      console.log(value,111111111)
       this.cameraId = value
       this.checkCamera()
     },
     async selectMic(value){//选择麦克风
-      console.log(value,2222222)
       this.microphoneId = value
-      let res = await this.zg.useAudioDevice(this.stream,String(this.value))
-      console.log(res,22222222555601)
     },
     changeTrends(){
       console.log(this.trends)
       this.trends==1?this.trends=0:this.trends=1
+    },
+    quitBoard(){
+      this.superboardShow = false
+      document.querySelector('#videoEle').style.width = '100%'
+      document.querySelector('#videoEle').style.height = 'calc(100% - 60px)'
     },
     async changeDevice(data){
       if (data.type === "mike") {
@@ -1308,6 +1234,19 @@ export default {
         case "device":
           this.deviceDialogVisible = true
           break
+        case "desktopShare":
+          if(this.liveStatus){
+            this.shareDesk()
+          }else{
+            this.$message.warning("直播暂未开启，请先开启直播")
+          }
+          break
+        case "superboard":
+          this.superboardShow = true
+          document.querySelector('#videoEle').style.width = '350px'
+          document.querySelector('#videoEle').style.height = '196px'
+          break
+
       }
     },
     recordMethod(){
@@ -1475,11 +1414,19 @@ export default {
         this.micError = false
       }
     },
-    addStep(){
+    async addStep(){
       if(this.checkStep<3){
         this.checkStep++
       }else{
-
+        if(!this.cameraError&&!this.micError){
+          let res = await this.zg.useVideoDevice(this.stream,this.cameraId) //切换摄像头
+          let resTwo = await this.zg.useAudioDevice(this.stream,this.microphoneId) //切换麦克风
+          if(res&&resTwo){
+            this.$message.success('设备切换成功')
+          }
+        }else{
+          this.$message.warning('所选设备存在异常请重新检测')
+        }
       }
     },
     // 获取token的方法
@@ -1663,21 +1610,42 @@ export default {
         }
       }
     },
+    changeEffect(value){
+      if(value){
+        this.openEffect() //开启美颜
+      }else{
+        this.closeEffect()//关闭美颜
+      }
+    },
+    resetEffect(){
+      this.beautifyParams.smoothIntensity = 50
+      this.beautifyParams.whitenIntensity = 50
+      this.beautifyParams.rosyIntensity = 50
+      this.beautifyParams.sharpenIntensity = 50
+    },
     // 关闭美颜
     closeEffect() {
       this.zg.setEffectsBeauty(this.stream, false);
     },
     changeSmoothIntensity(value){//磨皮
-      this.openEffect()
+      if(this.checked){
+        this.openEffect()
+      }
     },
     changeWhitenIntensity(value){//美白
-      this.openEffect()
+      if(this.checked){
+        this.openEffect()
+      }
     },
     changeRosyIntensity(value){//红润
-      this.openEffect()
+      if(this.checked){
+        this.openEffect()
+      }
     },
     changeSharpenIntensity(value){//锐化
-      this.openEffect()
+      if(this.checked){
+        this.openEffect()
+      }
     },
     joinGroup() {
       //加入直播群聊
@@ -1969,12 +1937,13 @@ export default {
       let params = {...this.params,...obj}
       this.$http
         .get(`/sys/mixedflow/getOnlineUsers`,{params})
-        .then((res) => {
+        .then(({data:res}) => {
           console.log("在线用户列表", res.data.list);
           if(!res.code==0) return this.$message.error(res.msg)
-          // let data = res.data.list;
-          // this.studentList = this.studentList.concat(data)
-          // this.total = res.data.total
+          let data = res.data.list;
+          console.log(data)
+          this.studentList = this.studentList.concat(data)
+          this.total = res.data.total
         });
     },
     // 获取主播推荐商品
@@ -2178,12 +2147,13 @@ p {
           border-radius: 50%;
         }
         .user-info {
-          margin-left: 20px;
           height: 80px;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
           padding: 14px 0px;
+          position: absolute;
+          left: 120px;
           .username {
             display: flex;
             align-items: center;
@@ -2444,6 +2414,12 @@ p {
               width: 100%;
               height: 100%;
               overflow: auto;
+              .el-input__inner{
+                background-color: #44454A;
+                border-radius: 23px;
+                border: none;
+                color: #b7b7b7;
+              }
               .content {
                 width: 310px;
                 padding: 14px;
@@ -2846,11 +2822,18 @@ p {
               top: 60px;
               width: 100%;
               height: calc(100% - 60px);
-              // background: pink;
-              .default{
-                width: 100%;
-                height: 100%;
-                background-color: #ffffff;
+              .quit_board{
+                position: absolute;
+                right: 10px;
+                top: 20px;
+                cursor: pointer;
+                background: linear-gradient(89deg, #FA3622 0%, #FE055B 100%);
+                box-shadow: 0px 4px 10px 1px rgba(249,46,29,0.4000);
+                width: 100px;
+                line-height: 25px;
+                border-radius: 10px;
+                color: #ffffff;
+                text-align: center;
               }
             }
 
@@ -3266,6 +3249,23 @@ p {
       .beautify_video{
         width: 100%;
         height: 182px;
+      }
+      .checkd_btn{
+        margin: 0px 0px 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #000000;
+        font-size: 14px;
+        .el-checkbox{
+          color: #000000;
+        }
+        .checkd_reset{
+          font-size: 12px;
+          >span{
+            margin-left: 2px;
+          }
+        }
       }
       .block{
         display: flex;
