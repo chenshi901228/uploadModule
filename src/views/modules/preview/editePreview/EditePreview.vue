@@ -420,6 +420,8 @@ export default {
             //   : "";
             if(res.data.assistant){
               this.ruleForm.assistant = res.data.assistant;
+            }else {
+              this.ruleForm.assistant = ""
             }
             if(res.data.products){
               this.ruleForm.products = res.data.products;
@@ -427,6 +429,8 @@ export default {
               this.ruleForm.products = productsData.length
                 ? `已选择${productsData.length}个商品`
                 : "";
+            }else {
+              this.ruleForm.products = ""
             }
             if(res.data.recommendedAnchors){
               this.ruleForm.recommendedAnchors = res.data.recommendedAnchors;
@@ -434,6 +438,8 @@ export default {
               this.ruleForm.recommendedAnchors = anchorData.length
                 ? `已选择${anchorData.length}个主播`
                 : "";
+            }else {
+              this.ruleForm.recommendedAnchors = ""
             }
 
             this.info = res.data;
