@@ -109,7 +109,7 @@
           </div>
         </div>
       </div>
-      <div class="info_type">
+      <div class="info_type" v-if="diaForm.userType==2">
         <div class="type_title">
           <span>联系人</span>
         </div>
