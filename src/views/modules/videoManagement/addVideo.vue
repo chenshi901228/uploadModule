@@ -14,6 +14,8 @@
         <el-input
           placeholder="请输入视频主题"
           style="width: 400px"
+          maxlength="60"
+          show-word-limit
           v-model="dataForm.liveTheme"
         ></el-input>
       </el-form-item>
