@@ -269,6 +269,8 @@ export default {
             return this.$message.error("请上传视频");
           }
 
+          this.submitLoading = true;
+          
           let params = {};
           params = JSON.parse(JSON.stringify(this.dataForm));
 
@@ -282,20 +284,18 @@ export default {
           );
           params.longTime = Math.ceil(liveDuration);
 
-          this.submitLoading = true;
 
           this.$http
             .post("/sys/livePlayback/save", { ...params })
             .then(({ data: res }) => {
+              this.submitLoading = false;
               if (res.code == 0) {
                 this.$message.success("添加视频成功");
-                this.submitLoading = false;
                 this.closeCurrentTab();
                 this.$router.push({
                   path:"/videoManagement-VideoManagement"
                 })
               } else {
-                this.submitLoading = false;
                 this.$message.error(res.msg);
               }
             })
