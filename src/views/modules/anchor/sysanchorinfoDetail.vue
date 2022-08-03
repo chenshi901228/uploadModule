@@ -153,7 +153,7 @@
             <span>开户行所在地</span>
             {{diaForm.bankInfo&&diaForm.bankInfo.address||'-'}}
           </div>
-          <div>
+          <div v-if="diaForm.userType==2">
             <span>验证金额</span>
             {{diaForm.bankInfo&&diaForm.bankInfo.attestAmount || 0}}
           </div>
