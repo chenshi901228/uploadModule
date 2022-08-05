@@ -3,7 +3,7 @@
 
 <template>
   <el-card shadow="never" class="aui-card--fill">
-    <div class="mod-pay__order">
+    <div class="mod-shareRecord">
       <el-form
         class="headerTool"
         :inline="true"

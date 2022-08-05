@@ -328,6 +328,7 @@ export default {
               this.$message.error(JSON.stringify(err))
             });
           } else {
+            instance.confirmButtonLoading = false;
             done();
           }
         }
