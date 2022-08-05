@@ -3,10 +3,7 @@
     <el-card 
         shadow="never" 
         class="aui-card--fill" 
-        v-loading="loading"
-        element-loading-text="正在加载缓存监控数据，请稍候！"
-        element-loading-spinner="el-icon-loading"
-        element-loading-background="rgba(0, 0, 0, 0.5)">
+        v-loading="loading">
         <div class="mod-cacheCharts">
             <el-row :gutter="20">
                 <el-col :span="24" class="card-box" style="margin-bottom: 20px">
