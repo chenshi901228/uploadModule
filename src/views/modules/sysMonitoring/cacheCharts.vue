@@ -124,9 +124,9 @@ export default {
                     ]
                 });
 
-                // 内存配置-默认G
+                // 内存配置-
                 let max = this.cache.info.maxmemory_human
-                max = parseInt(max) * 1024
+                max = this.calcMaxMemory(max)
 
                 this.usedmemory = echarts.init(this.$refs.usedmemory, "macarons");
                 this.usedmemory.setOption({
@@ -156,6 +156,14 @@ export default {
                 this.$message.error(JSON.stringify(err))
             })
         },
+        // 计算最大内存
+        calcMaxMemory(num) {
+            if(num.includes("G")) return parseInt(num) * 1024
+
+            if(num.includes("M")) return parseInt(num)
+
+            return parseInt(num)
+        }
     }
 };
 </script>
