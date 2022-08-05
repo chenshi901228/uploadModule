@@ -91,11 +91,11 @@ export default {
     },
     activated() {
         this.getList();
-        this.loading = true
     },
     methods: {
         /** 查缓存询信息 */
         getList() {
+            this.loading = true
             this.$http.get("/sys/monitor/cache").then(({data: res}) => {
                 
                 this.loading = false
