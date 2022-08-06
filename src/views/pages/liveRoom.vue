@@ -866,6 +866,8 @@ export default {
       micError:false,
       soundWaves:0,//音浪大小
       checked:false,//是否开启美颜
+      cameraStatus:true,
+      microphoneStatus:true,
     };
   },
   created() {
@@ -888,10 +890,12 @@ export default {
     let checkSystemRes = await this.zg.checkSystemRequirements()
     console.log(checkSystemRes,'55555')
     if(!checkSystemRes.camera){
+      this.cameraStatus = checkSystemRes.camera
       this.$message.warning('请先打开摄像头权限')
       return
     }
     if(!checkSystemRes.microphone){
+      this.microphoneStatus = checkSystemRes.microphone
       this.$message.warning('请先打开麦克风权限')
       return
     }
@@ -1508,6 +1512,11 @@ export default {
       }
     },
     async startPlayLive() {
+      if(!this.microphoneStatus){
+        return this.$message.warning('请先打开麦克风权限')
+      }else if(!this.cameraStatus){
+        return this.$message.warning('请先打开摄像头权限')
+      }
       let obj = {};
       if (
         this.$route.query.liveTheme &&
