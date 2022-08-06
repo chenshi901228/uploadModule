@@ -40,6 +40,8 @@ export default {
   },
   created () {
     this.$nextTick(() => {
+      let el = document.querySelector(".aui-wrapper")
+      if(el) el.style.setProperty("--themeColor", this.$store.state.theme)
       if (this.$refs.li) {
         let $li = this.$refs.li.$el
         let $a = $li.firstElementChild
