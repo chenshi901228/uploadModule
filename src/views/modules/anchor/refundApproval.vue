@@ -228,6 +228,9 @@
           align="center"
           show-overflow-tooltip
         >
+          <template slot-scope="{ row }">
+            <span>{{row.productTypeNum != 2 ? "仅退款" : "退货退款"}}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="createDate"

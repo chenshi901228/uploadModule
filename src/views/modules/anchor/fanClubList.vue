@@ -130,7 +130,7 @@
           show-overflow-tooltip
         >
           <template slot-scope="scope">
-            <div>{{ scope.row.delFlg ? "禁用" : "正常" }}</div>
+            <div>{{ scope.row.disabledFlg ? "禁用" : "正常" }}</div>
           </template>
         </el-table-column>
         <el-table-column

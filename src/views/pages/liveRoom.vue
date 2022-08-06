@@ -1055,14 +1055,7 @@ export default {
             // if (connectMessageInfo) {
             //   this.connectMessageInfo = connectMessageInfo;
             // }
-            this.getTimUserSig().then(res=>{
-              this.$http.post("/sys/mixedflow/startEvenWheat", { //重新进入直播间发起混流任务
-                  RoomId: this.roomId, //房间ID；
-                }).then((res) => {
-                  console.log(res);
-                  this.streamUrl = res.data.data.Data.PlayInfo[0].FLV
-                }).catch((err) => {});
-            })
+            this.getTimUserSig()
           }).catch(()=>{
             window.close()
           })
@@ -1502,7 +1495,15 @@ export default {
             type: "success",
           });
         } else {
-          this.$message({ message: "刷新成功", type: "success" });
+          this.$http.post("/sys/mixedflow/startEvenWheat", { //重新进入直播间发起混流任务
+                  RoomId: this.roomId, //房间ID；
+                }).then((res) => {
+                  console.log(res);
+                  this.streamUrl = res.data.data.Data.PlayInfo[0].FLV
+                  this.$message({ message: "刷新成功", type: "success" });
+                }).catch((err) => {
+                  this.$message({ message: "刷新失败", type: "error" });
+                });
         }
       }
     },
@@ -1583,7 +1584,7 @@ export default {
               });
               this.$message({ message: "直播已关闭", type: "success" });
               this.liveStatus = false;
-              localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
+              // localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
               this.tim.logout(); //退出IM
               this.tim.destroy();
               this.endLiveDialogVisible = true
@@ -1592,7 +1593,7 @@ export default {
                 // 以服务的方式调用的 Loading 需要异步关闭
                 this.$loading().close();
               });
-              this.$message({ message: "结束直播失败", type: "error" });
+              this.$message({ message: res.data.msg, type: "error" });
             }
           });
         this.stopPublishingStream();

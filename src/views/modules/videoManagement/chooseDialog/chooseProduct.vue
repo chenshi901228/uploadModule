@@ -30,7 +30,7 @@
           @visible-change="getProductType"
           style="width: 200px"
           v-model="dataForm.productType"
-          placeholder="商品类型"
+          placeholder="请选择"
           clearable
         >
           <el-option
@@ -76,32 +76,18 @@
       <!-- 操作按钮 -->
       <div class="headerTool-handle-btns">
         <div class="headerTool--handle-btns-left">
-        <el-form-item>
-          <el-button
-            type="primary"
-            plain
-            icon="el-icon-plus"
-            size="mini"
-            :disabled="!dataListSelections.length"
-            @click="add()">批量添加</el-button>
-        </el-form-item>
+          <el-form-item>
+            <el-button
+                type="primary"
+                plain
+                icon="el-icon-plus"
+                size="mini"
+                :disabled="!dataListSelections.length"
+                @click="add()">批量添加</el-button>
+          </el-form-item>
         </div>
       </div>
     </el-form>
-    <!-- 选中的内容 -->
-    <div class="selectedData">
-      <el-tooltip
-        v-for="item in defaultSelected"
-        :key="item.id"
-        :content="item.productName"
-        placement="top"
-      >
-        <span class="showTitle"
-          >{{ item.productName
-          }}<i @click="deleteSelect(item)" class="el-icon-close"></i
-        ></span>
-      </el-tooltip>
-    </div>
     <el-table
       v-loading="dataListLoading"
       :data="dataList"
@@ -201,9 +187,6 @@
       @current-change="pageCurrentChangeHandle"
     >
     </el-pagination>
-    <span slot="footer" class="dialog-footer">
-      <el-button type="primary" @click="add()" size="small">确 认</el-button>
-    </span>
   </el-dialog>
 </template>
 <script>
@@ -250,7 +233,6 @@ export default {
       this.dialogVisible = true;
       this.getAllData(data);
     },
-
     //置顶
     setTop(row) {
       if(this.defaultSelected.length > 1) {  //如果有1条以上数据，才将默认选中列表中数据置顶
@@ -270,7 +252,6 @@ export default {
         }
       })
       this.allDataList.unshift(row)
-
 
       this.$message.success("置顶成功")
 
@@ -299,8 +280,7 @@ export default {
           params: {
             page: 1,
             limit: 999,
-            anchorId: this.userId,
-            ...this.$httpParams(this.dataForm),
+            anchorId: this.userId, 
           },
         })
         .then(({ data: res }) => {
@@ -487,7 +467,7 @@ export default {
     // 关闭
     close() {
       this.$refs.dataForm.resetFields();
-      is.$emit("add", this.defaultSelected);
+      this.$emit("add", this.defaultSelected);
       this.dialogVisible = false;
     },
   },
@@ -525,7 +505,7 @@ export default {
   padding: 10px 20px !important;
 }
 .frontCoverImg {
-  max-width: 100%;
+  max-width: 100px;
   height: 60px;
   object-fit: cover;
 }

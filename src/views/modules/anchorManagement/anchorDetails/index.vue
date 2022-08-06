@@ -3,191 +3,212 @@
 <template>
   <div>
     <div class="diaBox">
-        <div class="diaBoxLeft">
-            <div class="diaBoxLeft_title">
-              <span>主播信息</span>
-              <el-button plain type="primary" size="mini" @click="editeUserInfo">编辑</el-button>
-            </div>
-            <div class="diaBoxLeft_mes">
-                <div class="avatar">
-                    <img :src="anchorDetails.avatarUrl || require('@/assets/img/default_avatar.png')" alt="">
-                    <div class="role">{{anchorDetails.userType == 2 ? "企业" : "个人"}}</div>
-                </div>
-                <div>主播昵称：{{ anchorDetails.username || '-' }}</div>
-                <div>真实姓名：{{ anchorDetails.realName || '-' }}</div>
-                <div>身份证号：{{ anchorDetails.idCard || '-' }}</div>
-                <div style="word-break: break-all;max-height: 150px;overflow: auto;">
-                    主播简介：{{ anchorDetails.introduce || '-' }}
-                </div>
-            </div>
-
-            <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:bank:info')">
-                <p>银行账户<span class="accountStatus" v-if="anchorDetails.haveApplyInfo && anchorDetails.userType == 2">核验中</span></p>
-                <el-button plain type="primary" size="mini" @click="editeUserBank">编辑</el-button>
-            </div>
-            <!-- 企业 -->
-            <div class="diaBoxLeft_mes" v-if="anchorDetails.userType == 2&&$hasPermission('anchor:bank:info')">
-                <div>公司名称：{{ anchorDetails.companyName || '-' }}</div>
-                <div>统一社会信用代码：{{ anchorDetails.companyCreditCode || '-' }}</div>
-                <div>开户银行：{{ anchorDetails.depositBank || '-' }}</div>
-                <div>账户名称：{{ anchorDetails.accountName || '-' }}</div>
-                <div>银行账号：{{ anchorDetails.bankAccount || '-' }}</div>
-            </div>
-            <!-- 个人 -->
-            <div class="diaBoxLeft_mes" v-else-if="anchorDetails.userType == 1&&$hasPermission('anchor:bank:info')">
-                <div>姓名：{{ anchorDetails.realName || '-' }}</div>
-                <div>身份证号：{{ anchorDetails.idCard || '-' }}</div>
-                <div>开户银行：{{ anchorDetails.depositBank || '-' }}</div>
-                <div>支行名称：{{ anchorDetails.branchName || '-' }}</div>
-                <div>账户名称：{{ anchorDetails.accountName || '-' }}</div>
-                <div>银行账号：{{ anchorDetails.bankAccount || '-' }}</div>
-                <div>开户行所在地：{{ anchorDetails.address || '-' }}</div>
-            </div>
-            <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:amount:info')">
-                <span>账户信息</span>
-                <el-button plain type="primary" size="mini" @click="withdrawMoney">提现</el-button>
-            </div>
-            <div class="diaBoxLeft_mes" v-if="$hasPermission('anchor:amount:info')">
-                <div>累计收益：￥{{ anchorDetails.priceIncome ? anchorDetails.priceIncome : 0 }}元</div>
-                <div>已提现金额：￥{{ anchorDetails.anchorWithdraw || 0 }}元</div>
-                <div>可提现余额：￥{{ anchorDetails.anchorBalance || 0 }}元</div>
-            </div>
+      <div class="diaBoxLeft">
+        <div class="diaBoxLeft_title">
+          <span style="font-size: 14px;font-weight: bold;color: #4057CB;">主播信息</span>
+          <el-button plain type="primary" size="mini" icon="el-icon-edit" @click="editeUserInfo">编辑</el-button>
         </div>
-        <div class="diaBoxRight">
-            <div style="display: flex">
-            <div
-                class="diaBoxRight_tabBtns"
-                @click="changeTbas(1)"
-                :class="{ 'is-active': diaTbas === 1 }"
-                v-if="$hasPermission('anchor:gain:list')"
-            >
-                收益记录
+        <div class="diaBoxLeft_mes">
+          <div class="avatar">
+            <img :src="anchorDetails.avatarUrl || require('@/assets/img/default_avatar.png')" alt="">
+            <div class="role">{{ anchorDetails.userType == 2 ? "企业" : "个人" }}</div>
+          </div>
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">主播昵称</div>
+            <div>{{ anchorDetails.username || '-' }}</div>
+          </div>
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">真实姓名</div>
+            <div>
+              {{ anchorDetails.idCard || '-' }}
             </div>
-            <div
-                class="diaBoxRight_tabBtns"
-                @click="changeTbas(2)"
-                :class="{ 'is-active': diaTbas === 2 }"
-                v-if="$hasPermission('anchor:withdraw:list')"
-            >
-                提现记录
+          </div>
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">身份证号</div>
+            <div>
+              {{ anchorDetails.idCard || '-' }}
             </div>
-            <div
-                class="diaBoxRight_tabBtns"
-                @click="changeTbas(3)"
-                :class="{ 'is-active': diaTbas === 3 }"
-            >
-                关注记录
+          </div>
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">主播简介</div>
+            <div>
+              {{ anchorDetails.introduce || '-' }}
             </div>
-            <div
-                class="diaBoxRight_tabBtns"
-                @click="changeTbas(4)"
-                :class="{ 'is-active': diaTbas === 4 }"
-            >
-                粉丝团成员
+          </div>
+
+        </div>
+
+        <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:bank:info')">
+          <p style="font-size: 14px;font-weight: bold;color: #4057CB;">银行账户<span class="accountStatus"
+              v-if="anchorDetails.haveApplyInfo && anchorDetails.userType == 2">核验中</span></p>
+          <el-button plain type="primary" size="mini" @click="editeUserBank" icon="el-icon-edit">编辑</el-button>
+        </div>
+        <!-- 企业 -->
+        <div class="diaBoxLeft_mes" v-if="anchorDetails.userType == 2 && $hasPermission('anchor:bank:info')">
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">公司名称</div>
+            <div>
+              {{ anchorDetails.companyName || '-' }}
             </div>
-            <div
-                class="diaBoxRight_tabBtns"
-                @click="changeTbas(5)"
-                :class="{ 'is-active': diaTbas === 5 }"
-            >
-                店铺
+          </div>
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">统一社会信用代码</div>
+            <div>
+              {{ anchorDetails.companyCreditCode || '-' }}
             </div>
-            <div
-                class="diaBoxRight_tabBtns"
-                @click="changeTbas(6)"
-                :class="{ 'is-active': diaTbas === 6 }"
-            >
-                推荐主播
+          </div>
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">开户银行</div>
+            <div>
+              {{ anchorDetails.depositBank || '-' }}
             </div>
+          </div>
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">账户名称</div>
+            <div>
+              {{ anchorDetails.accountName || '-' }}
             </div>
-            <el-form
-            :inline="true"
-            :style="{ margin: '20px' }"
-            :model="diaSearchForm"
-            @keyup.enter.native="queryPost_dia()"
-            size="small"
-            ref="searchForm"
-            label-width="100px"
-            >
-            <el-form-item label="收益类型" v-if="diaTbas === 1" prop="type">
-                <el-select
-                placeholder="请选择"
-                style="width: 180px"
-                v-model="diaSearchForm.type"
-                clearable
-                >
-                <el-option :value="1" label="直播间礼物"></el-option>
-                <el-option :value="2" label="粉丝团"></el-option>
-                <el-option :value="3" label="课程返利"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="结算时间" v-if="diaTbas === 1" prop="date">
-                <el-date-picker
-                placeholder="请选择"
-                v-model="diaSearchForm.date"
-                type="datetimerange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                value-format="yyyy-MM-dd HH:mm:ss"
-                >
-                </el-date-picker>
-            </el-form-item>
-            <el-form-item
-                label="提现单号"
-                v-if="diaTbas === 2"
-                prop="code"
-            >
-                <el-input
-                style="width: 180px"
-                placeholder="请输入"
-                v-model="diaSearchForm.code"
-                clearable
-                ></el-input>
-            </el-form-item>
-            <el-form-item
-                label="银行账号"
-                v-if="diaTbas === 2"
-                prop="bankAccount"
-            >
-                <el-input
-                style="width: 180px"
-                placeholder="请输入"
-                v-model="diaSearchForm.bankAccount"
-                clearable
-                ></el-input>
-            </el-form-item>
-            <el-form-item label="提现时间" v-if="diaTbas === 2" prop="date">
-                <el-date-picker
-                  placeholder="请选择"
-                  v-model="diaSearchForm.date"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  value-format="yyyy-MM-dd">
-                </el-date-picker>
-            </el-form-item>
-            <el-form-item
-                label="提现状态"
-                v-if="diaTbas === 2"
-                prop="withdrawStatus"
-            >
-                <el-select
-                placeholder="请选择"
-                style="width: 180px"
-                v-model="diaSearchForm.withdrawStatus"
-                clearable
-                >
-                <el-option :value="-1" label="驳回"></el-option>
-                <el-option :value="1" label="审核中"></el-option>
-                <el-option :value="2" label="核算中"></el-option>
-                <el-option :value="3" label="到帐中"></el-option>
-                <el-option :value="4" label="已到账"></el-option>
-                <el-option :value="5" label="未到账"></el-option>
-                </el-select>
-            </el-form-item>
-            <!-- <el-form-item
+          </div>
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">银行账号</div>
+            <div>
+              {{ anchorDetails.bankAccount || '-' }}
+            </div>
+          </div>
+
+        </div>
+        <!-- 个人 -->
+        <div class="diaBoxLeft_mes" v-else-if="anchorDetails.userType == 1 && $hasPermission('anchor:bank:info')">
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">姓名</div>
+            <div>
+              {{ anchorDetails.realName || '-' }}
+            </div>
+          </div>
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">身份证号</div>
+            <div>
+              {{ anchorDetails.idCard || '-' }}
+            </div>
+          </div>
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">开户银行</div>
+            <div>
+              {{ anchorDetails.depositBank || '-' }}
+            </div>
+          </div>
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">支行名称</div>
+            <div>
+              {{ anchorDetails.branchName || '-' }}
+            </div>
+          </div>
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">账户名称</div>
+            <div>
+              {{ anchorDetails.accountName || '-' }}
+            </div>
+          </div>
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">银行账号</div>
+            <div>
+              {{ anchorDetails.bankAccount || '-' }}
+            </div>
+          </div>
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">开户行所在地</div>
+            <div>
+              {{ anchorDetails.address || '-' }}
+            </div>
+          </div>
+
+        </div>
+        <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:amount:info')">
+          <span style="font-size: 14px;font-weight: bold;color: #4057CB;">账户信息</span>
+          <el-button plain type="primary" size="mini" @click="withdrawMoney" style="width:73px;background: rgb(64, 87, 203);
+    color: #fff;">提现</el-button>
+        </div>
+        <div class="diaBoxLeft_mes" v-if="$hasPermission('anchor:amount:info')">
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">累计收益</div>
+            <div>
+              ￥{{ anchorDetails.priceIncome ? anchorDetails.priceIncome : 0 }}元
+            </div>
+          </div>
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">已提现金额</div>
+            <div>
+             ￥{{ anchorDetails.anchorWithdraw || 0 }}元
+            </div>
+          </div>
+          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+            <div style="    color:#A8AAB3;margin-bottom: 10px;">可提现余额</div>
+            <div>
+             ￥{{ anchorDetails.anchorBalance || 0 }}元
+            </div>
+          </div>
+    
+        </div>
+      </div>
+      <div class="diaBoxRight">
+        <div style="display: flex">
+          <div class="diaBoxRight_tabBtns" @click="changeTbas(1)" :class="{ 'is-active': diaTbas === 1 }"
+            v-if="$hasPermission('anchor:gain:list')">
+            收益记录
+          </div>
+          <div class="diaBoxRight_tabBtns" @click="changeTbas(2)" :class="{ 'is-active': diaTbas === 2 }"
+            v-if="$hasPermission('anchor:withdraw:list')">
+            提现记录
+          </div>
+          <div class="diaBoxRight_tabBtns" @click="changeTbas(3)" :class="{ 'is-active': diaTbas === 3 }">
+            关注记录
+          </div>
+          <div class="diaBoxRight_tabBtns" @click="changeTbas(4)" :class="{ 'is-active': diaTbas === 4 }">
+            粉丝团成员
+          </div>
+          <div class="diaBoxRight_tabBtns" @click="changeTbas(5)" :class="{ 'is-active': diaTbas === 5 }">
+            店铺
+          </div>
+          <div class="diaBoxRight_tabBtns" @click="changeTbas(6)" :class="{ 'is-active': diaTbas === 6 }">
+            推荐主播
+          </div>
+        </div>
+        <el-form :inline="true" :style="{ margin: '20px' }" :model="diaSearchForm" @keyup.enter.native="queryPost_dia()"
+          size="small" ref="searchForm" label-width="100px">
+          <el-form-item label="收益类型" v-if="diaTbas === 1" prop="type">
+            <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.type" clearable>
+              <el-option :value="1" label="直播间礼物"></el-option>
+              <el-option :value="2" label="粉丝团"></el-option>
+              <el-option :value="3" label="课程返利"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="结算时间" v-if="diaTbas === 1" prop="date">
+            <el-date-picker placeholder="请选择" v-model="diaSearchForm.date" type="datetimerange" range-separator="至"
+              start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd HH:mm:ss">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="提现单号" v-if="diaTbas === 2" prop="code">
+            <el-input style="width: 180px" placeholder="请输入" v-model="diaSearchForm.code" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="银行账号" v-if="diaTbas === 2" prop="bankAccount">
+            <el-input style="width: 180px" placeholder="请输入" v-model="diaSearchForm.bankAccount" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="提现时间" v-if="diaTbas === 2" prop="date">
+            <el-date-picker placeholder="请选择" v-model="diaSearchForm.date" type="daterange" range-separator="至"
+              start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="提现状态" v-if="diaTbas === 2" prop="withdrawStatus">
+            <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.withdrawStatus" clearable>
+              <el-option :value="-1" label="驳回"></el-option>
+              <el-option :value="1" label="审核中"></el-option>
+              <el-option :value="2" label="核算中"></el-option>
+              <el-option :value="3" label="到帐中"></el-option>
+              <el-option :value="4" label="已到账"></el-option>
+              <el-option :value="5" label="未到账"></el-option>
+            </el-select>
+          </el-form-item>
+          <!-- <el-form-item
                 label="审批状态"
                 v-if="diaTbas === 2"
                 prop="approveStatus"
@@ -215,109 +236,44 @@
                 <el-option :value="-1" label="支付失败"></el-option>
                 </el-select>
             </el-form-item> -->
-            <el-form-item
-                label="用户昵称"
-                v-if="diaTbas === 3 || diaTbas === 4"
-                prop="userName"
-            >
-                <el-input
-                placeholder="请输入"
-                style="width: 180px"
-                v-model="diaSearchForm.userName"
-                clearable
-                ></el-input>
-            </el-form-item>
-            <el-form-item
-                label="商品名称"
-                v-if="diaTbas === 5"
-                prop="productName"
-            >
-                <el-input
-                placeholder="请输入"
-                style="width: 180px"
-                v-model="diaSearchForm.productName"
-                clearable
-                ></el-input>
-            </el-form-item>
-            <el-form-item
-                label="手机号码"
-                v-if="diaTbas === 3 || diaTbas === 4 || diaTbas === 6"
-                prop="phone"
-            >
-                <el-input
-                placeholder="请输入"
-                style="width: 180px"
-                v-model="diaSearchForm.phone"
-                clearable
-                ></el-input>
-            </el-form-item>
-            <el-form-item label="等级" v-if="diaTbas === 4" prop="level">
-                <el-select
-                placeholder="请选择"
-                @visible-change="getFansLevels"
-                style="width: 180px"
-                v-model="diaSearchForm.level"
-                clearable
-                >
-                <el-option
-                    v-for="item in fansLevelsOptions"
-                    :key="item"
-                    :value="item"
-                    :label="item"
-                ></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="粉丝团身份" v-if="diaTbas === 4" prop="userType">
-                <el-select
-                placeholder="请选择"
-                style="width: 180px"
-                v-model="diaSearchForm.userType"
-                clearable
-                >
-                <el-option :value="0" label="普通用户"></el-option>
-                <el-option :value="1" label="助手"></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
-                <el-input
-                placeholder="请输入"
-                style="width: 180px"
-                v-model="diaSearchForm.anchorName"
-                clearable
-                ></el-input>
-            </el-form-item>
-            <el-form-item
-                label="商品类型"
-                v-if="diaTbas === 5"
-                prop="productType"
-            >
-                <el-select
-                @visible-change="getProductType"
-                style="width: 180px"
-                v-model="diaSearchForm.productType"
-                placeholder="请选择"
-                clearable
-                >
-                <el-option
-                    v-for="item in productTypeOptions"
-                    :key="item.productType"
-                    :value="item.productType"
-                    :label="item.productType"
-                ></el-option>
-                </el-select>
-            </el-form-item>
-            <el-form-item label="是否免费" v-if="diaTbas === 5" prop="isFree">
-                <el-select
-                placeholder="请选择"
-                style="width: 180px"
-                v-model="diaSearchForm.isFree"
-                clearable
-                >
-                <el-option :value="0" label="否"></el-option>
-                <el-option :value="1" label="是"></el-option>
-                </el-select>
-            </el-form-item>
-            <!-- <el-form-item label="上架状态" v-if="diaTbas === 5">
+          <el-form-item label="用户昵称" v-if="diaTbas === 3 || diaTbas === 4" prop="userName">
+            <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.userName" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="商品名称" v-if="diaTbas === 5" prop="productName">
+            <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.productName" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="手机号码" v-if="diaTbas === 3 || diaTbas === 4 || diaTbas === 6" prop="phone">
+            <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.phone" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="等级" v-if="diaTbas === 4" prop="level">
+            <el-select placeholder="请选择" @visible-change="getFansLevels" style="width: 180px"
+              v-model="diaSearchForm.level" clearable>
+              <el-option v-for="item in fansLevelsOptions" :key="item" :value="item" :label="item"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="粉丝团身份" v-if="diaTbas === 4" prop="userType">
+            <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.userType" clearable>
+              <el-option :value="0" label="普通用户"></el-option>
+              <el-option :value="1" label="助手"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
+            <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.anchorName" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="商品类型" v-if="diaTbas === 5" prop="productType">
+            <el-select @visible-change="getProductType" style="width: 180px" v-model="diaSearchForm.productType"
+              placeholder="请选择" clearable>
+              <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType"
+                :label="item.productType"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="是否免费" v-if="diaTbas === 5" prop="isFree">
+            <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.isFree" clearable>
+              <el-option :value="0" label="否"></el-option>
+              <el-option :value="1" label="是"></el-option>
+            </el-select>
+          </el-form-item>
+          <!-- <el-form-item label="上架状态" v-if="diaTbas === 5">
                 <el-select
                 placeholder="请选择"
                 style="width: 180px"
@@ -328,341 +284,184 @@
                 <el-option :value="1" label="下架"></el-option>
                 </el-select>
             </el-form-item> -->
-            <el-form-item>
-                <el-button
-                size="mini"
-                v-if="diaTbas === 5 && dataListSelections.length !== 0"
-                type="danger"
-                plain
-                @click="deleteSelect()"
-                >批量下架</el-button
-                >
-                <el-button
-                size="mini"
-                v-if="diaTbas === 5"
-                @click="updateProduct"
-                type="primary"
-                plain
-                icon="el-icon-plus"
-                >上架商品</el-button
-                >
-                <el-button
-                size="mini"
-                icon="el-icon-user"
-                v-if="diaTbas === 4"
-                plain
-                @click="fansGroup"
-                type="primary"
-                >群组</el-button
-                >
-                <el-button
-                size="mini"
-                v-if="diaTbas === 6 && dataListSelections.length !== 0"
-                @click="deleteRecommend()"
-                type="danger"
-                plain
-                icon="el-icon-delete"
-                >批量取消</el-button
-                >
-                <el-button
-                size="mini"
-                v-if="diaTbas === 6"
-                @click="addRecommendShow"
-                type="primary"
-                plain
-                icon="el-icon-plus"
-                >新增主播</el-button
-                >
-                <el-button
-                size="mini"
-                icon="el-icon-search"
-                type="primary"
-                @click="queryPost_dia()"
-                >{{ $t("query") }}</el-button
-                >
-                <el-button size="mini" icon="el-icon-refresh" @click="mainReset"
-                >重置</el-button
-                >
-            </el-form-item>
-            </el-form>
-            <el-table
-            :data="diaDataList"
-            v-loading="dataListLoading"
-            style="width: 100%"
-            height="calc(calc(100vh - 50px - 36px - 30px - 45px - 90px - 47px) - 2px)"
-            @selection-change="dataListSelectionChangeHandle"
-            ref="dataTable"
-            >
-            <el-table-column
-                type="selection"
-                header-align="center"
-                align="center"
-                width="50"
-                fixed="left"
-                v-if="diaTbas === 5 || diaTbas === 6"
-            ></el-table-column>
-            <template v-for="(label, prop) in diaTableTitle">
-                <el-table-column
-                :prop="prop"
-                :label="label"
-                :key="prop"
-                header-align="center"
-                align="center"
-                v-if="prop === 'paySource'"
-                >
-                <template slot-scope="scope">
-                    <div>
-                    {{ scope.row.paySource === 1 ? "小程序" : "大于众学" }}
-                    </div>
-                </template>
-                </el-table-column>
-                <el-table-column
-                :prop="prop"
-                :label="label"
-                :key="prop"
-                header-align="center"
-                align="center"
-                width="120"
-                v-if="prop === 'productImage'"
-                >
-                <template slot-scope="{ row }">
-                    <div>
-                    <img
-                        style="width: 100%; height: 60px; object-fit: cover"
-                        class="productImage"
-                        :src="row.productImage"
-                        alt=""
-                    />
-                    </div>
-                </template>
-                </el-table-column>
-                <el-table-column
-                :prop="prop"
-                :label="label"
-                :key="prop"
-                header-align="center"
-                align="center"
-                v-else-if="prop === 'type'"
-                >
-                <template slot-scope="scope">
-                    <div>
-                    {{
-                        scope.row.type === 1
+          <el-form-item>
+            <el-button size="mini" v-if="diaTbas === 5 && dataListSelections.length !== 0" type="danger" plain
+              @click="deleteSelect()">批量下架</el-button>
+            <el-button size="mini" v-if="diaTbas === 5" @click="updateProduct" type="primary" plain icon="el-icon-plus">
+              上架商品</el-button>
+            <el-button size="mini" icon="el-icon-user" v-if="diaTbas === 4" plain @click="fansGroup" type="primary">群组
+            </el-button>
+            <el-button size="mini" v-if="diaTbas === 6 && dataListSelections.length !== 0" @click="deleteRecommend()"
+              type="danger" plain icon="el-icon-delete">批量取消</el-button>
+            <el-button size="mini" v-if="diaTbas === 6" @click="addRecommendShow" type="primary" plain
+              icon="el-icon-plus">新增主播</el-button>
+            <el-button size="mini" icon="el-icon-search" type="primary" @click="queryPost_dia()">{{ $t("query") }}
+            </el-button>
+            <el-button size="mini" icon="el-icon-refresh" @click="mainReset">重置</el-button>
+          </el-form-item>
+        </el-form>
+        <el-table :data="diaDataList" v-loading="dataListLoading" style="width: 100%"
+          height="calc(calc(100vh - 50px - 36px - 30px - 45px - 90px - 47px) - 80px)"
+          @selection-change="dataListSelectionChangeHandle" ref="dataTable">
+          <el-table-column type="selection" header-align="center" align="center" width="50" fixed="left"
+            v-if="diaTbas === 5 || diaTbas === 6"></el-table-column>
+          <template v-for="(label, prop) in diaTableTitle">
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-if="prop === 'paySource'">
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.paySource === 1 ? "小程序" : "大于众学" }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center" width="120"
+              v-if="prop === 'productImage'">
+              <template slot-scope="{ row }">
+                <div>
+                  <img style="width: 100%; height: 60px; object-fit: cover" class="productImage" :src="row.productImage"
+                    alt="" />
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'type'">
+              <template slot-scope="scope">
+                <div>
+                  {{
+                      scope.row.type === 1
                         ? "直播间礼物"
                         : scope.row.type === 2
-                        ? "粉丝团"
-                        : "课程返利"
-                    }}
-                    </div>
-                </template>
-                </el-table-column>
-                <el-table-column
-                :prop="prop"
-                :label="label"
-                :key="prop"
-                header-align="center"
-                align="center"
-                v-else-if="prop === 'approveStatus'"
-                >
-                <template slot-scope="scope">
-                    <div>
-                    {{
-                        scope.row.approveStatus === 0
+                          ? "粉丝团"
+                          : "课程返利"
+                  }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'approveStatus'">
+              <template slot-scope="scope">
+                <div>
+                  {{
+                      scope.row.approveStatus === 0
                         ? "审批中"
                         : scope.row.approveStatus === 1
-                        ? "已通过"
-                        : "未通过"
-                    }}
-                    </div>
-                </template>
-                </el-table-column>
-                <el-table-column
-                :prop="prop"
-                :label="label"
-                :key="prop"
-                header-align="center"
-                align="center"
-                v-else-if="prop === 'confirmStatus'"
-                >
-                <template slot-scope="scope">
-                    <div>
-                    {{
-                        scope.row.confirmStatus === 0
+                          ? "已通过"
+                          : "未通过"
+                  }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'confirmStatus'">
+              <template slot-scope="scope">
+                <div>
+                  {{
+                      scope.row.confirmStatus === 0
                         ? "待打款"
                         : scope.row.confirmStatus === 1 &&
-                            scope.row.payStatus === 0
-                        ? "到账中"
-                        : scope.row.confirmStatus === 1 &&
+                          scope.row.payStatus === 0
+                          ? "到账中"
+                          : scope.row.confirmStatus === 1 &&
                             scope.row.payStatus === 1
-                        ? "已到账"
-                        : "到账失败"
-                    }}
-                    </div>
-                </template>
-                </el-table-column>
+                            ? "已到账"
+                            : "到账失败"
+                  }}
+                </div>
+              </template>
+            </el-table-column>
 
-                <el-table-column
-                :prop="prop"
-                :label="label"
-                :key="prop"
-                header-align="center"
-                align="center"
-                v-else-if="prop === 'sumTax'"
-                >
-                <template slot="header">
-                  税费
-                  <el-tooltip class="item" effect="dark" content="税费=增值税+附加税+个税" placement="bottom">
-                    <i class="el-icon-question"></i>
-                  </el-tooltip>
-                </template>
-                </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'sumTax'">
+              <template slot="header">
+                税费
+                <el-tooltip class="item" effect="dark" content="税费=增值税+附加税+个税" placement="bottom">
+                  <i class="el-icon-question"></i>
+                </el-tooltip>
+              </template>
+            </el-table-column>
 
-                <el-table-column
-                :prop="prop"
-                :label="label"
-                :key="prop"
-                header-align="center"
-                align="center"
-                v-else-if="prop === 'userType' && diaTbas === 2"
-                >
-                <template slot-scope="scope">
-                    <div>
-                    {{ scope.row.userType === 1 ? "个人" : "企业" }}
-                    </div>
-                </template>
-                </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'userType' && diaTbas === 2">
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.userType === 1 ? "个人" : "企业" }}
+                </div>
+              </template>
+            </el-table-column>
 
-                <el-table-column
-                :prop="prop"
-                :label="label"
-                :key="prop"
-                header-align="center"
-                align="center"
-                v-else-if="prop === 'withdrawStatus' && diaTbas === 2"
-                >
-                <template slot-scope="scope">
-                    <div>
-                    {{ scope.row.withdrawStatus === '-1' ? "--" : scope.row.withdrawStatus === '1' ? "审核中" : scope.row.withdrawStatus === '2' ? "核算中" : scope.row.withdrawStatus === '3' ? "到帐中" : scope.row.withdrawStatus === '4' ? "已到账" : scope.row.withdrawStatus === '5' ? "未到账" : "--" }}
-                    </div>
-                </template>
-                </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'withdrawStatus' && diaTbas === 2">
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.withdrawStatus === '-1' ? "--" : scope.row.withdrawStatus === '1' ? "审核中" :
+                      scope.row.withdrawStatus === '2' ? "核算中" : scope.row.withdrawStatus === '3' ? "到帐中" :
+                        scope.row.withdrawStatus === '4' ? "已到账" : scope.row.withdrawStatus === '5' ? "未到账" : "--"
+                  }}
+                </div>
+              </template>
+            </el-table-column>
 
-                <el-table-column
-                :prop="prop"
-                :label="label"
-                :key="prop"
-                header-align="center"
-                align="center"
-                v-else-if="prop === 'payType'"
-                >
-                <template slot-scope="scope">
-                    <div>
-                    {{ scope.row.paySource === 1 ? "微信" : "支付宝" }}
-                    </div>
-                </template>
-                </el-table-column>
-                <el-table-column
-                :prop="prop"
-                :label="label"
-                :key="prop"
-                header-align="center"
-                align="center"
-                v-else-if="prop === 'isFree'"
-                >
-                <template slot-scope="scope">
-                    <div>
-                    {{ scope.row.isFree === 1 ? "是" : "否" }}
-                    </div>
-                </template>
-                </el-table-column>
-                <el-table-column
-                :prop="prop"
-                :label="label"
-                :key="prop"
-                header-align="center"
-                align="center"
-                v-else-if="prop === 'avatarUrl'"
-                >
-                <template slot-scope="scope">
-                    <img
-                    :src="
-                        scope.row.avatarUrl ||
-                        require('@/assets/img/default_avatar.png')
-                    "
-                    alt=""
-                    style="width: 60px; height: 60px; object-fit: cover"
-                    />
-                </template>
-                </el-table-column>
-                <el-table-column
-                :prop="prop"
-                :label="label"
-                :key="prop"
-                header-align="center"
-                align="center"
-                v-else-if="prop === 'userType'"
-                >
-                <template slot-scope="scope">
-                    <div>
-                    {{ scope.row.userType === 1 ? "助手" : "普通用户" }}
-                    </div>
-                </template>
-                </el-table-column>
-                <el-table-column
-                :prop="prop"
-                :label="label"
-                :key="prop"
-                header-align="center"
-                align="center"
-                v-else-if="prop === 'level'"
-                >
-                <template slot-scope="scope">
-                    <div>
-                    {{ "V" + scope.row.level }}
-                    </div>
-                </template>
-                </el-table-column>
-                <el-table-column
-                :prop="prop"
-                :label="label"
-                :key="prop"
-                header-align="center"
-                align="center"
-                v-else-if="prop === 'delFlg'"
-                >
-                <template slot-scope="scope">
-                    <div v-if="diaTbas === 5">
-                      上架
-                    </div>
-                    <div v-else>
-                    {{ scope.row.delFlg === 1 ? "未推荐" : "已推荐" }}
-                    </div>
-                </template>
-                </el-table-column>
-                <el-table-column
-                :prop="prop"
-                :label="label"
-                :key="prop"
-                header-align="center"
-                align="center"
-                min-width="120"
-                v-else
-                show-overflow-tooltip
-                >
-                </el-table-column>
-            </template>
-            <el-table-column
-                width="120"
-                label="操作"
-                fixed="right"
-                header-align="center"
-                align="center"
-                v-if="
-                diaTbas === 2 || diaTbas === 5 || diaTbas === 6 || diaTbas === 4
-                "
-            >
-                <template slot-scope="scope">
-                <!-- <el-button
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'payType'">
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.paySource === 1 ? "微信" : "支付宝" }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'isFree'">
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.isFree === 1 ? "是" : "否" }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'avatarUrl'">
+              <template slot-scope="scope">
+                <img :src="
+                  scope.row.avatarUrl ||
+                  require('@/assets/img/default_avatar.png')
+                " alt="" style="width: 60px; height: 60px; object-fit: cover" />
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'userType'">
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.userType === 1 ? "助手" : "普通用户" }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'level'">
+              <template slot-scope="scope">
+                <div>
+                  {{ "V" + scope.row.level }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'delFlg'">
+              <template slot-scope="scope">
+                <div v-if="diaTbas === 5">
+                  上架
+                </div>
+                <div v-else>
+                  {{ scope.row.delFlg === 1 ? "未推荐" : "已推荐" }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              min-width="120" v-else show-overflow-tooltip>
+            </el-table-column>
+          </template>
+          <el-table-column width="120" label="操作" fixed="right" header-align="center" align="center" v-if="
+            diaTbas === 2 || diaTbas === 5 || diaTbas === 6 || diaTbas === 4
+          ">
+            <template slot-scope="scope">
+              <!-- <el-button
                     v-if="diaTbas === 2"
                     type="text"
                     size="small"
@@ -670,15 +469,9 @@
                     @click="previewInvoiceImg(scope.row)"
                     >查看发票</el-button
                 > -->
-                <el-button
-                    v-if="diaTbas === 2"
-                    type="text"
-                    size="small"
-                    icon="el-icon-view"
-                    @click="previewInvoice(scope.row.id,scope.row.withdrawStatus)"
-                    >查看</el-button
-                >
-                <!-- <el-button
+              <el-button v-if="diaTbas === 2" type="text" size="small" icon="el-icon-view"
+                @click="previewInvoice(scope.row.id, scope.row.withdrawStatus)">查看</el-button>
+              <!-- <el-button
                     v-if="diaTbas === 2 && scope.row.approveStatus == 0"
                     type="text"
                     size="small"
@@ -686,192 +479,87 @@
                     @click="updateInvoiceImg(scope.row)"
                     >重新上传</el-button
                 > -->
-                <el-button
-                    v-if="diaTbas === 5"
-                    type="text"
-                    size="small"
-                    icon="el-icon-delete"
-                    @click="downProduct(scope.row.id)"
-                    >下架</el-button
-                >
-                <el-button
-                    v-if="diaTbas === 6"
-                    type="text"
-                    size="small"
-                    icon="el-icon-delete"
-                    @click="deleteRecommend(scope.row.id)"
-                    >取消推荐</el-button
-                >
-                <el-button
-                    v-if="diaTbas === 4"
-                    type="text"
-                    size="small"
-                    :icon="
-                    scope.row.userType === 1
-                        ? 'el-icon-delete'
-                        : 'el-icon-plus'
-                    "
-                    @click="changePower(scope.row)"
-                    >{{
-                    scope.row.userType === 1 ? "取消身份" : "授予身份"
-                    }}</el-button
-                >
-                </template>
-            </el-table-column>
-            </el-table>
-            <el-pagination
-            background
-            :current-page="page_dia"
-            :page-sizes="[10, 20, 50, 100]"
-            :page-size="limit_dia"
-            :total="total_dia"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="pageSizeChangeHandle_dia"
-            @current-change="pageCurrentChangeHandle_dia"
-            >
-            </el-pagination>
-        </div>
+              <el-button v-if="diaTbas === 5" type="text" size="small" icon="el-icon-delete"
+                @click="downProduct(scope.row.id)">下架</el-button>
+              <el-button v-if="diaTbas === 6" type="text" size="small" icon="el-icon-delete"
+                @click="deleteRecommend(scope.row.id)">取消推荐</el-button>
+              <el-button v-if="diaTbas === 4" type="text" size="small" :icon="
+                scope.row.userType === 1
+                  ? 'el-icon-delete'
+                  : 'el-icon-plus'
+              " @click="changePower(scope.row)">{{
+    scope.row.userType === 1 ? "取消身份" : "授予身份"
+}}</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <el-pagination background :current-page="page_dia" :page-sizes="[10, 20, 50, 100]" :page-size="limit_dia"
+          :total="total_dia" layout="total, sizes, prev, pager, next, jumper" @size-change="pageSizeChangeHandle_dia"
+          @current-change="pageCurrentChangeHandle_dia">
+        </el-pagination>
+      </div>
     </div>
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
       <span>确认删除吗？</span>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="confirmDel"
-          >确 定</el-button
-        >
+        <el-button size="small" type="primary" @click="confirmDel">确 定</el-button>
       </span>
     </el-dialog>
     <!-- 商品上架列表弹框 -->
-    <el-dialog
-      title="商品上架"
-      :visible.sync="dialogUserFormVisible"
-      width="70%"
-      top="20px"
-    >
-      <el-form
-        :inline="true"
-        :model="productForm"
-        @keyup.enter.native="queryUserList()"
-        size="small"
-        label-width="100px"
-      >
+    <el-dialog title="商品上架" :visible.sync="dialogUserFormVisible" width="70%" top="20px">
+      <el-form :inline="true" :model="productForm" @keyup.enter.native="queryUserList()" size="small"
+        label-width="100px">
         <el-form-item label="商品名称">
-          <el-input
-            style="width: 200px"
-            v-model="productForm.productName"
-            placeholder="请输入"
-          ></el-input>
+          <el-input style="width: 200px" v-model="productForm.productName" placeholder="请输入"></el-input>
         </el-form-item>
         <el-form-item label="商品类型">
-          <el-select
-            @visible-change="getProductType"
-            style="width: 200px"
-            v-model="productForm.productType"
-            placeholder="商品类型"
-            clearable
-          >
-            <el-option
-              v-for="item in productTypeOptions"
-              :key="item.productType"
-              :value="item.productType"
-              :label="item.productType"
-            ></el-option>
+          <el-select @visible-change="getProductType" style="width: 200px" v-model="productForm.productType"
+            placeholder="商品类型" clearable>
+            <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType"
+              :label="item.productType"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="是否免费">
-          <el-select
-            style="width: 200px"
-            v-model="productForm.isFree"
-            clearable
-          >
+          <el-select style="width: 200px" v-model="productForm.isFree" clearable>
             <el-option :value="0" label="否"></el-option>
             <el-option :value="1" label="是"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button
-            type="primary"
-            icon="el-icon-search"
-            size="mini"
-            @click="queryUserList"
-            >查询</el-button
-          >
-          <el-button
-            icon="el-icon-refresh"
-            size="mini"
-            @click="reset('productForm')"
-            >重置</el-button
-          >
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="queryUserList">查询</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="reset('productForm')">重置</el-button>
         </el-form-item>
 
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button
-                plain
-                size="mini"
-                icon="el-icon-delete"
-                v-if="dataListSelections.length !== 0"
-                type="danger"
-                @click="deleteSelect()"
-                >批量删除</el-button
-              >
+              <el-button plain size="mini" icon="el-icon-delete" v-if="dataListSelections.length !== 0" type="danger"
+                @click="deleteSelect()">批量删除</el-button>
             </el-form-item>
 
             <el-form-item>
-              <el-button
-                type="primary"
-                plain
-                icon="el-icon-plus"
-                size="mini"
-                v-if="dataListSelectionUsers.length !== 0"
-                @click="upSelect()"
-                >批量上架</el-button
-              >
+              <el-button type="primary" plain icon="el-icon-plus" size="mini" v-if="dataListSelectionUsers.length !== 0"
+                @click="upSelect()">批量上架</el-button>
             </el-form-item>
           </div>
         </div>
       </el-form>
-      <el-table
-        v-loading="dataUserListLoading"
-        :data="dataUserList"
-        fit
-        @selection-change="userListSelectionChangeHandle"
-        style="width: 100%"
-        max-height="500"
-      >
-        <el-table-column
-          type="selection"
-          header-align="center"
-          align="center"
-          width="50"
-          fixed="left"
-        ></el-table-column>
-        <el-table-column
-          width="150"
-          label="商品图片"
-          prop="productImage"
-          align="center"
-        >
+      <el-table v-loading="dataUserListLoading" :data="dataUserList" fit
+        @selection-change="userListSelectionChangeHandle" style="width: 100%" max-height="500">
+        <el-table-column type="selection" header-align="center" align="center" width="50" fixed="left">
+        </el-table-column>
+        <el-table-column width="150" label="商品图片" prop="productImage" align="center">
           <template slot-scope="{ row }">
             <div>
-              <img
-                style="width: 100%; height: 60px; object-fit: cover;"
-                :src="
-                  row.productImage || require('@/assets/img/default_cover.jpg')
-                "
-                alt=""
-              />
+              <img style="width: 100%; height: 60px; object-fit: cover;" :src="
+                row.productImage || require('@/assets/img/default_cover.jpg')
+              " alt="" />
             </div>
           </template>
         </el-table-column>
-        <el-table-column
-          width="150"
-          label="商品名称"
-          prop="productName"
-          align="center"
-        >
+        <el-table-column width="150" label="商品名称" prop="productName" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.productName || "--" }}</span>
           </template>
@@ -886,327 +574,148 @@
             <span>{{ scope.row.oldPrice || "--" }}</span>
           </template>
         </el-table-column> -->
-        <el-table-column
-          width="150"
-          label="带货价格"
-          prop="price"
-          align="center"
-        >
+        <el-table-column width="150" label="带货价格" prop="price" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.price || "--" }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          width="150"
-          label="商品类型"
-          prop="productType"
-          align="center"
-        >
+        <el-table-column width="150" label="商品类型" prop="productType" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.productType || "--" }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          width="150"
-          label="是否免费"
-          prop="isFree"
-          align="center"
-        >
+        <el-table-column width="150" label="是否免费" prop="isFree" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.isFree === 1 ? "是" : "否" }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          width="150"
-          label="上架状态"
-          prop="delFlg"
-          align="center"
-        >
+        <el-table-column width="150" label="上架状态" prop="delFlg" align="center">
           <template slot-scope="scope">
             <span> {{ scope.row.isAdd === 1 ? "上架" : "下架" }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          width="120"
-          label="操作"
-          fixed="right"
-          header-align="center"
-          align="center"
-        >
+        <el-table-column width="120" label="操作" fixed="right" header-align="center" align="center">
           <template slot-scope="scope">
-            <el-button
-              icon="el-icon-goods"
-              size="mini"
-              type="text"
-              @click="handleDeleteUser(scope.$index, scope.row)"
-              >上架</el-button
-            >
+            <el-button icon="el-icon-goods" size="mini" type="text" @click="handleDeleteUser(scope.$index, scope.row)">
+              上架</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-dialog>
     <!-- 推荐主播列表弹框 -->
-    <el-dialog
-      title="推荐主播"
-      :visible.sync="dialogRecommendVisible"
-      width="70%"
-      top="20px"
-    >
-      <el-form
-        size="small"
-        :inline="true"
-        :model="recommendForm"
-        @keyup.enter.native="getRecommendList()"
-        label-width="100px"
-      >
+    <el-dialog title="推荐主播" :visible.sync="dialogRecommendVisible" width="70%" top="20px">
+      <el-form size="small" :inline="true" :model="recommendForm" @keyup.enter.native="getRecommendList()"
+        label-width="100px">
         <el-form-item label="主播昵称" prop="anchorName">
-          <el-input
-            style="width: 200px"
-            v-model="recommendForm.anchorName"
-            placeholder="请输入"
-            clearable
-          ></el-input>
+          <el-input style="width: 200px" v-model="recommendForm.anchorName" placeholder="请输入" clearable></el-input>
         </el-form-item>
         <el-form-item label="手机号码" prop="anchorPhone">
-          <el-input
-            style="width: 200px"
-            v-model="recommendForm.anchorPhone"
-            placeholder="请输入"
-            clearable
-          ></el-input>
+          <el-input style="width: 200px" v-model="recommendForm.anchorPhone" placeholder="请输入" clearable></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button
-            type="primary"
-            icon="el-icon-search"
-            size="mini"
-            @click="getRecommendList"
-            >查询</el-button
-          >
-          <el-button
-            icon="el-icon-refresh"
-            size="mini"
-            @click="reset('recommendForm')"
-            >重置</el-button
-          >
+          <el-button type="primary" icon="el-icon-search" size="mini" @click="getRecommendList">查询</el-button>
+          <el-button icon="el-icon-refresh" size="mini" @click="reset('recommendForm')">重置</el-button>
         </el-form-item>
 
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button
-                type="primary"
-                plain
-                icon="el-icon-plus"
-                size="mini"
-                v-if="
-                  recommendListSelections.length !== 0 && dialogRecommendVisible
-                "
-                @click="addRecommend()"
-                >批量添加</el-button
-              >
+              <el-button type="primary" plain icon="el-icon-plus" size="mini" v-if="
+                recommendListSelections.length !== 0 && dialogRecommendVisible
+              " @click="addRecommend()">批量添加</el-button>
             </el-form-item>
           </div>
         </div>
       </el-form>
-      <el-table
-        v-loading="dataUserListLoading"
-        :data="recommendList"
-        fit
-        @selection-change="recommendSelectionChangeHandle"
-        style="width: 100%"
-        max-height="500"
-      >
-        <el-table-column
-          type="selection"
-          header-align="center"
-          align="center"
-          width="50"
-          fixed="left"
-        ></el-table-column>
-        <el-table-column
-          width="100"
-          label="主播头像"
-          prop="avatarUrl"
-          align="center"
-        >
+      <el-table v-loading="dataUserListLoading" :data="recommendList" fit
+        @selection-change="recommendSelectionChangeHandle" style="width: 100%" max-height="500">
+        <el-table-column type="selection" header-align="center" align="center" width="50" fixed="left">
+        </el-table-column>
+        <el-table-column width="100" label="主播头像" prop="avatarUrl" align="center">
           <template slot-scope="{ row }">
             <div>
-              <img
-                style="width: 60px; height: 60px; object-fit: cover"
-                class="productImage"
-                :src="
-                  row.avatarUrl || require('@/assets/img/default_avatar.png')
-                "
-                alt=""
-              />
+              <img style="width: 60px; height: 60px; object-fit: cover" class="productImage" :src="
+                row.avatarUrl || require('@/assets/img/default_avatar.png')
+              " alt="" />
             </div>
           </template>
         </el-table-column>
-        <el-table-column
-          width="150"
-          label="主播昵称"
-          prop="username"
-          align="center"
-        >
+        <el-table-column width="150" label="主播昵称" prop="username" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.username || "--" }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          width="150"
-          label="手机号码"
-          prop="phone"
-          align="center"
-        >
+        <el-table-column width="150" label="手机号码" prop="phone" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.phone || "--" }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          width="150"
-          label="推荐状态"
-          prop="delFlg"
-          align="center"
-        >
+        <el-table-column width="150" label="推荐状态" prop="delFlg" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.delFlg === 0 ? "已推荐" : "未推荐" }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          label="操作"
-          fixed="right"
-          header-align="center"
-          align="center"
-        >
+        <el-table-column label="操作" fixed="right" header-align="center" align="center">
           <template slot-scope="scope">
-            <el-button
-              icon="el-icon-plus"
-              size="mini"
-              type="text"
-              @click="addRecommend(scope.row.recommendAnchorId)"
-              >推荐</el-button
-            >
+            <el-button icon="el-icon-plus" size="mini" type="text" @click="addRecommend(scope.row.recommendAnchorId)">推荐
+            </el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-dialog>
     <!-- 修改银行信息 -->
-    <el-dialog
-      title="编辑银行卡信息"
-      :visible.sync="dialogVisible_editBank"
-      width="600px"
-    >
-      <el-form
-        :model="bankForm"
-        :rules="dataRule_bank"
-        ref="bankForm_host"
-        label-width="120px"
-        size="small"
-      >
+    <el-dialog title="编辑银行卡信息" :visible.sync="dialogVisible_editBank" width="600px">
+      <el-form :model="bankForm" :rules="dataRule_bank" ref="bankForm_host" label-width="120px" size="small">
         <el-form-item label="开户银行" prop="depositBank">
-          <el-autocomplete
-            v-model="bankForm.depositBank"
-            :fetch-suggestions="querySearchAsync"
-            placeholder="开户银行"
-            @select="handleSelect"
-          ></el-autocomplete>
+          <el-autocomplete v-model="bankForm.depositBank" :fetch-suggestions="querySearchAsync" placeholder="开户银行"
+            @select="handleSelect"></el-autocomplete>
         </el-form-item>
         <el-form-item label="支行名称">
-          <el-input
-            v-model="bankForm.branchName"
-            placeholder="支行名称"
-          ></el-input>
+          <el-input v-model="bankForm.branchName" placeholder="支行名称"></el-input>
         </el-form-item>
         <el-form-item label="开户行所在地" prop="address">
-          <el-cascader
-            :options="regionData"
-            filterable
-            style="width: 100%"
-            v-model="bankForm.address"
-            :props="{ label: 'name', value: 'id', children: 'children' }"
-            :clearable="true"
-            :placeholder="'请选择省/市/区县'"
-          >
+          <el-cascader :options="regionData" filterable style="width: 100%" v-model="bankForm.address"
+            :props="{ label: 'name', value: 'id', children: 'children' }" :clearable="true" :placeholder="'请选择省/市/区县'">
           </el-cascader>
         </el-form-item>
 
         <el-form-item label="账户名称" prop="accountName">
-          <el-input
-            v-model="bankForm.accountName"
-            placeholder="账户名称"
-          ></el-input>
+          <el-input v-model="bankForm.accountName" placeholder="账户名称"></el-input>
         </el-form-item>
         <el-form-item label="银行账户" prop="bankAccount">
-          <el-input
-            v-model="bankForm.bankAccount"
-            placeholder="银行账户"
-          ></el-input>
+          <el-input v-model="bankForm.bankAccount" placeholder="银行账户"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogVisible_editBank = false"
-          >取 消</el-button
-        >
-        <el-button size="small" type="primary" @click="subimtEditBank"
-          >确 定</el-button
-        >
+        <el-button size="small" @click="dialogVisible_editBank = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="subimtEditBank">确 定</el-button>
       </span>
     </el-dialog>
     <!-- 提现 -->
-    <el-dialog
-      title="申请提现"
-      :visible.sync="dialogVisible_withdraw"
-      width="800px"
-      top="20px"
-      @close="closeWithdrawHandle"
-    >
-      <el-form
-        :model="withdrawForm"
-        :rules="dataRule_withdraw"
-        ref="withdrawForm_host"
-        label-width="120px"
-        size="small"
-      >
+    <el-dialog title="申请提现" :visible.sync="dialogVisible_withdraw" width="800px" top="20px"
+      @close="closeWithdrawHandle">
+      <el-form :model="withdrawForm" :rules="dataRule_withdraw" ref="withdrawForm_host" label-width="120px"
+        size="small">
         <el-form-item label="可提现金额：">
           <div>{{ anchorDetails.anchorBalance || 0 }}</div>
         </el-form-item>
         <el-form-item label="申请提现金额：" prop="amount">
           <div style="display: inline-block">
-            <el-input-number
-              v-model="withdrawForm.amount"
-              :controls="false"
-              :precision="2"
-              placeholder="请输入"
-              :min="0"
-            >
+            <el-input-number v-model="withdrawForm.amount" :controls="false" :precision="2" placeholder="请输入" :min="0">
             </el-input-number>
           </div>
           <span>（提现金额需大于100元）</span>
         </el-form-item>
         <el-form-item label="上传发票：">
-          <el-upload
-            class="uploadStyle"
-            list-type="picture-card"
-            :action="uploadUrl"
-            :limit="invoiceLimit"
-            multiple
-            :file-list="withdrawForm.invoiceList"
-            :before-upload="beforeUpload"
-            :on-remove="onRemove"
-            :on-exceed="uploadExceed"
-            :on-error="uploadError"
-            :before-remove="beforeRemove"
-            :on-success="uploadSuccess"
-            :on-preview="handlePictureCardPreview"
-          >
+          <el-upload class="uploadStyle" list-type="picture-card" :action="uploadUrl" :limit="invoiceLimit" multiple
+            :file-list="withdrawForm.invoiceList" :before-upload="beforeUpload" :on-remove="onRemove"
+            :on-exceed="uploadExceed" :on-error="uploadError" :before-remove="beforeRemove" :on-success="uploadSuccess"
+            :on-preview="handlePictureCardPreview">
             <div class="uploadStyle-btn">
               <i class="el-icon-plus"></i>
-              <span
-                >{{ withdrawForm.invoiceList.length }} /
-                {{ invoiceLimit }}</span
-              >
+              <span>{{ withdrawForm.invoiceList.length }} /
+                {{ invoiceLimit }}</span>
             </div>
             <div class="el-upload__tip" slot="tip">注：点击图片可放大查看</div>
           </el-upload>
@@ -1216,111 +725,55 @@
         </el-form-item>
         <div class="withdraw_bank_info">
           <div class="header">提现至：</div>
-          <div>开户银行：{{ anchorDetails.depositBank || '-'  }}</div>
-          <div>支行名称：{{ anchorDetails.branchName || '-'  }}</div>
-          <div>账号名称：{{ anchorDetails.accountName || '-'  }}</div>
-          <div>银行账户：{{ anchorDetails.bankAccount || '-'  }}</div>
+          <div>开户银行：{{ anchorDetails.depositBank || '-' }}</div>
+          <div>支行名称：{{ anchorDetails.branchName || '-' }}</div>
+          <div>账号名称：{{ anchorDetails.accountName || '-' }}</div>
+          <div>银行账户：{{ anchorDetails.bankAccount || '-' }}</div>
           <div>开户行所在地：{{ anchorDetails.address || '-' }}</div>
         </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogVisible_withdraw = false"
-          >取 消</el-button
-        >
-        <el-button size="small" type="primary" @click="subimtWithdraw"
-          >确 定</el-button
-        >
+        <el-button size="small" @click="dialogVisible_withdraw = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="subimtWithdraw">确 定</el-button>
       </span>
     </el-dialog>
     <!-- 发票预览 -->
-    <el-dialog
-      title="预览"
-      :visible.sync="dialogVisible_preview"
-      width="80%"
-      top="20px"
-    >
+    <el-dialog title="预览" :visible.sync="dialogVisible_preview" width="80%" top="20px">
       <div style="text-align: center">
         <img style="max-width: 100%" :src="dialogImageUrl" alt="" />
       </div>
     </el-dialog>
     <!-- 查看所有发票 -->
-    <el-dialog
-      title="查看发票"
-      :visible.sync="dialogVisible_previewList"
-      width="400px"
-      top="20px"
-    >
+    <el-dialog title="查看发票" :visible.sync="dialogVisible_previewList" width="400px" top="20px">
       <div class="previewInvoiceList">
-        <img
-          @click="handlePictureCardPreview({ url: item })"
-          v-for="item in previewInvoiceList"
-          :key="item"
-          :src="item"
-          alt=""
-        />
+        <img @click="handlePictureCardPreview({ url: item })" v-for="item in previewInvoiceList" :key="item" :src="item"
+          alt="" />
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button
-          size="small"
-          type="primary"
-          @click="dialogVisible_previewList = false"
-          >关闭</el-button
-        >
+        <el-button size="small" type="primary" @click="dialogVisible_previewList = false">关闭</el-button>
       </span>
     </el-dialog>
     <!-- 重新上传 -->
-    <el-dialog
-      title="重新上传"
-      :visible.sync="dialogVisible_updateInvoiceImg"
-      @close="closeUpdateInvoiceImgHandle"
-      width="400px"
-      top="20px"
-    >
-      <el-upload
-        class="uploadStyle"
-        list-type="picture-card"
-        :action="uploadUrl"
-        :limit="invoiceLimit"
-        multiple
-        :file-list="withdrawForm.invoiceList"
-        :before-upload="beforeUpload"
-        :on-remove="onRemove"
-        :on-exceed="uploadExceed"
-        :on-error="uploadError"
-        :before-remove="beforeRemove"
-        :on-success="uploadSuccess"
-        :on-preview="handlePictureCardPreview"
-      >
+    <el-dialog title="重新上传" :visible.sync="dialogVisible_updateInvoiceImg" @close="closeUpdateInvoiceImgHandle"
+      width="400px" top="20px">
+      <el-upload class="uploadStyle" list-type="picture-card" :action="uploadUrl" :limit="invoiceLimit" multiple
+        :file-list="withdrawForm.invoiceList" :before-upload="beforeUpload" :on-remove="onRemove"
+        :on-exceed="uploadExceed" :on-error="uploadError" :before-remove="beforeRemove" :on-success="uploadSuccess"
+        :on-preview="handlePictureCardPreview">
         <div class="uploadStyle-btn">
           <i class="el-icon-plus"></i>
-          <span
-            >{{ withdrawForm.invoiceList.length }} / {{ invoiceLimit }}</span
-          >
+          <span>{{ withdrawForm.invoiceList.length }} / {{ invoiceLimit }}</span>
         </div>
         <div class="el-upload__tip" slot="tip">注：点击图片可放大查看</div>
       </el-upload>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" @click="dialogVisible_updateInvoiceImg = false"
-          >取 消</el-button
-        >
-        <el-button size="small" type="primary" @click="updateInvoiceImgSubmit"
-          >确 定</el-button
-        >
+        <el-button size="small" @click="dialogVisible_updateInvoiceImg = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="updateInvoiceImgSubmit">确 定</el-button>
       </span>
     </el-dialog>
     <!-- 改变身份 -->
-    <el-dialog
-      :title="userType === 0 ? '授予身份' : '取消身份'"
-      :visible.sync="changePowerVisible"
-      class="change-dialog"
-    >
-      <el-form
-        v-if="userType === 0"
-        :model="powerform"
-        ref="powerform"
-        :rules="dataRule"
-        size="small"
-      >
+    <el-dialog :title="userType === 0 ? '授予身份' : '取消身份'" :visible.sync="changePowerVisible" class="change-dialog">
+      <el-form v-if="userType === 0" :model="powerform" ref="powerform" :rules="dataRule" size="small">
         <el-form-item label="粉丝团身份" label-width="120px" prop="power">
           <el-select v-model="powerform.power" placeholder="请选择">
             <el-option label="助手" :value="1"></el-option>
@@ -1375,8 +828,8 @@ export default {
         approveStatus: "",
         payStatus: "",
         date: "",
-        code:"",
-        withdrawStatus:""
+        code: "",
+        withdrawStatus: ""
       },
       productForm: {
         productName: "",
@@ -1478,13 +931,12 @@ export default {
   },
   computed: {
     uploadUrl() {
-      return `${
-        window.SITE_CONFIG["apiURL"]
-      }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
+      return `${window.SITE_CONFIG["apiURL"]
+        }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
     },
   },
 
-  activated(){
+  activated() {
     this.userId = this.$store.state.user.id;
     this.$http
       .get("/sys/region/tree")
@@ -1495,14 +947,14 @@ export default {
         this.regionData = treeDataTranslate(res.data);
         this.regionDataAll = res.data;
       })
-      .catch(() => {});
+      .catch(() => { });
     this.getAnchorInfo()
     this.getAccountAmount();
-    if(this.$hasPermission('anchor:gain:list')){
+    if (this.$hasPermission('anchor:gain:list')) {
       this.changeTbas(1);
-    }else if(this.$hasPermission('anchor:withdraw:list')){
+    } else if (this.$hasPermission('anchor:withdraw:list')) {
       this.changeTbas(2);
-    }else{
+    } else {
       this.changeTbas(3);
     }
     this.queryBankList();
@@ -1600,16 +1052,16 @@ export default {
     },
     // 获取用户详细信息
     getAnchorInfo() {
-        this.$http.get(`/sys/anchor/info/getInfoWithAnchor`,{params:{anchorId:this.userId}}).then(({ data: res }) => {
-            if (res.code !== 0) return this.$message.error(res.msg);
+      this.$http.get(`/sys/anchor/info/getInfoWithAnchor`, { params: { anchorId: this.userId } }).then(({ data: res }) => {
+        if (res.code !== 0) return this.$message.error(res.msg);
 
-            this.anchorDetails = {...this.anchorDetails, ...res.data};
-        }).catch((err) => this.$message.error(JSON.stringify(err.message)));
+        this.anchorDetails = { ...this.anchorDetails, ...res.data };
+      }).catch((err) => this.$message.error(JSON.stringify(err.message)));
     },
     // 获取用户账户金额信息
     getAccountAmount() {
       this.$http
-        .get(`/sys/manage/userDetail/getWithAnchor`,{params:{anchorId:this.userId}})
+        .get(`/sys/manage/userDetail/getWithAnchor`, { params: { anchorId: this.userId } })
         .then(({ data: res }) => {
           if (res.code !== 0) {
             return vm.$message.error(res.msg);
@@ -1621,7 +1073,7 @@ export default {
             anchorBalance: res.data.anchorBalance,
           };
         })
-        .catch(() => {});
+        .catch(() => { });
     },
     // 多选
     dataListSelectionChangeHandle(val) {
@@ -2264,11 +1716,11 @@ export default {
     //编辑主播信息
     editeUserInfo() {
       let obj = {
-        id:this.anchorDetails.weixinUserId,
-        username:this.anchorDetails.username,
-        introduce:this.anchorDetails.introduce,
-        avatarUrl:this.anchorDetails.avatarUrl,
-        qrCode:this.anchorDetails.qrCode,
+        id: this.anchorDetails.weixinUserId,
+        username: this.anchorDetails.username,
+        introduce: this.anchorDetails.introduce,
+        avatarUrl: this.anchorDetails.avatarUrl,
+        qrCode: this.anchorDetails.qrCode,
       }
       this.$router.push({
         path: "/anchorManagement-anchorDetails-EditeUserInfo",
@@ -2277,49 +1729,49 @@ export default {
     },
     //编辑银行卡信息
     editeUserBank() {
-        // 企业银行账号核验中不可编辑
-        // if(this.anchorDetails.haveApplyInfo && this.anchorDetails.userType == 2) {
-        //     return this.$confirm("您的银行账号正在核验中，不可操作编辑", "提示", {
-        //         confirmButtonText: "确认",
-        //         showCancelButton: false,
-        //         showClose: false
-        //     }).catch(() => {})
-        // }
+      // 企业银行账号核验中不可编辑
+      // if(this.anchorDetails.haveApplyInfo && this.anchorDetails.userType == 2) {
+      //     return this.$confirm("您的银行账号正在核验中，不可操作编辑", "提示", {
+      //         confirmButtonText: "确认",
+      //         showCancelButton: false,
+      //         showClose: false
+      //     }).catch(() => {})
+      // }
 
 
-        // 有未到账的提现不可编辑
-        if(this.anchorDetails.haveWithdraw) {
-            return this.$confirm("您还有未到账的提现，暂不可编辑银行账户信息", "提示", {
-                confirmButtonText: "确认",
-                showCancelButton: false,
-                showClose: false
-            }).catch(() => {})
-        }
+      // 有未到账的提现不可编辑
+      if (this.anchorDetails.haveWithdraw) {
+        return this.$confirm("您还有未到账的提现，暂不可编辑银行账户信息", "提示", {
+          confirmButtonText: "确认",
+          showCancelButton: false,
+          showClose: false
+        }).catch(() => { })
+      }
 
-        let url = `anchorManagement-anchorDetails-${this.anchorDetails.userType == 2 ? "editBankForEnterprise" : "editBankForPersonal"}` 
+      let url = `anchorManagement-anchorDetails-${this.anchorDetails.userType == 2 ? "editBankForEnterprise" : "editBankForPersonal"}`
 
-        this.$router.push({ name: url})
+      this.$router.push({ name: url })
 
-        // this.dialogVisible_editBank = true;
+      // this.dialogVisible_editBank = true;
 
-        // this.bankForm = {
-        //     depositBank: this.anchorDetails.depositBank ? this.anchorDetails.depositBank : "",
-        //     branchName: this.anchorDetails.branchName ? this.anchorDetails.branchName : "",
-        //     address: this.anchorDetails.province
-        //     ? [this.anchorDetails.province, this.anchorDetails.city, this.anchorDetails.county]
-        //     : [],
-        //     accountName: this.anchorDetails.accountName ? this.anchorDetails.accountName : "",
-        //     bankAccount: this.anchorDetails.bankAccount ? this.anchorDetails.bankAccount : "",
-        // };
+      // this.bankForm = {
+      //     depositBank: this.anchorDetails.depositBank ? this.anchorDetails.depositBank : "",
+      //     branchName: this.anchorDetails.branchName ? this.anchorDetails.branchName : "",
+      //     address: this.anchorDetails.province
+      //     ? [this.anchorDetails.province, this.anchorDetails.city, this.anchorDetails.county]
+      //     : [],
+      //     accountName: this.anchorDetails.accountName ? this.anchorDetails.accountName : "",
+      //     bankAccount: this.anchorDetails.bankAccount ? this.anchorDetails.bankAccount : "",
+      // };
 
-        // this.restaurants.forEach((v) => {
-        //     if (
-        //         this.anchorDetails.depositBank &&
-        //         this.anchorDetails.depositBank === v.value
-        //     ) {
-        //         this.bankForm.depositBankValue = v.dictValue;
-        //     }
-        // });
+      // this.restaurants.forEach((v) => {
+      //     if (
+      //         this.anchorDetails.depositBank &&
+      //         this.anchorDetails.depositBank === v.value
+      //     ) {
+      //         this.bankForm.depositBankValue = v.dictValue;
+      //     }
+      // });
     },
     subimtEditBank() {
       this.$refs.bankForm_host.validate((valid) => {
@@ -2362,7 +1814,7 @@ export default {
                     this.bankForm.address.length > 0
                       ? this.bankForm.address[0]
                       : "",
-                  address: address.slice(0,address.length-1),
+                  address: address.slice(0, address.length - 1),
                   city:
                     this.bankForm.address.length > 0
                       ? this.bankForm.address[1]
@@ -2384,7 +1836,7 @@ export default {
                     return this.$message.error(res.msg);
                   }
                   this.$http
-                    .get(`/sys/anchor/info/getInfoWithAnchor`,{params:{anchorId:this.userId}})
+                    .get(`/sys/anchor/info/getInfoWithAnchor`, { params: { anchorId: this.userId } })
                     .then(({ data: res }) => {
                       if (res.code !== 0) {
                         return this.$message.error(res.msg);
@@ -2410,23 +1862,23 @@ export default {
     },
     //提现
     withdrawMoney() {
-        // 企业银行账号核验中不可申请提现
-        if(this.anchorDetails.haveApplyInfo && this.anchorDetails.userType == 2) {
-            return this.$confirm("您的银行账号正在核验中，不可申请提现", "提示", {
-                confirmButtonText: "确认",
-                showCancelButton: false,
-                showClose: false
-            }).catch(() => {})
-        }
+      // 企业银行账号核验中不可申请提现
+      if (this.anchorDetails.haveApplyInfo && this.anchorDetails.userType == 2) {
+        return this.$confirm("您的银行账号正在核验中，不可申请提现", "提示", {
+          confirmButtonText: "确认",
+          showCancelButton: false,
+          showClose: false
+        }).catch(() => { })
+      }
 
-        this.$router.push({
-          path:'anchorManagement-anchorDetails-withdraw',
-          query:{
-            anchorDetails:this.anchorDetails
-          }
-        })
-        
-        // this.dialogVisible_withdraw = true;
+      this.$router.push({
+        path: 'anchorManagement-anchorDetails-withdraw',
+        query: {
+          anchorDetails: this.anchorDetails
+        }
+      })
+
+      // this.dialogVisible_withdraw = true;
     },
     // 关闭提现
     closeWithdrawHandle() {
@@ -2532,7 +1984,7 @@ export default {
                 this.$message.error(res.msg);
               }
             })
-            .catch((err) => {});
+            .catch((err) => { });
         }
       });
     },
@@ -2574,16 +2026,16 @@ export default {
             this.$message.error(res.msg);
           }
         })
-        .catch((err) => {});
+        .catch((err) => { });
     },
     //查看提现详情
-    previewInvoice(id,withdrawStatus){
+    previewInvoice(id, withdrawStatus) {
       this.$router.push({
-          path:'anchorManagement-anchorDetails-withdrawDetail',
-          query:{
-            id:id,
-            withdrawStatus:withdrawStatus
-          }
+        path: 'anchorManagement-anchorDetails-withdrawDetail',
+        query: {
+          id: id,
+          withdrawStatus: withdrawStatus
+        }
       })
     }
   },
@@ -2596,35 +2048,42 @@ export default {
   position: relative;
   background: #fff;
 }
+
 .diaBoxLeft {
   position: absolute;
   top: 0;
   left: 0;
-  width: 300px;
+  width: 460px;
   bottom: 0;
   overflow: auto;
+  margin: 10px;
   padding: 10px;
-  border: 5px solid #cccccc69;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px 1px rgba(17, 17, 17, 0.185);
+
 }
+
 .diaBoxRight {
   position: absolute;
   top: 0;
   right: 0;
-  left: 300px;
+  left: 480px;
   bottom: 0;
   overflow: auto;
+  margin: 10px;
   padding: 10px;
-  border: 5px solid #cccccc69;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px 1px rgba(17, 17, 17, 0.185);
 }
+
 .diaBoxLeft_title {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  border-left: 5px solid #409eff;
-  padding-left: 5px;
-  line-height: 19px;
-  height: 16px;
+
+  padding-left: 10px;
+  height: 50px;
+
   .accountStatus {
     display: inline-block;
     line-height: 20px;
@@ -2634,30 +2093,35 @@ export default {
     margin-left: 10px;
   }
 }
+
 .diaBoxLeft_mes {
-  padding: 0 10px 20px 10px;
+   padding: 20px 10px;
+    border-bottom: 1px solid #E2E5EA;
+
   .avatar {
-    width: 75px;
-    height: 75px;
+    width: 110px;
+    height: 110px;
     position: relative;
     margin: 0 auto;
-    margin-bottom: 16px;
+    margin-bottom: 30px;
+
     img {
-        width: 100%;
-        height: 100%;
-        border-radius: 50%;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
     }
+
     .role {
-        width: 50px;
-        line-height: 20px;
-        border-radius: 4px;
-        color: #fff;
-        background: rgba(22, 155, 213, 1);
-        text-align: center;
-        position: absolute;
-        bottom: -10px;
-        left: 50%;
-        transform: translateX(-50%);
+      width: 50px;
+      line-height: 20px;
+      border-radius: 4px;
+      color: #fff;
+      background: rgba(22, 155, 213, 1);
+      text-align: center;
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
     }
   }
 }
@@ -2677,47 +2141,58 @@ export default {
   -webkit-box-shadow: none;
   box-shadow: none;
 }
+
 .is-active {
   background-color: rgba(64, 158, 255, 1);
   color: #fff;
 }
+
 /deep/.frontCoverImg {
   width: 100%;
   height: 80px;
 }
+
 /deep/.el-autocomplete {
   width: 100% !important;
 }
+
 .withdraw_bank_info {
   .header {
     width: 120px;
     text-align: right;
     padding-right: 12px;
   }
-  & > div {
+
+  &>div {
     margin-top: 10px;
   }
-  & > div:not(:first-child) {
+
+  &>div:not(:first-child) {
     text-indent: 120px;
   }
 }
+
 /deep/.uploadStyle {
   .el-upload--picture-card {
     width: 90px;
     height: 90px;
   }
-  .el-upload-list--picture-card > li {
+
+  .el-upload-list--picture-card>li {
     width: 90px;
     height: 90px;
   }
+
   .el-progress {
     width: 90px;
     height: 90px;
   }
+
   .el-progress-circle {
     width: 100% !important;
     height: 100% !important;
   }
+
   .uploadStyle-btn {
     display: flex;
     justify-content: center;
@@ -2725,6 +2200,7 @@ export default {
     flex-direction: column;
     width: 100%;
     height: 100%;
+
     span {
       line-height: normal;
       display: inline-block;
@@ -2732,27 +2208,31 @@ export default {
     }
   }
 }
+
 .previewInvoiceList {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
+
   img {
     width: 30%;
     height: 100px;
     object-fit: contain;
     margin-top: 10px;
     cursor: pointer;
+
     &:not(:nth-child(3n)) {
       margin-right: 5%;
     }
+
     &:hover {
       border: 1px solid #999;
     }
   }
 }
 
-/deep/.change-dialog{
-  .el-dialog{
+/deep/.change-dialog {
+  .el-dialog {
     width: 30%;
   }
 }
