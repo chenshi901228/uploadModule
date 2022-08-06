@@ -2,7 +2,7 @@
 
 <template>
     <el-card shadow="never" class="aui-card--fill">
-        <div class="mod-live__goodsMail">
+        <div class="mod-onlineUser">
             <el-form
                 class="headerTool"
                 :inline="true"
@@ -92,7 +92,6 @@
             <el-table
                 v-loading="dataListLoading"
                 :data="dataList"
-                @selection-change="dataListSelectionChangeHandle"
                 :height="siteContentViewHeight"
                 style="width: 100%"
                 ref="table"
