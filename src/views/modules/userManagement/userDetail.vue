@@ -55,13 +55,14 @@
               <img src="../../../assets/img/icon333.png" alt="">
             </div>
             <div>
-              <div>{{ diaForm.priceBalance ? diaForm.priceBalance : 0 }}</div>
+               <div style="display:flex;align-items: center;"> <img src="../../../assets/img/icon777.png" alt="" style="    margin: -8px 5px 0 -8px;">{{ diaForm.priceBalance ? diaForm.priceBalance : 0 }}</div>
+     
               <div>可用种子</div>
             </div>
           </div>
         </div>
         <div class="diaBoxLeft_title" style="font-size: 14px;font-weight: bold;color: #4057CB;">消费数据</div>
-        <div class="diaBoxLeft_mes" style="display: flex; justify-content: space-around;flex-wrap: wrap;">
+        <div class="diaBoxLeft_mes" style="display: flex; flex-wrap: wrap;">
           <div class="box">
             <div style="margin:0 20px">
               <img src="../../../assets/img/icon111.png" alt="">
@@ -84,15 +85,41 @@
               <div> 累计充值</div>
             </div>
           </div>
+            <div class="box">
+            <div style="margin:0 20px">
+              <img src="../../../assets/img/icon666.png" alt="">
+            </div>
+            <div>
+              <div>￥{{
+                 diaForm.shoppingConsumption || 0
+              }}</div>
+              <div> 商品消费</div>
+            </div>
+          </div>
+            <div class="box">
+            <div style="margin:0 20px">
+              <img src="../../../assets/img/icon444.png" alt="">
+            </div>
+            <div>
+              <div style="display:flex;align-items: center;"> <img src="../../../assets/img/icon777.png" alt="" style="    margin: -8px 5px 0 -8px;">{{ diaForm.giftConsumption || 0 }}</div>
+              <div> 礼物消费</div>
+            </div>
+          </div>
+            <div class="box">
+            <div style="margin:0 20px">
+              <img src="../../../assets/img/icon555.png" alt="">
+            </div>
+            <div>
+              <div style="display:flex;align-items: center;"> <img src="../../../assets/img/icon777.png" alt="" style="    margin: -8px 5px 0 -8px;">{{ diaForm.fansConsumption || 0 }}</div>
+              <div> 加入粉丝团消费</div>
+            </div>
+          </div>
           
          
-          <div>商品消费：￥{{ diaForm.shoppingConsumption || 0 }}元</div>
-          <div>礼物消费：{{ diaForm.giftConsumption || 0 }}种子</div>
-          <div>加入粉丝团消费：{{ diaForm.fansConsumption || 0 }}种子</div>
         </div>
       </div>
       <div class="diaBoxRight">
-        <div style="display: flex">
+        <div style="display: flex;border-bottom: 2px solid #E4E7ED;">
           <div class="diaBoxRight_tabBtns" @click="changeTbas(1)" :class="{ 'is-active': diaTbas === 1 }">
             充值记录
           </div>
@@ -741,7 +768,7 @@ export default {
   bottom: 0;
   overflow: auto;
   margin: 10px;
-  padding: 10px;
+  padding: 10px 30px;
   border-radius: 5px;
   box-shadow: 0px 0px 10px 1px rgba(17, 17, 17, 0.185);
 }
@@ -762,30 +789,33 @@ export default {
   .box {
     width: 190px;
     height: 80px;
+    margin: 5px;
     background: #F5F7FA;
     display: flex;
     align-items: center;
   }
 }
 
+
 .diaBoxRight_tabBtns {
   border-width: 0px;
-  width: 100px;
+    margin-right: 50px;
   height: 45px;
   text-align: center;
   cursor: pointer;
   line-height: 45px;
   background: inherit;
-  background-color: rgba(236, 245, 255, 1);
   border: none;
-  border-radius: 3px;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
   box-shadow: none;
 }
 
 .is-active {
-  background-color: rgba(64, 158, 255, 1);
-  color: #fff;
+  color: #4057CB;
+    bottom: -2px;
+    position: relative;
+  border-bottom:2px solid #4057CB;
+ 
 }
 </style>

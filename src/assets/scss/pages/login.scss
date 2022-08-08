@@ -10,34 +10,35 @@
     content: "";
   }
   &::before {
-    background-image: url(~@/assets/img/login_bg.jpg);
+    background-image: url(~@/assets/img/loGin.png);
     background-size: cover;
   }
   &::after {
-    background-color: rgba(38, 50, 56, .4);
+    // background-color: rgba(38, 50, 56, .4);
   }
   .aui-content {
-    display: flex;
-    flex-flow: column wrap;
-    justify-content: center;
+    // display: flex;
+    // flex-flow: column wrap;
+    // justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    padding: 50px 20px 150px;
-    text-align: center;
+    // min-height: 100vh;
+    // padding: 50px 20px 150px;
+    // text-align: center;
     &__wrapper {
-      height: 100vh;
       background-color: transparent;
       overflow-x: hidden;
       overflow-y: auto;
     }
   }
   .login-header {
-    padding: 20px;
-    color: #fff;
+    display: flex;
+    margin: 50px;
+    align-items: center;
     .login-brand {
-      margin: 0 0 15px;
-      font-size: 40px;
-      font-weight: 400;
+      margin: 0 20px;
+      font-size: 24px;
+      font-weight: 600;
+      color: #474443;
       letter-spacing: 2px;
       text-transform: uppercase;
     }
@@ -60,8 +61,13 @@
     width: 460px;
   }
   .login-body {
-    padding: 20px 30px;
+    position: absolute;
+    top: 300px;
     background-color: #fff;
+    width: 350px;
+    height: 377px;
+    right: 23.1%;
+    box-shadow: 0px 0px 20px 1px rgba(1, 129, 248, 0.055);
     .login-title {
       font-size: 18px;
       font-weight: 400;

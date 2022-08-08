@@ -8703,7 +8703,7 @@ portfinder@1.0.21:
 
 portfinder@^1.0.26:
   version "1.0.29"
-  resolved "https://registry.npmmirror.com/portfinder/-/portfinder-1.0.29.tgz#d06ff886f4ff91274ed3e25c7e6b0c68d2a0735a"
+  resolved "https://registry.yarnpkg.com/portfinder/-/portfinder-1.0.29.tgz#d06ff886f4ff91274ed3e25c7e6b0c68d2a0735a"
   integrity sha512-Z5+DarHWCKlufshB9Z1pN95oLtANoY5Wn9X3JGELGyQ6VhEcBfT2t+1fGUBq7MwUant6g/mqowH+4HifByPbiQ==
   dependencies:
     async "^2.6.4"
