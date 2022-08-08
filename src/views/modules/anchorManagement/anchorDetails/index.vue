@@ -151,7 +151,7 @@
         </div>
       </div>
       <div class="diaBoxRight">
-        <div style="display: flex">
+        <div style="display: flex;border-bottom: 2px solid #E4E7ED;">
           <div class="diaBoxRight_tabBtns" @click="changeTbas(1)" :class="{ 'is-active': diaTbas === 1 }"
             v-if="$hasPermission('anchor:gain:list')">
             收益记录
@@ -2128,23 +2128,24 @@ export default {
 
 .diaBoxRight_tabBtns {
   border-width: 0px;
-  width: 100px;
+    margin-right: 50px;
   height: 45px;
   text-align: center;
   cursor: pointer;
   line-height: 45px;
   background: inherit;
-  background-color: rgba(236, 245, 255, 1);
   border: none;
-  border-radius: 3px;
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
   box-shadow: none;
 }
 
 .is-active {
-  background-color: rgba(64, 158, 255, 1);
-  color: #fff;
+  color: #4057CB;
+    position: relative;
+    bottom: -2px;
+  border-bottom:2px solid #4057CB;
+ 
 }
 
 /deep/.frontCoverImg {

@@ -3,7 +3,7 @@ const t = {}
 t.loading = '加载中...'
 
 t.brand = {}
-t.brand.lg = '直播微服务平台'
+t.brand.lg = '大于众学直播小程序管理系统'
 t.brand.mini = '直播'
 
 t.add = '新增'

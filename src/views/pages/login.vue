@@ -3,11 +3,21 @@
     <div class="aui-content__wrapper">
       <main class="aui-content">
         <div class="login-header">
+          <img src="../../assets/img/loginIcon.png" alt="">
           <h2 class="login-brand">{{ $t('brand.lg') }}</h2>
         </div>
         <div class="login-body">
-          <h3 class="login-title">{{ $t('login.title') }}</h3>
-          <el-form v-show="loginType" :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" status-icon>
+          <div style="margin:50px;display: flex;justify-content: space-between;align-items: center;">
+            <div :style="{ color: !loginType ? '#111F2C' : '#707980', fontWeight: !loginType ? '600' : '400' }"
+              :class="!loginType ? 'changedBtn' : ''" @click="loginType = !loginType"
+              style="color: #707980;cursor:pointer;font-size: 20px;">验证码登录</div>
+            <div :style="{ color: loginType ? '#111F2C' : '#707980', fontWeight: loginType ? '600' : '400' }"
+              :class="loginType ? 'changedBtn' : ''" @click="loginType = !loginType"
+              style="color: #707980;cursor:pointer;font-size: 20px;">密码登录</div>
+          </div>
+          <!-- <span style="color:#66b1ff;cursor:pointer;" @click="loginType=!loginType">{{loginType?'手机号码登录':'密码登录'}}</span> -->
+          <el-form style="margin:0 30px" v-show="loginType" :model="dataForm" :rules="dataRule" ref="dataForm"
+            @keyup.enter.native="dataFormSubmitHandle()" status-icon>
             <!-- <el-form-item>
               <el-select v-model="$i18n.locale" class="w-percent-100">
                 <el-option v-for="(val, key) in i18nMessages" :key="key" :label="val._lang" :value="key"></el-option>
@@ -16,14 +26,18 @@
             <el-form-item prop="username">
               <el-input v-model="dataForm.username" :placeholder="$t('login.username')">
                 <span slot="prefix" class="el-input__icon">
-                  <svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-user"></use></svg>
+                  <svg class="icon-svg" aria-hidden="true">
+                    <use xlink:href="#icon-user"></use>
+                  </svg>
                 </span>
               </el-input>
             </el-form-item>
             <el-form-item prop="password">
-              <el-input v-model="dataForm.password" type="password" :placeholder="$t('login.password')">
+              <el-input v-model="dataForm.password" type="password" show-password :placeholder="$t('login.password')">
                 <span slot="prefix" class="el-input__icon">
-                  <svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-lock"></use></svg>
+                  <svg class="icon-svg" aria-hidden="true">
+                    <use xlink:href="#icon-lock"></use>
+                  </svg>
                 </span>
               </el-input>
             </el-form-item>
@@ -32,7 +46,9 @@
                 <el-col :span="14">
                   <el-input v-model="dataForm.captcha" :placeholder="$t('login.captcha')">
                     <span slot="prefix" class="el-input__icon">
-                      <svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-safetycertificate"></use></svg>
+                      <svg class="icon-svg" aria-hidden="true">
+                        <use xlink:href="#icon-safetycertificate"></use>
+                      </svg>
                     </span>
                   </el-input>
                 </el-col>
@@ -42,42 +58,38 @@
               </el-row>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="dataFormSubmitHandle()" class="w-percent-100">{{ $t('login.title') }}</el-button>
+              <el-button type="primary" @click="dataFormSubmitHandle()" class="w-percent-100">{{ $t('login.title') }}
+              </el-button>
             </el-form-item>
           </el-form>
-          <el-form v-show="!loginType" :model="dataFormPhone" :rules="dataRulephone" ref="dataFormPhone" @keyup.enter.native="dataFormSubmitHandle()" status-icon>
+          <el-form style="margin:0 30px" v-show="!loginType" :model="dataFormPhone" :rules="dataRulephone"
+            ref="dataFormPhone" @keyup.enter.native="dataFormSubmitHandle()" status-icon>
             <el-form-item prop="phone">
               <el-input v-model="dataFormPhone.phone" placeholder="请输入手机号">
-                <span slot="prefix" class="el-input__icon">
-                  <svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-user"></use></svg>
-                </span>
+                <i slot="prefix" class="el-input__icon el-icon-mobile-phone"></i>
               </el-input>
             </el-form-item>
             <el-form-item prop="verifyCode">
               <div class="bind_code">
-                <el-input
-                  class="bind_code_input code"
-                  v-model="dataFormPhone.verifyCode"
-                  type="text"
-                  placeholder="请输入验证码"
-                >
+                <el-input class="bind_code_input code" v-model="dataFormPhone.verifyCode" type="text"
+                  placeholder="请输入验证码">
                   <span slot="prefix" class="el-input__icon">
-                    <svg class="icon-svg" aria-hidden="true"><use xlink:href="#icon-lock"></use></svg>
+                    <svg class="icon-svg" aria-hidden="true">
+                      <use xlink:href="#icon-lock"></use>
+                    </svg>
                   </span>
                 </el-input>
-                <el-button
-                  @click.native.prevent="bindforgetSendCode"
-                  class="bind_code_gain"
-                  :disabled="disabled"
-                  >{{ btnText }}</el-button
-                >
+                <el-button @click.native.prevent="bindforgetSendCode" class="bind_code_gain" :disabled="disabled">{{
+                    btnText
+                }}</el-button>
               </div>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="dataFormSubmitHandle()" class="w-percent-100">{{ $t('login.title') }}</el-button>
+              <el-button type="primary" @click="dataFormSubmitHandle()" class="w-percent-100">{{ $t('login.title') }}
+              </el-button>
             </el-form-item>
           </el-form>
-          <span style="color:#66b1ff;cursor:pointer;" @click="loginType=!loginType">{{loginType?'手机号码登录':'密码登录'}}</span>
+
         </div>
         <div class="login-footer">
           <p>
@@ -87,28 +99,28 @@
         </div>
       </main>
     </div>
-    <el-dialog
-      title="选择账号"
-      :visible.sync="dialogVisible"
-      :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :show-close="true"
-      :center="true"
-      width="30%"
-      >
+    <el-dialog title="选择账号" :modal="false" :visible.sync="dialogVisible" 
+    top="260px"
+      :show-close="false" :center="true" width="350px">
       <div class="login_user">
-        <p>{{loginUserList.length&&loginUserList[0].userName}}的账号</p>
-        <div class="user_list" v-for="(item,index) in loginUserList" :key="index" :class="active==index?'active':''" @click="selectUser(item,index)">
-          <img :src="item.avatarUrl||require('@/assets/img/default_avatar.png')" alt="">
+        <div class="user_list" v-for="(item, index) in loginUserList" :key="index"
+          :class="active == index ? 'active' : ''" @click="selectUser(item, index)">
+          <!-- <img :src="item.avatarUrl || require('@/assets/img/default_avatar.png')" alt=""> -->
+          <el-avatar :size="50" >
+            <img :src="item.avatarUrl || require('@/assets/img/default_avatar.png')" />
+          </el-avatar>
           <div>
-            <p>{{item.userName}}</p>
-            <span>{{item.type==0?'平台':item.type==1?'主播':'助手'}}</span>
+            <p>{{ item.userName }}</p>
+            <span>{{ item.type == 0 ? '平台' : item.type == 1 ? '主播' : '助手' }}</span>
           </div>
-          <i class="el-icon-check" v-show="active==index"></i>
+          <i class="el-icon-success" style="font-size: 16px;color: #017FF8;" v-show="active == index"></i>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" type="primary" @click="goToHome">进入</el-button>
+        <el-button size="small" style="    width: 100%;
+    height: 50px;
+    font-size: 16px;
+    background: #017FF8;" type="primary" @click="goToHome">进入</el-button>
       </span>
     </el-dialog>
   </div>
@@ -120,7 +132,7 @@ import debounce from 'lodash/debounce'
 import { messages } from '@/i18n'
 import { getUUID } from '@/utils'
 export default {
-  data () {
+  data() {
     return {
       i18nMessages: messages,
       captchaPath: '',
@@ -131,22 +143,22 @@ export default {
         captcha: '',
         grant_type: 'password',
       },
-      dataFormPhone:{
+      dataFormPhone: {
         grant_type: 'phone_verify_code',
-        phone:'',
-        verifyCode:''
+        phone: '',
+        verifyCode: ''
       },
-      loginType:true,//true:账号密码 false：手机号验证
+      loginType: true,//true:账号密码 false：手机号验证
       btnText: "发送验证码",
       disabled: false,
-      loginUserList:[],//登录账号列表
-      dialogVisible:false,//登录账号选择弹窗
-      active:0,//登录账号选中
-      selectUserAnchor:{}//选择登录账号
+      loginUserList: [],//登录账号列表
+      dialogVisible: false,//登录账号选择弹窗
+      active: 0,//登录账号选中
+      selectUserAnchor: {}//选择登录账号
     }
   },
   computed: {
-    dataRule () {
+    dataRule() {
       return {
         username: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
@@ -157,33 +169,33 @@ export default {
         captcha: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ],
-        phone:[
+        phone: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ],
       }
     },
-    dataRulephone(){
+    dataRulephone() {
       return {
         verifyCode: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ],
-        phone:[
+        phone: [
           { required: true, message: this.$t('validate.required'), trigger: 'blur' }
         ],
       }
     }
   },
-  created () {
+  created() {
     this.getCaptcha()
   },
   methods: {
-    selectUser(data,index){
+    selectUser(data, index) {
       this.selectUserAnchor = data
       this.active = index
     },
-    goToHome(){ //选择角色进入
-      this.$http.post('/sys/user/chooseLoginRole',{anchorId:this.selectUserAnchor.anchorId,type:this.selectUserAnchor.type}).then(({data:res})=>{
-        if(res.code!==0){
+    goToHome() { //选择角色进入
+      this.$http.post('/sys/user/chooseLoginRole', { anchorId: this.selectUserAnchor.anchorId, type: this.selectUserAnchor.type }).then(({ data: res }) => {
+        if (res.code !== 0) {
           return this.$message.error(res.msg)
         }
         this.dialogVisible = false
@@ -191,13 +203,13 @@ export default {
       })
     },
     // 获取验证码
-    getCaptcha () {
+    getCaptcha() {
       this.dataForm.uuid = getUUID()
       this.captchaPath = `${window.SITE_CONFIG['apiURL']}/auth/captcha?uuid=${this.dataForm.uuid}`
     },
     // 表单提交
     dataFormSubmitHandle: debounce(function () {
-      if(this.loginType){
+      if (this.loginType) {
         this.$refs['dataForm'].validate((valid) => {
           if (!valid) {
             return false
@@ -215,23 +227,23 @@ export default {
               return this.$message.error(res.msg)
             }
             Cookies.set('access_token', res.access_token)
-            this.$http.get('/sys/user/getAnchorListWithLogin').then(({ data: res })=>{
+            this.$http.get('/sys/user/getAnchorListWithLogin').then(({ data: res }) => {
               console.log(res)
-              if(res.code!==0){
+              if (res.code !== 0) {
                 return this.$message.error(res.msg)
               }
-              if(res.data && res.data.length > 0) {
+              if (res.data && res.data.length > 0) {
                 this.loginUserList = res.data
                 this.dialogVisible = true
-                this.selectUserAnchor =this.loginUserList[0] 
+                this.selectUserAnchor = this.loginUserList[0]
               } else {
                 this.$router.replace({ name: 'home' })
               }
-             
+
             })
-          }).catch(() => {})
+          }).catch(() => { })
         })
-      }else{
+      } else {
         this.$refs['dataFormPhone'].validate((valid) => {
           if (!valid) {
             return false
@@ -248,20 +260,20 @@ export default {
               return this.$message.error(res.msg)
             }
             Cookies.set('access_token', res.access_token)
-            this.$http.get('/sys/user/getAnchorListWithLogin').then(({ data: res })=>{
+            this.$http.get('/sys/user/getAnchorListWithLogin').then(({ data: res }) => {
               console.log(res)
-              if(res.code!==0){
+              if (res.code !== 0) {
                 return this.$message.error(res.msg)
               }
-              if(res.data && res.data.length > 0) {
+              if (res.data && res.data.length > 0) {
                 this.loginUserList = res.data
                 this.dialogVisible = true
-                this.selectUserAnchor =this.loginUserList[0]
+                this.selectUserAnchor = this.loginUserList[0]
               } else {
                 this.$router.replace({ name: 'home' })
               }
             })
-          }).catch(() => {})
+          }).catch(() => { })
         })
       }
     }, 1000, { 'leading': true, 'trailing': false }),
@@ -270,11 +282,11 @@ export default {
       //手机号 为空的话
       this.$refs.dataFormPhone.validateField("phone", (errorMessage) => {
         if (!errorMessage) {
-          this.$http.post('/message/sms/sendCodeWithLogin',{mobile:this.dataFormPhone.phone}).then(res=>{
-            if(res){
+          this.$http.post('/message/sms/sendCodeWithLogin', { mobile: this.dataFormPhone.phone }).then(res => {
+            if (res) {
               this.$message({
-                message:"已发送验证码，请查收",
-                type:'success'
+                message: "已发送验证码，请查收",
+                type: 'success'
               });
               this.disabled = true;
               this.btnText = "请稍候...";
@@ -309,6 +321,7 @@ export default {
 <style scoped lang="scss">
 .bind_code {
   position: relative;
+
   .el-input__inner {
     width: 328px;
     height: 44px;
@@ -318,15 +331,18 @@ export default {
     outline: none;
     padding: 0 100px 0 10px;
   }
+
   .code /deep/.el-input__suffix {
     right: 97px;
   }
+
   .el-button {
     border: 0;
     background: none;
     padding: 0;
     border-radius: 0;
   }
+
   .bind_code_gain {
     position: absolute;
     top: calc(50% - 9px);
@@ -339,55 +355,116 @@ export default {
     padding-left: 10px;
     border-left: 1px solid #d8d8d8;
   }
-} 
-.login_user{
-  height: 300px;
-  overflow: auto;
-  >p{
+}
+
+.login_user {
+  // height: 300px;
+  // overflow: auto;
+
+  >p {
     border-bottom: 1px solid #ccc;
     margin: 0;
     padding: 10px 0;
   }
-  .user_list{
+
+  .user_list {
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #ccc;
-    padding: 10px 0;
+    border-bottom: 1px solid #F1F2F7;
+    padding: 15px 0;
     cursor: pointer;
     position: relative;
-    >i{
+
+    >i {
       position: absolute;
       right: 20px;
-      top:30px;
+      top: 30px;
       font-size: 26px;
     }
-    >img{
+
+    >img {
       width: 60px;
       height: 60px;
     }
-    >div{
+
+    >div {
       display: flex;
       flex-direction: column;
       justify-content: space-around;
       margin-left: 10px;
-      >p{
-        margin: 0; 
+
+      >p {
+        margin: 0;
         padding: 0;
         font-size: 16px;
       }
-      >span{
-        font-size:14px;
+
+      >span {
+        font-size: 14px;
         color: #ccc;
       }
     }
   }
-  .active{
-    border-bottom:2px solid #20aee5;
-    color: #20aee5;
+
+  .active {
+    // border-bottom: 2px solid #20aee5;
+    // color: #20aee5;
   }
+
   &::-webkit-scrollbar {
-    width:0px;
-    height:0px;
+    width: 0px;
+    height: 0px;
+  }
+}
+
+.changedBtn {
+  position: relative;
+
+  &:after {
+    content: " ";
+    width: 30px;
+    height: 4px;
+    background: #017FF8;
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
+  }
+}
+/deep/ .el-dialog--center .el-dialog__body {
+    text-align: initial;
+    padding: 0 30px;
+}
+/deep/ .el-dialog__footer{
+    padding: 30px;
+}
+/deep/ .el-dialog__header{
+    padding: 40px;
+}
+/deep/ .el-dialog {
+  
+    position: absolute;
+    right: 23.1%;
+}
+/deep/ .el-dialog__title{
+    font-size: 20px;
+font-family: PingFang HK-Semibold, PingFang HK;
+font-weight: 600;
+position: relative;
+color: #111F2C;
+&:after {
+    content: " ";
+    width: 30px;
+    height: 4px;
+    background: #017FF8;
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
   }
 }
 </style>
