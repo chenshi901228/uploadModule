@@ -36,11 +36,11 @@ export default {
                 if(el && flvJs.isSupported()) {
                     this.flvPlayer = flvJs.createPlayer({
                         type: 'flv',
-                        url: downloadFileUrl(url)
+                        url: url
                     });
                     this.flvPlayer.attachMediaElement(el);
                     this.flvPlayer.load();
-                    // this.flvPlayer.play();
+                    this.flvPlayer.play();
                 }
             })
         },

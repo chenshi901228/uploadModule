@@ -46,6 +46,7 @@
     "tim-js-sdk": "^2.18.0",
     "tim-upload-plugin": "^1.0.4",
     "vue": "^2.6.11",
+    "vue-aliplayer": "^1.0.0",
     "vue-cron": "^1.0.9",
     "vue-i18n": "^8.18.2",
     "vue-img-cutter": "^3.0.1",
@@ -105,7 +106,7 @@
     "last 2 versions",
     "android 4",
     "opera 12"
-],
+  ],
   "element-theme": {
     "config": "./src/element-ui/theme-variables.scss",
     "out": "./src/element-ui/theme",
