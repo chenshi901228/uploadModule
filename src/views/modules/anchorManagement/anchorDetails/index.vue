@@ -13,11 +13,11 @@
             <img :src="anchorDetails.avatarUrl || require('@/assets/img/default_avatar.png')" alt="">
             <div class="role">{{ anchorDetails.userType == 2 ? "企业" : "个人" }}</div>
           </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+          <div style="width:50%;display: inline-block">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">主播昵称</div>
             <div>{{ anchorDetails.username || '-' }}</div>
           </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+          <div style="width:50%;display: inline-block;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">真实姓名</div>
             <div>
               {{ anchorDetails.idCard || '-' }}
@@ -45,13 +45,13 @@
         </div>
         <!-- 企业 -->
         <div class="diaBoxLeft_mes" v-if="anchorDetails.userType == 2 && $hasPermission('anchor:bank:info')">
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+          <div style="width:50%;display: inline-block;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">公司名称</div>
             <div>
               {{ anchorDetails.companyName || '-' }}
             </div>
           </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+          <div style="width:50%;display: inline-block;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">统一社会信用代码</div>
             <div>
               {{ anchorDetails.companyCreditCode || '-' }}
@@ -79,13 +79,13 @@
         </div>
         <!-- 个人 -->
         <div class="diaBoxLeft_mes" v-else-if="anchorDetails.userType == 1 && $hasPermission('anchor:bank:info')">
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+          <div style="width:50%;display: inline-block;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">姓名</div>
             <div>
               {{ anchorDetails.realName || '-' }}
             </div>
           </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+          <div style="width:50%;display: inline-block;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">身份证号</div>
             <div>
               {{ anchorDetails.idCard || '-' }}
@@ -129,13 +129,13 @@
     color: #fff;">提现</el-button>
         </div>
         <div class="diaBoxLeft_mes" v-if="$hasPermission('anchor:amount:info')">
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+          <div style="width:50%;display: inline-block">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">累计收益</div>
             <div>
               ￥{{ anchorDetails.priceIncome ? anchorDetails.priceIncome : 0 }}元
             </div>
           </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+          <div style="width:50%;display: inline-block">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">已提现金额</div>
             <div>
              ￥{{ anchorDetails.anchorWithdraw || 0 }}元
@@ -151,7 +151,7 @@
         </div>
       </div>
       <div class="diaBoxRight">
-        <div style="display: flex;border-bottom: 2px solid #E4E7ED;">
+        <div style="display: flex;border-bottom: 2px solid #E4E7ED">
           <div class="diaBoxRight_tabBtns" @click="changeTbas(1)" :class="{ 'is-active': diaTbas === 1 }"
             v-if="$hasPermission('anchor:gain:list')">
             收益记录
@@ -2071,7 +2071,7 @@ export default {
   bottom: 0;
   overflow: auto;
   margin: 10px;
-  padding: 10px;
+  padding: 10px 30px;
   border-radius: 5px;
   box-shadow: 0px 0px 10px 1px rgba(17, 17, 17, 0.185);
 }
@@ -2095,7 +2095,7 @@ export default {
 }
 
 .diaBoxLeft_mes {
-   padding: 20px 10px;
+   padding: 0 10px 20px;
     border-bottom: 1px solid #E2E5EA;
 
   .avatar {

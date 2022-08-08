@@ -768,7 +768,7 @@ export default {
   bottom: 0;
   overflow: auto;
   margin: 10px;
-  padding: 10px;
+  padding: 10px 30px;
   border-radius: 5px;
   box-shadow: 0px 0px 10px 1px rgba(17, 17, 17, 0.185);
 }
