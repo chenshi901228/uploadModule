@@ -132,7 +132,7 @@
           </div>
         </div>
       </el-form>
-      <div class="content">
+      <div class="content" v-loading="dataListLoading">
         <div class="live_list" v-for="(item,index) in liveList" :key="index">
           <div class="header">
             <div class="anchor_info">
@@ -196,6 +196,7 @@ export default {
             anchorTel:"",
             anchorUser:""
            },
+           dataListLoading: false,
            page:1,
            limit:8,
            total:0,
@@ -207,14 +208,18 @@ export default {
     },
     methods: {
       getLiveList(){
+        this.dataListLoading = true
         this.$http.get('/sys/liveListSupervisory/page',{
           params:{
             page:this.page,limit:this.limit,...this.dataForm
           }
         }).then(({data:res})=>{
+          this.dataListLoading = false
           if(!res.code==0) return this.$message.error(res.msg)
           this.liveList = res.data.list
           this.total = res.data.total
+        }).catch(err => {
+          this.dataListLoading = false
         })
       },
       toDetail(data){

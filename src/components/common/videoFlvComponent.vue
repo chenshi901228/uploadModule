@@ -37,13 +37,9 @@ export default {
                     type: "flv",
                     isLive: true, //是否直播
                     url: url, //地址
-                    cors: true,
                     hasAudio: true,
                     hasVideo: true,
                 }, {
-                    headers: {
-                        "Access-Control-Allow-Origin" : "*"
-                    },
                     enableWorker: false,
                     lazyLoadMaxDuration: 3 * 60,
                     seekType: 'range',
