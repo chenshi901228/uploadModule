@@ -23,10 +23,10 @@
 
               </div>
             </div>
-            <!-- <videoFlvComponent :url="liveDetail.liveStream&&liveDetail.liveStream.Data.PlayInfo[0].FLV"></videoFlvComponent> -->
+            <video-flv-component :url="videoUrl"></video-flv-component>
             <!-- <video autoplay muted id="videoEle"></video> -->
-            <aliplayer v-if="videoUrl" class="aliplayer_box" ref="player" :autoplay="true" :isLive="isLive" :rePlay="false" showBuffer="false" showBarTime="5000" format="flv" 
-            :source="videoUrl"></aliplayer>
+            <!-- <aliplayer v-if="videoUrl" class="aliplayer_box" ref="player" :autoplay="true" :isLive="isLive" :rePlay="false" showBuffer="false" showBarTime="5000" format="flv" 
+            :source="videoUrl"></aliplayer> -->
             {{liveDetail.liveStream&&liveDetail.liveStream.Data.PlayInfo[0].FLV}}
           </div>
           <div id="live_trends" ref="liveTrends"></div>
@@ -44,12 +44,12 @@
 </template>
 
 <script>
-import videoFlvComponent from "@/components/common/videoFlvComponent.vue"
+import VideoFlvComponent from "@/components/common/videoFlvComponent.vue"
 import Aliplayer from "@/components/common/Aliplayer.vue"
 import echarts from "echarts"
 export default {
   components:{
-    videoFlvComponent,
+    VideoFlvComponent,
     Aliplayer
   },
   data(){
