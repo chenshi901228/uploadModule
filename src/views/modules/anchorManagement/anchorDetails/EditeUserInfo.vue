@@ -2,6 +2,9 @@
 
 <template>
   <el-card shadow="never" class="aui-card--fill">
+      <div style="height: 50px;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 25px;border-bottom:1px solid #EBEEF5;">
+                主播信息
+            </div>
     <el-form
       :model="ruleForm"
       :rules="rules"
@@ -36,13 +39,12 @@
       <el-form-item label="主播二维码" required>
         <upload :fileList="fileListQRcode" :limit="1" :multiple="false" @getImg="getImgQRcode"></upload>
       </el-form-item>
-      <el-form-item>
-        <!-- <el-button @click="resetForm('ruleForm')">取消</el-button> -->
-        <el-button size="small" type="primary" @click="submitForm('ruleForm')"
-          >修改</el-button
-        >
-      </el-form-item>
+    
     </el-form>
+      <el-button size="small" type="primary" @click="submitForm('ruleForm')"
+          >确定</el-button
+        >
+        <el-button  size="small" @click="resetForm('ruleForm')">取消</el-button>
     <el-dialog :visible.sync="dialogVisible">
       <img width="100%" :src="dialogImageUrl" alt="" />
     </el-dialog>
@@ -202,4 +204,8 @@ export default {
 /deep/.el-input__count {
   right: 30px;
 }
+/deep/ .el-card__body {
+    padding: 0 20px 20px;
+}
+
 </style>

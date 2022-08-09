@@ -6,7 +6,10 @@
           <img src="../../assets/img/loginIcon.png" alt="">
           <h2 class="login-brand">{{ $t('brand.lg') }}</h2>
         </div>
-        <div class="login-body">
+    
+       
+      </main>
+          <div class="login-body">
           <div style="margin:50px;display: flex;justify-content: space-between;align-items: center;">
             <div :style="{ color: !loginType ? '#111F2C' : '#707980', fontWeight: !loginType ? '600' : '400' }"
               :class="!loginType ? 'changedBtn' : ''" @click="loginType = !loginType"
@@ -91,13 +94,6 @@
           </el-form>
 
         </div>
-        <div class="login-footer">
-          <p>
-            <a href="javascript:void(0);" target="_blank">{{ $t('login.demo') }}</a>
-          </p>
-          <p><a href="javascript:void(0);" target="_blank">{{ $t('login.copyright') }}</a>2022</p>
-        </div>
-      </main>
     </div>
     <el-dialog title="选择账号" :modal="false" :visible.sync="dialogVisible" 
     top="260px"
