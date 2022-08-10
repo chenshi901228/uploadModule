@@ -1389,8 +1389,8 @@ export default {
       this.checkStream = await this.zg.createStream({ //摄像头
         camera: {
           videoQuality: 4,
-          width: parseInt(document.getElementById('videoEle').getBoundingClientRect().width * 1),
-          height: parseInt(document.getElementById('videoEle').getBoundingClientRect().height * 1),
+          // width: parseInt(document.getElementById('videoEle').getBoundingClientRect().width * 1),
+          // height: parseInt(document.getElementById('videoEle').getBoundingClientRect().height * 1),
           frameRate: 15,
           bitrate: 2000,
           videoInput:this.cameraId,

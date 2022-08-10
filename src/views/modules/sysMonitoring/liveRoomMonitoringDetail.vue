@@ -44,12 +44,10 @@
 
 <script>
 import VideoFlvComponent from "@/components/common/videoFlvComponent.vue"
-import Aliplayer from "@/components/common/Aliplayer.vue"
 import echarts from "echarts"
 export default {
   components:{
     VideoFlvComponent,
-    Aliplayer
   },
   data(){
     return{

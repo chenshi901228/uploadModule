@@ -34,7 +34,7 @@ export default new Vuex.Store({
       }
     ],
     contentTabsActiveName: 'home', //当前tab标签页
-    theme: "#409EFF" //主题颜色
+    theme: "#3558cc" //主题颜色
   },
   modules: {
     user
