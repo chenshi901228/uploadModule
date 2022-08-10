@@ -49,7 +49,10 @@
         style="width: 800px; height: 500px"
       ></video>
     </div> -->
-
+    <div
+      style="height: 50px;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 25px;border-bottom:1px solid #EBEEF5;">
+      带货商品
+    </div>
     <el-table
         v-loading="dataListLoading"
         :data="dataList"
@@ -136,11 +139,12 @@
         </el-form-item>
       </el-form>
       <div
-        style="display: flex; justify-content: flex-end"
+        style="display: flex; "
         class="dialog-footer"
       >
-        <el-button size="small" @click="resolve">驳回</el-button>
         <el-button type="primary" size="small" @click="confirm">通过</el-button>
+        <el-button size="small" @click="resolve">驳回</el-button>
+
       </div>
     </div>
     <!-- 审核状态图片 -->

@@ -3,37 +3,39 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-live__liveList">
-      <el-steps
-        :active="active"
-        finish-status="success"
-        process-status="finish"
-        align-center
-      >
-        <el-step title="提现金额"></el-step>
-        <el-step title="开具发票"></el-step>
-        <el-step title="提交申请"></el-step>
-      </el-steps>
+     
 
       <div class="all-content">
         <div v-if="active === 0" class="step-one-content">
-          <div class="money-title">提现金额</div>
+           <div style="height: 50px;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 25px;border-bottom:1px solid #EBEEF5;">
+                提现金额
+            </div>
           <div class="money-content">
             <el-form
               :inline="true"
               :model="withdrawForm"
               :rules="dataRule_withdraw"
               ref="withdrawForm_host"
+              label-width="140px"
               class="demo-form-inline"
             >
-              <el-form-item label="可提现金额：" required>
-                <div>{{ anchorDetails.anchorBalance || 0 }}</div>
+              <el-form-item label="可提现金额" required>
+                 <el-input
+                    style="width:640px"
+                    v-model="anchorDetails.anchorBalance"
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
               </el-form-item>
-              <el-form-item label="申请提现金额：" prop="amount" required>
+              <el-form-item label="提现金额" prop="amount" required>
                 <div style="display: inline-block">
                   <el-input
-                    style="width: 200px"
+                    style="width:640px"
                     v-model="withdrawForm.amount"
-                    placeholder="请输入"
+                    placeholder=""
                     size="small"
                     type="number"
                     :min="0"
@@ -48,114 +50,279 @@
             </el-form>
           </div>
 
-          <div class="user-title">提现账户</div>
+         <div style="height: 50px;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 25px;border-bottom:1px solid #EBEEF5;">
+                提现账户
+            </div>
           <div class="user-content">
-            <div class="user-item">
-              <span class="item"
-                >姓 名:{{ anchorDetails.realName || "-" }}</span
-              >
-              <span
-                v-if="
+              <el-form
+              :inline="true"
+              label-width="140px"
+             
+              class="demo-form-inline"
+            >
+              <el-form-item label="姓名" >
+                 <el-input
+                    style="width:640px"
+                    v-model="anchorDetails.realName"
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+              <el-form-item label="统一社会信用代码"  v-if="
                   anchorDetails.userType == 2 &&
                   $hasPermission('anchor:bank:info')
-                "
-                class="item"
-                >统一社会信用代码:{{
-                  anchorDetails.companyCreditCode || "-"
-                }}</span
-              >
-              <span v-else class="item"
-                >身份证号:{{ anchorDetails.idCard || "-" }}</span
-              >
-            </div>
-            <div class="user-item">
-              <span class="item"
-                >账户类型:{{
-                  anchorDetails.userType == 2 ? "企业" : "个人"
-                }}</span
-              >
-              <span class="item"
-                >开户银行:{{ anchorDetails.depositBank || "-" }}</span
-              >
-            </div>
-            <div class="user-item">
-              <span class="item"
-                >支行名称:{{ anchorDetails.branchName || "-" }}</span
-              >
-              <span class="item"
-                >账户名称:{{ anchorDetails.accountName || "-" }}</span
-              >
-            </div>
-            <div class="user-item">
-              <span class="item"
-                >银行账号:{{ anchorDetails.bankAccount || "-" }}</span
-              >
-              <span class="item"
-                >开户行所在地:{{ anchorDetails.address || "-" }}</span
-              >
-            </div>
+                ">
+                 <el-input
+                    style="width:640px"
+                    v-model="anchorDetails.companyCreditCode"
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+              <el-form-item v-else label="身份证号" >
+                 <el-input
+                    style="width:640px"
+                    v-model="anchorDetails.idCard"
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+              <el-form-item label="账户类型" >
+                 <el-input
+                    style="width:640px"
+                    :value='anchorDetails.userType == 2 ? "企业" : "个人"'
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+              <el-form-item label="开户银行" >
+                 <el-input
+                    style="width:640px"
+                    v-model="anchorDetails.depositBank"
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+              <el-form-item label="支行名称" >
+                 <el-input
+                    style="width:640px"
+                    v-model="anchorDetails.branchName"
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+              <el-form-item label="账户名称" >
+                 <el-input
+                    style="width:640px"
+                    v-model="anchorDetails.accountName"
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+              <el-form-item label="银行账号" >
+                 <el-input
+                    style="width:640px"
+                    v-model="anchorDetails.bankAccount"
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+              <el-form-item label="开户行所在地" >
+                 <el-input
+                    style="width:640px"
+                    v-model="anchorDetails.address"
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+          
+            </el-form>
+        
+         
           </div>
           <div class="btns">
-            <el-button size="small" @click="cancel">取 消</el-button>
             <el-button size="small" type="primary" @click="next"
               >下一步</el-button
             >
+            <el-button size="small" @click="cancel">取 消</el-button>
+
           </div>
         </div>
 
         <div class="step-two-content" v-if="active === 1">
           <div class="money-title">开票金额</div>
-          <div class="user-item">
-            <span class="item">开票金额:{{ amount || "-" }}</span>
-          </div>
+              <el-form
+              :inline="true"
+              label-width="140px"
+             
+              class="demo-form-inline"
+            >
+              <el-form-item label="开票金额" >
+                 <el-input
+                    style="width:640px"
+                    v-model="amount"
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+            
+        
+          
+          
+            </el-form>
+      
           <div class="money-title">开票信息</div>
-          <div class="user-item">
-            <span class="item">名称:{{ invoiceInfo.name || "--" }}</span>
-          </div>
-          <div class="user-item">
-            <span class="item"
-              >纳税人识别号:{{
-                invoiceInfo.taxpayer_identification_number || "--"
-              }}</span
+            <el-form
+              :inline="true"
+              label-width="140px"
+             
+              class="demo-form-inline"
             >
-          </div>
-          <div class="user-item">
-            <span class="item">地址电话:{{ invoiceInfo.address || "--" }}</span>
-          </div>
-          <div class="user-item">
-            <span class="item"
-              >开户行及账号:{{ invoiceInfo.open_account || "--" }}</span
-            >
-          </div>
-          <div class="user-item">
+              <el-form-item label="姓名" >
+                 <el-input
+                    style="width:640px"
+                    v-model="invoiceInfo.name"
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+              <el-form-item label="纳税人识别号"  >
+                 <el-input
+                    style="width:640px"
+                    v-model="invoiceInfo.taxpayer_identification_number"
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+              <el-form-item label="地址电话" >
+                 <el-input
+                    style="width:640px"
+                    v-model="invoiceInfo.address"
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+              <el-form-item label="开户行及账号" >
+                 <el-input
+                    style="width:640px"
+                    :value='invoiceInfo.open_account'
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+          
+          
+            </el-form>
+               <div class="user-item">
             <span style="color: red" class="item"
               >注：可增值税专用发票或增值税普通发票；</span
             >
           </div>
           <div class="money-title">发票邮寄</div>
-          <div class="user-item">
-            <span class="item"
-              >收件人:{{ invoiceAddress.recipient || "--" }}</span
+             <el-form
+              :inline="true"
+              label-width="140px"
+             
+              class="demo-form-inline"
             >
-            <span class="item">电话:{{ invoiceAddress.phone || "--" }}</span>
-          </div>
-          <div class="user-item">
-            <span class="item"
-              >邮寄地址:{{ invoiceAddress.mailing_address || "--" }}</span
-            >
-          </div>
-          <div class="user-item">
-            <span class="item"
-              >邮箱地址:{{ invoiceAddress.email || "--" }}</span
-            >
-          </div>
+              <el-form-item label="收件人" >
+                 <el-input
+                    style="width:640px"
+                    v-model="invoiceAddress.recipient"
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+              <el-form-item label="电话" >
+                 <el-input
+                    style="width:640px"
+                    v-model="invoiceAddress.phone"
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+              <el-form-item label="邮寄地址"  >
+                 <el-input
+                    style="width:640px"
+                    v-model="invoiceAddress.mailing_address"
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+              <el-form-item label="邮箱地址" >
+                 <el-input
+                    style="width:640px"
+                    v-model="invoiceAddress.email "
+                    placeholder=""
+                    disabled
+                    size="small"
+                  >
+                  </el-input>
+                
+              </el-form-item>
+        
+          
+          
+            </el-form>
+       
           <div class="user-item">
             <span style="color: red" class="item"
               >注：纸质发票需邮寄至以上地址，电子发票发送邮箱即可</span
             >
           </div>
           <div class="btns">
-            <el-button size="small" @click="cancelSub">取 消</el-button>
+            <el-button size="small" @click="cancelSub">上一步</el-button>
             <el-button size="small" type="primary" @click="sub">提交</el-button>
           </div>
         </div>
@@ -506,70 +673,59 @@ export default {
   }
 
   .all-content {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
     .step-one-content {
-      width: 70%;
-      padding-top: 50px;
+      width:100%;
       .money-title {
-        border-left: 5px solid #409eff;
-        padding-left: 5px;
+     height: 50px;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 25px;border-bottom:1px solid #EBEEF5;
       }
       .money-content {
-        /deep/.el-form {
+ 
+      }
+      .user-title {
+     height: 50px;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 25px;border-bottom:1px solid #EBEEF5;
+      }
+      .user-content {
+          /deep/.el-form {
           display: flex;
+          flex-wrap: wrap;
           justify-content: space-between;
-          padding-left: 50px;
           .el-form-item {
             flex: 1;
           }
         }
       }
-      .user-title {
-        border-left: 5px solid #409eff;
-        padding-left: 5px;
-        margin-bottom: 20px;
-      }
-      .user-content {
-        padding-left: 50px;
-        .user-item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 20px;
-          .item {
-            flex: 1;
-          }
-        }
-      }
       .btns {
+        margin-top: 20px;
+
         display: flex;
-        justify-content: flex-end;
         align-items: center;
+        button{
+          width: 75px;
+        }
       }
     }
     .step-two-content {
-      width: 70%;
-      padding-top: 50px;
+      
       .money-title {
-        border-left: 5px solid #409eff;
-        padding-left: 5px;
+     height: 50px;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 25px;border-bottom:1px solid #EBEEF5;
       }
       .user-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 10px;
-        padding-left: 80px;
+        margin: 10px 70px;
         .item {
           flex: 1;
         }
       }
       .btns {
+        margin-top: 20px;
         display: flex;
-        justify-content: flex-end;
         align-items: center;
+         button{
+          width: 75px;
+        }
       }
     }
     .step-three-content {
@@ -579,7 +735,7 @@ export default {
       align-items: center;
       font-size: 34px;
       font-weight: 500;
-      padding-top: 200px;
+      padding-top: 640pxpx;
     }
   }
 }
@@ -591,4 +747,18 @@ export default {
 ::v-deep input[type="number"] {
   -moz-appearance: textfield !important;
 }
+/deep/ .el-card__body {
+    padding: 0 20px 20px;
+}
+/deep/ .el-form-item {
+    margin-bottom:0;
+}
+       /deep/.el-form {
+          display: flex;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          .el-form-item {
+            flex: 1;
+          }
+        }
 </style>

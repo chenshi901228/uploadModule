@@ -38,15 +38,7 @@
                         >
                         </el-input>
                     </el-form-item>
-                    <el-form-item
-                        label="删除状态"
-                        prop="delFlg"
-                    >
-                        <el-select clearable style="width: 200px" v-model="dataForm.delFlg" placeholder="请选择">
-                            <el-option label="已删除" :value="1"></el-option>
-                            <el-option label="未删除" :value="0"></el-option>
-                        </el-select>
-                    </el-form-item>
+                
                     <!-- 搜索重置展开按钮 -->
                     <div class="headerTool-search-btns">
                         <el-form-item>
@@ -86,13 +78,28 @@
                         </div>
                     </div>
                 </el-form>
-                <div v-if="livePlayBackCommentInfo" class="livePlayBackCommentInfo">
-                    <div class="name">
-                        <p>评论人：{{ livePlayBackCommentInfo.commentUserName || "-"}}</p>
-                        <p>手机号码：{{ livePlayBackCommentInfo.phone || "-"}}</p>
-                    </div>
-                    <p class="info">{{ livePlayBackCommentInfo.commentValue }}</p>
-                </div>
+               <el-descriptions style="margin:20px 0" v-if="livePlayBackCommentInfo" class="margin-top" :column="2" size="small" border>
+
+                    <el-descriptions-item>
+                        <template slot="label">
+                            评论人
+                        </template>
+                        {{ livePlayBackCommentInfo.commentUserName || "-" }}
+                    </el-descriptions-item>
+                    <el-descriptions-item>
+                        <template slot="label">
+                            手机号码
+                        </template>
+                        {{ livePlayBackCommentInfo.phone || "-" }}
+                    </el-descriptions-item>
+                    <el-descriptions-item>
+                        <template slot="label">
+                            评论内容
+                        </template>
+                        {{ livePlayBackCommentInfo.commentValue }}
+                    </el-descriptions-item>
+
+                </el-descriptions>
                 <el-table
                     v-loading="dataListLoading"
                     :data="dataList"
@@ -115,7 +122,7 @@
                         :key="item.prop"
                         :prop="item.prop"
                         :label="item.label"
-                        :width="item.width || 120"
+                        :width="item.width "
                         show-overflow-tooltip
                         :sortable="['transcribeFlg', 'liveState', 'showState'].includes(item.prop)"
                     >
@@ -207,11 +214,12 @@ export default {
             },
             sys: 0,
 
+         
             tableItem: [
-                { prop: "commentUserName", label: "回复人" },
-                { prop: "phone", label: "手机号码" },
+                { prop: "commentUserName", label: "回复人", width: 160 },
+                { prop: "phone", label: "手机号码", width: 160 },
                 { prop: "commentValue", label: "回复内容" },
-                { prop: "delFlg", label: "删除状态" },
+                { prop: "delFlg", label: "删除状态", width: 100 },
                 // { prop: "remark", label: "备注" },
                 { prop: "createDate", label: "创建时间", width: 180 },
             ],
@@ -279,7 +287,7 @@ export default {
     },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
     .custom-dialog-top{
         transform: translateY(50%);
     }
@@ -298,4 +306,8 @@ export default {
 
         }
     }
+    /deep/ th.el-descriptions-item__cell.el-descriptions-item__label.is-bordered-label {
+    width: 120px;
+    text-align: right;
+}
 </style>

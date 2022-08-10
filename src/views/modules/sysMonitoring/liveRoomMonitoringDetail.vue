@@ -23,11 +23,10 @@
 
               </div>
             </div>
-            <!-- <videoFlvComponent :url="liveDetail.liveStream&&liveDetail.liveStream.Data.PlayInfo[0].FLV"></videoFlvComponent> -->
+            <video-flv-component :url="videoUrl" class="live_video_flv"></video-flv-component>
             <!-- <video autoplay muted id="videoEle"></video> -->
-            <aliplayer v-if="videoUrl" class="aliplayer_box" ref="player" :autoplay="true" :isLive="isLive" :rePlay="false" showBuffer="false" showBarTime="5000" format="flv" 
-            :source="videoUrl"></aliplayer>
-            {{liveDetail.liveStream&&liveDetail.liveStream.Data.PlayInfo[0].FLV}}
+            <!-- <aliplayer v-if="videoUrl" class="aliplayer_box" ref="player" :autoplay="true" :isLive="isLive" :rePlay="false" showBuffer="false" showBarTime="5000" format="flv" 
+            :source="videoUrl"></aliplayer> -->
           </div>
           <div id="live_trends" ref="liveTrends"></div>
         </div>
@@ -44,12 +43,12 @@
 </template>
 
 <script>
-import videoFlvComponent from "@/components/common/videoFlvComponent.vue"
+import VideoFlvComponent from "@/components/common/videoFlvComponent.vue"
 import Aliplayer from "@/components/common/Aliplayer.vue"
 import echarts from "echarts"
 export default {
   components:{
-    videoFlvComponent,
+    VideoFlvComponent,
     Aliplayer
   },
   data(){
@@ -145,7 +144,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .data_details{
   width: 100%;
   height: 165px;
@@ -236,7 +235,14 @@ export default {
         font-size: 14px;
       }
     }
-    
+  
+  }
+
+  .live_video_flv {
+    text-align: center;
+    video {
+      max-height: 395px;
+    }
   }
   
 }

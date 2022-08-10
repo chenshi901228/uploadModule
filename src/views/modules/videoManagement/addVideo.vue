@@ -13,7 +13,7 @@
       <el-form-item label="视频主题" prop="liveTheme">
         <el-input
           placeholder="请输入视频主题"
-          style="width: 400px"
+          style="width: 640px"
           maxlength="60"
           show-word-limit
           v-model="dataForm.liveTheme"
@@ -21,7 +21,7 @@
       </el-form-item>
       <el-form-item label="视频显示" prop="showMode">
         <el-select
-          style="width: 400px"
+          style="width: 640px"
           v-model="dataForm.showMode"
           clearable
           placeholder="请选择"
@@ -58,7 +58,7 @@
       </el-form-item>
       <el-form-item label="添加商品" prop="goods">
         <el-input
-          style="width: 400px"
+          style="width: 640px"
           placeholder="推荐商品"
           @click.native="chooseProduct"
           v-model="dataForm.goods"
@@ -68,16 +68,17 @@
       </el-form-item>
     </el-form>
     <div class="footer">
-      <el-button :disabled="submitLoading" size="small" @click="cancelAdd"
-        >取 消</el-button
-      >
+    
       <el-button
         :disabled="submitLoading"
         :loading="submitLoading"
         size="small"
         type="primary"
         @click="submit"
-        >添 加</el-button
+        >确定</el-button
+      >
+        <el-button :disabled="submitLoading" size="small" @click="cancelAdd"
+        >取 消</el-button
       >
     </div>
     <!-- 商品弹框 -->
@@ -310,4 +311,19 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+/deep/ .upload-demo .custom-style {
+    width: 380px;
+    height: 180px;
+    border: 1px solid #dcdfe6;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    border-radius: 2px;
+}
 </style>
