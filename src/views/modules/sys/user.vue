@@ -549,6 +549,20 @@ export default {
       this.$refs.dataForm.resetFields()
       this.getUserList(n)
     },
+    banLiveConfirm(remark, id) {
+      this.$http
+        .put("/sys/liveList/stopLive", { id, remark })
+        .then(({ data: res }) => {
+          if (res.code == 0) {
+            this.$message.success("禁播成功");
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
     forbiddenHandle(type, data) {
       if(this.diaTbas === 2){
         let url = "/sys/anchor/info/updateAnchorStatus";
@@ -558,9 +572,13 @@ export default {
             if (res.code == 0) {
               this.$message.success("操作成功");
               this.getUserList(this.diaTbas);
+              if(type===1&&data.liveStatus){
+                this.banLiveConfirm('你的主播账号被禁用',data.liveId)
+              }
             } else {
               this.$message.error(res.msg);
             }
+            
           })
           .catch((err) => {
             console.log(err);
