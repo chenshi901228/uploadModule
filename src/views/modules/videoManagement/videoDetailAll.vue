@@ -1,69 +1,86 @@
 <template>
-  <el-card shadow="never" class="aui-card--fill">
+  <el-card shadow="never" class="aui-card--fill" style="background-color: transparent;">
 
-    <el-row>
-      <el-col :span="12">视频主题：{{ info.liveTheme }}</el-col>
-      <el-col :span="12">主 播：{{ info.anchorUser }}</el-col>
-      <el-col :span="24">视频显示：{{ info.showMode === 0 ? "竖屏" : "横屏" }}</el-col>
-      <el-col :span="12">封面图：
-        <el-image :preview-src-list="srcList" v-if="info && info.frontCoverUrl" :src="info && info.frontCoverUrl"
-          style="width: 200px; height: 200px">
-        </el-image>
-      </el-col>
-      <el-col :span="12">视频：
-        <video ref="video" id="video" :src="info.relationLiveUrl" :autoplay="videolist.autoplay"
-          :controls="videolist.controls" :controlslist="videolist.controlslist" :webkit-playsinline="webkitplaysinline"
-          style="width: 200px; height: 200px"></video>
-      </el-col>
-      <el-col v-if="!(checkFlag && info.approveStatus === 0)" :span="24">备注：{{ info.remark }}</el-col>
-    </el-row>
-    <div
-      style="height: 50px;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 25px;border-bottom:1px solid #EBEEF5;">
-      带货商品
+    <div style="background-color: #fff;padding: 30px 20px;box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.1600);
+border-radius: 5px 5px 5px 5px;position: relative;">
+      <el-row>
+        <el-col :span="12" style="display:flex;align-items: center;">视频主题：<el-input disabled type="textarea"
+            :value="info.liveTheme" size="small" style="width:calc(100% - 120px)"></el-input>
+        </el-col>
+        <el-col :span="12" style="display:flex;align-items: center;">主 播：<el-input disabled :value="info.anchorUser"
+            size="small" style="width:calc(100% - 120px)"></el-input>
+        </el-col>
+        <el-col :span="24" style="display:flex;align-items: center;">视频显示：<el-input disabled
+            :value="info.showMode === 0 ? '竖屏' : '横屏'" size="small" style="width:calc(100% - 120px)"></el-input>
+        </el-col>
+        <el-col :span="10">封面图：
+          <el-image :preview-src-list="srcList" v-if="info && info.frontCoverUrl" :src="info && info.frontCoverUrl"
+            style="width: 200px; height: 180px">
+          </el-image>
+        </el-col>
+        <el-col :span="10">视频：
+          <video ref="video" id="video" :src="info.relationLiveUrl" :autoplay="videolist.autoplay"
+            :controls="videolist.controls" :controlslist="videolist.controlslist"
+            :webkit-playsinline="webkitplaysinline" style="width: 200px; height: 200px"></video>
+        </el-col>
+        <el-col :span="2">
+          <img v-if="statusImg" class="statusImg" :src="statusImg" alt="">
+
+        </el-col>
+        <el-col v-if="!(checkFlag && info.approveStatus === 0)" :span="24">备注：{{ info.remark }}</el-col>
+      </el-row>
+      <!-- 审核状态图片 -->
     </div>
-    <el-table v-loading="dataListLoading" :data="dataList" max-height="400" fit style="width: 100%">
-      <el-table-column header-align="center" align="center" v-for="item in tableItem" :key="item.prop" :prop="item.prop"
-        :label="item.label" :show-overflow-tooltip="item.prop == 'productName' ? false : true">
-        <template slot-scope="{ row, $index }">
-          <!-- 序号 -->
-          <span v-if="item.prop == 'index'">{{ $index + 1 }}</span>
-          <!-- 封面图 -->
-          <div v-else-if="item.prop == 'productImage'">
-            <img class="frontCoverImg" :src="
-              row.productImage || require('@/assets/img/default_cover.jpg')
-            " alt="" />
-          </div>
-          <!-- 商品价格 -->
-          <span v-else-if="item.prop == 'oldPrice'">
-            ￥{{ row.oldPrice }}
-          </span>
-          <!-- 销售价格 -->
-          <span v-else-if="item.prop == 'price'"> ￥{{ row.price }} </span>
-          <!-- 是否添加 -->
-          <span v-else-if="item.prop == 'isAdd'">
-            {{ row.isAdd ? "已添加" : "未添加" }}
-          </span>
-          <!-- 是否主推 -->
-          <!-- <span v-else-if="item.prop == 'isFeatured'">
+
+    <div style="background-color: #fff;padding: 30px 20px;box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.1600);
+border-radius: 5px 5px 5px 5px;margin: 20px 0;">
+      <div
+        style="height: 50px;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 25px;border-bottom:1px solid #EBEEF5;">
+        带货商品
+      </div>
+      <el-table v-loading="dataListLoading" :data="dataList" max-height="400" fit style="width: 100%">
+        <el-table-column header-align="center" align="center" v-for="item in tableItem" :key="item.prop"
+          :prop="item.prop" :label="item.label" :show-overflow-tooltip="item.prop == 'productName' ? false : true">
+          <template slot-scope="{ row, $index }">
+            <!-- 序号 -->
+            <span v-if="item.prop == 'index'">{{ $index + 1 }}</span>
+            <!-- 封面图 -->
+            <div v-else-if="item.prop == 'productImage'">
+              <img class="frontCoverImg" :src="
+                row.productImage || require('@/assets/img/default_cover.jpg')
+              " alt="" />
+            </div>
+            <!-- 商品价格 -->
+            <span v-else-if="item.prop == 'oldPrice'">
+              ￥{{ row.oldPrice }}
+            </span>
+            <!-- 销售价格 -->
+            <span v-else-if="item.prop == 'price'"> ￥{{ row.price }} </span>
+            <!-- 是否添加 -->
+            <span v-else-if="item.prop == 'isAdd'">
+              {{ row.isAdd ? "已添加" : "未添加" }}
+            </span>
+            <!-- 是否主推 -->
+            <!-- <span v-else-if="item.prop == 'isFeatured'">
             {{ row.isFeatured ? "已主推" : "未主推" }}
           </span> -->
-          <!-- 是否免费 -->
-          <span v-else-if="item.prop == 'isFree'">
-            <el-tag size="small" :type="row.isFree ? 'success' : 'danger'">{{
-                row.isFree ? "是" : "否"
-            }}</el-tag>
-          </span>
-          <span v-else>
-            {{ row[item.prop] || "-" }}
-          </span>
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-pagination background :current-page="page" :page-sizes="[10, 20, 50, 100]" :page-size="limit" :total="total"
-      layout="total, sizes, prev, pager, next, jumper" @size-change="pageSizeChangeHandle"
-      @current-change="pageCurrentChangeHandle">
-    </el-pagination>
-
+            <!-- 是否免费 -->
+            <span v-else-if="item.prop == 'isFree'">
+              <el-tag size="small" :type="row.isFree ? 'success' : 'danger'">{{
+                  row.isFree ? "是" : "否"
+              }}</el-tag>
+            </span>
+            <span v-else>
+              {{ row[item.prop] || "-" }}
+            </span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination background :current-page="page" :page-sizes="[10, 20, 50, 100]" :page-size="limit" :total="total"
+        layout="total, sizes, prev, pager, next, jumper" @size-change="pageSizeChangeHandle"
+        @current-change="pageCurrentChangeHandle">
+      </el-pagination>
+    </div>
     <!-- <div style="margin-bottom: 30px">视频主题：{{ info.liveTheme }}</div>
     <div style="margin-bottom: 30px">主 播：{{ info.anchorUser }}</div>
     <div style="margin-bottom: 30px">
@@ -86,24 +103,24 @@
         style="width: 800px; height: 500px"
       ></video>
     </div> -->
-    <div v-if="checkFlag && info.approveStatus === 0" style="margin-top: 20px">
+    <div v-if="checkFlag && info.approveStatus === 0" style="background-color: #fff;padding: 30px 20px;box-shadow: 0px 0px 10px 1px rgba(0,0,0,0.1600);
+border-radius: 5px 5px 5px 5px;position: relative;">
       <el-form :model="ruleForm" ref="ruleForm" label-width="60px" class="demo-ruleForm">
         <el-form-item label="备注：" prop="desc">
           <el-input size="small" type="textarea" maxlength="100" show-word-limit v-model="ruleForm.desc"></el-input>
         </el-form-item>
       </el-form>
-      <div style="display: flex; " class="dialog-footer">
-        <el-button type="primary" size="small" @click="confirm">通过</el-button>
-        <el-button size="small" @click="resolve">驳回</el-button>
 
-      </div>
+    </div>
+
+    <div v-if="checkFlag && info.approveStatus === 0"  style="display: flex; margin-top: 20px;" class="dialog-footer">
+      <el-button type="primary" size="small" @click="confirm">通过</el-button>
+      <el-button size="small" @click="resolve">驳回</el-button>
+
     </div>
 
 
 
-
-    <!-- 审核状态图片 -->
-    <img v-if="statusImg" class="statusImg" :src="statusImg" alt="">
 
   </el-card>
 </template>
@@ -345,10 +362,7 @@ export default {
 <style scoped lang="scss">
 .statusImg {
   width: 100px;
-  height: 100px;
-  position: absolute;
-  top: 10px;
-  right: 100px;
+
 }
 
 .frontCoverImg {

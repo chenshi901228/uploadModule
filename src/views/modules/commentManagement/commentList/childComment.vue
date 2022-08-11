@@ -86,13 +86,32 @@
                         </div>
                     </div>
                 </el-form>
-                <div v-if="commentInfo" class="commentInfo">
-                    <div class="name">
-                        <p>评论人：{{ commentInfo.commentUserName || "-"}}</p>
-                        <p>手机号码：{{ commentInfo.commentUserPhone || "-"}}</p>
-                    </div>
-                    <p class="info">{{ commentInfo.commentValue }}</p>
-                </div>
+                
+                <el-descriptions style="margin:20px 0" v-if="commentInfo" class="margin-top" :column="2"
+                    size="small" border>
+
+                    <el-descriptions-item>
+                        <template slot="label">
+                            评论人
+                        </template>
+                        {{ commentInfo.commentUserName || "-" }}
+                    </el-descriptions-item>
+                    <el-descriptions-item>
+                        <template slot="label">
+                            手机号码
+                        </template>
+                        {{ commentInfo.commentUserPhone || "-" }}
+
+                    </el-descriptions-item>
+                    <el-descriptions-item>
+                        <template slot="label">
+                            评论内容
+                        </template>
+                        {{ commentInfo.commentValue }}
+                    </el-descriptions-item>
+
+                </el-descriptions>
+           
                 <el-table
                     v-loading="dataListLoading"
                     :data="dataList"
@@ -277,7 +296,7 @@ export default {
     },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
     .custom-dialog-top{
         transform: translateY(50%);
     }
@@ -296,4 +315,9 @@ export default {
 
         }
     }
+    
+    /deep/ th.el-descriptions-item__cell.el-descriptions-item__label.is-bordered-label {
+    width: 120px;
+    text-align: right;
+}
 </style>

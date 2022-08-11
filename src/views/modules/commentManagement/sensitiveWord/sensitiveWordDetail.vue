@@ -1,7 +1,7 @@
 <template>
   <div class="detalilBox">
-    <div class="detalilBox_top">
-      <div style="border:1px solid #E7EBF5">
+    <div class="detalilBox_top" style="display:flex;">
+      <div style="border:1px solid #E7EBF5;width: calc(100% - 120px);">
         <el-descriptions class="margin-top" :column="2" size="small" border>
 
           <el-descriptions-item>
@@ -26,7 +26,8 @@
         </div>
       </div>
 
-
+    <!-- 审核状态图片 -->
+    <img v-if="statusImg" class="statusImg" :src="statusImg" alt="">
     </div>
     <div class="detalilBox_top" style="margin:20px 0">
       <div
@@ -35,10 +36,10 @@
       </div>
       <div style="display: flex ;font-size: 14px;color: #000;">{{ diaForm.content }}</div>
     </div>
-    <div class="detalilBox_top">
-      <div style="display: flex; margin: 0px 0 10px">备注：{{ diaForm.remark }}</div>
-      <div style="display: flex; margin: 0 20px" >
-        <el-input v-model="diaForm.remark" type="textarea" :rows="2"  :readonly="!(diaForm.checkStatus === 2)"
+    <div class="detalilBox_top" style="display:flex;">
+      <div style="display: flex; margin: 0px 0 10px">备注</div>
+      <div style="display: flex; margin: 0 20px;    width: calc(100% - 70px );" >
+        <el-input v-model="diaForm.remark" type="textarea" :rows="2"  :disabled="!(diaForm.checkStatus === 2)"
         style="border:1px solid #D7DAE2"
           maxlength="200"  show-word-limit></el-input>
       </div>
@@ -70,7 +71,15 @@ export default {
       },
     };
   },
-
+ computed: {
+    // 审核状态图片
+    statusImg() {
+      if (this.diaForm && this.diaForm.checkStatus == 2) return require("@/assets/icon/icon_applying.png")
+      if (this.diaForm && this.diaForm.checkStatus == 1) return require("@/assets/icon/icon_agree.png")
+      if (this.diaForm && this.diaForm.checkStatus == 4) return require("@/assets/icon/icon_reject.png")
+      return ""
+    }
+  },
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       vm.userId = window.localStorage.getItem("sensitiveWordDetailID");
@@ -136,8 +145,12 @@ export default {
 
   .detalilBox_bottom {
     height: 40px;
-    padding: 0 20px;
+    padding: 20px 0;
   }
+}
+.statusImg {
+  width: 100px;
+  margin-left: 10px;
 }
 
 .tag {
@@ -145,7 +158,7 @@ export default {
   margin: 0 15px 0 0;
   line-height: 30px;
   border-radius: 20px;
-  width: 50px;
+    padding: 0 10px;
   color: #3095FA;
   height: 30px;
   background: #E9F4FE;

@@ -21,27 +21,29 @@
         </el-form>
         <div>
           <el-button @click="dialogFormVisible = true" plain type="primary"
+          style="background-color: #3558cc;color: #fff;margin: 20px 0;"
             >动态组 +</el-button
           >
         </div>
-        <div style="width: 100%; height: 100%">
+        <div style="width: 100%; height: calc(100% - 130px);overflow: auto;">
           <div
             v-for="(item, index) in groupGroups"
             :key="index"
             style="
               width: 100%;
-              height: 40px;
-              margin-top: 5px;
+              height: 60px;
               display: flex;
               justify-content: space-between;
               align-items: center;
-              padding-left: 5px;
+              cursor: pointer;
+              padding-left: 20px;
+              border-bottom: 1px solid #E5E5E5;
             "
             :class="item.id === chooseGroupId ? 'text-isActive' : ''"
             @click="chooseMens(item.id)"
           >
             <span>{{ item.name }}</span>
-            <div style="margin-right: 5px; cursor: pointer">
+            <div style="margin-right: 5px; cursor: pointer;color: #3558cc;" v-if="item.id === chooseGroupId">
               <i
                 @click.stop="edite(index, item)"
                 style="margin-right: 5px; cursor: pointer"
@@ -129,7 +131,7 @@
                   size="mini"
                   plain
                   icon="el-icon-sort-down"
-                  type="primary"
+                  type="warning"
                   @click="importXlx"
                   >导入</el-button
                 >
@@ -150,7 +152,7 @@
                   icon="el-icon-delete"
                   size="mini"
                   :disabled="dataListSelections.length === 0"
-                  type="danger"
+                  type="success"
                   @click="deleteSelect()"
                   >批量移除</el-button
                 >
@@ -191,7 +193,7 @@
           fit
           @selection-change="dataListSelectionChangeHandle"
           style="width: 100%"
-          :height="siteContentViewHeight"
+          height="calc(100% - 150px)"
         >
           <el-table-column
             type="selection"
@@ -1169,22 +1171,22 @@ export default {
 /deep/.content-box {
   display: flex;
   justify-content: space-between;
-  padding: 10px;
   background: #f6f7f9;
-  height: calc(calc(100vh - 50px - 36px) - 2px);
-  overflow-x: scroll;
+  height: calc(calc(100vh - 50px - 36px) - 50px);
 
   .left-box {
     flex: 2;
+       padding: 20px;
+    box-sizing: border-box;
     margin-right: 10px;
     background: #fff;
     height: 100%;
-    overflow-y: scroll;
     .el-button {
       width: 100%;
     }
     .text-isActive {
       border-left: 5px solid #409eff;
+      background: #F7F7F7;
     }
     .el-form-item__content {
       display: block;
@@ -1199,6 +1201,8 @@ export default {
   }
   .right-box {
     flex: 6;
+    padding: 20px;
+    box-sizing: border-box;
     background: #fff;
   }
 }

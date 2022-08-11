@@ -164,7 +164,6 @@ export default {
 
   .statusImg {
     width: 100px;
-    height: 100px;
     position: absolute;
     top: 10px;
     right: 100px;
