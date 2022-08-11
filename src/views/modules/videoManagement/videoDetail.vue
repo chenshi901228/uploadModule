@@ -23,11 +23,11 @@ border-radius: 5px 5px 5px 5px;position: relative;">
             :webkit-playsinline="webkitplaysinline" style="width: 200px; height: 200px"></video>
         </el-col>
         <el-col :span="2">
+          <!-- 审核状态图片 -->
           <img v-if="statusImg" class="statusImg" :src="statusImg" alt="">
         </el-col>
         <el-col v-if="!(checkFlag && info.approveStatus === 0)" :span="24">备注：{{ info.remark }}</el-col>
       </el-row>
-      <!-- 审核状态图片 -->
     </div>
 
 
