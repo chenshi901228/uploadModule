@@ -132,11 +132,12 @@
         </el-form-item>
 
         <el-form-item>
-   
+
         </el-form-item>
       </el-form>
-       <el-button type="primary" size="small" style="margin-left: 20px;" :icon="submitLoading ? 'el-icon-loading' : ''"
-            :disabled="submitLoading" @click="submitForm('ruleForm')">确定</el-button>
+      <el-button type="primary" size="small" style="margin-left: 20px;" :icon="submitLoading ? 'el-icon-loading' : ''"
+        :disabled="submitLoading" @click="submitForm('ruleForm')">确定</el-button>
+      <el-button size="small" @click="closeCurrentTab()">取消</el-button>
       <!-- 主播弹框 -->
       <choose-anchor ref="chooseAnchor" @add="addAnchorConfirm"></choose-anchor>
       <!-- 商品弹框 -->
@@ -574,23 +575,24 @@ export default {
 /deep/.quill-editor {
   position: relative;
 }
+
 /deep/ .el-card__body {
-    padding: 20px 0 20px;
+  padding: 20px 0 20px;
 }
 
 /deep/ .upload-demo .custom-style {
-    width: 380px;
-    height: 180px;
-    border: 1px solid #dcdfe6;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    border-radius: 2px;
+  width: 380px;
+  height: 180px;
+  border: 1px solid #dcdfe6;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  border-radius: 2px;
 }
 </style>

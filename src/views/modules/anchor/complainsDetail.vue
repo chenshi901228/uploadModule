@@ -66,7 +66,6 @@
           <el-input v-model="diaForm.contactPhone" disabled style="border:1px solid #D7DAE2" size="small"></el-input>
         </div>
       </div>
-      <div style="display: flex ;font-size: 14px;color: #000;">{{ diaForm.content }}</div>
     </div>
     <div class="detalilBox_top" style="display:flex;">
       <div style="display: flex; margin: 0px 0 10px">处理方案</div>

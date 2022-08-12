@@ -3,161 +3,74 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-live__liveList">
-      <el-form
-        :model="ruleForm"
-        :rules="rules"
-        ref="ruleForm"
-        size="small"
-        label-width="110px"
-        class="demo-ruleForm"
-      >
-        <el-form-item label="直播主题" prop="liveTheme">
-          <el-input
-            style="width: 400px"
-            placeholder="直播主题"
-            v-model.trim="ruleForm.liveTheme"
-            maxlength="60"
-            show-word-limit
-          ></el-input>
-        </el-form-item>
-        <el-form-item label="主播" prop="anchorId">
-          <el-select
-            style="width: 400px"
-            v-model="ruleForm.anchorId"
-            filterable
-            remote
-            reserve-keyword
-            clearable
-            placeholder="请输入选择"
-            :remote-method="getAnchorInfo"
-            :loading="loading"
-            @change="changeAnchorId"
-          >
-            <el-option
-              v-for="item in anchorOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="预计开播时间" prop="startDate">
-          <el-date-picker
-            style="width: 400px"
-            v-model="ruleForm.startDate"
-            type="datetime"
-            placeholder="预计开播时间"
-            :picker-options="pickerOptions"
-            :formatter="dateFormat"
-            :editable="false"
-          >
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="预计时长(分)" prop="estimateLiveTime">
-          <el-input
-            maxlength="4"
-            style="width: 400px"
-            placeholder="预计时长"
-            v-model="ruleForm.estimateLiveTime"
-          ></el-input>
-        </el-form-item>
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm" size="small" label-width="110px" class="demo-ruleForm">
+        <div style="display:flex">
+          <el-form-item label="直播主题" prop="liveTheme">
+            <el-input style="width: 640px" v-model.trim="ruleForm.liveTheme" maxlength="60" show-word-limit>
+            </el-input>
+          </el-form-item>
+
+
+          <el-form-item label="主播" prop="anchorId">
+            <el-select style="width: 640px" v-model="ruleForm.anchorId" filterable remote reserve-keyword clearable
+              placeholder="请输入选择" :remote-method="getAnchorInfo" :loading="loading" @change="changeAnchorId">
+              <el-option v-for="item in anchorOptions" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </div>
+        <div style="display:flex">
+
+          <el-form-item label="预计开播时间" prop="startDate">
+            <el-date-picker style="width: 640px" v-model="ruleForm.startDate" type="datetime" placeholder="预计开播时间"
+              :picker-options="pickerOptions" :formatter="dateFormat" :editable="false">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="预计时长(分)" prop="estimateLiveTime">
+            <el-input style="width: 640px" placeholder="预计时长" maxlength="4" v-model="ruleForm.estimateLiveTime">
+            </el-input>
+          </el-form-item>
+        </div>
+        <div style="display:flex">
+
+
+          <el-form-item label="助手" prop="assistantIds">
+            <el-select style="width: 640px" v-model="ruleForm.assistantIds" filterable multiple placeholder="请选择"
+              :clearable="true">
+              <el-option v-for="(item, index) in assistantOptions" :key="index" :label="item.label"
+                :value="item.weixinUserId">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="投放人群" prop="dynamicGroupIds">
+            <el-select style="width: 640px" v-model="ruleForm.dynamicGroupIds" filterable multiple placeholder="请选择"
+              :clearable="true" @visible-change="changeDynamicGroupList($event)">
+              <el-option v-for="(item, index) in options" :key="index" :label="item.name" :value="item.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </div>
+
         <el-form-item label="直播宣传图" prop="frontCoverUrl" class="img-item">
           <div v-for="item in defaultImg" :key="item" class="img-box">
-            <el-image
-              style="width: 100px; height: 100px"
-              :src="item"
-              fit="cover"
-              @click="choosePic(item)"
-            ></el-image>
-            <img
-              v-if="item === ruleForm.frontCoverUrl"
-              class="like-img"
-              src="@/assets/img/like_red.png"
-              alt=""
-            />
+            <el-image style="width: 100px; height: 100px" :src="item" fit="cover" @click="choosePic(item)"></el-image>
+            <img v-if="item === ruleForm.frontCoverUrl" class="like-img" src="@/assets/img/like_red.png" alt="" />
           </div>
           <div v-for="item in fileList" :key="item" class="img-box">
-            <el-image
-              style="width: 100px; height: 100px"
-              :src="item"
-              fit="cover"
-              @click="choosePic(item)"
-            ></el-image>
-            <img
-              v-if="item === ruleForm.frontCoverUrl"
-              class="like-img"
-              src="@/assets/img/like_red.png"
-              alt=""
-            />
-            <img
-              @click="handleRemove(item)"
-              class="close-img"
-              src="@/assets/img/close.png"
-              alt=""
-            />
+            <el-image style="width: 100px; height: 100px" :src="item" fit="cover" @click="choosePic(item)"></el-image>
+            <img v-if="item === ruleForm.frontCoverUrl" class="like-img" src="@/assets/img/like_red.png" alt="" />
+            <img @click="handleRemove(item)" class="close-img" src="@/assets/img/close.png" alt="" />
           </div>
-          <el-upload
-            class="upload-demo"
-            :action="uploadUrl"
-            :on-success="handleSuccess"
-            list-type="picture-card"
-            :multiple="false"
-            :show-file-list="false"
-          >
+          <el-upload class="upload-demo" :action="uploadUrl" :on-success="handleSuccess" list-type="picture-card"
+            :multiple="false" :show-file-list="false">
             <i slot="default" class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
-        <el-form-item label="助手" prop="assistantIds">
-          <el-select
-            style="width: 400px"
-            v-model="ruleForm.assistantIds"
-            filterable
-            multiple
-            placeholder="请选择"
-            :clearable="true"
-            @visible-change="changeAssistantIds($event)"
-          >
-            <el-option
-              v-for="(item, index) in assistantOptions"
-              :key="index"
-              :label="item.label"
-              :value="item.weixinUserId"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="投放人群" prop="dynamicGroupIds">
-          <el-select
-            style="width: 400px"
-            v-model="ruleForm.dynamicGroupIds"
-            filterable
-            multiple
-            placeholder="请选择"
-            :clearable="true"
-            @visible-change="changeDynamicGroupList($event)"
-          >
-            <el-option
-              v-for="(item, index) in options"
-              :key="index"
-              :label="item.name"
-              :value="item.id"
-            >
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item
-          class="quill-editor"
-          label="直播介绍"
-          prop="liveIntroduce"
-        >
-          <quill-editor
-            v-model="ruleForm.liveIntroduce"
-            ref="myQuillEditor"
-            style="width: 800px; height: 380px"
-            :options="editorOption"
-            @change="onEditorChange($event)"
-          >
+
+
+        <el-form-item class="quill-editor" label="直播介绍" prop="liveIntroduce">
+          <quill-editor v-model="ruleForm.liveIntroduce" ref="myQuillEditor" style="width: 800px; height: 380px"
+            :options="editorOption" @change="onEditorChange($event)">
             <!-- 自定义toolar -->
             <div id="toolbar" slot="toolbar">
               <!-- Add a bold button -->
@@ -200,11 +113,7 @@
               </select>
               <!-- Add subscript and superscript buttons -->
               <select class="ql-color" value="color" title="字体颜色"></select>
-              <select
-                class="ql-background"
-                value="background"
-                title="背景颜色"
-              ></select>
+              <select class="ql-background" value="background" title="背景颜色"></select>
               <select class="ql-align" value="align" title="对齐"></select>
               <button class="ql-clean" title="还原"></button>
               <!-- You can also add your own -->
@@ -217,36 +126,19 @@
           > -->
         </el-form-item>
         <el-form-item label="添加商品" prop="goods">
-          <el-input
-            style="width: 400px"
-            placeholder="请选择"
-            @click.native="chooseProduct"
-            v-model="ruleForm.goods"
-            readonly
-            clearable
-          ></el-input>
+          <el-input style="width: 640px" placeholder="请选择" @click.native="chooseProduct" v-model="ruleForm.goods"
+            readonly clearable></el-input>
         </el-form-item>
 
         <el-form-item label="添加主播" prop="anchors">
-          <el-input
-            style="width: 400px"
-            placeholder="请选择"
-            @click.native="chooseAnchor"
-            v-model="ruleForm.anchors"
-            readonly
-            clearable
-          ></el-input>
+          <el-input style="width: 640px" placeholder="请选择" @click.native="chooseAnchor" v-model="ruleForm.anchors"
+            readonly clearable></el-input>
         </el-form-item>
 
         <el-form-item label="直播背景">
-          <custom-upload
-            ref="frontCoverUpload"
-            @uploadSuccess="frontCoverUploadSuccess"
-            @uploadRemove="frontCoverUploadRemove"
-            :fileList="frontCoverList"
-            :fileType="['png', 'jpg', 'jpeg']"
-            :fileMaxSize="2"
-          ></custom-upload>
+          <custom-upload ref="frontCoverUpload" @uploadSuccess="frontCoverUploadSuccess"
+            @uploadRemove="frontCoverUploadRemove" :fileList="frontCoverList" :fileType="['png', 'jpg', 'jpeg']"
+            :fileMaxSize="2"></custom-upload>
           <div>
             格式限制：jpg/jpeg/png,建议图片尺寸不小于630px×347px，大小不得超过2M
           </div>
@@ -260,24 +152,16 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button
-            type="primary"
-            size="small"
-            :icon="submitLoading ? 'el-icon-loading' : ''"
-            :disabled="submitLoading"
-            @click="submitForm('ruleForm')"
-            >立即创建</el-button
-          >
+
         </el-form-item>
       </el-form>
-
+      <el-button type="primary" size="small" :icon="submitLoading ? 'el-icon-loading' : ''" :disabled="submitLoading"
+        @click="submitForm('ruleForm')">确定</el-button>
+      <el-button size="small" @click="closeCurrentTab()">取消</el-button>
       <!-- 主播弹框 -->
       <choose-anchor ref="chooseAnchor" @add="addAnchorConfirm"></choose-anchor>
       <!-- 商品弹框 -->
-      <choose-product
-        ref="chooseProduct"
-        @add="addProductConfirm"
-      ></choose-product>
+      <choose-product ref="chooseProduct" @add="addProductConfirm"></choose-product>
     </div>
   </el-card>
 </template>
@@ -335,7 +219,7 @@ export default {
     const blurAnchorId = async (rule, value, callback) => {
       if (!value) {
         return callback(new Error("请输入主播"));
-      }else{
+      } else {
         callback();
       }
     };
@@ -423,11 +307,10 @@ export default {
     },
   },
   computed: {},
-  created() {},
+  created() { },
   activated() {
-    this.uploadUrl = `${
-      window.SITE_CONFIG["apiURL"]
-    }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
+    this.uploadUrl = `${window.SITE_CONFIG["apiURL"]
+      }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
     this.ruleForm = {
       liveTheme: "",
       startDate: "",
@@ -748,6 +631,7 @@ export default {
     width: 100%;
     height: 80px;
   }
+
   // /deep/.el-input {
   //   width: 300px;
   //   padding-right: 50px;
@@ -757,15 +641,19 @@ export default {
     margin-left: 10px;
     color: #909399;
   }
+
   /deep/.img-item {
     .el-form-item__content {
       display: flex;
     }
+
     .img-box {
       position: relative;
+
       .el-image {
         margin-right: 10px;
       }
+
       .like-img {
         position: absolute;
         width: 24px;
@@ -773,6 +661,7 @@ export default {
         left: 0;
         top: 0;
       }
+
       .close-img {
         position: absolute;
         width: 24px;
@@ -781,6 +670,7 @@ export default {
         right: 10px;
       }
     }
+
     .el-upload {
       display: flex;
       justify-content: center;
@@ -789,12 +679,30 @@ export default {
       height: 100px;
     }
   }
+
   /deep/.ql-container {
     height: 300px;
     overflow-y: scroll;
   }
 }
+
 /deep/.quill-editor {
   position: relative;
+}
+
+/deep/ .upload-demo .custom-style {
+  width: 380px;
+  height: 180px;
+  border: 1px solid #dcdfe6;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  border-radius: 2px;
 }
 </style>
