@@ -24,18 +24,42 @@
               </div>
             </div>
             <video-flv-component :url="videoUrl" class="live_video_flv"></video-flv-component>
-            <!-- <video autoplay muted id="videoEle"></video> -->
-            <!-- <aliplayer v-if="videoUrl" class="aliplayer_box" ref="player" :autoplay="true" :isLive="isLive" :rePlay="false" showBuffer="false" showBarTime="5000" format="flv" 
-            :source="videoUrl"></aliplayer> -->
           </div>
-          <div id="live_trends" ref="liveTrends"></div>
+          <div class="charts_title_box">
+            <div class="charts_title">
+              <div class="title">直播趋势</div>
+              <div>
+                <div>直播间观看人数：{{cumulativeNum}}</div>
+                <div>在线人数：{{liveTrendsY[liveTrendsY.length-1]}}</div>
+              </div>
+            </div>
+            <div id="live_trends"></div>
+          </div>
         </div>
         <div class="live_content_bottom">
-          <div id="cargo_analysis">
+          <div class="charts_title_box">
+            <div class="charts_title">
+              <div class="title">带货分析</div>
+              <div>
+                <div>带货数量</div>
+                <div>带货收入</div>
+              </div>
+            </div>
+            <div id="cargo_analysis">
 
+            </div>
           </div>
-          <div id="reward_analysis">
+          <div class="charts_title_box">
+            <div class="charts_title">
+              <div class="title">打赏分析</div>
+              <div>
+                <div>礼物数量</div>
+                <div>打赏收入</div>
+              </div>
+            </div>
+            <div id="reward_analysis">
 
+            </div>
           </div>
         </div>
       </div>
@@ -44,7 +68,8 @@
 
 <script>
 import VideoFlvComponent from "@/components/common/videoFlvComponent.vue"
-import echarts from "echarts"
+// import echarts from "echarts"
+import * as echarts from 'echarts';
 export default {
   components:{
     VideoFlvComponent,
@@ -92,7 +117,9 @@ export default {
         },
       ],
       liveDetail:{},
-      liveTrends:null,
+      liveTrendsX:[],
+      liveTrendsY:[],
+      cumulativeNum:0,
       videoUrl:"",
       isLive:true
     }
@@ -103,8 +130,35 @@ export default {
   },
   activated(){
     this.getliveDetail()
+    this.getLiveTrends()
+    this.getCommerceIncome()
+    this.getGetReward()
   },
   methods:{
+    getLiveTrends(){ //直播趋势
+      this.$http.get(`/sys/liveListSupervisory/getLiveOnlineNumTrend/${this.$route.query.id}`).then(({data:res})=>{
+        if(!res.code==0) return this.$message.error(res.msg)
+        res.data.forEach(item=>{
+          this.liveTrendsX.push(item.createDate)
+          this.liveTrendsY.push(Number(item.onlineNum))
+        })
+        this.cumulativeNum = res.data[res.data.length-1].cumulativeNum
+        console.log(this.liveTrendsX,this.liveTrendsY,'/直播趋势')
+        this.initEcharts()
+      })
+    },
+    getCommerceIncome(){ //带货分析
+      this.$http.get(`/sys/liveListSupervisory/getCommerceIncome/${this.$route.query.id}`).then(({data:res})=>{
+        if(!res.code==0) return this.$message.error(res.msg)
+        console.log(res)
+      })
+    },
+    getGetReward(){ //打赏分析
+      this.$http.get(`/sys/liveListSupervisory/getGetReward/${this.$route.query.id}`).then(({data:res})=>{
+        if(!res.code==0) return this.$message.error(res.msg)
+        console.log(res)
+      })
+    },
     getliveDetail(){
       this.$http.get(`/sys/liveListSupervisory/getDetailed/${this.$route.query.id}`).then(({data:res})=>{
         if(!res.code==0) return this.$message.error(res.msg)
@@ -112,30 +166,48 @@ export default {
         this.videoUrl = res.data.liveStream.Data.PlayInfo[0].FLV
       })
     },
-    // initEcharts(){
-    //   this.liveTrends = echarts.init(this.$refs.liveTrends, "liveTrends");
-    //   console.log(this.liveTrends)
-      // this.liveTrends.setOption({
-      //   tooltip: {
-      //       trigger: "item",
-      //       formatter: "{a} <br/>{b} : {c} ({d}%)",
-      //   },
-      //   series: [
-      //       {
-      //           name: "命令",
-      //           type: "pie",
-      //           roseType: "radius",
-      //           colorBy: "data",
-      //           radius: [15, 95],
-      //           center: ["50%", "38%"],
-      //           // data: res.data.commandStats,
-      //           animationEasing: "cubicInOut",
-      //           animationDuration: 1000,
-      //       }
-      //   ]
-      // });
-    // },
-   
+    initEcharts(){
+      var chartDom = document.getElementById('live_trends');
+      var myChart = echarts.init(chartDom);
+      var option;
+      option = {
+        xAxis: {
+          type: 'category',
+          data: this.liveTrendsX,
+        },
+        yAxis: {
+          type: 'value',
+          min:0,
+          minInterval:1,
+          maxInterval:5000
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer:{
+             axis:'y'
+          }
+        },
+        dataZoom: [
+          {
+            type: 'slider',
+            start: 0,
+            end: 20,
+            show:false,
+          },
+          {
+            start: 0,
+            end: 20,
+          }
+        ],
+        series: [
+          {
+            data: this.liveTrendsY,
+            type: 'line'
+          }
+        ]
+      };
+      option && myChart.setOption(option);
+    },
   },
   mounted(){
   },
@@ -208,6 +280,7 @@ export default {
         width: 100%;
         height: 100%;
       }
+      
     }
     >div:last-child{
       width: 59%;
@@ -233,7 +306,48 @@ export default {
         font-size: 14px;
       }
     }
-  
+    .charts_title_box{
+      height: 100%;
+      .charts_title{
+        height: 10%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+        .title{
+          font-size: 20px;
+          font-weight: bold;
+        }
+        >div:last-child{
+          display: flex;
+        }
+      }
+      #live_trends{
+        height: 90%;
+      }
+    }
+  }
+  .live_content_bottom{
+    .charts_title_box{
+      height: 100%;
+      .charts_title{
+        height: 10%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 20px;
+        .title{
+          font-size: 20px;
+          font-weight: bold;
+        }
+        >div:last-child{
+          display: flex;
+        }
+      }
+      #live_trends{
+        height: 90%;
+      }
+    }
   }
 
   .live_video_flv {
