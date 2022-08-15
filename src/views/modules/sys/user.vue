@@ -588,7 +588,7 @@ export default {
         ? "/sys/manage/weixinUser/startUsing"
         : "/sys/manage/weixinUser/forbiddenUsere";
         this.$http
-          .put(url, { userIds: [data.id] })
+          .put(url, { userIds: [data.id], assistantStatus: this.diaTbas === 3 ? 1 : 0 })
           .then(({ data: res }) => {
             if (res.code == 0) {
               this.$message.success("操作成功");
