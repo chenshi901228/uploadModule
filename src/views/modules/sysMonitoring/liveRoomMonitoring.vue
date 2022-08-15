@@ -62,7 +62,7 @@
           <el-select
             size="small"
             style="width: 200px"
-            v-model="dataForm.liveStatus"
+            v-model="dataForm.liveState"
             placeholder="请选择"
             clearable
           >
@@ -142,8 +142,8 @@
                 <span>{{item.fansNum}}粉丝</span>
               </div>
             </div>
-            <div class="net_status">
-              {{52}}分钟
+            <div class="net_status" v-if="item.liveState==0">
+              {{item.liveTime}}分钟
             </div>
           </div>
           <div class="live_detail">
@@ -192,7 +192,7 @@ export default {
            dataForm:{
             livingRoomId:"",
             liveTheme:"",
-            liveStatus:"",
+            liveState:"",
             anchorTel:"",
             anchorUser:""
            },
@@ -373,7 +373,7 @@ export default {
       background-color: #00C106;
     }
     .live_prohibit{
-      background-color: #00C106;
+      background-color: #EE2B2D;
     }
     .no_live{
       background-color: #00C106;
