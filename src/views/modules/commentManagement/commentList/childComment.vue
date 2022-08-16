@@ -314,9 +314,7 @@ export default {
                 margin-left: 20px;
             }
         }
-        .info {
 
-        }
     }
     
     /deep/ th.el-descriptions-item__cell.el-descriptions-item__label.is-bordered-label {
