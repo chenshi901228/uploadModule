@@ -143,6 +143,9 @@
                             <span v-if="item.prop == 'delFlg'">
                                 <el-tag :type="row.delFlg ? 'danger' : 'success'">{{row.delFlg ? "已删除" : "未删除"}}</el-tag>
                             </span>
+                             <span v-else-if="item.prop == 'commentValue'">
+                               {{row.commentValue.length>4?row.commentValue.substring(0,5)+'...':row.commentValue}}
+                            </span>
                             <span v-else>
                                 {{ row[item.prop] || "-" }}
                             </span>

@@ -15,7 +15,7 @@
             style="width: 200px"
             v-model="dataForm.userName"
             clearable
-            placeholder="用户昵称"
+            placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
@@ -23,11 +23,11 @@
             style="width: 200px"
             v-model="dataForm.userPhone"
             clearable
-            placeholder="手机号码"
+            placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 3" label="充值方式" prop="payType">
-          <el-select style="width: 200px" v-model="dataForm.payType" clearable placeholder="充值方式">
+          <el-select style="width: 200px" v-model="dataForm.payType" clearable placeholder="请选择">
             <el-option :value="1" label="微信"></el-option>
             <el-option :value="2" label="支付宝"></el-option>
           </el-select>
@@ -37,18 +37,18 @@
             style="width: 200px"
             v-model="dataForm.paySource"
             clearable
-            placeholder="充值来源"
+            placeholder="请选择"
           >
             <el-option :value="1" label="小程序"></el-option>
             <el-option :value="2" label="大于众学"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 5" label="交易状态" prop="delFlg">
+        <el-form-item v-if="isOpen || formItemCount >= 5" label="充值状态" prop="delFlg">
           <el-select
             style="width: 200px"
             v-model="dataForm.delFlg"
             clearable
-            placeholder="交易状态"
+            placeholder="请选择"
           >
             <el-option :value="1" label="支付失败"></el-option>
             <el-option :value="0" label="支付成功"></el-option>
@@ -130,7 +130,7 @@
         </el-table-column>
         <el-table-column
           prop="price"
-          label="充值大豆"
+          label="充值种子"
           header-align="center"
           align="center"
           show-overflow-tooltip
@@ -144,6 +144,11 @@
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="scope">
+            <div>
+              ￥{{ scope.row.amount }}
+            </div>
+          </template>
         </el-table-column>
         <el-table-column
           prop="payType"
