@@ -1876,7 +1876,7 @@ export default {
       const text = this.barrage;
       let data = {
         userInfo: this.userInfo, //用户信息
-        // fansInfo,//用户是否为粉丝相关信息
+        fansInfo:{},//用户是否为粉丝相关信息
         message: {
           /**
            * 消息类型:
