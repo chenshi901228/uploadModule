@@ -538,10 +538,10 @@
           </div>
           <div class="check_btn">
               <div @click="checkError">
-                {{checkStep===3?'重新检测':'无法看到'}}
+                {{checkStep===3?'重新检测':checkStep===2?'无法听到':'无法看到'}}
               </div>
               <div @click="addStep">
-                {{checkStep===3?'加入直播间':'可以看到'}}
+                {{checkStep===3?'加入直播间':checkStep===2?'无法看到':'可以看到'}}
               </div>
             </div>
         </div>
@@ -3064,13 +3064,15 @@ p {
         }
       }
       .tip{
-        margin-top: 10px;
         font-size: 12px;
         color: #ABABAB;
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-end;
         cursor: pointer;
+        width: 234px;
+        margin: 10px auto 0px;
+        padding-right: 16px;
         .tip_title{
           display: flex;
           align-items: center;
@@ -3087,6 +3089,7 @@ p {
       }
     }
     .check_mike{
+      margin-top: 30px;
       .mic_device{
         >span{
           color: #000;
@@ -3144,7 +3147,7 @@ p {
           background: linear-gradient(90deg, #FA3623 0%, #FE055A 100%)!important;
         }
         .el-slider__button{
-          border:2px solid #FA3623 !important;
+          border:none !important;
           box-shadow: 0px 0px 3px 1px rgba(250,54,35,0.4000);
         }
       }
@@ -3167,13 +3170,15 @@ p {
         }
       }
       .tip{
-        margin-top: 10px;
         font-size: 12px;
         color: #ABABAB;
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-end;
         cursor: pointer;
+        width: 234px;
+        margin: 10px auto 0px;
+        padding-right: 16px;
         .tip_title{
           display: flex;
           align-items: center;
@@ -3190,6 +3195,7 @@ p {
       }
     }
     .check_result{
+      margin-top: 30px;
       .device_result{
         width: 300px;
         height: 45px;

@@ -181,6 +181,7 @@
           header-align="center"
           align="center"
           width="150"
+          v-if="diaTbas!=5"
         >
           <template slot-scope="{ row }">
             <el-button

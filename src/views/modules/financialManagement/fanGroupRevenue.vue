@@ -13,7 +13,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="userName">
           <el-input
             style="width: 200px"
-            placeholder="用户昵称"
+            placeholder="请输入"
             v-model="dataForm.userName"
             clearable
           ></el-input>
@@ -21,7 +21,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 2" label="用户手机号码" prop="userPhone">
           <el-input
             style="width: 200px"
-            placeholder="用户手机号码"
+            placeholder="请输入"
             v-model="dataForm.userPhone"
             clearable
           ></el-input>
@@ -29,7 +29,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 3" label="粉丝团名称" prop="title">
           <el-input
             style="width: 200px"
-            placeholder="粉丝团名称"
+            placeholder="请输入"
             v-model="dataForm.title"
             clearable
           ></el-input>
@@ -37,7 +37,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 4" label="主播" prop="anchorName">
           <el-input
             style="width: 200px"
-            placeholder="主播"
+            placeholder="请输入"
             v-model="dataForm.anchorName"
             clearable
           ></el-input>
@@ -45,7 +45,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 5" label="主播手机号码" prop="anchorPhone">
           <el-input
             style="width: 200px"
-            placeholder="主播手机号码"
+            placeholder="请输入"
             v-model="dataForm.anchorPhone"
             clearable
           ></el-input>
@@ -72,12 +72,12 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button 
+              <!-- <el-button 
                 type="warning"
                 plain
                 icon="el-icon-download" 
                 size="mini"
-                @click="exportHandle">{{ $t("export") }}</el-button>
+                @click="exportHandle">{{ $t("export") }}</el-button> -->
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
@@ -178,7 +178,7 @@
         >
           <template slot-scope="scope">
             <div>
-              {{ scope.row.payType === 1 ? "大豆" : "支付宝" }}
+              {{ scope.row.payType === 1 ? "种子" : "支付宝" }}
             </div>
           </template>
         </el-table-column>

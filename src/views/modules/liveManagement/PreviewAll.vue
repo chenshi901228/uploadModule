@@ -228,14 +228,14 @@
               @click="addPreview"
               >新增</el-button
             >
-            <el-button
+            <!-- <el-button
               type="warning"
               plain
               icon="el-icon-download"
               size="mini"
               @click="exportT()"
               >{{ $t("export") }}</el-button
-            >
+            > -->
           </div>
           <div class="headerTool-btns-right">
             <el-form-item>

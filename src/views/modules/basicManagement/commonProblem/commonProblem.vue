@@ -81,14 +81,14 @@
               >
             </el-form-item>
             <el-form-item>
-              <el-button
+              <!-- <el-button
                 size="mini"
                 type="warning"
                 plain
                 icon="el-icon-download"
                 @click="exportHandle"
                 >{{ $t("export") }}</el-button
-              >
+              > -->
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">

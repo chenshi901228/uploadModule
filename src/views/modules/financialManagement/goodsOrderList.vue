@@ -50,7 +50,7 @@
             <el-option value="服务课" label="服务课"></el-option>
             <el-option value="线下课" label="线下课"></el-option>
             <el-option value="权益卡" label="权益卡"></el-option>
-            <el-option value="书籍" label="书籍"></el-option>
+            <!-- <el-option value="书籍" label="书籍"></el-option> -->
           </el-select>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 5" label="支付方式" prop="payType">
@@ -109,12 +109,12 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button 
+              <!-- <el-button 
                 type="warning"
                 plain
                 icon="el-icon-download" 
                 size="mini"
-                @click="exportHandle">{{ $t("export") }}</el-button>
+                @click="exportHandle">{{ $t("export") }}</el-button> -->
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
