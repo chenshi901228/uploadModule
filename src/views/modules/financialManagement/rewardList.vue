@@ -83,8 +83,8 @@
         </el-table-column>
         <el-table-column prop="payType" label="支付方式" header-align="center" show-overflow-tooltip align="center">
           <template slot-scope="scope">
-            <div>
-              {{ scope.row.payType === 1 ? "大豆" : "支付宝" }}
+              <div>
+              {{ scope.row.payType === 1 ? "种子" : "支付宝" }}
             </div>
           </template>
         </el-table-column>
