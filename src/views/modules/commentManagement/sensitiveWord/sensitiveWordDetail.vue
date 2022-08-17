@@ -41,7 +41,7 @@
       <div style="display: flex; margin: 0 20px;    width: calc(100% - 70px );" >
         <el-input v-model="diaForm.remark" type="textarea" :rows="2"  :disabled="!(diaForm.checkStatus === 2)"
         style="border:1px solid #D7DAE2"
-          maxlength="200"  show-word-limit></el-input>
+          maxlength="100"  show-word-limit></el-input>
       </div>
     </div>
 
