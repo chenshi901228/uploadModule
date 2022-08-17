@@ -105,7 +105,7 @@
           </div>
           <div>
             <span>营业执照</span>
-            {{diaForm.companyBusinessLicense||'-'}}
+            <img style="max-width:200px;max-height:200px" :src="diaForm.companyBusinessLicense" alt="">
           </div>
         </div>
       </div>

@@ -20,7 +20,7 @@
           type="textarea"
           :rows="5"
           v-model="ruleForm.introduce"
-          maxlength="500"
+          maxlength="200"
           :show-word-limit="true"
         ></el-input>
       </el-form-item>
@@ -74,7 +74,7 @@ export default {
       rules: {
         username: [
           { required: true, message: "请输入主播昵称", trigger: "blur" },
-          { min: 3, max: 6, message: "长度在 3 到 6 个字符", trigger: "blur" },
+          { min: 1, max: 6, message: "长度在 1 到 6 个字符", trigger: "blur" },
         ],
         introduce: [{ required: true, message: "请输入主播简介", trigger: "blur" }],
       },

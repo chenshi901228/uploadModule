@@ -190,6 +190,7 @@ export default {
       this.active = index
     },
     goToHome() { //选择角色进入
+      if(this.selectUserAnchor.disabledFlg) return this.$message.warning('该账号已被禁用处，无法登录')
       this.$http.post('/sys/user/chooseLoginRole', { anchorId: this.selectUserAnchor.anchorId, type: this.selectUserAnchor.type }).then(({ data: res }) => {
         if (res.code !== 0) {
           return this.$message.error(res.msg)

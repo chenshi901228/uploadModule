@@ -30,8 +30,8 @@
             </div>
           </div>
           <div style="width:50%;display: inline-block;margin: 20px 0 0;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">主播简介</div>
-            <div>
+            <div style="color:#A8AAB3;margin-bottom: 10px;">主播简介</div>
+            <div style="max-height:120px;overflow:auto;">
               {{ anchorDetails.introduce || '-' }}
             </div>
           </div>
@@ -972,6 +972,7 @@ export default {
       let data = {};
       data.id = this.changeUserTypeData.id;
       data.weixinUserId = this.changeUserTypeData.weixinUserId;
+      data.anchorId = this.userId
       if (this.userType === 0) {
         this.$refs.powerform.validate((valid) => {
           if (valid) {
