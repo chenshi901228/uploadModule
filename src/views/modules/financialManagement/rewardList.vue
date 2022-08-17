@@ -20,7 +20,7 @@
             <el-option :value="2" label="大于众学"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 5" label="直播间名称" prop="liveTheme">
+        <el-form-item v-if="isOpen || formItemCount >= 5" label="直播名称" prop="liveTheme">
           <el-input style="width: 200px" v-model="dataForm.liveTheme" clearable placeholder="请输入"></el-input>
 
         </el-form-item>
@@ -88,7 +88,7 @@
             </div>
           </template>
         </el-table-column>
-            <el-table-column prop="liveTheme" label="直播间名称" min-width="160px" header-align="center" align="center"
+            <el-table-column prop="liveTheme" label="直播名称" min-width="160px" header-align="center" align="center"
           show-overflow-tooltip>
         </el-table-column>
 

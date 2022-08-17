@@ -5,43 +5,19 @@
     <div>
         <el-card shadow="never" class="aui-card--fill">
             <div class="mod-comment">
-                <el-form
-                    class="headerTool"
-                    :inline="true"
-                    :model="dataForm"
-                    ref="dataForm"
-                    size="small"
-                    label-width="100px"
-                    @keyup.enter.native="getDataList"
-                >
-                    <el-form-item
-                        label="回复人"
-                        prop="commentUserName"
-                    >
-                        <el-input
-                            style="width: 200px"
-                            v-model.trim="dataForm.commentUserName"
-                            placeholder="请输入昵称或手机号"
-                            clearable
-                        >
+                <el-form class="headerTool" :inline="true" :model="dataForm" ref="dataForm" size="small"
+                    label-width="100px" @keyup.enter.native="getDataList">
+                    <el-form-item label="回复人" prop="commentUserName">
+                        <el-input style="width: 200px" v-model.trim="dataForm.commentUserName" placeholder="请输入昵称或手机号"
+                            clearable>
                         </el-input>
                     </el-form-item>
-                    <el-form-item
-                        label="回复内容"
-                        prop="commentValue"
-                    >
-                        <el-input
-                            style="width: 200px"
-                            v-model.trim="dataForm.commentValue"
-                            placeholder="请输入内容关键字"
-                            clearable
-                        >
+                    <el-form-item label="回复内容" prop="commentValue">
+                        <el-input style="width: 200px" v-model.trim="dataForm.commentValue" placeholder="请输入内容关键字"
+                            clearable>
                         </el-input>
                     </el-form-item>
-                    <el-form-item
-                        label="删除状态"
-                        prop="delFlg"
-                    >
+                    <el-form-item label="删除状态" prop="delFlg">
                         <el-select clearable style="width: 200px" v-model="dataForm.delFlg" placeholder="请选择">
                             <el-option label="已删除" :value="1"></el-option>
                             <el-option label="未删除" :value="0"></el-option>
@@ -50,15 +26,11 @@
                     <!-- 搜索重置展开按钮 -->
                     <div class="headerTool-search-btns">
                         <el-form-item>
-                            <el-button 
-                                type="primary" 
-                                icon="el-icon-search" 
-                                size="mini"
-                                @click="getDataList">{{ $t("query") }}</el-button>
-                            <el-button 
-                                icon="el-icon-refresh" 
-                                size="mini" 
-                                @click="resetDataForm()">{{ $t("reset") }}</el-button>
+                            <el-button type="primary" icon="el-icon-search" size="mini" @click="getDataList">{{
+                                    $t("query")
+                            }}</el-button>
+                            <el-button icon="el-icon-refresh" size="mini" @click="resetDataForm()">{{ $t("reset") }}
+                            </el-button>
                             <el-button size="mini" plain @click="open">
                                 <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
                                 {{ isOpen ? "收起" : "展开" }}
@@ -69,11 +41,7 @@
                     <div class="headerTool-handle-btns">
                         <div class="headerTool--handle-btns-left">
                             <el-form-item>
-                                <el-button 
-                                    type="warning"
-                                    plain
-                                    icon="el-icon-download" 
-                                    size="mini"
+                                <el-button type="warning" plain icon="el-icon-download" size="mini"
                                     @click="exportHandle">{{ $t("export") }}</el-button>
                             </el-form-item>
                         </div>
@@ -86,9 +54,9 @@
                         </div>
                     </div>
                 </el-form>
-                
-                <el-descriptions style="margin:20px 0" v-if="commentInfo" class="margin-top" :column="2"
-                    size="small" border>
+
+                <el-descriptions style="margin:20px 0" v-if="commentInfo" class="margin-top" :column="2" size="small"
+                    border>
 
                     <el-descriptions-item>
                         <template slot="label">
@@ -111,40 +79,28 @@
                     </el-descriptions-item>
 
                 </el-descriptions>
-           
-                <el-table
-                    v-loading="dataListLoading"
-                    :data="dataList"
-                    @selection-change="dataListSelectionChangeHandle"
-                    :height="siteContentViewHeight"
-                    style="width: 100%"
-                >
-                    <el-table-column
-                        type="selection"
-                        header-align="center"
-                        align="center"
-                        width="50"
-                        fixed="left"
-                    ></el-table-column>
 
-                    <el-table-column
-                        header-align="center"
-                        align="center"
-                        v-for="item in tableItem"
-                        :key="item.prop"
-                        :prop="item.prop"
-                        :label="item.label"
-                        :width="item.width || 120"
-                        show-overflow-tooltip
-                        :sortable="['transcribeFlg', 'liveState', 'showState'].includes(item.prop)"
-                    >
+                <el-table v-loading="dataListLoading" :data="dataList" @selection-change="dataListSelectionChangeHandle"
+                    :height="siteContentViewHeight" style="width: 100%">
+                    <el-table-column type="selection" header-align="center" align="center" width="50" fixed="left">
+                    </el-table-column>
+
+                    <el-table-column header-align="center" align="center" v-for="item in tableItem" :key="item.prop"
+                        :prop="item.prop" :label="item.label" :width="item.width || 120" show-overflow-tooltip
+                        :sortable="['transcribeFlg', 'liveState', 'showState'].includes(item.prop)">
                         <template slot-scope="{ row }">
                             <!-- 删除状态 -->
                             <span v-if="item.prop == 'delFlg'">
-                                <el-tag :type="row.delFlg ? 'danger' : 'success'">{{row.delFlg ? "已删除" : "未删除"}}</el-tag>
+                                <el-tag :type="row.delFlg ? 'danger' : 'success'">{{ row.delFlg ? "已删除" : "未删除" }}
+                                </el-tag>
                             </span>
-                             <span v-else-if="item.prop == 'commentValue'">
-                               {{row.commentValue.length>4?row.commentValue.substring(0,5)+'...':row.commentValue}}
+                            <span v-else-if="item.prop == 'commentValue'">
+                                <el-tooltip class="item" effect="dark" :content="row.commentValue" placement="top"
+                                    :disabled="row.commentValue.length < 5">
+                                    <div> {{ row.commentValue.length > 4 ? row.commentValue.substring(0, 5) + '...' :
+                                            row.commentValue
+                                    }}</div>
+                                </el-tooltip>
                             </span>
                             <span v-else>
                                 {{ row[item.prop] || "-" }}
@@ -153,28 +109,18 @@
                     </el-table-column>
                     <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center">
                         <template slot-scope="{ row }">
-                            <el-button icon="el-icon-document" type="text" size="small" @click="detail(row)">回复详情</el-button>
-                            <el-button
-                            type="text"
-                            icon="el-icon-view"
-                            size="small"
-                            @click="checkRemark(row)"
-                            >查看备注</el-button
-                            >
-                            <el-button icon="el-icon-delete" v-if="!row.delFlg" type="text" size="small" @click="deleteComment(row.id)">删除</el-button>
+                            <el-button icon="el-icon-document" type="text" size="small" @click="detail(row)">回复详情
+                            </el-button>
+                            <el-button type="text" icon="el-icon-view" size="small" @click="checkRemark(row)">查看备注
+                            </el-button>
+                            <el-button icon="el-icon-delete" v-if="!row.delFlg" type="text" size="small"
+                                @click="deleteComment(row.id)">删除</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
-                <el-pagination
-                    background
-                    :current-page="page"
-                    :page-sizes="[10, 20, 50, 100]"
-                    :page-size="limit"
-                    :total="total"
-                    layout="total, sizes, prev, pager, next, jumper"
-                    @size-change="pageSizeChangeHandle"
-                    @current-change="pageCurrentChangeHandle"
-                >
+                <el-pagination background :current-page="page" :page-sizes="[10, 20, 50, 100]" :page-size="limit"
+                    :total="total" layout="total, sizes, prev, pager, next, jumper" @size-change="pageSizeChangeHandle"
+                    @current-change="pageCurrentChangeHandle">
                 </el-pagination>
 
 
@@ -185,16 +131,15 @@
 
 
         <!-- 回复详情弹框 -->
-        <el-dialog
-            top="0" 
-            custom-class="custom-dialog-top"
-            title="回复详情"
-            :visible.sync="commentDetailsVisible"
+        <el-dialog top="0" custom-class="custom-dialog-top" title="回复详情" :visible.sync="commentDetailsVisible"
             width="30%">
-            <el-descriptions title="" :column="1" :labelStyle="{ width: '100px'}" :contentStyle="{ width: '80%' }">
-                <el-descriptions-item label="回复人">{{commentDetailsInfo && commentDetailsInfo.commentUserName || "-"}}</el-descriptions-item>
-                <el-descriptions-item label="手机号码">{{commentDetailsInfo && commentDetailsInfo.commentUserPhone || "-"}}</el-descriptions-item>
-                <el-descriptions-item label="回复详情">{{commentDetailsInfo && commentDetailsInfo.commentValue || "-"}}</el-descriptions-item>
+            <el-descriptions title="" :column="1" :labelStyle="{ width: '100px' }" :contentStyle="{ width: '80%' }">
+                <el-descriptions-item label="回复人">{{ commentDetailsInfo && commentDetailsInfo.commentUserName || "-" }}
+                </el-descriptions-item>
+                <el-descriptions-item label="手机号码">{{ commentDetailsInfo && commentDetailsInfo.commentUserPhone || "-" }}
+                </el-descriptions-item>
+                <el-descriptions-item label="回复详情">{{ commentDetailsInfo && commentDetailsInfo.commentValue || "-" }}
+                </el-descriptions-item>
             </el-descriptions>
             <span slot="footer" class="dialog-footer">
                 <el-button size="small" type="primary" @click="commentDetailsVisible = false">关 闭</el-button>
@@ -207,7 +152,7 @@
 import mixinTableModule from '@/mixins/table-module'
 import RemarkModal from "@/components/common/remarkDialog"
 export default {
-    mixins: [ mixinTableModule ],
+    mixins: [mixinTableModule],
     components: {
         RemarkModal,
     },
@@ -242,7 +187,7 @@ export default {
             commentInfo: null, //被回复的评论详情
         };
     },
-    activated(){
+    activated() {
         this.params.fatherId = this.$route.query.id;
         this.dataList = []
         this.commentInfo = JSON.parse(localStorage.getItem("comment") || "") || null
@@ -253,34 +198,34 @@ export default {
         setOtherViewHeight() {
             setTimeout(() => {
                 let h = 0
-                if(document.querySelector(".headerTool")) {
+                if (document.querySelector(".headerTool")) {
                     h += document.querySelector(".headerTool").getBoundingClientRect().height
                 }
-                if(document.querySelector(".commentInfo")) {
+                if (document.querySelector(".commentInfo")) {
                     h += document.querySelector(".commentInfo").getBoundingClientRect().height
                 }
                 this.otherViewHeight = Math.ceil(h) + 10
-            },150)
+            }, 150)
         },
         // 查看回复详情
         detail(data) {
-            if(data.id)this.commentDetailsInfo = data
+            if (data.id) this.commentDetailsInfo = data
             this.commentDetailsVisible = true
         },
         // 删除回复
         deleteComment(id) {
-            if(!id) return
+            if (!id) return
             this.$refs.remarkModal.init(id)
         },
         // 确认删除回复
         confirmHandle(remark, id, cb) {
             this.$http.put("/sys/liveComment/deleteComment", { id, remark }).then(({ data: res }) => {
                 cb()
-                if(res.code == 0){
+                if (res.code == 0) {
                     this.$message.success("删除回复成功");
                     this.$refs.remarkModal.close()
                     this.query()
-                }else{
+                } else {
                     this.$message.error(res.msg);
                 }
             }).catch(err => {
@@ -293,31 +238,34 @@ export default {
         checkRemark({ remark }) {
             this.$alert(remark || '暂无备注', '查看备注', {
                 confirmButtonText: '关闭',
-                callback: action => {}
+                callback: action => { }
             });
         },
     },
 };
 </script>
 <style lang="scss" scoped>
-    .custom-dialog-top{
-        transform: translateY(50%);
-    }
-    .commentInfo {
-        border: 1px solid #999;
-        padding: 10px;
-        margin-bottom: 10px;
-        color: #606266;
-        .name{
-            display: flex;
-            p:not(:first-child){
-                margin-left: 20px;
-            }
-        }
+.custom-dialog-top {
+    transform: translateY(50%);
+}
 
+.commentInfo {
+    border: 1px solid #999;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: #606266;
+
+    .name {
+        display: flex;
+
+        p:not(:first-child) {
+            margin-left: 20px;
+        }
     }
-    
-    /deep/ th.el-descriptions-item__cell.el-descriptions-item__label.is-bordered-label {
+
+}
+
+/deep/ th.el-descriptions-item__cell.el-descriptions-item__label.is-bordered-label {
     width: 120px;
     text-align: right;
 }
