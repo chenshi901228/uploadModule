@@ -43,7 +43,7 @@
             <el-option :value="2" label="大于众学"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 5" label="充值状态" prop="delFlg">
+        <!-- <el-form-item v-if="isOpen || formItemCount >= 5" label="充值状态" prop="delFlg">
           <el-select
             style="width: 200px"
             v-model="dataForm.delFlg"
@@ -53,7 +53,7 @@
             <el-option :value="1" label="支付失败"></el-option>
             <el-option :value="0" label="支付成功"></el-option>
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">
           <el-form-item>
@@ -186,7 +186,7 @@
           show-overflow-tooltip
         >
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="delFlg"
           label="充值状态"
           header-align="center"
@@ -198,7 +198,7 @@
               {{ scope.row.delFlg === 0 ? "支付成功" : "支付失败" }}
             </div>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
       <el-pagination
         background
