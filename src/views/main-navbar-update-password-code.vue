@@ -20,11 +20,11 @@
           >{{ btnText }}</el-button>
       </el-form-item>
       <el-form-item prop="newPassword" label="登录密码">
-        <el-input style="width: 300px" v-model.trim="dataForm.newPassword" type="password" show-password :placeholder="$t('updatePassword.newPassword')"></el-input>
+        <el-input style="width: 300px" v-model.trim="dataForm.newPassword" :placeholder="$t('updatePassword.newPassword')"></el-input>
         <span>（密码由8~16位的字母和数字组成）</span>
       </el-form-item>
       <el-form-item prop="confirmPassword" label="再次输入登录密码">
-        <el-input style="width: 300px" v-model.trim="dataForm.confirmPassword" type="password" show-password :placeholder="$t('updatePassword.confirmPassword')"></el-input>
+        <el-input style="width: 300px" v-model.trim="dataForm.confirmPassword"  :placeholder="$t('updatePassword.confirmPassword')"></el-input>
       </el-form-item>
     </el-form>
     <template slot="footer">
