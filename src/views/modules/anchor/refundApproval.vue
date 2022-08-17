@@ -229,7 +229,7 @@
           show-overflow-tooltip
         >
           <template slot-scope="{ row }">
-            <span>{{row.productTypeNum != 2 ? "仅退款" : "退货退款"}}</span>
+            <span>{{row.productTypeNum != 2 ? "仅退款" : row.productTypeNum == 2 && row.useStatus == 0 ? "仅退款" : "退货退款"}}</span>
           </template>
         </el-table-column>
         <el-table-column
