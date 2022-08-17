@@ -39,29 +39,35 @@
       </el-form-item>
       <el-form-item label="库存数量：" prop="stock">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <!-- <el-input-number
-          v-model="dataForm.proportion"
+        <el-input-number
+          v-model="dataForm.stock"
           :controls="false"
           :precision="0"
-          :min="10"
-          :max="20"
+          :min="0"
+          placeholder="库存数量"
+
+          :max="9999999999"
         >
-        </el-input-number> -->
-        <el-input
+        </el-input-number>
+        <!-- <el-input-number
           v-model="dataForm.stock"
           placeholder="库存数量"
-        ></el-input>
+        ></el-input-number> -->
       </el-form-item>
       <el-form-item label="已购买人数：" prop="buyers">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <!-- <el-input-number
+        <el-input-number
           v-model="dataForm.buyers"
           :controls="false"
+          :precision="0"
           :min="0"
-        >
-        </el-input-number> -->
+          placeholder="已购买人数"
 
-        <el-input v-model="dataForm.buyers" placeholder="已购买人数"></el-input>
+          :max="9999999999"
+        >
+        </el-input-number>
+
+        <!-- <el-input v-model="dataForm.buyers" placeholder="已购买人数"></el-input> -->
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
