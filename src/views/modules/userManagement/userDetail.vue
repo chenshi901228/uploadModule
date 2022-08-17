@@ -403,7 +403,7 @@ export default {
       diaDataList: [],
       dataListLoading: false,
       diaTableTitle: {
-        price: "充值大豆",
+        price: "充值种子",
         amount: "支付金额",
         payType: "支付方式",
         paySource: "充值来源",
@@ -468,7 +468,7 @@ export default {
       switch (n) {
         case 1:
           this.diaTableTitle = {
-            price: "充值大豆",
+            price: "充值种子",
             amount: "支付金额",
             payType: "支付方式",
             paySource: "充值来源",

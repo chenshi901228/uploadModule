@@ -26,7 +26,8 @@
         <upload
           :fileList="fileList"
           :limit="1"
-          :fileType="['png', 'jpg', 'jpeg']"
+          :fileMaxSize="2"
+          :fileType="['png', 'jpg']"
           ref="uploadFile"
           @uploadSuccess="uploadSuccess"
           @uploadRemove="uploadRemove"
@@ -39,6 +40,7 @@
           :limit="1"
           :fileType="['svga']"
           ref="uploadFilePic"
+          :fileMaxSize="10"
           @uploadSuccess="uploadPicSuccess"
           @uploadRemove="uploadPicRemove"
         ></upload>
@@ -52,9 +54,13 @@
       <el-form-item label="礼物价格" prop="price">
         <el-input-number
           v-model="dataForm.price"
-          placeholder="价格"
+          placeholder="请输入"
+          :precision="0"
           :min="0"
+          :max="999999"
+          :controls="false"
         ></el-input-number>
+        <span style="margin-left: 10px">种子</span>
       </el-form-item>
     </el-form>
     <template slot="footer">

@@ -197,9 +197,9 @@ export default {
         this.accountSelectVisible = false
 
         this.$store.state.contentTabs = this.$store.state.contentTabs.filter(item => item.name === 'home')
-        if(this.$store.state.contentTabsActiveName == 'home') return
-        this.$router.push({ name: 'home' })
-
+        if(this.$store.state.contentTabsActiveName != 'home') {
+          this.$router.push({ name: 'home' })
+        }
         setTimeout(() => {
           location.reload()
         }, 500)
