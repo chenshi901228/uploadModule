@@ -302,7 +302,7 @@ export default {
     },
     // 超出上传数量
     uploadExceed() {
-      this.$message.error(`只能上传${this.limit}只附件`);
+      this.$message.error(`只能上传${this.limit}个附件`);
     },
     // 预览图片
     previewImg(data) {
