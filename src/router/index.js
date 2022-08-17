@@ -84,7 +84,7 @@ export function addDynamicRoute (routeParams, router) {
 }
 
 const router = new Router({
-  mode: 'hash',
+  mode: 'history',
   scrollBehavior: () => ({ y: 0 }),
   routes: pageRoutes.concat(moduleRoutes)
 })
