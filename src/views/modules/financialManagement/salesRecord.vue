@@ -51,6 +51,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 5" label="支付方式" prop="payType">
           <el-select style="width: 200px"  v-model="dataForm.payType" clearable>
             <el-option value="微信" label="微信"></el-option>
+            <el-option value="支付宝" label="支付宝"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 6" label="消费来源" prop="consumptionSource">
@@ -61,6 +62,7 @@
             placeholder="请选择"
           >
             <el-option value="小程序端" label="小程序端"></el-option>
+            <el-option value="大于众学" label="大于众学"></el-option>
           </el-select>
         </el-form-item>
         <!-- 搜索重置展开按钮 -->
