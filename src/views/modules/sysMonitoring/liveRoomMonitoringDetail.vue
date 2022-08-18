@@ -163,7 +163,7 @@ export default {
       this.$http.get(`/sys/liveListSupervisory/getDetailed/${this.$route.query.id}`).then(({data:res})=>{
         if(!res.code==0) return this.$message.error(res.msg)
         this.liveDetail = res.data
-        this.videoUrl = res.data.liveStream.Data.PlayInfo[0].FLV
+        this.videoUrl = res.data.liveStream.Data.PlayInfo[0].FLV.replace('http','https')
       })
     },
     initEchartsThree(){
