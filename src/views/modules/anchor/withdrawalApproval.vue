@@ -291,7 +291,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.amount || "--" }}</span>
+            <span>￥{{scope.row.amount? scope.row.amount: "--" }}</span> 
           </template>
         </el-table-column>
         <el-table-column
@@ -302,7 +302,9 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.taxSum || "--" }}</span>
+            
+            <span>￥{{scope.row.taxSum? parseFloat(scope.row.taxSum).toLocaleString()  :"--" }}</span> 
+
           </template>
         </el-table-column>
         <el-table-column
@@ -313,7 +315,8 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.addedValueTax || "--" }}</span>
+            <span>￥{{scope.row.addedValueTax? parseFloat(scope.row.addedValueTax).toLocaleString()  : "--" }}</span> 
+
           </template>
         </el-table-column>
 
@@ -325,7 +328,8 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.additionalTax || "--" }}</span>
+            <span>￥{{scope.row.additionalTax? parseFloat(scope.row.additionalTax).toLocaleString()   : "--" }}</span> 
+
           </template>
         </el-table-column>
         <el-table-column
@@ -336,7 +340,8 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.personalIncomeTax || "--" }}</span>
+            <span>￥{{scope.row.personalIncomeTax?  parseFloat(scope.row.personalIncomeTax).toLocaleString()   : "--" }}</span> 
+
           </template>
         </el-table-column>
         <el-table-column
@@ -347,7 +352,8 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.receivedAmount || "--" }}</span>
+            <span>￥{{scope.row.receivedAmount? scope.row.receivedAmount: "--" }}</span> 
+
           </template>
         </el-table-column>
         <el-table-column
@@ -358,7 +364,8 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.accumulatedWithdrawalAmount || "--" }}</span>
+            <span>￥{{scope.row.accumulatedWithdrawalAmount? scope.row.accumulatedWithdrawalAmount:"--" }}</span> 
+
           </template>
         </el-table-column>
         <el-table-column
@@ -390,6 +397,7 @@
           header-align="center"
           show-overflow-tooltip
           align="center"
+          width="180"
         >
           <template slot-scope="scope">
             <span>{{ scope.row.createDate || "--" }}</span>
@@ -593,6 +601,26 @@ export default {
             })
             .catch(() => {});
     },
+        // 当金额大于10000时，在作展示的时候，需要加千分位逗号，就是每隔1000要用逗号分隔；
+    format (n) {
+      let num = n.toString()
+      let decimals = ''
+      // 判断是否有小数
+      num.indexOf('.') > -1 ? decimals = num.split('.')[1] : decimals
+      let len = num.length
+      if (len <= 3) {
+        return num
+      } else {
+        let temp = ''
+        let remainder = len % 3
+        decimals ? temp = '.' + decimals : temp
+        if (remainder > 0) { // 不是3的整数倍
+          return num.slice(0, remainder) + ',' + num.slice(remainder, len).match(/\d{3}/g).join(',') + temp
+        } else { // 是3的整数倍
+          return num.slice(0, len).match(/\d{3}/g).join(',') + temp
+        }
+      }
+    }
   },
 };
 </script>

@@ -70,7 +70,7 @@
             v-model="dataForm.updateType" 
             clearable>
             <el-option :value="1" label="主播申请"></el-option>
-            <el-option :value="2" label="银行卡信息审批"></el-option>
+            <el-option :value="2" label="账户信息"></el-option>
             <!-- <el-option :value="3" label="修改简介"></el-option>
             <el-option :value="4" label="修改头像"></el-option>
             <el-option :value="5" label="主播二维码"></el-option> -->
@@ -300,7 +300,7 @@
           width="120"
         >
           <template slot-scope="scope">
-            {{ scope.row.updateType==1?'主播申请':scope.row.updateType==2?'银行卡信息审批':'-' }}
+            {{ scope.row.updateType==1?'主播申请':scope.row.updateType==2?'账户信息':'-' }}
           </template>
         </el-table-column>
         <el-table-column

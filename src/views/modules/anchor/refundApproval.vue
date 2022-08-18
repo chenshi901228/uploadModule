@@ -466,6 +466,7 @@ export default {
       this.refundReason = refundReason
       this.id = id;
       this.dialogFormVisible = true;
+      this.ruleForm.desc = '';
     },
     showDialogWithRemark(refundReason,remark) {
       this.refundReason = refundReason;
