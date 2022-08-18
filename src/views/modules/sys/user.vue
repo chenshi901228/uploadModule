@@ -1,30 +1,18 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-sys__user">
-      <el-form
-        class="headerTool"
-        :inline="true"
-        :model="dataForm"
-        ref="dataForm"
-        size="small"
-        label-width="100px"
-        label-position="right"
-        @keyup.enter.native="getUserList(diaTbas)"
-      >
+      <el-form class="headerTool" :inline="true" :model="dataForm" ref="dataForm" size="small" label-width="100px"
+        label-position="right" @keyup.enter.native="getUserList(diaTbas)">
         <el-form-item v-if="isOpen || formItemCount >= 1" label="用户名称" prop="nickName">
-          <el-input
-            v-model="dataForm.nickName"
-            placeholder="请输入"
-            clearable
-          ></el-input>
+          <el-input v-model="dataForm.nickName" placeholder="请输入" clearable></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="phone">
-          <el-input
-            v-model="dataForm.phone"
-            placeholder="请输入"
-          ></el-input>
+          <el-input v-model="dataForm.phone" placeholder="请输入"></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 3" label="账号状态" prop="status">
+        <el-form-item v-if="isOpen || formItemCount >= 3" label="用户类型" prop="roleStatus">
+          <el-input v-model="dataForm.roleStatus" placeholder="请输入"></el-input>
+        </el-form-item>
+        <el-form-item v-if="isOpen || formItemCount >= 4" label="账号状态" prop="status">
           <el-select v-model="dataForm.status" clearable placeholder="请选择">
             <el-option label="正常" value="1">正常</el-option>
             <el-option label="停用" value="0">停用</el-option>
@@ -40,15 +28,9 @@
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">
           <el-form-item>
-            <el-button 
-              type="primary" 
-              icon="el-icon-search" 
-              size="mini"
-              @click="getUserList(diaTbas)">{{ $t("query") }}</el-button>
-            <el-button 
-              icon="el-icon-refresh" 
-              size="mini" 
-              @click="resetDataForm(diaTbas)">{{ $t("reset") }}</el-button>
+            <el-button type="primary" icon="el-icon-search" size="mini" @click="getUserList(diaTbas)">{{ $t("query") }}
+            </el-button>
+            <el-button icon="el-icon-refresh" size="mini" @click="resetDataForm(diaTbas)">{{ $t("reset") }}</el-button>
             <el-button size="mini" plain @click="open">
               <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
               {{ isOpen ? "收起" : "展开" }}
@@ -59,15 +41,8 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button
-                size="mini"
-                v-if="$hasPermission('sys:dict:save')&&diaTbas==1"
-                icon="el-icon-plus"
-                plain
-                type="primary"
-                @click="addOrUpdateHandle()"
-                >{{ $t("add") }}</el-button
-              >
+              <el-button size="mini" v-if="$hasPermission('sys:dict:save') && diaTbas == 1" icon="el-icon-plus" plain
+                type="primary" @click="addOrUpdateHandle()">{{ $t("add") }}</el-button>
               <!-- <el-button
                 type="warning"
                 plain
@@ -96,102 +71,52 @@
         </div>
       </el-form>
       <div class="user-type-tab">
-        <div
-          class="diaBoxRight_tabBtns"
-          @click="changeTbas(1)"
-          :class="{ 'is-active': diaTbas === 1 }"
-        >
+        <div class="diaBoxRight_tabBtns" @click="changeTbas(1)" :class="{ 'is-active': diaTbas === 1 }">
           员工
         </div>
-        <div
-          class="diaBoxRight_tabBtns"
-          @click="changeTbas(2)"
-          :class="{ 'is-active': diaTbas === 2 }"
-        >
+        <div class="diaBoxRight_tabBtns" @click="changeTbas(2)" :class="{ 'is-active': diaTbas === 2 }">
           主播
         </div>
-        <div
-          class="diaBoxRight_tabBtns"
-          @click="changeTbas(3)"
-          :class="{ 'is-active': diaTbas === 3 }"
-        >
+        <div class="diaBoxRight_tabBtns" @click="changeTbas(3)" :class="{ 'is-active': diaTbas === 3 }">
           助手
         </div>
-        <div
-          class="diaBoxRight_tabBtns"
-          @click="changeTbas(4)"
-          :class="{ 'is-active': diaTbas === 4 }"
-        >
+        <div class="diaBoxRight_tabBtns" @click="changeTbas(4)" :class="{ 'is-active': diaTbas === 4 }">
           用户
         </div>
-        <div
-          class="diaBoxRight_tabBtns"
-          @click="changeTbas(5)"
-          :class="{ 'is-active': diaTbas === 5 }"
-        >
+        <div class="diaBoxRight_tabBtns" @click="changeTbas(5)" :class="{ 'is-active': diaTbas === 5 }">
           超级管理员
         </div>
       </div>
-      <el-table
-        :data="diaDataList"
-        ref="table"
-        v-loading="dataListLoading"
-        :height="siteContentViewHeight"
-        style="width: 100%"
-      >
-        <el-table-column
-          type="selection"
-          header-align="center"
-          align="center"
-          width="50"
-        ></el-table-column>
-        <el-table-column
-          v-for="(item,index) in tableItem"
-          :key="index"
-          :prop="item.prop"
-          :label="item.label"
-          header-align="center"
-          align="center"
-          show-overflow-tooltip
-        >
+      <el-table :data="diaDataList" ref="table" v-loading="dataListLoading" :height="siteContentViewHeight"
+        style="width: 100%">
+        <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
+        <el-table-column v-for="(item, index) in tableItem" :key="index" :prop="item.prop" :label="item.label"
+          header-align="center" align="center" show-overflow-tooltip>
           <template slot-scope="{ row }">
-            <el-tag v-if="item.prop=='status'&&row.status === 0&&diaTbas!=2" size="small" type="danger">{{
-              $t("user.status0")
+            <el-tag v-if="item.prop == 'status' && row.status === 0 && diaTbas != 2" size="small" type="danger">{{
+                $t("user.status0")
             }}</el-tag>
-            <el-tag v-else-if="item.prop=='status'&&row.status === 1&&diaTbas!=2"  size="small" type="success">{{
-              $t("user.status1")
+            <el-tag v-else-if="item.prop == 'status' && row.status === 1 && diaTbas != 2" size="small" type="success">{{
+                $t("user.status1")
             }}</el-tag>
-            <el-tag v-else-if="item.prop=='disabledFlg'&&row.disabledFlg === 1" size="small" type="danger">{{
-              $t("user.status0")
+            <el-tag v-else-if="item.prop == 'disabledFlg' && row.disabledFlg === 1" size="small" type="danger">{{
+                $t("user.status0")
             }}</el-tag>
-            <el-tag v-else-if="item.prop=='disabledFlg'&&row.disabledFlg === 0"  size="small" type="success">{{
-              $t("user.status1")
+            <el-tag v-else-if="item.prop == 'disabledFlg' && row.disabledFlg === 0" size="small" type="success">{{
+                $t("user.status1")
             }}</el-tag>
-            <span v-else-if="item.prop=='roleStatus'">
-              {{diaTbas==1?'员工':diaTbas==2?'主播':diaTbas==3?'助手':diaTbas==4?'用户':'超级管理员'}}
+            <span v-else-if="item.prop == 'roleStatus'">
+              {{ diaTbas == 1 ? '员工' : diaTbas == 2 ? '主播' : diaTbas == 3 ? '助手' : diaTbas == 4 ? '用户' : '超级管理员' }}
             </span>
             <span v-else>
               {{ row[item.prop] || "-" }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column
-          :label="$t('handle')"
-          fixed="right"
-          header-align="center"
-          align="center"
-          width="150"
-          v-if="diaTbas!=5"
-        >
+        <el-table-column :label="$t('handle')" header-align="center" align="center" width="150" v-if="diaTbas != 5">
           <template slot-scope="{ row }">
-            <el-button
-              v-if="$hasPermission('sys:user:update')&&diaTbas===1"
-              type="text"
-              size="mini"
-              icon="el-icon-edit"
-              @click="addOrUpdateHandle(row.id)"
-              >编辑</el-button
-            >
+            <el-button v-if="$hasPermission('sys:user:update') && diaTbas === 1" type="text" size="mini"
+              icon="el-icon-edit" @click="addOrUpdateHandle(row.id)">编辑</el-button>
             <!-- <el-button
               v-if="$hasPermission('sys:user:delete')"
               type="text"
@@ -200,50 +125,21 @@
               @click="deleteHandle(row.id)"
               >{{ $t("delete") }}</el-button
             > -->
-            <el-button
-              icon="el-icon-close"
-              type="text"
-              size="small"
-              v-if="!row.delFlg&&diaTbas!=2"
-              @click="forbidden(row)"
-              >{{ row.status != 0 ? "禁用" : "解除" }}</el-button
-            >
-            <el-button
-              icon="el-icon-close"
-              type="text"
-              size="small"
-              v-if="!row.delFlg&&diaTbas===2"
-              @click="forbidden(row)"
-              >{{ row.disabledFlg != 0 ? "解除" : "禁用" }}</el-button
-            >
-             <el-button
-              v-if="$hasPermission('sys:user:update')&&diaTbas===1"
-              type="text"
-              size="mini"
-              icon="el-icon-edit"
-              @click="resetPassword(row.id)"
-              >重置密码</el-button
-            >
+            <el-button icon="el-icon-close" type="text" size="small" v-if="!row.delFlg && diaTbas != 2"
+              @click="forbidden(row)">{{ row.status != 0 ? "禁用" : "解除" }}</el-button>
+            <el-button icon="el-icon-close" type="text" size="small" v-if="!row.delFlg && diaTbas === 2"
+              @click="forbidden(row)">{{ row.disabledFlg != 0 ? "解除" : "禁用" }}</el-button>
+            <el-button v-if="$hasPermission('sys:user:update') && diaTbas === 1" type="text" size="mini"
+              icon="el-icon-edit" @click="resetPassword(row.id)">重置密码</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
-        background
-        :current-page="page"
-        :page-sizes="[10, 20, 50, 100]"
-        :page-size="limit"
-        :total="total"
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="pageSizeChangeHandle"
-        @current-change="pageCurrentChangeHandle"
-      >
+      <el-pagination background :current-page="page" :page-sizes="[10, 20, 50, 100]" :page-size="limit" :total="total"
+        layout="total, sizes, prev, pager, next, jumper" @size-change="pageSizeChangeHandle"
+        @current-change="pageCurrentChangeHandle">
       </el-pagination>
       <!-- 弹窗, 新增 / 修改 -->
-      <add-or-update
-        v-if="addOrUpdateVisible"
-        ref="addOrUpdate"
-        @refreshDataList="changeTbas(diaTbas)"
-      ></add-or-update>
+      <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="changeTbas(diaTbas)"></add-or-update>
     </div>
   </el-card>
 </template>
@@ -263,9 +159,9 @@ export default {
       //   deleteIsBatch: true,
       //   exportURL: "/sys/user/export",
       // },
-      addOrUpdateVisible:false,
+      addOrUpdateVisible: false,
       diaTbas: 1,
-      addDataForm:{
+      addDataForm: {
         id: '',
         mobile: '',
         roleIdList: [],
@@ -280,98 +176,98 @@ export default {
         phone: "",
         status: "",
       },
-      tableItem:[],
-      column:[
+      tableItem: [],
+      column: [
         {
-          label:'登录账号',
-          prop:'username'
+          label: '登录账号',
+          prop: 'username'
         },
         {
-          label:'用户名称',
-          prop:'realName'
+          label: '用户名称',
+          prop: 'realName'
         },
         {
-          label:'手机号码',
-          prop:'mobile'
+          label: '手机号码',
+          prop: 'mobile'
         },
         {
-          label:'用户类型',
-          prop:'roleStatus'
+          label: '用户类型',
+          prop: 'roleStatus'
         },
         {
-          label:'用户角色',
-          prop:'roleName'
+          label: '用户角色',
+          prop: 'roleName'
         },
         {
-          label:'创建时间',
-          prop:'createDate'
+          label: '创建时间',
+          prop: 'createDate'
         },
         {
-          label:'账号状态',
-          prop:'status'
-        },
-      ],
-      columnTwo:[
-        {
-          label:'登录账号',
-          prop:'phone'
-        },
-        {
-          label:'用户名称',
-          prop:'nickName'
-        },
-        {
-          label:'手机号码',
-          prop:'phone'
-        },
-        {
-          label:'用户类型',
-          prop:'roleStatus'
-        },
-        {
-          label:'用户角色',
-          prop:'roleName'
-        },
-        {
-          label:'创建时间',
-          prop:'createDate'
-        },
-        {
-          label:'账号状态',
-          prop:'status'
+          label: '账号状态',
+          prop: 'status'
         },
       ],
-      columnThree:[
+      columnTwo: [
         {
-          label:'登录账号',
-          prop:'username'
+          label: '登录账号',
+          prop: 'phone'
         },
         {
-          label:'用户名称',
-          prop:'realName'
+          label: '用户名称',
+          prop: 'nickName'
         },
         {
-          label:'手机号码',
-          prop:'mobile'
+          label: '手机号码',
+          prop: 'phone'
         },
         {
-          label:'用户类型',
-          prop:'roleStatus'
+          label: '用户类型',
+          prop: 'roleStatus'
         },
         {
-          label:'用户角色',
-          prop:'roleName'
+          label: '用户角色',
+          prop: 'roleName'
         },
         {
-          label:'创建时间',
-          prop:'createDate'
+          label: '创建时间',
+          prop: 'createDate'
         },
         {
-          label:'账号状态',
-          prop:'disabledFlg'
+          label: '账号状态',
+          prop: 'status'
         },
       ],
-      total:0,
+      columnThree: [
+        {
+          label: '登录账号',
+          prop: 'username'
+        },
+        {
+          label: '用户名称',
+          prop: 'realName'
+        },
+        {
+          label: '手机号码',
+          prop: 'mobile'
+        },
+        {
+          label: '用户类型',
+          prop: 'roleStatus'
+        },
+        {
+          label: '用户角色',
+          prop: 'roleName'
+        },
+        {
+          label: '创建时间',
+          prop: 'createDate'
+        },
+        {
+          label: '账号状态',
+          prop: 'disabledFlg'
+        },
+      ],
+      total: 0,
       diaDataList: [],
       dataListLoading: false,
       page: 1, // 当前页码
@@ -392,14 +288,14 @@ export default {
   },
   watch: {
     isOpen() {
-        this.setOtherViewHeight()
+      this.setOtherViewHeight()
     },
     sidebarFold(val) {
-        this.setHeaderSearchWidth(val)
+      this.setHeaderSearchWidth(val)
     }
   },
   computed: {
-    dataRule () {
+    dataRule() {
       var validateMobile = (rule, value, callback) => {
         if (!isMobile(value)) {
           return callback(new Error(this.$t('validate.format', { 'attr': this.$t('user.mobile') })))
@@ -421,60 +317,60 @@ export default {
     },
     documentClientHeight: {
       get() {
-          return this.$store.state.documentClientHeight;
+        return this.$store.state.documentClientHeight;
       },
     },
     documentClientWidth: {
       get() {
-          return this.$store.state.documentClientWidth;
+        return this.$store.state.documentClientWidth;
       },
     },
     siteContentViewHeight() {
-      var height = this.documentClientHeight - this.otherViewHeight - ( 50 + 36 + 55 + 40 + 47 + 2 );
+      var height = this.documentClientHeight - this.otherViewHeight - (50 + 36 + 55 + 40 + 47 + 2);
       return height;
     },
     sidebarFold: {
       get() {
-          return this.$store.state.sidebarFold;
+        return this.$store.state.sidebarFold;
       },
     }
   },
-  created() {},
+  created() { },
   activated() {
     this.setOtherViewHeight()
     this.setHeaderSearchWidth()
 
     // 防止table刷新错位
-    if(this.$refs.table) {
-        this.$nextTick(()=>{
+    if (this.$refs.table) {
+      this.$nextTick(() => {
         this.$refs.table.doLayout()
-        })
+      })
     }
   },
   methods: {
     // 搜索栏高度设置
     setOtherViewHeight() {
-        setTimeout(() => {
-            if(document.querySelector(".headerTool")) {
-                let h = document.querySelector(".headerTool").getBoundingClientRect().height
-                this.otherViewHeight = Math.ceil(h)
-            }
-        },150)
+      setTimeout(() => {
+        if (document.querySelector(".headerTool")) {
+          let h = document.querySelector(".headerTool").getBoundingClientRect().height
+          this.otherViewHeight = Math.ceil(h)
+        }
+      }, 150)
     },
     // 计算搜索栏宽度能放的formItem个数
     setHeaderSearchWidth(val = false) {
-        setTimeout(() => {
-            let elFormWidth = this.documentClientWidth - (val ? 64 : 230) - 40
-            this.formItemCount = Math.floor(elFormWidth / 300) - 1
-        },150)
+      setTimeout(() => {
+        let elFormWidth = this.documentClientWidth - (val ? 64 : 230) - 40
+        this.formItemCount = Math.floor(elFormWidth / 300) - 1
+      }, 150)
     },
     // 搜索栏收起/展开
     open() {
-        this.isOpen = !this.isOpen
-        // this.resetDataForm()
+      this.isOpen = !this.isOpen
+      // this.resetDataForm()
     },
-    changeTbas(n){
-      this.dataForm={
+    changeTbas(n) {
+      this.dataForm = {
         nickName: "",
         phone: "",
         status: "",
@@ -483,24 +379,24 @@ export default {
       this.diaDataList = [];
       this.total = 0;
       this.page = 1;
-      if(n===2){
+      if (n === 2) {
         this.tableItem = this.columnThree
         this.getUserList(n);
-      }else if(n===4){
+      } else if (n === 4) {
         this.tableItem = this.columnTwo
         this.getUserList(n);
-      }else{
+      } else {
         this.tableItem = this.column
         this.getUserList(n);
       }
     },
-    getUserList(n){
+    getUserList(n) {
       let url;
-      if(n!=4){
+      if (n != 4) {
         url = '/sys/user/page'
         this.dataForm.type = n
         this.dataForm.page = this.page
-      }else{
+      } else {
         delete this.dataForm.type
         url = '/sys/manage/weixinUser/managePage'
       }
@@ -526,7 +422,7 @@ export default {
         });
     },
     // 新增 / 修改
-    addOrUpdateHandle (id) {
+    addOrUpdateHandle(id) {
       this.addOrUpdateVisible = true
       this.$nextTick(() => {
         this.$refs.addOrUpdate.dataForm.id = id
@@ -545,7 +441,7 @@ export default {
       this.page = val;
       this.getUserList(this.diaTbas);
     },
-     // 重置搜索条件
+    // 重置搜索条件
     resetDataForm(n) {
       this.$refs.dataForm.resetFields()
       this.getUserList(n)
@@ -565,7 +461,7 @@ export default {
         });
     },
     forbiddenHandle(type, data) {
-      if(this.diaTbas === 2){
+      if (this.diaTbas === 2) {
         let url = "/sys/anchor/info/updateAnchorStatus";
         this.$http
           .post(url, { disabledFlg: type, id: data.id, phone: data.mobile })
@@ -573,21 +469,21 @@ export default {
             if (res.code == 0) {
               this.$message.success("操作成功");
               this.getUserList(this.diaTbas);
-              if(type===1&&data.liveStatus){
-                this.banLiveConfirm('你的主播账号被禁用',data.liveId)
+              if (type === 1 && data.liveStatus) {
+                this.banLiveConfirm('你的主播账号被禁用', data.liveId)
               }
             } else {
               this.$message.error(res.msg);
             }
-            
+
           })
           .catch((err) => {
             console.log(err);
           });
-      }else{
+      } else {
         let url = type
-        ? "/sys/manage/weixinUser/startUsing"
-        : "/sys/manage/weixinUser/forbiddenUsere";
+          ? "/sys/manage/weixinUser/startUsing"
+          : "/sys/manage/weixinUser/forbiddenUsere";
         this.$http
           .put(url, { userIds: [data.id], assistantStatus: this.diaTbas === 3 ? 1 : 0 })
           .then(({ data: res }) => {
@@ -605,26 +501,50 @@ export default {
     },
     // 禁用，解除用户
     forbidden(row) {
-      //单个操作
-      this.$confirm(
-        `确认[${row.status == 0 ? "解除" : "禁用"}]${row.realName||row.nickName}?`,
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }
-      )
-        .then(() => {
-          if(this.diaTbas===2){
-            this.forbiddenHandle(row.disabledFlg == 0 ? 1 : 0, row);
-          }else{
-            this.forbiddenHandle(row.status == 0 ? 1 : 0, row);
+      if (row.liveId&&row.disabledFlg===0) {
+        //单个操作
+        this.$confirm(
+          `主播正在直播，禁用后该场直播会同步禁用?`,
+          "提示",
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
           }
-        })
-        .catch(() => {
-          this.$message.info("已取消操作");
-        });
+        )
+          .then(() => {
+            if (this.diaTbas === 2) {
+              this.forbiddenHandle(row.disabledFlg == 0 ? 1 : 0, row);
+            } else {
+              this.forbiddenHandle(row.status == 0 ? 1 : 0, row);
+            }
+          })
+          .catch(() => {
+            this.$message.info("已取消操作");
+          });
+      } else {
+        //单个操作
+        this.$confirm(
+          `确认[${row.status == 0 ? "解除" : "禁用"}]${row.realName || row.nickName}?`,
+          "提示",
+          {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+          }
+        )
+          .then(() => {
+            if (this.diaTbas === 2) {
+              this.forbiddenHandle(row.disabledFlg == 0 ? 1 : 0, row);
+            } else {
+              this.forbiddenHandle(row.status == 0 ? 1 : 0, row);
+            }
+          })
+          .catch(() => {
+            this.$message.info("已取消操作");
+          });
+      }
+
     },
 
     resetPassword(id) {
@@ -638,34 +558,35 @@ export default {
           type: "warning",
         }
       )
-      .then(() => {
-        let url = "/sys/user/resetPassword"
-        this.$http
-          .post(url, { id })
-          .then(({ data: res }) => {
-            if (res.code == 0) {
-              this.$message.success("操作成功");
-              this.getUserList(this.diaTbas);
-            } else {
-              this.$message.error(res.msg);
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      })
-      .catch(() => {
-        this.$message.info("已取消操作");
-      });
+        .then(() => {
+          let url = "/sys/user/resetPassword"
+          this.$http
+            .post(url, { id })
+            .then(({ data: res }) => {
+              if (res.code == 0) {
+                this.$message.success("操作成功");
+                this.getUserList(this.diaTbas);
+              } else {
+                this.$message.error(res.msg);
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        })
+        .catch(() => {
+          this.$message.info("已取消操作");
+        });
     },
 
   },
 };
 </script>
 <style scoped lang="scss">
-.user-type-tab{
+.user-type-tab {
   display: flex;
   margin-bottom: 10px;
+
   .diaBoxRight_tabBtns {
     border-width: 0px;
     width: 100px;
@@ -681,6 +602,7 @@ export default {
     -webkit-box-shadow: none;
     box-shadow: none;
   }
+
   .is-active {
     background-color: rgba(64, 158, 255, 1);
     color: #fff;

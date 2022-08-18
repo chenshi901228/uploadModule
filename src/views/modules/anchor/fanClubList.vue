@@ -1,46 +1,19 @@
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-message__sms">
-      <el-form
-        class="headerTool"
-        :inline="true"
-        :model="dataForm"
-        ref="dataForm"
-        size="small"
-        label-width="100px"
-        @keyup.enter.native="getDataList"
-      >
+      <el-form class="headerTool" :inline="true" :model="dataForm" ref="dataForm" size="small" label-width="100px"
+        @keyup.enter.native="getDataList">
         <el-form-item v-if="isOpen || formItemCount >= 1" label="粉丝团名称" prop="title">
-          <el-input
-            style="width: 200px"
-            v-model="dataForm.title"
-            placeholder="粉丝团名称"
-            clearable
-          ></el-input>
+          <el-input style="width: 200px" v-model="dataForm.title" placeholder="粉丝团名称" clearable></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 2" label="主播昵称" prop="username">
-          <el-input
-            style="width: 200px"
-            v-model="dataForm.username"
-            placeholder="主播昵称"
-            clearable
-          ></el-input>
+          <el-input style="width: 200px" v-model="dataForm.username" placeholder="主播昵称" clearable></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 3" label="手机号码" prop="phone">
-          <el-input
-            style="width: 200px"
-            v-model="dataForm.phone"
-            placeholder="手机号码"
-            clearable
-          ></el-input>
+          <el-input style="width: 200px" v-model="dataForm.phone" placeholder="手机号码" clearable></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 4" label="状态" prop="disabledFlg">
-          <el-select
-            style="width: 200px"
-            v-model="dataForm.disabledFlg"
-            clearable
-            placeholder="状态"
-          >
+          <el-select style="width: 200px" v-model="dataForm.disabledFlg" clearable placeholder="状态">
             <el-option value="1" label="禁用"></el-option>
             <el-option value="0" label="正常"></el-option>
           </el-select>
@@ -48,15 +21,9 @@
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">
           <el-form-item>
-            <el-button 
-              type="primary" 
-              icon="el-icon-search" 
-              size="mini"
-              @click="getDataList">{{ $t("query") }}</el-button>
-            <el-button 
-              icon="el-icon-refresh" 
-              size="mini" 
-              @click="resetDataForm()">{{ $t("reset") }}</el-button>
+            <el-button type="primary" icon="el-icon-search" size="mini" @click="getDataList">{{ $t("query") }}
+            </el-button>
+            <el-button icon="el-icon-refresh" size="mini" @click="resetDataForm()">{{ $t("reset") }}</el-button>
             <el-button size="mini" plain @click="open">
               <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
               {{ isOpen ? "收起" : "展开" }}
@@ -84,122 +51,47 @@
           </div>
         </div>
       </el-form>
-      <el-table
-        v-loading="dataListLoading"
-        :data="dataList"
-        :height="siteContentViewHeight"
-        @sort-change="dataListSortChangeHandle"
-        style="width: 100%"
-        ref="table"
-      >
-        <el-table-column
-          prop="title"
-          label="粉丝团名称"
-          header-align="center"
-          align="center"
-          show-overflow-tooltip
-        ></el-table-column>
-        <el-table-column
-          prop="username"
-          label="主播昵称"
-          header-align="center"
-          align="center"
-          width="180"
-          show-overflow-tooltip
-        ></el-table-column>
-        <el-table-column
-          prop="phone"
-          label="手机号码"
-          header-align="center"
-          align="center"
-          show-overflow-tooltip
-        >
+      <el-table v-loading="dataListLoading" :data="dataList" :height="siteContentViewHeight"
+        @sort-change="dataListSortChangeHandle" style="width: 100%" ref="table">
+        <el-table-column prop="title" label="粉丝团名称" header-align="center" align="center" show-overflow-tooltip>
         </el-table-column>
-        <el-table-column
-          prop="fansNum"
-          label="粉丝团成员"
-          header-align="center"
-          align="center"
-          show-overflow-tooltip
-        ></el-table-column>
-        <el-table-column
-          prop="disabledFlg"
-          label="状态"
-          header-align="center"
-          align="center"
-          show-overflow-tooltip
-        >
+        <el-table-column prop="username" label="主播昵称" header-align="center" align="center" width="180"
+          show-overflow-tooltip></el-table-column>
+        <el-table-column prop="phone" label="手机号码" header-align="center" align="center" show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column prop="fansNum" label="粉丝团成员" header-align="center" align="center" show-overflow-tooltip>
+               <template slot-scope="scope">
+            <div>{{ format(Number(scope.row.fansNum)) }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="disabledFlg" label="状态" header-align="center" align="center" show-overflow-tooltip>
           <template slot-scope="scope">
             <div>{{ scope.row.disabledFlg ? "禁用" : "正常" }}</div>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="createDate"
-          label="创建时间"
-          header-align="center"
-          align="center"
-          show-overflow-tooltip
-        ></el-table-column>
-        <el-table-column
-          :label="$t('handle')"
-          fixed="right"
-          header-align="center"
-          align="center"
-          width="180"
-        >
+        <el-table-column prop="createDate" label="创建时间" header-align="center" align="center" show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center" width="180">
           <template slot-scope="scope">
-            <el-button
-              type="text"
-              size="small"
-              icon="el-icon-user"
-              @click="openfansListDIa(scope.row)"
-              >成员列表</el-button
-            >
+            <el-button type="text" size="small" icon="el-icon-user" @click="openfansListDIa(scope.row)">成员列表</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination
-        background
-        :current-page="page"
-        :page-sizes="[10, 20, 50, 100]"
-        :page-size="limit"
-        :total="total"
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="pageSizeChangeHandle"
-        @current-change="pageCurrentChangeHandle"
-      >
+      <el-pagination background :current-page="page" :page-sizes="[10, 20, 50, 100]" :page-size="limit" :total="total"
+        layout="total, sizes, prev, pager, next, jumper" @size-change="pageSizeChangeHandle"
+        @current-change="pageCurrentChangeHandle">
       </el-pagination>
 
       <!-- 粉丝团成员列表-->
-      <el-dialog
-        title="粉丝团成员列表"
-        :visible.sync="dialogVisible_fans"
-        width="1300px"
-        top="20px"
-      >
+      <el-dialog title="粉丝团成员列表" :visible.sync="dialogVisible_fans" width="1300px" top="20px">
         <div style="margin: 10px 0">
-          <el-form
-            :inline="true"
-            :model="dataForm_fans"
-            @keyup.enter.native="queryPost_fans()"
-            ref="dataForm_fans"
-            size="small"
-          >
+          <el-form :inline="true" :model="dataForm_fans" @keyup.enter.native="queryPost_fans()" ref="dataForm_fans"
+            size="small">
             <el-form-item label="用户昵称" prop="userName">
-              <el-input
-                style="width: 200px"
-                v-model="dataForm_fans.userName"
-                placeholder="用户昵称"
-                clearable
-              ></el-input>
+              <el-input style="width: 200px" v-model="dataForm_fans.userName" placeholder="用户昵称" clearable></el-input>
             </el-form-item>
             <el-form-item label="手机号码" prop="phone">
-              <el-input
-                style="width: 200px"
-                v-model="dataForm_fans.phone"
-                placeholder="手机号码"
-                clearable
-              ></el-input>
+              <el-input style="width: 200px" v-model="dataForm_fans.phone" placeholder="手机号码" clearable></el-input>
             </el-form-item>
             <el-form-item label="用户等级" prop="level">
               <el-select @visible-change="getFansLevels" style="width: 200px" v-model="dataForm_fans.level" clearable>
@@ -207,107 +99,49 @@
               </el-select>
             </el-form-item>
             <el-form-item label="粉丝团身份" prop="userType">
-              <el-select
-                style="width: 200px"
-                v-model="dataForm_fans.userType"
-                clearable
-              >
+              <el-select style="width: 200px" v-model="dataForm_fans.userType" clearable>
                 <el-option :value="0" label="普通用户"></el-option>
                 <el-option :value="1" label="助手"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-button
-                size="mini"
-                type="primary"
-                @click="queryPost_fans()"
-                >{{ $t("query") }}</el-button
-              >
-              <el-button
-                size="mini"
-                @click="queryPost_fans_reset"
-                >重置</el-button
-              >
+              <el-button size="mini" type="primary" @click="queryPost_fans()">{{ $t("query") }}</el-button>
+              <el-button size="mini" @click="queryPost_fans_reset">重置</el-button>
             </el-form-item>
           </el-form>
         </div>
         <div style="display: flex; margin: 10px 0 20px">
           <div>粉丝团名称：{{ detailForm.title }}</div>
           <div style="margin: 0 60px">主播昵称：{{ detailForm.username }}</div>
-          <div>成员总数：{{ detailForm.fansNum }}人</div>
+          <div>成员总数：{{ format(Number(detailForm.fansNum)) }}人</div>
         </div>
         <el-table v-loading="loading_fans" :data="dataList_fans" style="width: 100%" height="400px">
-          <el-table-column
-            prop="avatarUrl"
-            label="用户头像"
-            header-align="center"
-            align="center"
-          >
+          <el-table-column prop="avatarUrl" label="用户头像" header-align="center" align="center">
             <template slot-scope="scope">
-              <img
-                :src="scope.row.avatarUrl || require('@/assets/img/default_avatar.png')"
-                alt=""
-                style="width: 60px; height: 60px"
-              />
+              <img :src="scope.row.avatarUrl || require('@/assets/img/default_avatar.png')" alt=""
+                style="width: 60px; height: 60px" />
             </template>
           </el-table-column>
-          <el-table-column
-            prop="userName"
-            label="用户昵称"
-            header-align="center"
-            align="center"
-          ></el-table-column>
-          <el-table-column
-            prop="phone"
-            label="手机号码"
-            header-align="center"
-            align="center"
-          ></el-table-column>
-          <el-table-column
-            prop="intimacyNum"
-            label="亲密度"
-            header-align="center"
-            align="center"
-          ></el-table-column>
-          <el-table-column
-            prop="level"
-            label="用户等级"
-            header-align="center"
-            align="center"
-          ></el-table-column>
-          <el-table-column
-            prop="userType"
-            label="粉丝团身份"
-            header-align="center"
-            align="center"
-          >
+          <el-table-column prop="userName" label="用户昵称" header-align="center" align="center"></el-table-column>
+          <el-table-column prop="phone" label="手机号码" header-align="center" align="center"></el-table-column>
+          <el-table-column prop="intimacyNum" label="亲密度" header-align="center" align="center"></el-table-column>
+          <el-table-column prop="level" label="用户等级" header-align="center" align="center"></el-table-column>
+          <el-table-column prop="userType" label="粉丝团身份" header-align="center" align="center">
             <template slot-scope="scope">
               <div>
                 {{
-                  scope.row.userType === 0
-                    ? "普通用户"
-                    : "助手"
+                    scope.row.userType === 0
+                      ? "普通用户"
+                      : "助手"
                 }}
               </div>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="createDate"
-            label="入团时间"
-            header-align="center"
-            align="center"
-          ></el-table-column>
+          <el-table-column prop="createDate" label="入团时间" header-align="center" align="center"></el-table-column>
         </el-table>
-        <el-pagination
-          background
-          :current-page="page_fans"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="limit_fans"
-          :total="total_fans"
-          layout="total, sizes, prev, pager, next, jumper"
-          @size-change="pageSizeChangeHandle_fans"
-          @current-change="pageCurrentChangeHandle_fans"
-        >
+        <el-pagination background :current-page="page_fans" :page-sizes="[10, 20, 50, 100]" :page-size="limit_fans"
+          :total="total_fans" layout="total, sizes, prev, pager, next, jumper" @size-change="pageSizeChangeHandle_fans"
+          @current-change="pageCurrentChangeHandle_fans">
         </el-pagination>
         <span slot="footer" class="dialog-footer"></span>
       </el-dialog>
@@ -406,11 +240,11 @@ export default {
     },
     // 获取粉丝等级
     getFansLevels(type) {
-      if(!type) return
-      this.$http.get("/sys/sysfanslevel/getLevelList").then(({data: res}) => {
-        if(res.code == 0) {
-          this.fansLevelsOptions = res.data
-        }else {
+      if (!type) return
+      this.$http.get("/sys/sysfanslevel/getLevelList").then(({ data: res }) => {
+        if (res.code == 0) {
+          this.fansLevelsOptions = res.data.sort((a, b) => a - b)
+        } else {
           this.fansLevelsOptions = []
           return this.$message.error(res.msg)
         }
@@ -435,10 +269,30 @@ export default {
       this.page_fans = val;
       this.queryPost_fans();
     },
+    // 当金额大于10000时，在作展示的时候，需要加千分位逗号，就是每隔1000要用逗号分隔；
+    format (n) {
+      let num = n.toString()
+      let decimals = ''
+      // 判断是否有小数
+      num.indexOf('.') > -1 ? decimals = num.split('.')[1] : decimals
+      let len = num.length
+      if (len <= 3) {
+        return num
+      } else {
+        let temp = ''
+        let remainder = len % 3
+        decimals ? temp = '.' + decimals : temp
+        if (remainder > 0) { // 不是3的整数倍
+          return num.slice(0, remainder) + ',' + num.slice(remainder, len).match(/\d{3}/g).join(',') + temp
+        } else { // 是3的整数倍
+          return num.slice(0, len).match(/\d{3}/g).join(',') + temp
+        }
+      }
+    }
   },
   computed: {
   },
-  created() {},
+  created() { },
   filters: {
     formatDate: function (value) {
       let date = new Date(value);
