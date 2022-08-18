@@ -13,7 +13,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="userName">
           <el-input
             style="width: 200px"
-            placeholder="用户昵称"
+            placeholder="请输入"
             v-model="dataForm.userName"
             clearable
           ></el-input>
@@ -21,7 +21,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
           <el-input
             style="width: 200px"
-            placeholder="手机号码"
+            placeholder="请输入"
             v-model="dataForm.userPhone"
             clearable
           ></el-input>
@@ -29,7 +29,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 3" label="商品名称" prop="productName">
           <el-input
             style="width: 200px"
-            placeholder="商品名称"
+            placeholder="请输入"
             v-model="dataForm.productName"
             clearable
           ></el-input>
@@ -37,7 +37,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 4" label="商品类型" prop="productType">
           <el-select
             style="width: 200px"
-            placeholder="商品类型"
+            placeholder="请选择"
             v-model="dataForm.productType"
             clearable
           >
@@ -49,14 +49,14 @@
           </el-select>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 5" label="退款方式" prop="payType">
-          <el-select style="width: 200px" placeholder="退款方式" v-model="dataForm.payType" clearable>
+          <el-select style="width: 200px" placeholder="请选择" v-model="dataForm.payType" clearable>
             <el-option value="微信" label="微信"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 6" label="关联订单编号" prop="weixinUserProductId">
           <el-input
             style="width: 200px"
-            placeholder="关联订单编号"
+            placeholder="请输入"
             v-model="dataForm.weixinUserProductId"
             clearable
           ></el-input>
@@ -64,7 +64,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 7" label="退款单号" prop="id">
           <el-input
             style="width: 200px"
-            placeholder="退款单号"
+            placeholder="请输入"
             v-model="dataForm.id"
             clearable
           ></el-input>
@@ -73,7 +73,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 8" label="审批节点状态" prop="confirmStatus">
           <el-select
             style="width: 200px"
-            placeholder="审批节点状态"
+            placeholder="请选择"
             v-model="dataForm.confirmStatus"
             clearable
           >
@@ -86,7 +86,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 9" label="审批流程状态" prop="flowStatus">
           <el-select
             style="width: 200px"
-            placeholder="审批流程状态"
+            placeholder="请选择"
             v-model="dataForm.flowStatus"
             clearable
           >
@@ -99,7 +99,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 10" label="退款状态" prop="refundStatus">
           <el-select
             style="width: 200px"
-            placeholder="退款状态"
+            placeholder="请选择"
             v-model="dataForm.refundStatus"
             clearable
           >
@@ -131,12 +131,12 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button 
+              <!-- <el-button 
                 type="warning"
                 plain
                 icon="el-icon-download" 
                 size="mini"
-                @click="exportHandle">{{ $t("export") }}</el-button>
+                @click="exportHandle">{{ $t("export") }}</el-button> -->
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">

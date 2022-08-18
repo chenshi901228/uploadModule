@@ -10,7 +10,7 @@
         </div> -->
       <div style="color:#ccc">
         <span style="color:#000">验证类型：</span>
-        {{ diaForm.updateType==1?'主播申请':diaForm.updateType==2?'银行卡信息审批':'-' }}
+        {{ diaForm.updateType==1?'主播申请':diaForm.updateType==2?'账户信息':'-' }}
       </div>
       <div class="info_type">
         <div class="type_title">
@@ -105,7 +105,7 @@
           </div>
           <div>
             <span>营业执照</span>
-            {{diaForm.companyBusinessLicense||'-'}}
+            <img style="max-width:200px;max-height:200px" :src="diaForm.companyBusinessLicense" alt="">
           </div>
         </div>
       </div>
@@ -204,7 +204,9 @@ export default {
   data() {
     return {
       userId: "",
-      diaForm: {},
+      diaForm: {
+        remark:''
+      },
       mixinViewModuleOptions: {
         createdIsNeed: false, // 此页面是否在创建时，调用查询数据列表接口？
       },
@@ -214,6 +216,7 @@ export default {
     this.$http.get(`/sys/anchor/applyInfo/${this.$route.query.id}`).then(res=>{
       if(res.data.code===0){
         this.diaForm = res.data.data
+        this.diaForm.remark = res.data.data.remark||''
       }
     })
   },

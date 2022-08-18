@@ -28,7 +28,7 @@
         <el-input
           maxlength="10"
           v-model="dataForm.level"
-          placeholder="等级"
+          placeholder="请输入"
           :disabled="dataForm.id ? true : false"
           :oninput="(dataForm.level = dataForm.level.toString().replace(/[^0-9.]/g, ''))"
         ></el-input>
@@ -37,7 +37,7 @@
         <el-input
           maxlength="6"
           v-model="dataForm.levelName"
-          placeholder="等级名称"
+          placeholder="请输入"
           :disabled="dataForm.id ? true : false"
         ></el-input>
       </el-form-item>
@@ -45,7 +45,7 @@
         <el-input
           maxlength="10"
           v-model="dataForm.intimacyNum"
-          placeholder="亲密值要求"
+          placeholder="请输入"
           :oninput="(dataForm.intimacyNum = dataForm.intimacyNum.replace(/[^0-9.]/g, ''))"
         ></el-input>
 
@@ -151,7 +151,7 @@ export default {
     },
     // 表单提交
     dataFormSubmitHandle(formName) {
-      if(this.dataForm.intimacyNum.includes(".")) return this.$message.error("输入的内容有误")
+      if(this.dataForm.intimacyNum.includes(".") || this.dataForm.level.includes(".")) return this.$message.error("输入的内容有误,等级或亲密度值为正整数")
       this.$refs[formName].validate((valid) => {
         if (valid) {
           this.$http[!this.dataForm.id ? "post" : "put"](

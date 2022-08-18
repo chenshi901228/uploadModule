@@ -30,8 +30,8 @@
             </div>
           </div>
           <div style="width:50%;display: inline-block;margin: 20px 0 0;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">主播简介</div>
-            <div>
+            <div style="color:#A8AAB3;margin-bottom: 10px;">主播简介</div>
+            <div style="max-height:120px;overflow:auto;">
               {{ anchorDetails.introduce || '-' }}
             </div>
           </div>
@@ -259,6 +259,12 @@
           </el-form-item>
           <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
             <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.anchorName" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="推荐状态" v-if="diaTbas === 6" prop="delFlg">
+            <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.delFlg" clearable>
+              <el-option :value="0" label="已推荐"></el-option>
+              <el-option :value="1" label="未推荐"></el-option>
+            </el-select>
           </el-form-item>
           <el-form-item label="商品类型" v-if="diaTbas === 5" prop="productType">
             <el-select @visible-change="getProductType" style="width: 180px" v-model="diaSearchForm.productType"
@@ -829,7 +835,7 @@ export default {
         payStatus: "",
         date: "",
         code: "",
-        withdrawStatus: ""
+        withdrawStatus: "",
       },
       productForm: {
         productName: "",
@@ -972,6 +978,7 @@ export default {
       let data = {};
       data.id = this.changeUserTypeData.id;
       data.weixinUserId = this.changeUserTypeData.weixinUserId;
+      data.anchorId = this.userId
       if (this.userType === 0) {
         this.$refs.powerform.validate((valid) => {
           if (valid) {
@@ -1107,6 +1114,8 @@ export default {
               approveStatus: "",
               payStatus: "",
               date: "",
+              code:"",
+              withdrawStatus:""
             };
             this.page_dia = 1; // 当前页码
             this.diaDataList = [];
@@ -1141,6 +1150,8 @@ export default {
         approveStatus: "",
         payStatus: "",
         date: "",
+        code:"",
+        withdrawStatus:""
       };
       this.diaDataList = [];
       this.total_dia = 0;
@@ -1245,9 +1256,11 @@ export default {
             limit: this.limit_dia,
             page: this.page_dia,
             anchorId: this.userId,
+            code:this.diaSearchForm.code,
             bankAccount: this.diaSearchForm.bankAccount,
-            approveStatus: this.diaSearchForm.approveStatus,
-            payStatus: this.diaSearchForm.payStatus,
+            withdrawStatus: this.diaSearchForm.withdrawStatus,
+            // approveStatus: this.diaSearchForm.approveStatus,
+            // payStatus: this.diaSearchForm.payStatus,
             startDate: this.diaSearchForm.date && this.diaSearchForm.date[0] || '',
             endDate: this.diaSearchForm.date && this.diaSearchForm.date[1] || '',
           };
@@ -1296,7 +1309,7 @@ export default {
             anchorId: this.userId,
             phone: this.diaSearchForm.phone,
             anchorName: this.diaSearchForm.anchorName,
-            // delFlg: this.diaSearchForm.delFlg,
+            delFlg: this.diaSearchForm.delFlg,
           };
           url = "/sys/manage/anchor/recommend/listWithAnchorId";
           break;

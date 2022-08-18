@@ -15,7 +15,7 @@
             style="width: 200px"
             v-model="dataForm.userName"
             clearable
-            placeholder="用户昵称"
+            placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
@@ -23,7 +23,7 @@
             style="width: 200px"
             v-model="dataForm.userPhone"
             clearable
-            placeholder="手机号码"
+            placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 3" label="商品类型" prop="productType">
@@ -31,7 +31,7 @@
             @visible-change="getProductType" 
             style="width: 200px" 
             v-model="dataForm.productType" 
-            placeholder="商品类型"
+            placeholder="请选择"
             clearable>
               <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType" :label="item.productType"></el-option>
           </el-select>
@@ -41,7 +41,7 @@
             style="width: 200px"
             v-model="dataForm.productName"
             clearable
-            placeholder="商品名称"
+            placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 5" label="关联订单编号" prop="weixinUserProductId">
@@ -49,7 +49,7 @@
             style="width: 200px"
             v-model="dataForm.weixinUserProductId"
             clearable
-            placeholder="关联订单编号"
+            placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item v-if="isOpen || formItemCount >= 6" label="审批节点状态" prop="approveStatus">
@@ -96,12 +96,12 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button 
+              <!-- <el-button 
                 type="warning"
                 plain
                 icon="el-icon-download" 
                 size="mini"
-                @click="exportHandle">{{ $t("export") }}</el-button>
+                @click="exportHandle">{{ $t("export") }}</el-button> -->
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
@@ -229,7 +229,7 @@
           show-overflow-tooltip
         >
           <template slot-scope="{ row }">
-            <span>{{row.productTypeNum != 2 ? "仅退款" : "退货退款"}}</span>
+            <span>{{row.productTypeNum != 2 ? "仅退款" : row.productTypeNum == 2 && row.useStatus == 0 ? "仅退款" : "退货退款"}}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -466,6 +466,7 @@ export default {
       this.refundReason = refundReason
       this.id = id;
       this.dialogFormVisible = true;
+      this.ruleForm.desc = '';
     },
     showDialogWithRemark(refundReason,remark) {
       this.refundReason = refundReason;

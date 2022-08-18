@@ -13,7 +13,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 1" label="真实姓名" prop="realName">
           <el-input
             style="width: 200px"
-            placeholder="真实姓名"
+            placeholder="请输入"
             v-model="dataForm.realName"
             clearable
           ></el-input>
@@ -21,7 +21,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 3" label="手机号码" prop="phone">
           <el-input
             style="width: 200px"
-            placeholder="手机号码"
+            placeholder="请输入"
             v-model="dataForm.phone"
             clearable
           ></el-input>
@@ -29,7 +29,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 2" label="主播昵称" prop="username">
           <el-input
             style="width: 200px"
-            placeholder="主播昵称"
+            placeholder="请输入"
             v-model="dataForm.username"
             clearable
           ></el-input>
@@ -45,10 +45,10 @@
         <el-form-item v-if="isOpen || formItemCount >= 5" label="更改类型" prop="updateType">
           <el-select 
             style="width: 200px"
-            placeholder="请选择更改类型" 
+            placeholder="请选择" 
             v-model="dataForm.updateType" 
             clearable>
-            <el-option :value="1" label="全量修改"></el-option>
+            <el-option :value="1" label="全部"></el-option>
             <el-option :value="2" label="修改名称"></el-option>
             <el-option :value="3" label="修改简介"></el-option>
             <el-option :value="4" label="修改头像"></el-option>
@@ -236,7 +236,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span v-if="scope.row.updateType === 1">全量修改</span>
+            <span v-if="scope.row.updateType === 1">全部</span>
             <span v-else-if="scope.row.updateType === 2">修改名称</span>
             <span v-else-if="scope.row.updateType === 3">修改简介</span>
             <span v-else-if="scope.row.updateType === 4">修改头像</span>

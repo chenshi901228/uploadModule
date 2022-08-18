@@ -19,7 +19,7 @@
           style="width: 200px"
             v-model.trim="dataForm.name"
             clearable
-            placeholder="礼物名称"
+            placeholder="请输入"
           ></el-input>
           <!-- <el-select
                 style="width:100%"
@@ -98,14 +98,14 @@
               >
             </el-form-item>
             <el-form-item>
-              <el-button
+              <!-- <el-button
                 type="warning"
                 plain
                 icon="el-icon-download"
                 size="mini"
                 @click="exportHandle"
                 >{{ $t("export") }}</el-button
-              >
+              > -->
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
@@ -259,10 +259,10 @@
             <el-button
               v-if="scope.row.delFlg === 0 && scope.row.status !== 1"
               type="text"
-              icon="el-icon-refresh-right"
+              icon="el-icon-edit"
               size="small"
               @click="addOrUpdateHandle(scope.row.id)"
-              >{{ $t("update") }}</el-button
+              >编辑</el-button
             >
             <el-button
               icon="el-icon-top"

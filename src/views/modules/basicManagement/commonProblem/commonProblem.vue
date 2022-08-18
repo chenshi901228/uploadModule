@@ -66,7 +66,7 @@
                 type="danger"
                 size="mini"
                 icon="el-icon-delete"
-                @click="deleteProblem"
+                @click="deleteProblem()"
                 >批量删除</el-button
               >
             </el-form-item>
@@ -81,14 +81,14 @@
               >
             </el-form-item>
             <el-form-item>
-              <el-button
+              <!-- <el-button
                 size="mini"
                 type="warning"
                 plain
                 icon="el-icon-download"
                 @click="exportHandle"
                 >{{ $t("export") }}</el-button
-              >
+              > -->
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
@@ -141,16 +141,19 @@
           <template slot-scope="{ row }">
             <!-- 序号 -->
             <div v-if="item.prop == 'num'">
-              <el-input
+              <el-input-number 
                 v-if="sortId === row.id && sortId !== ''"
                 size="mini"
                 v-model="sortVal"
                 placeholder="请输入"
                 @blur="sortId = ''"
+                :min="0"
+                :precision="0"
+                 :controls="false"
+                :max="9999"
                 :id="'input' + row.id"
                 @keyup.enter.native="userSelect"
-                type="number"
-              ></el-input>
+              ></el-input-number>
               <span v-else>
                 {{ row.num || "--" }}
               </span>

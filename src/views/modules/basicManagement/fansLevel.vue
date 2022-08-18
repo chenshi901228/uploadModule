@@ -16,7 +16,7 @@
           prop="level"
           v-if="isOpen || formItemCount >= 1"
         >
-          <el-select placeholder="等级" @visible-change="getFansLevels" style="width: 200px" v-model="dataForm.level" clearable>
+          <el-select placeholder="请选择" @visible-change="getFansLevels" style="width: 200px" v-model="dataForm.level" clearable>
             <el-option v-for="item in fansLevelsOptions" :key="item" :value="item" :label="item"></el-option>
           </el-select>
         </el-form-item>
@@ -25,7 +25,7 @@
           prop="levelName"
           v-if="isOpen || formItemCount >= 2"
         >
-          <el-input placeholder="等级名称" style="width: 200px" clearable v-model="dataForm.levelName">
+          <el-input placeholder="请输入" style="width: 200px" clearable v-model="dataForm.levelName">
           </el-input>
         </el-form-item>
         <div class="headerTool-search-btns">
@@ -66,14 +66,14 @@
               >
             </el-form-item>
             <el-form-item>
-              <el-button
+              <!-- <el-button
                 type="warning"
                 plain
                 icon="el-icon-download"
                 size="mini"
                 @click="exportHandle"
                 >{{ $t("export") }}</el-button
-              >
+              > -->
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
@@ -158,7 +158,7 @@
               type="text"
               size="small"
               @click="addOrUpdateHandle(scope.row.id)"
-              >{{ $t("update") }}</el-button
+              >编辑</el-button
             >
           </template>
         </el-table-column>

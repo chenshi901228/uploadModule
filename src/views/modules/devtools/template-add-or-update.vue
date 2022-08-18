@@ -5,19 +5,19 @@
       <el-row :gutter="24">
         <el-col :span="12">
           <el-form-item label="模板名" prop="name">
-            <el-input v-model="dataForm.name" placeholder="模板名"></el-input>
+            <el-input v-model="dataForm.name" placeholder="请输入"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="文件名" prop="fileName">
-            <el-input v-model="dataForm.fileName" placeholder="文件名"></el-input>
+            <el-input v-model="dataForm.fileName" placeholder="请输入"></el-input>
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="24">
         <el-col :span="12">
           <el-form-item label="生成路径" prop="path">
-            <el-input v-model="dataForm.path" placeholder="生成路径"></el-input>
+            <el-input v-model="dataForm.path" placeholder="请输入"></el-input>
           </el-form-item>
         </el-col>
         <el-col :span="12">

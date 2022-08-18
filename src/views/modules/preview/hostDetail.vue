@@ -110,7 +110,7 @@
         >
           <el-form-item label="收益类型" v-if="diaTbas === 1" prop="type">
             <el-select
-              placeholder="收益类型"
+              placeholder="请选择"
               style="width: 180px"
               v-model="diaSearchForm.type"
               clearable
@@ -122,7 +122,7 @@
           </el-form-item>
           <el-form-item label="结算时间" v-if="diaTbas === 1" prop="date">
             <el-date-picker
-              placeholder="结算时间"
+              placeholder="请选择"
               v-model="diaSearchForm.date"
               type="datetimerange"
               range-separator="至"
@@ -139,14 +139,14 @@
           >
             <el-input
               style="width: 180px"
-              placeholder="银行账户"
+              placeholder="请输入"
               v-model="diaSearchForm.bankAccount"
               clearable
             ></el-input>
           </el-form-item>
           <el-form-item label="提现时间" v-if="diaTbas === 2" prop="date">
             <el-date-picker
-              placeholder="提现时间"
+              placeholder="请选择"
               v-model="diaSearchForm.date"
               type="datetimerange"
               range-separator="至"
@@ -162,7 +162,7 @@
             prop="approveStatus"
           >
             <el-select
-              placeholder="审批状态"
+              placeholder="请选择"
               style="width: 180px"
               v-model="diaSearchForm.approveStatus"
               clearable
@@ -174,7 +174,7 @@
           </el-form-item>
           <el-form-item label="支付状态" v-if="diaTbas === 2" prop="payStatus">
             <el-select
-              placeholder="支付状态"
+              placeholder="请选择"
               style="width: 180px"
               v-model="diaSearchForm.payStatus"
               clearable
@@ -190,7 +190,7 @@
             prop="userName"
           >
             <el-input
-              placeholder="用户昵称"
+              placeholder="请输入"
               style="width: 180px"
               v-model="diaSearchForm.userName"
               clearable
@@ -202,7 +202,7 @@
             prop="productName"
           >
             <el-input
-              placeholder="商品名称"
+              placeholder="请输入"
               style="width: 180px"
               v-model="diaSearchForm.productName"
               clearable
@@ -214,7 +214,7 @@
             prop="phone"
           >
             <el-input
-              placeholder="手机号码"
+              placeholder="请输入"
               style="width: 180px"
               v-model="diaSearchForm.phone"
               clearable
@@ -237,7 +237,7 @@
           </el-form-item>
           <el-form-item label="粉丝团身份" v-if="diaTbas === 4" prop="userType">
             <el-select
-              placeholder="粉丝团身份"
+              placeholder="请选择"
               style="width: 180px"
               v-model="diaSearchForm.userType"
               clearable
@@ -249,7 +249,7 @@
           </el-form-item>
           <el-form-item label="状态" v-if="diaTbas === 4" prop="delFlg">
             <el-select
-              placeholder="状态"
+              placeholder="请选择"
               style="width: 180px"
               v-model="diaSearchForm.delFlg"
               clearable
@@ -260,7 +260,7 @@
           </el-form-item>
           <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
             <el-input
-              placeholder="主播昵称"
+              placeholder="请输入"
               style="width: 180px"
               v-model="diaSearchForm.anchorName"
               clearable
@@ -275,7 +275,7 @@
               @visible-change="getProductType"
               style="width: 180px"
               v-model="diaSearchForm.productType"
-              placeholder="商品类型"
+              placeholder="请选择"
               clearable
             >
               <el-option
@@ -288,7 +288,7 @@
           </el-form-item>
           <el-form-item label="是否免费" v-if="diaTbas === 5" prop="isFree">
             <el-select
-              placeholder="是否免费"
+              placeholder="请选择"
               style="width: 180px"
               v-model="diaSearchForm.isFree"
               clearable
@@ -681,7 +681,7 @@
             @visible-change="getProductType"
             style="width: 200px"
             v-model="productForm.productType"
-            placeholder="商品类型"
+            placeholder="请选择"
             clearable
           >
             <el-option
@@ -1061,14 +1061,14 @@
           <el-autocomplete
             v-model="bankForm.depositBank"
             :fetch-suggestions="querySearchAsync"
-            placeholder="开户银行"
+            placeholder="请选择"
             @select="handleSelect"
           ></el-autocomplete>
         </el-form-item>
         <el-form-item label="支行名称">
           <el-input
             v-model="bankForm.branchName"
-            placeholder="支行名称"
+            placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item label="开户行所在地" prop="address">
@@ -1087,13 +1087,13 @@
         <el-form-item label="账户名称" prop="accountName">
           <el-input
             v-model="bankForm.accountName"
-            placeholder="账户名称"
+            placeholder="请输入"
           ></el-input>
         </el-form-item>
         <el-form-item label="银行账户" prop="bankAccount">
           <el-input
             v-model="bankForm.bankAccount"
-            placeholder="银行账户"
+            placeholder="请输入"
           ></el-input>
         </el-form-item>
       </el-form>

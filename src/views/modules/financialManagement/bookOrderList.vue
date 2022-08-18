@@ -46,10 +46,10 @@
             clearable
             placeholder="请选择"
           >
-            <el-option value="专业课" label="专业课"></el-option>
+            <!-- <el-option value="专业课" label="专业课"></el-option>
             <el-option value="服务课" label="服务课"></el-option>
             <el-option value="线下课" label="线下课"></el-option>
-            <el-option value="权益卡" label="权益卡"></el-option>
+            <el-option value="权益卡" label="权益卡"></el-option> -->
             <el-option value="书籍" label="书籍"></el-option>
           </el-select>
         </el-form-item>
@@ -117,12 +117,12 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button 
+              <!-- <el-button 
                 type="warning"
                 plain
                 icon="el-icon-download" 
                 size="mini"
-                @click="exportHandle">{{ $t("export") }}</el-button>
+                @click="exportHandle">{{ $t("export") }}</el-button> -->
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
@@ -194,7 +194,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="price"
+          prop="num"
           label="商品数量"
           header-align="center"
           show-overflow-tooltip
@@ -210,7 +210,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="payPrice"
+          prop="freight"
           label="运费"
           header-align="center"
           show-overflow-tooltip
@@ -244,7 +244,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="statusStr"
+          prop="courierNumber"
           label="快递单号"
           header-align="center"
           align="center"
@@ -260,7 +260,7 @@
         >
         </el-table-column>
         <el-table-column
-          prop="statusStr"
+          prop="logisticsStatus"
           label="物流状态"
           header-align="center"
           align="center"
@@ -309,7 +309,7 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/finance/user/product/userOrderPage",
+        getDataListURL: "/sys/finance/user/product/userOrderBooksPage",
         getDataListIsPage: true,
         deleteIsBatch: true,
         exportURL: "/sys/finance/user/product/userOrderExport",

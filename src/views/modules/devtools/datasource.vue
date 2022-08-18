@@ -11,10 +11,10 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="连接名" prop="connName">
-              <el-input size="small" v-model="dataForm.connName" placeholder="连接名" clearable></el-input>
+              <el-input size="small" v-model="dataForm.connName" placeholder="请输入" clearable></el-input>
             </el-form-item>
             <el-form-item label="数据库类型" prop="dbType">
-              <el-select size="small" v-model="dataForm.dbType" clearable placeholder="数据库类型" class="w-percent-100">
+              <el-select size="small" v-model="dataForm.dbType" clearable placeholder="请选择" class="w-percent-100">
                 <el-option value="MySQL" label="MySQL"></el-option>
                 <el-option value="Oracle" label="Oracle"></el-option>
                 <el-option value="SQLServer" label="SQLServer"></el-option>

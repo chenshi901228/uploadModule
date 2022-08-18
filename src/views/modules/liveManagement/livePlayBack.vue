@@ -110,12 +110,12 @@
                 icon="el-icon-plus"
                 type="primary"
                 @click="addOrUpdateHandle()">{{ $t("add") }}</el-button> -->
-              <el-button 
+              <!-- <el-button 
                 type="warning"
                 plain
                 icon="el-icon-download" 
                 size="mini"
-                @click="exportHandle">{{ $t("export") }}</el-button>
+                @click="exportHandle">{{ $t("export") }}</el-button> -->
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">

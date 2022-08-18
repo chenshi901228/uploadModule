@@ -19,7 +19,7 @@
                     <el-input
                         style="width: 200px"
                         v-model.trim="dataForm.liveTheme"
-                        placeholder="直播主题"
+                        placeholder="请输入"
                         clearable
                     >
                     </el-input>
@@ -30,7 +30,7 @@
                     <el-input
                         style="width: 200px"
                         v-model.trim="dataForm.anchorUser"
-                        placeholder="主播"
+                        placeholder="请输入"
                         clearable
                     >
                     </el-input>

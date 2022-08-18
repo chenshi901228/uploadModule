@@ -13,7 +13,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 1" label="真实姓名" prop="realName">
           <el-input
             style="width: 200px"
-            placeholder="真实姓名"
+            placeholder="请输入"
             v-model="dataForm.realName"
             clearable
           ></el-input>
@@ -21,7 +21,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="phone">
           <el-input
             style="width: 200px"
-            placeholder="手机号码"
+            placeholder="请输入"
             v-model="dataForm.phone"
             clearable
           ></el-input>
@@ -29,7 +29,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 3" label="身份证号" prop="idCard">
           <el-input
             style="width: 200px"
-            placeholder="身份证号"
+            placeholder="请输入"
             v-model="dataForm.idCard"
             clearable
           ></el-input>
@@ -37,7 +37,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 4" label="性别" prop="gender">
           <el-select 
             style="width: 200px"
-            placeholder="性别" 
+            placeholder="请选择" 
             v-model="dataForm.gender" 
             clearable>
             <el-option :value="0" label="男"></el-option>
@@ -70,7 +70,7 @@
             v-model="dataForm.updateType" 
             clearable>
             <el-option :value="1" label="主播申请"></el-option>
-            <el-option :value="2" label="银行卡信息审批"></el-option>
+            <el-option :value="2" label="账户信息"></el-option>
             <!-- <el-option :value="3" label="修改简介"></el-option>
             <el-option :value="4" label="修改头像"></el-option>
             <el-option :value="5" label="主播二维码"></el-option> -->
@@ -109,12 +109,12 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button 
+              <!-- <el-button 
                 type="warning"
                 plain
                 icon="el-icon-download" 
                 size="mini"
-                @click="exportHandle">{{ $t("export") }}</el-button>
+                @click="exportHandle">{{ $t("export") }}</el-button> -->
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
@@ -300,7 +300,7 @@
           width="120"
         >
           <template slot-scope="scope">
-            {{ scope.row.updateType==1?'主播申请':scope.row.updateType==2?'银行卡信息审批':'-' }}
+            {{ scope.row.updateType==1?'主播申请':scope.row.updateType==2?'账户信息':'-' }}
           </template>
         </el-table-column>
         <el-table-column

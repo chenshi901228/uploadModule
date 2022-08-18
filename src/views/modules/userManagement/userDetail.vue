@@ -216,11 +216,11 @@
             </el-select>
           </el-form-item>
           <el-form-item label="关联商品编号" v-if="diaTbas === 3 || diaTbas === 6" prop="linkedProductId">
-            <el-input style="width: 180px" placeholder="关联商品编号" v-model="diaSearchForm.linkedProductId" clearable>
+            <el-input style="width: 180px" placeholder="请输入" v-model="diaSearchForm.linkedProductId" clearable>
             </el-input>
           </el-form-item>
           <el-form-item label="使用状态" v-if="diaTbas === 3" prop="useStatus">
-            <el-select style="width: 180px" placeholder="使用状态" v-model="diaSearchForm.useStatus" clearable>
+            <el-select style="width: 180px" placeholder="请选择" v-model="diaSearchForm.useStatus" clearable>
               <el-option :value="0" label="未使用"></el-option>
               <el-option :value="1" label="已使用"></el-option>
             </el-select>
@@ -403,7 +403,7 @@ export default {
       diaDataList: [],
       dataListLoading: false,
       diaTableTitle: {
-        price: "充值大豆",
+        price: "充值种子",
         amount: "支付金额",
         payType: "支付方式",
         paySource: "充值来源",
@@ -468,7 +468,7 @@ export default {
       switch (n) {
         case 1:
           this.diaTableTitle = {
-            price: "充值大豆",
+            price: "充值种子",
             amount: "支付金额",
             payType: "支付方式",
             paySource: "充值来源",

@@ -11,7 +11,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="模板名" prop="name">
-              <el-input size="small" v-model="dataForm.name" placeholder="模板名" clearable></el-input>
+              <el-input size="small" v-model="dataForm.name" placeholder="请输入" clearable></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">

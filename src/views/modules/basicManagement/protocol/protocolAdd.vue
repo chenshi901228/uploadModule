@@ -15,7 +15,7 @@
                         <el-input
                             style="width: 400px"
                             v-model.trim="dataForm.name"
-                            placeholder="协议名称"
+                            placeholder="请输入"
                             show-word-limit
                             :maxlength="20"
                             clearable
@@ -28,7 +28,7 @@
                         <el-input
                             style="width: 400px"
                             v-model.trim="dataForm.title"
-                            placeholder="协议标题"
+                            placeholder="请输入"
                             show-word-limit
                             :maxlength="20"
                             clearable
@@ -41,7 +41,7 @@
                         <el-input
                             style="width: 400px"
                             v-model.trim="dataForm.consultativeKey"
-                            placeholder="协议key"
+                            placeholder="请输入"
                             :maxlength="50"
                             show-word-limit
                             clearable

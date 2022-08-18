@@ -37,29 +37,11 @@
           </div>
         </div>
         <div class="live_content_bottom">
-          <div class="charts_title_box">
-            <div class="charts_title">
-              <div class="title">带货分析</div>
-              <div>
-                <div>带货数量</div>
-                <div>带货收入</div>
-              </div>
-            </div>
-            <div id="cargo_analysis">
-
-            </div>
+          <div class="">
+            <div id="cargo_analysis"></div>
           </div>
-          <div class="charts_title_box">
-            <div class="charts_title">
-              <div class="title">打赏分析</div>
-              <div>
-                <div>礼物数量</div>
-                <div>打赏收入</div>
-              </div>
-            </div>
-            <div id="reward_analysis">
-
-            </div>
+          <div>
+            <div id="reward_analysis"></div>
           </div>
         </div>
       </div>
@@ -121,7 +103,13 @@ export default {
       liveTrendsY:[],
       cumulativeNum:0,
       videoUrl:"",
-      isLive:true
+      isLive:true,
+      rewardGiftName:[],//打赏礼物
+      giftNum:[],//礼物数量
+      giftPrice:[],//礼物价格
+      commerceName:[],//课名称
+      commerceNum:[],//礼物数量
+      commercePrice:[]//礼物价格
     }
   },
   created(){
@@ -150,13 +138,25 @@ export default {
     getCommerceIncome(){ //带货分析
       this.$http.get(`/sys/liveListSupervisory/getCommerceIncome/${this.$route.query.id}`).then(({data:res})=>{
         if(!res.code==0) return this.$message.error(res.msg)
-        console.log(res)
+        console.log(res.data,'带货分析')
+        res.data.forEach(item=>{
+          this.commerceName.push(item.productName)
+          this.commerceNum.push(item.totalNum)
+          this.commercePrice.push(item.totalPrice)
+        })
+        this.initEchartsTwo()
       })
     },
     getGetReward(){ //打赏分析
       this.$http.get(`/sys/liveListSupervisory/getGetReward/${this.$route.query.id}`).then(({data:res})=>{
         if(!res.code==0) return this.$message.error(res.msg)
-        console.log(res)
+        console.log(res.data,'打赏分析')
+        res.data.forEach(item=>{
+          this.rewardGiftName.push(item.name)
+          this.giftNum.push(item.totalGiftNum)
+          this.giftPrice.push(item.totalPrice)
+        })
+        this.initEchartsThree()
       })
     },
     getliveDetail(){
@@ -165,6 +165,124 @@ export default {
         this.liveDetail = res.data
         this.videoUrl = res.data.liveStream.Data.PlayInfo[0].FLV
       })
+    },
+    initEchartsThree(){
+      var chartDom = document.getElementById('reward_analysis');
+      var myChart = echarts.init(chartDom);
+      var option;
+      option = {
+        tooltip: {
+          trigger: 'axis'
+        },
+        dataZoom: [
+          {
+            type: 'slider',
+            start: 0,
+            end: 20,
+            show:false,
+          },
+          {
+            start: 0,
+            end: 20,
+          }
+        ],
+        title: {
+          left: 'left',
+          text: '打赏分析'
+        },
+        legend: {
+          left: 'right',
+          data: ['礼物数量', '打赏收入']
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: this.rewardGiftName
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            name: '礼物数量',
+            type: 'line',
+            stack: 'Total',
+            data: this.giftNum
+          },
+          {
+            name: '打赏收入',
+            type: 'line',
+            stack: 'Total',
+            data: this.giftPrice
+          },
+        ]
+      };
+      option && myChart.setOption(option);
+    },
+    initEchartsTwo(){
+      var chartDom = document.getElementById('cargo_analysis');
+      var myChart = echarts.init(chartDom);
+      var option;
+      option = {
+        tooltip: {
+          trigger: 'axis'
+        },
+        title: {
+          left: 'left',
+          text: '带货分析'
+        },
+        dataZoom: [
+          {
+            type: 'slider',
+            start: 0,
+            end: 20,
+            show:false,
+          },
+          {
+            start: 0,
+            end: 20,
+          }
+        ],
+        legend: {
+          left: 'right',
+          data: ['带货数量', '带货收入']
+        },
+        grid: {
+          left: '3%',
+          right: '4%',
+          bottom: '3%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'category',
+          boundaryGap: false,
+          data: this.commerceName
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            name: '带货数量',
+            type: 'line',
+            stack: 'Total',
+            data: this.commerceNum
+          },
+          {
+            name: '带货收入',
+            type: 'line',
+            stack: 'Total',
+            data: this.commercePrice
+          },
+        ]
+      };
+      option && myChart.setOption(option);
     },
     initEcharts(){
       var chartDom = document.getElementById('live_trends');
@@ -182,10 +300,7 @@ export default {
           maxInterval:5000
         },
         tooltip: {
-          trigger: 'axis',
-          axisPointer:{
-             axis:'y'
-          }
+          trigger: 'axis'
         },
         dataZoom: [
           {
@@ -201,6 +316,8 @@ export default {
         ],
         series: [
           {
+            name: '在线人数',
+            stack: 'Total',
             data: this.liveTrendsY,
             type: 'line'
           }
@@ -313,7 +430,7 @@ export default {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 0 20px;
+        padding: 0 10px;
         .title{
           font-size: 20px;
           font-weight: bold;
@@ -328,25 +445,14 @@ export default {
     }
   }
   .live_content_bottom{
-    .charts_title_box{
+    >div{
+      padding: 10px;
+    }
+    #cargo_analysis{
       height: 100%;
-      .charts_title{
-        height: 10%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 20px;
-        .title{
-          font-size: 20px;
-          font-weight: bold;
-        }
-        >div:last-child{
-          display: flex;
-        }
-      }
-      #live_trends{
-        height: 90%;
-      }
+    }
+    #reward_analysis{
+      height: 100%;
     }
   }
 

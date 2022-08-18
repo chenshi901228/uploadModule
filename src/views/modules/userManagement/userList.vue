@@ -18,7 +18,7 @@
         >
           <el-input
             style="width: 200px"
-            placeholder="用户昵称"
+            placeholder="请输入"
             v-model="dataForm.nickName"
             clearable
           ></el-input>
@@ -30,7 +30,7 @@
         >
           <el-input
             style="width: 200px"
-            placeholder="手机号码"
+            placeholder="请输入"
             v-model="dataForm.phone"
             clearable
           ></el-input>
@@ -42,7 +42,7 @@
         >
           <el-select
             style="width: 200px"
-            placeholder="是否认证"
+            placeholder="请选择"
             v-model="dataForm.legalizeFlg"
             clearable
           >
@@ -57,7 +57,7 @@
         >
           <el-select
             style="width: 200px"
-            placeholder="是否认证导师"
+            placeholder="请选择"
             v-model="dataForm.tutorFlg"
             clearable
           >
@@ -72,7 +72,7 @@
         >
           <el-input
             style="width: 200px"
-            placeholder="邀请人"
+            placeholder="请输入"
             v-model="dataForm.inviteUserName"
             clearable
           ></el-input>
@@ -84,7 +84,7 @@
         >
           <el-input
             style="width: 200px"
-            placeholder="请选择"
+            placeholder="请输入"
             v-model="dataForm.invitePhone"
             clearable
           ></el-input>
@@ -142,12 +142,12 @@
                 >禁用</el-button
               >
             </el-form-item> -->
-            <el-button 
+            <!-- <el-button 
               type="warning"
               plain
               icon="el-icon-download" 
               size="mini"
-              @click="exportHandle">{{ $t("export") }}</el-button>
+              @click="exportHandle">{{ $t("export") }}</el-button> -->
           </div>
           <div class="headerTool--handle-btns-right">
             <el-form-item>

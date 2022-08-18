@@ -187,8 +187,9 @@
               <el-input
                 placeholder="输入搜索内容"
                 suffix-icon="el-icon-search"
-                v-model="serachUser">
+                v-model="searchUser">
               </el-input>
+              <div class="search_btn" @click="searchUserFun"></div>
               <div
                 class="student_content"
                 v-for="(item, index) in studentList"
@@ -538,10 +539,10 @@
           </div>
           <div class="check_btn">
               <div @click="checkError">
-                {{checkStep===3?'重新检测':'无法看到'}}
+                {{checkStep===3?'重新检测':checkStep===2?'无法听到':'无法看到'}}
               </div>
               <div @click="addStep">
-                {{checkStep===3?'加入直播间':'可以看到'}}
+                {{checkStep===3?'加入直播间':checkStep===2?'无法看到':'可以看到'}}
               </div>
             </div>
         </div>
@@ -555,25 +556,25 @@
       center
       width="60%"
     >
-      <el-descriptions title="直播" column="2">
-        <el-descriptions-item label="直播主题"></el-descriptions-item>
-        <el-descriptions-item label="开播时间"></el-descriptions-item>
-        <el-descriptions-item label="下播时间"></el-descriptions-item>
-        <el-descriptions-item label="直播时长"></el-descriptions-item>
-        <el-descriptions-item label="观看人数"></el-descriptions-item>
-        <el-descriptions-item label="最高在线人数"></el-descriptions-item>
-        <el-descriptions-item label="累计点赞"></el-descriptions-item>
-        <el-descriptions-item label="累计分享"></el-descriptions-item>
-        <el-descriptions-item label="礼物收益"></el-descriptions-item>
-        <el-descriptions-item label="粉丝团收益"></el-descriptions-item>
-        <el-descriptions-item label="带货销售"></el-descriptions-item>
+      <el-descriptions title="直播" :column="2">
+        <el-descriptions-item label="直播主题">{{liveInfo.liveTheme}}</el-descriptions-item>
+        <el-descriptions-item label="开播时间">{{liveInfo.startDate}}</el-descriptions-item>
+        <el-descriptions-item label="下播时间">{{liveInfo.endDate}}</el-descriptions-item>
+        <el-descriptions-item label="直播时长">{{liveInfo.liveTime}}</el-descriptions-item>
+        <el-descriptions-item label="观看人数">{{liveInfo.audienceNum}}</el-descriptions-item>
+        <el-descriptions-item label="最高在线人数">{{liveInfo.maxOnlineNum}}</el-descriptions-item>
+        <el-descriptions-item label="累计点赞">{{liveInfo.giveLikeNum}}</el-descriptions-item>
+        <el-descriptions-item label="累计分享">{{liveInfo.shareNum}}</el-descriptions-item>
+        <el-descriptions-item label="礼物收益">{{liveInfo.rewardMoney}}</el-descriptions-item>
+        <el-descriptions-item label="粉丝团收益">{{liveInfo.unionIncome}}</el-descriptions-item>
+        <el-descriptions-item label="带货销售">{{liveInfo.commerceSale}}</el-descriptions-item>
       </el-descriptions>
-      <el-descriptions title="主播" column="2">
-        <el-descriptions-item label="新增用户"></el-descriptions-item>
-        <el-descriptions-item label="增加粉丝"></el-descriptions-item>
-        <el-descriptions-item label="礼物收入"></el-descriptions-item>
-        <el-descriptions-item label="带货收入"></el-descriptions-item>
-        <el-descriptions-item label="粉丝团收入"></el-descriptions-item>
+      <el-descriptions title="主播" :column="2">
+        <el-descriptions-item label="新增用户">{{liveInfo.addUserNum}}</el-descriptions-item>
+        <el-descriptions-item label="增加粉丝">{{liveInfo.fansNum}}</el-descriptions-item>
+        <el-descriptions-item label="礼物收入">{{liveInfo.rewardMoney}}</el-descriptions-item>
+        <el-descriptions-item label="带货收入">{{liveInfo.commerceIncome}}</el-descriptions-item>
+        <el-descriptions-item label="粉丝团收入">{{liveInfo.unionIncome}}</el-descriptions-item>
       </el-descriptions>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" size="small" @click="confirmQuit">确 定</el-button>
@@ -773,7 +774,7 @@ export default {
       barrage: "",
       questionMessageInfo: [], //提问消息
       studentList: [],//在线用户列表
-      serachUser:"",
+      searchUser:"",
       userInfo: {}, //用户信息
       goodsPushTimer: null, //商品推送定时
       livePredictionTimer: null, //直播预告推送定时
@@ -868,6 +869,7 @@ export default {
       checked:false,//是否开启美颜
       cameraStatus:true,
       microphoneStatus:true,
+      liveInfo:{},//结束直播详情
     };
   },
   created() {
@@ -984,10 +986,6 @@ export default {
               );
             }
           });
-          localStorage.setItem(
-            "connectMessageInfo",
-            JSON.stringify(this.connectMessageInfo)
-          ); //将当前麦上列表存着
           this.$loading().close();
           if (this.roomId != streamItem.streamID) {
             let extraInfo = streamItem.extraInfo;
@@ -1053,12 +1051,6 @@ export default {
             this.liveStatus = true
             this.isRecord = res.data.data.startRecord==1
             this.pauseRecord = res.data.data.pauseRecord==1
-            // let connectMessageInfo = JSON.parse(
-            //   localStorage.getItem("connectMessageInfo")
-            // ); //连麦列表状态
-            // if (connectMessageInfo) {
-            //   this.connectMessageInfo = connectMessageInfo;
-            // }
             this.getTimUserSig()
           }).catch(()=>{
             window.close()
@@ -1587,16 +1579,11 @@ export default {
           })
           .then((res) => {
             if (res.data.success && res.data.msg == "success") {
-              this.$nextTick(() => {
-                // 以服务的方式调用的 Loading 需要异步关闭
-                this.$loading().close();
-              });
               this.$message({ message: "直播已关闭", type: "success" });
               this.liveStatus = false;
-              // localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
               this.tim.logout(); //退出IM
               this.tim.destroy();
-              this.endLiveDialogVisible = true
+              this.getEndLiveInfo()
             } else {
               this.$nextTick(() => {
                 // 以服务的方式调用的 Loading 需要异步关闭
@@ -1609,7 +1596,29 @@ export default {
       }).catch(() => {
         this.$message.info("取消操作")
       })
-
+    },
+    async getEndLiveInfo(){ //结束获取直播详情
+      let {data:res} = await this.$http.get("/sys/liveList/getNearLive")
+      console.log(res)
+      if(res.code == -10099){
+        setTimeout(()=>{
+          this.getEndLiveInfo()
+        },1000)
+        return
+      }
+      if(res.code==0){
+        this.liveInfo = res.data
+        this.endLiveDialogVisible = true
+        this.$nextTick(() => {
+          // 以服务的方式调用的 Loading 需要异步关闭
+          this.$loading().close();
+        });
+      }else{
+        this.$nextTick(() => {
+          // 以服务的方式调用的 Loading 需要异步关闭
+          this.$loading().close();
+        });
+      }
     },
     // 开启美颜
     async openEffect() {
@@ -1751,7 +1760,6 @@ export default {
             this.$alert(item.payload.userDefinedField, '系统提示', {
               confirmButtonText: '确定',
               callback: action => {
-                localStorage.removeItem("connectMessageInfo"); //将直播连麦列表移除
                 this.endLiveTitle = '您因违反规定已被禁播'
                 this.endLiveDialogVisible = true
               }
@@ -1813,10 +1821,6 @@ export default {
                   : this.$message("用户已断开连麦");
                 this.$loading().close();
               }
-              localStorage.setItem(
-                "connectMessageInfo",
-                JSON.stringify(this.connectMessageInfo)
-              ); //将当前麦上列表存着
             }
             if (
               applyInfo.message &&
@@ -1829,10 +1833,6 @@ export default {
                   item.message.connectType = applyInfo.message.connectType;
                 }
               });
-              localStorage.setItem(
-                "connectMessageInfo",
-                JSON.stringify(this.connectMessageInfo)
-              ); //将当前麦上列表存着
             }
           }
         }
@@ -1876,7 +1876,7 @@ export default {
       const text = this.barrage;
       let data = {
         userInfo: this.userInfo, //用户信息
-        // fansInfo,//用户是否为粉丝相关信息
+        fansInfo:{},//用户是否为粉丝相关信息
         message: {
           /**
            * 消息类型:
@@ -1938,11 +1938,15 @@ export default {
       this.barrage = "";
       if (cb) cb();
     },
-    
+    searchUserFun(){
+      this.params.page=1
+      this.studentList = []
+      this.getOnlineUsers()
+    },
     // 获取在线学生
     getOnlineUsers() {
       let obj = {
-        nickName:''
+        nickName:this.searchUser
       }
       let params = {...this.params,...obj}
       this.$http
@@ -2059,6 +2063,8 @@ export default {
         replyUserId: userId,
       };
       if (status === 1) {
+        let arr = this.connectMessageInfo.filter(item=>item.connectStatus)
+        if(arr.length==3) return this.$message.warning("当前连麦人数已达上限")
         //同意
         this.$loading({ background: "rgba(0,0,0,.5)", text: "连接中..." });
         this.sendMessage(messageInfo);
@@ -2067,10 +2073,6 @@ export default {
             item.connectStatus = true;
           }
         });
-        localStorage.setItem(
-          "connectMessageInfo",
-          JSON.stringify(this.connectMessageInfo)
-        ); //将当前麦上列表存着
       } else {
         //拒绝
         if (this.connectMessageInfo.length == 1) {
@@ -2082,10 +2084,6 @@ export default {
           (item) => item.userInfo.userId === userId
         );
         this.connectMessageInfo.splice(ind, 1);
-        localStorage.setItem(
-          "connectMessageInfo",
-          JSON.stringify(this.connectMessageInfo)
-        ); //将当前麦上列表存着
       }
     },
     hangup(info) {
@@ -2101,10 +2099,6 @@ export default {
         (item) => item.userInfo.userId === info.userInfo.userId
       );
       this.connectMessageInfo.splice(ind, 1); //移除挂断的一条连麦信息
-      localStorage.setItem(
-        "connectMessageInfo",
-        JSON.stringify(this.connectMessageInfo)
-      ); //将当前麦上列表存着
     },
     confirmQuit(){//退出直播间，关闭页面
       window.close()
@@ -2120,6 +2114,10 @@ export default {
       this.goodsPushTimer = null;
     }
     // this.stopPublishingStream
+    let arr = this.connectMessageInfo.filter(item=>item.connectStatus)
+    arr.forEach(item=>{
+      this.hangup(item)
+    })
   },
 };
 </script>
@@ -2424,6 +2422,15 @@ p {
               width: 100%;
               height: 100%;
               overflow: auto;
+              position: relative;
+              .search_btn{
+                cursor: pointer;
+                width: 40px;
+                height: 40px;
+                position: absolute;
+                right: 0;
+                top: 0;
+              }
               .el-input__inner{
                 background-color: #44454A;
                 border-radius: 23px;
@@ -3064,13 +3071,15 @@ p {
         }
       }
       .tip{
-        margin-top: 10px;
         font-size: 12px;
         color: #ABABAB;
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-end;
         cursor: pointer;
+        width: 234px;
+        margin: 10px auto 0px;
+        padding-right: 16px;
         .tip_title{
           display: flex;
           align-items: center;
@@ -3087,6 +3096,7 @@ p {
       }
     }
     .check_mike{
+      margin-top: 30px;
       .mic_device{
         >span{
           color: #000;
@@ -3144,7 +3154,7 @@ p {
           background: linear-gradient(90deg, #FA3623 0%, #FE055A 100%)!important;
         }
         .el-slider__button{
-          border:2px solid #FA3623 !important;
+          border:none !important;
           box-shadow: 0px 0px 3px 1px rgba(250,54,35,0.4000);
         }
       }
@@ -3167,13 +3177,15 @@ p {
         }
       }
       .tip{
-        margin-top: 10px;
         font-size: 12px;
         color: #ABABAB;
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-end;
         cursor: pointer;
+        width: 234px;
+        margin: 10px auto 0px;
+        padding-right: 16px;
         .tip_title{
           display: flex;
           align-items: center;
@@ -3190,6 +3202,7 @@ p {
       }
     }
     .check_result{
+      margin-top: 30px;
       .device_result{
         width: 300px;
         height: 45px;

@@ -6,7 +6,7 @@
     :close-on-click-modal="false"
     @close="close"
     :close-on-press-escape="false"
-    width="80%"
+    width="90%"
     top="20px"
   >
     <el-form
@@ -52,14 +52,17 @@
           <el-option :value="0" label="否"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="关联商品编号" prop="linkedProductId">
-        <el-input
-          placeholder="请输入"
+      <!-- <el-form-item label="添加状态" prop="isAdd">
+        <el-select
+          placeholder="请选择"
           style="width: 200px"
+          v-model="dataForm.isAdd"
           clearable
-          v-model="dataForm.linkedProductId"
-        />
-      </el-form-item>
+        >
+          <el-option :value="1" label="已添加"></el-option>
+          <el-option :value="0" label="未添加"></el-option>
+        </el-select>
+      </el-form-item> -->
       <el-form-item>
         <el-button
           type="primary"
@@ -137,6 +140,10 @@
               row.isFree ? "是" : "否"
             }}</el-tag>
           </span>
+          <!-- 是否添加 -->
+          <span v-else-if="item.prop == 'isAdd'">
+            {{row.isAdd ? "已添加" : "未添加"}}
+          </span>
           <span v-else>
             {{ row[item.prop] || "-" }}
           </span>
@@ -149,6 +156,14 @@
         align="center"
       >
         <template slot-scope="{ row }">
+          <el-button
+            icon="el-icon-delete"
+            type="text"
+            size="small"
+            v-if="row._isSelected"
+            @click="deleteSelect(row)"
+            >移除</el-button
+          >
           <el-button
             icon="el-icon-upload2"
             type="text"
@@ -164,14 +179,6 @@
             v-if="!row._isSelected"
             @click="add(row)"
             >添加</el-button
-          >
-          <el-button
-            icon="el-icon-delete"
-            type="text"
-            size="small"
-            v-if="row._isSelected"
-            @click="deleteSelect(row)"
-            >删除</el-button
           >
         </template>
       </el-table-column>
@@ -199,7 +206,7 @@ export default {
         productName: "",
         productType: "",
         isFree: null,
-        linkedProductId: "",
+        isAdd: "",
       },
       allDataList: [], //所有数据集合
       dataList: [], // 数据列表
@@ -216,7 +223,7 @@ export default {
         { prop: "price", label: "销售价格" },
         { prop: "productType", label: "商品类型" },
         { prop: "isFree", label: "是否免费" },
-        { prop: "linkedProductId", label: "关联产品编号" },
+        // { prop: "isAdd", label: "添加状态" },
       ],
       productTypeOptions: [], //商品类型下拉选项
       params: { 

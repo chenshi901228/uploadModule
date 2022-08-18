@@ -17,7 +17,7 @@
         >
           <el-input
             style="width: 200px"
-            placeholder="主播昵称"
+            placeholder="请输入"
             v-model="dataForm.anchorName"
             clearable
           ></el-input>
@@ -29,7 +29,7 @@
         >
           <el-input
             style="width: 200px"
-            placeholder="真实姓名"
+            placeholder="请输入"
             v-model="dataForm.realName"
             clearable
           ></el-input>
@@ -41,7 +41,7 @@
         >
           <el-input
             style="width: 200px"
-            placeholder="手机号码"
+            placeholder="请输入"
             v-model="dataForm.phone"
             clearable
           ></el-input>
@@ -53,7 +53,7 @@
         >
           <el-select
             style="width: 200px"
-            placeholder="账户类型"
+            placeholder="请选择"
             v-model="dataForm.type"
             clearable
           >
@@ -69,7 +69,7 @@
         >
           <el-select
             style="width: 200px"
-            placeholder="提现状态"
+            placeholder="请选择"
             v-model="dataForm.withdrawStatus"
             clearable
           >
@@ -102,7 +102,7 @@
         >
           <el-input
             style="width: 200px"
-            placeholder="提现单号"
+            placeholder="请输入"
             v-model="dataForm.code"
             clearable
           ></el-input>
@@ -136,14 +136,14 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button
+              <!-- <el-button
                 type="warning"
                 plain
                 icon="el-icon-download"
                 size="mini"
                 @click="exportHandle"
                 >{{ $t("export") }}</el-button
-              >
+              > -->
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">

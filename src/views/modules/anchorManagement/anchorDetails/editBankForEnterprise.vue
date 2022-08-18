@@ -29,20 +29,20 @@
                         style="width:400px"
                         v-model="bankForm.depositBank"
                         :fetch-suggestions="querySearchAsync"
-                        placeholder="开户银行"
+                        placeholder="请选择"
                         @select="handleSelect"></el-autocomplete>
                 </el-form-item>
                 <el-form-item label="账户名称" prop="accountName">
                     <el-input
                         style="width:400px"
                         v-model="bankForm.accountName"
-                        placeholder="账户名称"></el-input>
+                        placeholder="请输入"></el-input>
                 </el-form-item>
                 <el-form-item label="银行账户" prop="bankAccount">
                     <el-input
                         style="width:400px"
                         v-model="bankForm.bankAccount"
-                        placeholder="银行账户"></el-input>
+                        placeholder="请输入"></el-input>
                 </el-form-item>
                 <el-form-item style="textAlign:right;width:60%;marginTop:30px;">
                     <el-button size="small" @click="resetForm('bankForm_host')">取消</el-button>

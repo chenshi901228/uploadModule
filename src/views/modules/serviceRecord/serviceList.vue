@@ -20,12 +20,12 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button 
+              <!-- <el-button 
                 type="warning"
                 plain
                 icon="el-icon-download" 
                 size="mini"
-                @click="exportHandle">{{ $t("export") }}</el-button>
+                @click="exportHandle">{{ $t("export") }}</el-button> -->
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
@@ -68,7 +68,12 @@
             header-align="center"
             align="center"
             show-overflow-tooltip
-        ></el-table-column>
+        >
+          <template slot-scope="{ row }">
+            <img v-if="row.msgType=='TIMImageElem'" style="width:70px;height:70px;" :src="row.msgContent" alt="">
+            <span v-else>{{row.msgContent}}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           prop="createDate"
           label="创建时间"
@@ -114,7 +119,10 @@
        <el-descriptions column="1" content-class-name="my-content">
           <el-descriptions-item label="昵称">{{content.sendUserName}}</el-descriptions-item>
           <el-descriptions-item label="手机号码">{{content.sendUserPhone}}</el-descriptions-item>
-          <el-descriptions-item label="聊天内容">{{content.msgContent}}</el-descriptions-item>
+          <el-descriptions-item label="聊天内容">
+            <img v-if="content.msgType=='TIMImageElem'" style="max-width:300px;max-height:300px;" :src="content.msgContent" alt="">
+            <span v-else>{{content.msgContent}}</span>
+          </el-descriptions-item>
         </el-descriptions>
       </el-dialog>
     </div>
