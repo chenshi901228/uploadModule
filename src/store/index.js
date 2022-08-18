@@ -43,7 +43,9 @@ export default new Vuex.Store({
     // 重置vuex本地储存状态
     resetStore (state) {
       Object.keys(state).forEach((key) => {
-        state[key] = cloneDeep(window.SITE_CONFIG['storeState'][key])
+        if(key != "contentTabsActiveName") {
+          state[key] = cloneDeep(window.SITE_CONFIG['storeState'][key])
+        }
       })
     },
     // 更新窗口高度
