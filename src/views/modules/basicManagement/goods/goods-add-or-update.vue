@@ -23,19 +23,17 @@
       </el-form-item>
       <el-form-item label="销售价格：" prop="price">
         ￥&nbsp;
-        <!-- <el-input-number
+        <el-input-number
           v-model="dataForm.price"
           :controls="false"
           :precision="2"
           :min="0"
-        >
-        </el-input-number> -->
-
-        <el-input
-          maxlength="8"
-          v-model="dataForm.price"
           placeholder="请输入"
-        ></el-input>
+          :max="9999999999"
+        >
+        </el-input-number>
+
+  
       </el-form-item>
       <el-form-item label="库存数量：" prop="stock">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
