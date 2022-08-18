@@ -218,7 +218,12 @@
             格式限制：jpg/jpeg/png,建议图片尺寸不小于630px×347px，大小不得超过2M
           </div>
         </el-form-item>
-
+        <el-form-item label="直播动态" prop="trendsOpen">
+          <el-radio-group v-model="ruleForm.trendsOpen">
+            <el-radio :label="1">开启动态</el-radio>
+            <el-radio :label="0">关闭动态</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" size="small" @click="submitForm('ruleForm')"
             >立即修改</el-button
@@ -288,6 +293,7 @@ export default {
         products: "",
         recommendedAnchors: "",
         frontCover: "",
+        trendsOpen:1
       },
       dialogImageUrl: "",
       showDefaultImg: false,
@@ -370,6 +376,7 @@ export default {
       products: "",
       recommendedAnchors: "",
       frontCover: "",
+      trendsOpen:1
     };
     this.dialogImageUrl = "";
     this.showDefaultImg = false;
@@ -395,6 +402,7 @@ export default {
     this.frontCoverListDefault = this.$route.query.detailInfo.frontCover
       ? this.$route.query.detailInfo.frontCover
       : "";
+    this.ruleForm.trendsOpen = this.$route.query.detailInfo.trendsOpen;
   },
   methods: {
     //获取数据
@@ -538,6 +546,7 @@ export default {
             estimateLiveTime: this.ruleForm.estimateLiveTime,
             frontCoverUrl: this.ruleForm.frontCoverUrl,
             liveIntroduce: this.ruleForm.liveIntroduce,
+            trendsOpen: this.ruleForm.trendsOpen
           };
           if (
             this.frontCoverList.length !== 0 &&

@@ -246,7 +246,12 @@
             格式限制：jpg/jpeg/png,建议图片尺寸不小于630px×347px，大小不得超过2M
           </div>
         </el-form-item>
-
+        <el-form-item label="直播动态" prop="trendsOpen">
+          <el-radio-group v-model="ruleForm.trendsOpen">
+            <el-radio :label="1">开启动态</el-radio>
+            <el-radio :label="0">关闭动态</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item>
           <el-button type="primary" size="small" @click="submitForm('ruleForm')"
             >立即修改</el-button
@@ -318,6 +323,7 @@ export default {
         frontCover: "",
         anchorId: "",
         dynamicGroupIds: [],
+        trendsOpen:1
       },
       dialogImageUrl: "",
       showDefaultImg: false,
@@ -372,16 +378,16 @@ export default {
     };
   },
   watch: {
-    "ruleForm.liveTheme"(nv, ov) {
-      if (nv.length > 60) {
-        this.$message.warning("直播主题字数不得超过60字！");
-      }
-    },
-    "ruleForm.liveIntroduce"(nv, ov) {
-      if (nv.length > 2007) {
-        this.$message.warning("直播介绍字数不得超过2000字！");
-      }
-    },
+    // "ruleForm.liveTheme"(nv, ov) {
+    //   if (nv.length > 60) {
+    //     this.$message.warning("直播主题字数不得超过60字！");
+    //   }
+    // },
+    // "ruleForm.liveIntroduce"(nv, ov) {
+    //   if (nv.length > 2007) {
+    //     this.$message.warning("直播介绍字数不得超过2000字！");
+    //   }
+    // },
   },
   activated() {
     this.getPreviewDetail();
@@ -400,6 +406,7 @@ export default {
       frontCover: "",
       anchorId: "",
       dynamicGroupIds: [],
+      trendsOpen:1
     };
     this.dialogImageUrl = "";
     this.showDefaultImg = false;
@@ -430,6 +437,7 @@ export default {
     this.frontCoverListDefault = this.$route.query.detailInfo.frontCover
       ? this.$route.query.detailInfo.frontCover
       : "";
+    this.ruleForm.trendsOpen = this.$route.query.detailInfo.trendsOpen;
   },
   methods: {
     //获取数据
@@ -574,6 +582,7 @@ export default {
             frontCoverUrl: this.ruleForm.frontCoverUrl,
             liveIntroduce: this.ruleForm.liveIntroduce,
             dynamicGroupIds: this.ruleForm.dynamicGroupIds,
+            trendsOpen: this.ruleForm.trendsOpen
           };
           if (
             this.frontCoverList.length !== 0 &&

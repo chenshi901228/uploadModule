@@ -829,7 +829,7 @@ export default {
         payStatus: "",
         date: "",
         code: "",
-        withdrawStatus: ""
+        withdrawStatus: "",
       },
       productForm: {
         productName: "",
@@ -1108,6 +1108,8 @@ export default {
               approveStatus: "",
               payStatus: "",
               date: "",
+              code:"",
+              withdrawStatus:""
             };
             this.page_dia = 1; // 当前页码
             this.diaDataList = [];
@@ -1142,6 +1144,8 @@ export default {
         approveStatus: "",
         payStatus: "",
         date: "",
+        code:"",
+        withdrawStatus:""
       };
       this.diaDataList = [];
       this.total_dia = 0;
@@ -1246,9 +1250,11 @@ export default {
             limit: this.limit_dia,
             page: this.page_dia,
             anchorId: this.userId,
+            code:this.diaSearchForm.code,
             bankAccount: this.diaSearchForm.bankAccount,
-            approveStatus: this.diaSearchForm.approveStatus,
-            payStatus: this.diaSearchForm.payStatus,
+            withdrawStatus: this.diaSearchForm.withdrawStatus,
+            // approveStatus: this.diaSearchForm.approveStatus,
+            // payStatus: this.diaSearchForm.payStatus,
             startDate: this.diaSearchForm.date && this.diaSearchForm.date[0] || '',
             endDate: this.diaSearchForm.date && this.diaSearchForm.date[1] || '',
           };

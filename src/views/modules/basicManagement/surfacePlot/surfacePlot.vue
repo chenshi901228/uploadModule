@@ -116,7 +116,7 @@
       <el-form :model="imgForm" ref="imgForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="上传" prop="img" required>
           <el-upload :action="uploadUrl" list-type="picture-card" :on-preview="handlePictureCardPreview"
-            :on-remove="handleRemove" :on-success="handleSuccess" :on-exceed="handleExceed1" :limit="1" ref="upload"
+            :on-remove="handleRemove" :on-success="handleSuccess" :on-exceed="handleExceed1" :before-upload="beforeUpload" :limit="1" ref="upload"
             :class="imgForm.img.length !== 0 ? 'hide_box' : ''">
             <i class="el-icon-plus"></i>
           </el-upload>
@@ -280,6 +280,24 @@ export default {
     this.query();
   },
   methods: {
+    // 上传前
+    beforeUpload(file) {
+      let type = file.type ? file.type.split("/") : file.name.split(".");
+      type = type[type.length - 1];
+      let fileSize = file.size / 1024 / 1024 < 2;
+      if (!fileSize) {
+        this.$message.error(`上传附件大小不能超过2M!`);
+        return false;
+      }
+      // this.uploadList.push({
+      //   uid: file.uid,
+      //   uploading: true,
+      //   progress: 0,
+      //   type: file.type,
+      //   name: file.name,
+      // });
+      // return true;
+    },
     handleExceed1(file, fileList) {
       if (fileList.length >= 1) {
         this.$message.warning("只能上传一张！");

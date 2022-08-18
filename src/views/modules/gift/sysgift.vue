@@ -259,10 +259,10 @@
             <el-button
               v-if="scope.row.delFlg === 0 && scope.row.status !== 1"
               type="text"
-              icon="el-icon-refresh-right"
+              icon="el-icon-edit"
               size="small"
               @click="addOrUpdateHandle(scope.row.id)"
-              >{{ $t("update") }}</el-button
+              >编辑</el-button
             >
             <el-button
               icon="el-icon-top"
