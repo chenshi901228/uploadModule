@@ -37,7 +37,7 @@ module.exports = {
       warnings: true
     },
     historyApiFallback: {
-      index: './index.html' 
+      index: '/index.html' 
     },
   },
   configureWebpack: {
