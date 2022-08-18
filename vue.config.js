@@ -36,9 +36,6 @@ module.exports = {
       errors: true,
       warnings: true
     },
-    historyApiFallback: {
-      index: '/index.html' 
-    },
   },
   configureWebpack: {
     plugins: [
