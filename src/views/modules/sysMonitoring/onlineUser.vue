@@ -178,7 +178,7 @@ export default {
     },
     methods: {
         // 强退
-        logoutUser({ phone, weixinUserId, phoneModel }) {
+        logoutUser({ phone, weixinUserId, phoneModel, token }) {
             this.$confirm(`确认强退[${phone}]`, "提示", {
                 confirmButtonText: "确定",
                 cancelButtonText: "取消",
@@ -190,7 +190,7 @@ export default {
                         instance.confirmButtonLoading = true;
                         instance.confirmButtonText = '强退中...';
 
-                        this.$http.delete("/sys/monitor/loginUser", { data: {phone, weixinUserId, phoneModel} }).then(({data: res}) => {
+                        this.$http.delete("/sys/monitor/loginUser", { data: {phone, weixinUserId, phoneModel, token} }).then(({data: res}) => {
                             instance.confirmButtonLoading = false;
                             done()
                             if(res.code != 0) return this.$message.error(res.msg)
