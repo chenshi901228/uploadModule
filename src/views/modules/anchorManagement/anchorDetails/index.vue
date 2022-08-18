@@ -260,6 +260,12 @@
           <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
             <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.anchorName" clearable></el-input>
           </el-form-item>
+          <el-form-item label="推荐状态" v-if="diaTbas === 6" prop="delFlg">
+            <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.delFlg" clearable>
+              <el-option :value="0" label="已推荐"></el-option>
+              <el-option :value="1" label="未推荐"></el-option>
+            </el-select>
+          </el-form-item>
           <el-form-item label="商品类型" v-if="diaTbas === 5" prop="productType">
             <el-select @visible-change="getProductType" style="width: 180px" v-model="diaSearchForm.productType"
               placeholder="请选择" clearable>
@@ -1303,7 +1309,7 @@ export default {
             anchorId: this.userId,
             phone: this.diaSearchForm.phone,
             anchorName: this.diaSearchForm.anchorName,
-            // delFlg: this.diaSearchForm.delFlg,
+            delFlg: this.diaSearchForm.delFlg,
           };
           url = "/sys/manage/anchor/recommend/listWithAnchorId";
           break;
