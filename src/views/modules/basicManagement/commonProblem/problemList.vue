@@ -59,7 +59,7 @@
                 type="danger"
                 size="mini"
                 icon="el-icon-delete"
-                @click="deleteProblem"
+                @click="deleteProblem()"
                 >批量删除</el-button
               >
             </el-form-item>
