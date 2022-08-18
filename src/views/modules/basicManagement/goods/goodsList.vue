@@ -56,7 +56,7 @@
               @visible-change="getProductType" 
               style="width: 200px" 
               v-model="dataForm.productType" 
-              placeholder="商品类型"
+              placeholder="请选择"
               clearable>
                 <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType" :label="item.productType"></el-option>
             </el-select>

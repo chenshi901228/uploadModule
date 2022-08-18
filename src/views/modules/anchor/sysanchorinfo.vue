@@ -13,7 +13,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 1" label="真实姓名" prop="realName">
           <el-input
             style="width: 200px"
-            placeholder="真实姓名"
+            placeholder="请输入"
             v-model="dataForm.realName"
             clearable
           ></el-input>
@@ -21,7 +21,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="phone">
           <el-input
             style="width: 200px"
-            placeholder="手机号码"
+            placeholder="请输入"
             v-model="dataForm.phone"
             clearable
           ></el-input>
@@ -29,7 +29,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 3" label="身份证号" prop="idCard">
           <el-input
             style="width: 200px"
-            placeholder="身份证号"
+            placeholder="请输入"
             v-model="dataForm.idCard"
             clearable
           ></el-input>
@@ -37,7 +37,7 @@
         <el-form-item v-if="isOpen || formItemCount >= 4" label="性别" prop="gender">
           <el-select 
             style="width: 200px"
-            placeholder="性别" 
+            placeholder="请选择" 
             v-model="dataForm.gender" 
             clearable>
             <el-option :value="0" label="男"></el-option>

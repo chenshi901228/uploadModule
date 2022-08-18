@@ -34,7 +34,7 @@
         <el-input
           maxlength="8"
           v-model="dataForm.price"
-          placeholder="销售价格"
+          placeholder="请输入"
         ></el-input>
       </el-form-item>
       <el-form-item label="库存数量：" prop="stock">
@@ -44,7 +44,7 @@
           :controls="false"
           :precision="0"
           :min="0"
-          placeholder="库存数量"
+          placeholder="请输入"
           :max="9999999999"
         >
         </el-input-number>
@@ -60,7 +60,7 @@
           :controls="false"
           :precision="0"
           :min="0"
-          placeholder="已购买人数"
+          placeholder="请输入"
 
           :max="9999999999"
         >

@@ -23,7 +23,7 @@
                  <el-input
                     style="width:640px"
                     v-model="anchorDetails.anchorBalance"
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -35,7 +35,7 @@
                   <el-input
                     style="width:640px"
                     v-model="withdrawForm.amount"
-                    placeholder=""
+                    placeholder="请输入"
                     size="small"
                     type="number"
                     :min="0"
@@ -64,7 +64,7 @@
                  <el-input
                     style="width:640px"
                     v-model="anchorDetails.realName"
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -78,7 +78,7 @@
                  <el-input
                     style="width:640px"
                     v-model="anchorDetails.companyCreditCode"
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -89,7 +89,7 @@
                  <el-input
                     style="width:640px"
                     v-model="anchorDetails.idCard"
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -100,7 +100,7 @@
                  <el-input
                     style="width:640px"
                     :value='anchorDetails.userType == 2 ? "企业" : "个人"'
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -111,7 +111,7 @@
                  <el-input
                     style="width:640px"
                     v-model="anchorDetails.depositBank"
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -122,7 +122,7 @@
                  <el-input
                     style="width:640px"
                     v-model="anchorDetails.branchName"
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -133,7 +133,7 @@
                  <el-input
                     style="width:640px"
                     v-model="anchorDetails.accountName"
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -144,7 +144,7 @@
                  <el-input
                     style="width:640px"
                     v-model="anchorDetails.bankAccount"
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -155,7 +155,7 @@
                  <el-input
                     style="width:640px"
                     v-model="anchorDetails.address"
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -188,7 +188,7 @@
                  <el-input
                     style="width:640px"
                     v-model="amount"
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -212,7 +212,7 @@
                  <el-input
                     style="width:640px"
                     v-model="invoiceInfo.name"
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -223,7 +223,7 @@
                  <el-input
                     style="width:640px"
                     v-model="invoiceInfo.taxpayer_identification_number"
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -234,7 +234,7 @@
                  <el-input
                     style="width:640px"
                     v-model="invoiceInfo.address"
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -245,7 +245,7 @@
                  <el-input
                     style="width:640px"
                     :value='invoiceInfo.open_account'
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -271,7 +271,7 @@
                  <el-input
                     style="width:640px"
                     v-model="invoiceAddress.recipient"
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -282,7 +282,7 @@
                  <el-input
                     style="width:640px"
                     v-model="invoiceAddress.phone"
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -293,7 +293,7 @@
                  <el-input
                     style="width:640px"
                     v-model="invoiceAddress.mailing_address"
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >
@@ -304,7 +304,7 @@
                  <el-input
                     style="width:640px"
                     v-model="invoiceAddress.email "
-                    placeholder=""
+                    placeholder="请输入"
                     disabled
                     size="small"
                   >

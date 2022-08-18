@@ -17,7 +17,7 @@
       <el-form-item label="礼物名称" prop="name">
         <el-input
           v-model="dataForm.name"
-          placeholder="礼物名称"
+          placeholder="请输入"
           required
         ></el-input>
       </el-form-item>

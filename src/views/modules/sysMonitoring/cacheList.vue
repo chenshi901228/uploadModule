@@ -100,14 +100,14 @@
                                         readonly
                                         v-model="cacheValue.cacheName"
                                         clearable
-                                        placeholder="缓存名称"></el-input>
+                                        placeholder="请输入"></el-input>
                                 </el-form-item>
                                 <el-form-item label="缓存键名：" prop="cacheKey">
                                     <el-input
                                         readonly
                                         v-model="cacheValue.cacheKey"
                                         clearable
-                                        placeholder="缓存键名"></el-input>
+                                        placeholder="请输入"></el-input>
                                 </el-form-item>
                                 <el-form-item label="缓存内容：" prop="cacheValue">
                                     <el-input
@@ -117,7 +117,7 @@
                                         v-model="cacheValue.cacheValue"
                                         clearable
                                         resize="none"
-                                        placeholder="缓存内容"></el-input>
+                                        placeholder="请输入"></el-input>
                                 </el-form-item>
                             </el-form>
                         </div>

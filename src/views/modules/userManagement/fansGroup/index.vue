@@ -14,7 +14,7 @@
             clearable
             style="width: 200px"
             v-model="groupNameForm.groupName"
-            placeholder="群组名称"
+            placeholder="请输入"
           ></el-input>
         </el-form-item>
         <!-- 搜索重置展开按钮 -->

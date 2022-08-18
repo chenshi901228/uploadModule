@@ -20,7 +20,7 @@
                     <el-input
                         style="width: 200px"
                         v-model.trim="dataForm.name"
-                        placeholder="协议名称"
+                        placeholder="请输入"
                         clearable
                     >
                     </el-input>
@@ -32,7 +32,7 @@
                     <el-input
                         style="width: 200px"
                         v-model.trim="dataForm.title"
-                        placeholder="协议标题"
+                        placeholder="请输入"
                         clearable
                     >
                     </el-input>
