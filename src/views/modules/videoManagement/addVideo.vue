@@ -59,7 +59,7 @@
       <el-form-item label="添加商品" prop="goods">
         <el-input
           style="width: 640px"
-          placeholder="推荐商品"
+          placeholder="请输入"
           @click.native="chooseProduct"
           v-model="dataForm.goods"
           readonly

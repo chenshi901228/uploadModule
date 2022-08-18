@@ -11,10 +11,10 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="字段类型" prop="columnType">
-              <el-input size="small" v-model="dataForm.columnType" placeholder="字段类型" clearable></el-input>
+              <el-input size="small" v-model="dataForm.columnType" placeholder="请输入" clearable></el-input>
             </el-form-item>
             <el-form-item label="属性类型" prop="attrType">
-              <el-input size="small" v-model="dataForm.attrType" placeholder="属性类型" clearable></el-input>
+              <el-input size="small" v-model="dataForm.attrType" placeholder="请输入" clearable></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">

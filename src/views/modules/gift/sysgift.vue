@@ -19,7 +19,7 @@
           style="width: 200px"
             v-model.trim="dataForm.name"
             clearable
-            placeholder="礼物名称"
+            placeholder="请输入"
           ></el-input>
           <!-- <el-select
                 style="width:100%"

@@ -67,7 +67,7 @@
             size="small"
             style="width: 200px"
             v-model="dataForm.dynamicGroupName"
-            placeholder="请选择投放人群"
+            placeholder="请选择"
             :loading="getDynamicGroupLoading"
             @visible-change="getDynamicGroup"
             clearable
@@ -90,7 +90,7 @@
             style="width: 200px"
             size="small"
             v-model.trim="dataForm.livingRoomId"
-            placeholder="请输入直播间ID"
+            placeholder="请输入"
             clearable
           >
           </el-input>

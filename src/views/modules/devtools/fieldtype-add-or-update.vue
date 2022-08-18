@@ -2,13 +2,13 @@
   <el-dialog :visible.sync="visible" :title='!dataForm.id ? "新增" : "编辑"' :close-on-click-modal="false" :close-on-press-escape="false">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
       <el-form-item label="字段类型" prop="columnType">
-        <el-input v-model="dataForm.columnType" placeholder="字段类型"></el-input>
+        <el-input v-model="dataForm.columnType" placeholder="请输入"></el-input>
       </el-form-item>
       <el-form-item label="属性类型" prop="attrType">
-        <el-input v-model="dataForm.attrType" placeholder="属性类型"></el-input>
+        <el-input v-model="dataForm.attrType" placeholder="请输入"></el-input>
       </el-form-item>
       <el-form-item label="属性包名" prop="packageName">
-        <el-input v-model="dataForm.packageName" placeholder="属性包名"></el-input>
+        <el-input v-model="dataForm.packageName" placeholder="请输入"></el-input>
       </el-form-item>
     </el-form>
     <template slot="footer">

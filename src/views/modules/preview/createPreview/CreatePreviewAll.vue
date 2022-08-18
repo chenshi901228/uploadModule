@@ -22,12 +22,12 @@
         <div style="display:flex">
 
           <el-form-item label="预计开播时间" prop="startDate">
-            <el-date-picker style="width: 640px" v-model="ruleForm.startDate" type="datetime" placeholder="预计开播时间"
+            <el-date-picker style="width: 640px" v-model="ruleForm.startDate" type="datetime" placeholder="请选择"
               :picker-options="pickerOptions" :formatter="dateFormat" :editable="false">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="预计时长(分)" prop="estimateLiveTime">
-            <el-input style="width: 640px" placeholder="预计时长" maxlength="4" v-model="ruleForm.estimateLiveTime">
+            <el-input style="width: 640px" placeholder="请输入" maxlength="4" v-model="ruleForm.estimateLiveTime">
             </el-input>
           </el-form-item>
         </div>

@@ -111,7 +111,7 @@
             style="width: 200px"
             :clearable="true"
             v-model="dataForm.appointmentState"
-            placeholder="预约状态"
+            placeholder="请选择"
           >
             <el-option label="已结束" :value="0"></el-option>
             <el-option label="预约中" :value="1"></el-option>
@@ -126,7 +126,7 @@
             style="width: 200px"
             :clearable="true"
             v-model="dataForm.liveState"
-            placeholder="直播状态"
+            placeholder="请选择"
           >
             <el-option label="已下播" :value="0"></el-option>
             <el-option label="直播中" :value="1"></el-option>
@@ -143,7 +143,7 @@
             style="width: 200px"
             :clearable="true"
             v-model="dataForm.showState"
-            placeholder="显示状态"
+            placeholder="请选择"
           >
             <el-option label="显示" :value="1"></el-option>
             <el-option label="隐藏" :value="0"></el-option>

@@ -25,7 +25,7 @@
             style="width: 400px"
             v-model="ruleForm.startDate"
             type="datetime"
-            placeholder="预计开播时间"
+            placeholder="请选择"
             :formatter="dateFormat"
             :editable="false"
             :picker-options="pickerOptions"
@@ -87,7 +87,7 @@
         <el-form-item label="助手" prop="assistant">
           <el-input
             style="width: 400px"
-            placeholder="助手"
+            placeholder="请输入"
             @click.native="chooseAssistants"
             v-model="ruleForm.assistant"
             readonly
@@ -167,7 +167,7 @@
         <el-form-item label="添加商品" prop="products">
           <el-input
             style="width: 400px"
-            placeholder="推荐商品"
+            placeholder="请输入"
             @click.native="chooseProduct"
             v-model="ruleForm.products"
             readonly
@@ -178,7 +178,7 @@
         <el-form-item label="添加主播" prop="recommendedAnchors">
           <el-input
             style="width: 400px"
-            placeholder="推荐主播"
+            placeholder="请输入"
             @click.native="chooseAnchor"
             v-model="ruleForm.recommendedAnchors"
             readonly
