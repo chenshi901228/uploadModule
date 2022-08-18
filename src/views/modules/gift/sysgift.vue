@@ -285,7 +285,7 @@
               v-if="scope.row.delFlg === 0 && scope.row.status !== 1"
               type="text"
               size="small"
-              @click="deleteHandle(scope.row.id)"
+              @click="deleteHandleGift(scope.row.id)"
               >{{ $t("delete") }}</el-button
             >
           </template>
@@ -328,8 +328,8 @@ export default {
         getDataListURL: "/sys/sys/gift/page",
         getDataListIsPage: true,
         exportURL: "/sys/sys/gift/export",
-        deleteURL: "/sys/sys/gift",
-        deleteIsBatch: true,
+        // deleteURL: "/sys/sys/gift",
+        // deleteIsBatch: true,
       },
       dataForm: {
         name: "",
@@ -346,6 +346,28 @@ export default {
     SvgaDialog
   },
   methods: {
+    //删除礼物
+    deleteHandleGift(id){
+      this.$confirm('确定删除该礼物？', '删除', {
+        confirmButtonText: this.$t('confirm'),
+        cancelButtonText: this.$t('cancel'),
+        type: 'warning'
+      }).then(() => {
+        this.$http.delete(`/sys/sys/gift`,{'data':[id]}).then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg)
+          }
+          this.$message({
+            message: this.$t('prompt.success'),
+            type: 'success',
+            duration: 500,
+            onClose: () => {
+              this.query()
+            }
+          })
+        }).catch(() => {})
+      }).catch(() => {})
+    },
     // 判断是否是svga格式
     fileTypeIsSvga(url) {
       url = url.split(".")
@@ -400,8 +422,8 @@ export default {
           status,
         };
         this.$confirm(
-          `是否执行 [${status == 0 ? "下架" : "上架"}] 操作`,
-          this.$t("prompt.title"),
+          `确定${status == 0 ? "下架" : "上架"}该礼物？`,
+          status == 0 ? "下架" : "上架",
           {
             confirmButtonText: this.$t("confirm"),
             cancelButtonText: this.$t("cancel"),

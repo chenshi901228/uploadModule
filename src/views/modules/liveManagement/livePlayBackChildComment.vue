@@ -131,6 +131,14 @@
                             <span v-if="item.prop == 'delFlg'">
                                 <el-tag :type="row.delFlg ? 'danger' : 'success'">{{row.delFlg ? "已删除" : "未删除"}}</el-tag>
                             </span>
+                            <div v-else-if="item.prop == 'commentValue'">
+                                <el-tooltip class="item" effect="dark" :content="row.commentValue" placement="top"
+                                    :disabled="row.commentValue.length < 5">
+                                    <span>
+                                        {{row.commentValue.length>5?row.commentValue.substring(0,5)+'...':row.commentValue}}
+                                    </span>
+                                </el-tooltip>
+                            </div>
                             <span v-else>
                                 {{ row[item.prop] || "-" }}
                             </span>

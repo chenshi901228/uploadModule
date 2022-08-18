@@ -18,7 +18,7 @@
             <el-input
               style="width: 200px"
               v-model.trim="dataForm.username"
-              placeholder="主播"
+              placeholder="请输入"
               clearable
             ></el-input>
           </el-form-item>
@@ -26,7 +26,7 @@
             <el-input
               style="width: 200px"
               v-model.trim="dataForm.phone"
-              placeholder="手机号码"
+              placeholder="请输入"
               clearable
             ></el-input>
           </el-form-item>
