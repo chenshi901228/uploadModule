@@ -55,7 +55,7 @@
       <div style="display:flex;width: 48%;align-items: center;">
         <div style="text-align: right;">投诉图片</div>
         <div style="display: flex; margin: 0 10px ; width: calc(100% - 100px );">
-          <el-image v-for="(url, k) in diaForm.fileUrl" :key="k" style="width: 140px; height: 80px; margin-right: 20px"
+          <el-image v-for="(url, k) in diaForm.fileUrl" :key="k" style="width: 80px; height: 80px; margin-right: 20px"
           :src="url" fit="cover" :preview-src-list="diaForm.fileUrl">
         </el-image>
         </div>
