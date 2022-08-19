@@ -91,7 +91,7 @@
                     <div class="cacheValue module">
                         <div class="header">
                             <span>缓存内容</span>
-                            <span class="deleteAll" @click="deleteContent"><i class="el-icon-refresh-right"></i>清理全部</span>
+                            <!-- <span class="deleteAll" @click="deleteContent"><i class="el-icon-refresh-right"></i>清理全部</span> -->
                         </div>
                         <div class="content" v-loading="cacheValueLoading">
                             <el-form ref="form" :model="cacheValue" size="small">
