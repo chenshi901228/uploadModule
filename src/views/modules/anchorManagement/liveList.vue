@@ -450,6 +450,8 @@ export default {
 
       dynamicGroupOptions: [], //投放人群
       getDynamicGroupLoading: false, //下拉框加载数据loading
+      sonPage: null, //子页面
+      sonPageTimer: null, //定时监听子页面关闭
     };
   },
   created() {
@@ -457,6 +459,13 @@ export default {
   },
   activated() {
     this.query();
+  },
+  destroyed() {
+    if(this.sonPageTimer) {
+      clearInterval(this.sonPageTimer);
+      this.sonPageTimer = null;
+    }
+    if(this.sonPage) this.sonPage = null
   },
   methods: {
     // 投放人群下拉请求数据
@@ -530,7 +539,15 @@ export default {
         name: "liveRoom",
         query: { liveTheme: row.liveTheme, TaskId: row.id, trendsOpen: row.trendsOpen },
       });
-      window.open(t.href, "_blank");
+      // 关闭窗口刷新父页面
+      this.sonPage = window.open(t.href, "_blank");
+      this.sonPageTimer = setInterval(() => {
+        if (this.sonPage.closed) {
+          clearInterval(this.sonPageTimer);
+          this.sonPageTimer = null;
+          window.location.reload();
+        }
+      }, 1);
     },
 
     // 判断是否有操作按钮的权限---type:1-商品/主播，2-助手
