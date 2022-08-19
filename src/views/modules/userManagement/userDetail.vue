@@ -499,7 +499,7 @@ export default {
             consumptionSource: "消费来源",
             productId: "关联产品编号",
             payDate: "下单时间",
-            useStatus: "订单状态",
+            statusStr: "订单状态",
             useStatus: "使用状态",
           };
           break;

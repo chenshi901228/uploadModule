@@ -27,7 +27,7 @@
           :fileList="fileList"
           :limit="1"
           :fileMaxSize="2"
-          :fileType="['png', 'jpg']"
+          :fileType="['png', 'jpg', 'jpeg']"
           ref="uploadFile"
           @uploadSuccess="uploadSuccess"
           @uploadRemove="uploadRemove"

@@ -139,7 +139,7 @@
               <img :src="item.avatarUrl" alt="">
               <div>
                 <span>{{item.anchorUser}}</span>
-                <span>{{item.fansNum}}粉丝</span>
+                <span>{{numberChange(item.fansNum)}}粉丝</span>
               </div>
             </div>
             <div class="net_status" v-if="item.liveState==0">
@@ -158,11 +158,11 @@
           </div>
           <div class="live_bottom">
             <div class="online_user">
-              <span>{{item.maxOnlineNum}}</span>
+              <span>{{numberChange(item.maxOnlineNum)}}</span>
               <p>在线人数</p>
             </div>
             <div class="sale_num">
-              <span>{{item.commerceSale}}</span>
+              <span>{{numberChange(item.commerceSale)}}</span>
               <p>销售额</p>
             </div>
           </div>
@@ -185,6 +185,7 @@
 
 <script>
 import mixinTableModule from "@/mixins/table-module";
+
 export default {
   mixins: [mixinTableModule],
     data() {
@@ -207,6 +208,11 @@ export default {
       this.getLiveList()
     },
     methods: {
+      numberChange(num, unit = "W") {
+        if(num == null) num = 0
+        num = Number(num)
+        return (num / 10000) > 1 ? parseFloat((num / 10000)).toFixed(1) + unit :  num;
+      },
       getLiveList(){
         this.dataListLoading = true
         this.$http.get('/sys/liveListSupervisory/page',{
