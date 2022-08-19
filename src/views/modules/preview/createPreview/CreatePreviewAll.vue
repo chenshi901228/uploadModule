@@ -6,13 +6,13 @@
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" size="small" label-width="110px" class="demo-ruleForm">
         <div style="display:flex">
           <el-form-item label="直播主题" prop="liveTheme">
-            <el-input style="width: 640px" v-model.trim="ruleForm.liveTheme" maxlength="60" show-word-limit>
+            <el-input style="width: 400px" v-model.trim="ruleForm.liveTheme" maxlength="60" show-word-limit>
             </el-input>
           </el-form-item>
 
 
           <el-form-item label="主播" prop="anchorId">
-            <el-select style="width: 640px" v-model="ruleForm.anchorId" filterable remote reserve-keyword clearable
+            <el-select style="width: 400px" v-model="ruleForm.anchorId" filterable remote reserve-keyword clearable
               placeholder="请输入选择" :remote-method="getAnchorInfo" :loading="loading" @change="changeAnchorId">
               <el-option v-for="item in anchorOptions" :key="item.value" :label="item.label" :value="item.value">
               </el-option>
@@ -22,12 +22,12 @@
         <div style="display:flex">
 
           <el-form-item label="预计开播时间" prop="startDate">
-            <el-date-picker style="width: 640px" v-model="ruleForm.startDate" type="datetime" placeholder="请选择"
+            <el-date-picker style="width: 400px" v-model="ruleForm.startDate" type="datetime" placeholder="请选择"
               :picker-options="pickerOptions" :formatter="dateFormat" :editable="false">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="预计时长(分)" prop="estimateLiveTime">
-            <el-input style="width: 640px" placeholder="请输入" maxlength="4" v-model="ruleForm.estimateLiveTime">
+            <el-input style="width: 400px" placeholder="请输入" maxlength="4" v-model="ruleForm.estimateLiveTime">
             </el-input>
           </el-form-item>
         </div>
@@ -35,7 +35,7 @@
 
 
           <el-form-item label="助手" prop="assistantIds">
-            <el-select style="width: 640px" v-model="ruleForm.assistantIds" filterable multiple placeholder="请选择"
+            <el-select style="width: 400px" v-model="ruleForm.assistantIds" filterable multiple placeholder="请选择"
               :clearable="true">
               <el-option v-for="(item, index) in assistantOptions" :key="index" :label="item.label"
                 :value="item.weixinUserId">
@@ -43,7 +43,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="投放人群" prop="dynamicGroupIds">
-            <el-select style="width: 640px" v-model="ruleForm.dynamicGroupIds" filterable multiple placeholder="请选择"
+            <el-select style="width: 400px" v-model="ruleForm.dynamicGroupIds" filterable multiple placeholder="请选择"
               :clearable="true" @visible-change="changeDynamicGroupList($event)">
               <el-option v-for="(item, index) in options" :key="index" :label="item.name" :value="item.id">
               </el-option>
@@ -126,12 +126,12 @@
           > -->
         </el-form-item>
         <el-form-item label="添加商品" prop="goods">
-          <el-input style="width: 640px" placeholder="请选择" @click.native="chooseProduct" v-model="ruleForm.goods"
+          <el-input style="width: 400px" placeholder="请选择" @click.native="chooseProduct" v-model="ruleForm.goods"
             readonly clearable></el-input>
         </el-form-item>
 
         <el-form-item label="添加主播" prop="anchors">
-          <el-input style="width: 640px" placeholder="请选择" @click.native="chooseAnchor" v-model="ruleForm.anchors"
+          <el-input style="width: 400px" placeholder="请选择" @click.native="chooseAnchor" v-model="ruleForm.anchors"
             readonly clearable></el-input>
         </el-form-item>
 
