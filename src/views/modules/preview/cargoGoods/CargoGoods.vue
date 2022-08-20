@@ -59,7 +59,7 @@
             <el-option :value="0" label="否"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item
+        <!-- <el-form-item
           label="关联产品编号"
           prop="linkedProductId"
           v-if="isOpen || formItemCount >= 4"
@@ -70,7 +70,7 @@
             clearable
             v-model="dataForm.linkedProductId"
           />
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item
           label="添加状态"
           prop="isAdd"

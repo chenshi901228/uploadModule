@@ -11,7 +11,7 @@ border-radius: 5px 5px 5px 5px;position: relative;">
             size="small" style="width:calc(100% - 120px)"></el-input>
         </el-col>
         <el-col :span="24" style="display:flex;align-items: center;">视频显示：<el-input disabled
-            :value="info.showMode === 0 ? '竖屏' : '横屏'" size="small" style="width:calc(100% - 120px)"></el-input>
+            :value="info.showMode === 0 ? '竖屏' : '横屏'" size="small" style="width:calc(50% - 120px)"></el-input>
         </el-col>
         <el-col :span="10">封面图：
           <el-image :preview-src-list="srcList" v-if="info && info.frontCoverUrl" :src="info && info.frontCoverUrl"
