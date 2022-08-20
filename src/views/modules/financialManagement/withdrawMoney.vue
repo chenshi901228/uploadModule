@@ -390,7 +390,7 @@
         </el-table-column>
 
         <el-table-column
-          prop="createDate"
+          prop="approveDate"
           label="申请时间"
           min-width="160px"
           header-align="center"
