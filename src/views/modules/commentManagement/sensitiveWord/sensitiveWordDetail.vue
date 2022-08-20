@@ -54,9 +54,9 @@
 </template>
 
 <script>
-import mixinViewModule from "@/mixins/view-module";
+import commonModule from "@/mixins/common-module";
 export default {
-  mixins: [mixinViewModule],
+  mixins: [commonModule],
 
   name: "complainsRecords_detail",
   data() {
@@ -66,12 +66,27 @@ export default {
         content: "",
       },
       details: [],
-      mixinViewModuleOptions: {
-        createdIsNeed: false, // 此页面是否在创建时，调用查询数据列表接口？
-      },
     };
   },
- computed: {
+  activated() {
+    this.userId = window.localStorage.getItem("sensitiveWordDetailID");
+      this.$http
+        .get(`/sys/sensitiveWordCheck/getInfo?id=${this.userId}`)
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          this.diaForm = res.data;
+          this.details = this.diaForm.details ? this.diaForm.details.split(",") : [];
+          for (let index = 0; index < this.details.length; index++) {
+            if (this.details[index] == "") {
+              this.details.splice(1, index);
+            }
+          }
+        })
+        .catch(() => { });
+  },
+  computed: {
     // 审核状态图片
     statusImg() {
       if (this.diaForm && this.diaForm.checkStatus == 2) return require("@/assets/icon/icon_applying.png")
@@ -79,26 +94,6 @@ export default {
       if (this.diaForm && this.diaForm.checkStatus == 4) return require("@/assets/icon/icon_reject.png")
       return ""
     }
-  },
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      vm.userId = window.localStorage.getItem("sensitiveWordDetailID");
-      vm.$http
-        .get(`sys/sensitiveWordCheck/getInfo?id=${vm.userId}`)
-        .then(({ data: res }) => {
-          if (res.code !== 0) {
-            return vm.$message.error(res.msg);
-          }
-          vm.diaForm = res.data;
-          vm.details = vm.diaForm.details ? vm.diaForm.details.split(",") : [];
-          for (let index = 0; index < vm.details.length; index++) {
-            if (vm.details[index] == "") {
-              vm.details.splice(1, index);
-            }
-          }
-        })
-        .catch(() => { });
-    });
   },
   methods: {
     // 审核
@@ -110,7 +105,7 @@ export default {
       })
         .then(() => {
           this.$http
-            .post("sys/sensitiveWordCheck/updateCheckStatus", {
+            .post("/sys/sensitiveWordCheck/updateCheckStatus", {
               id: this.diaForm.id,
               status: type,
               remark: this.diaForm.remark,

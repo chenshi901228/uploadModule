@@ -183,19 +183,24 @@ export default {
       }
     };
   },
-  created() {
+  activated() {
     this.id = this.$route.query.videoDetail.id
     this.params.playbackId = this.$route.query.videoDetail.id
     this.params.anchorId = this.$route.query.videoDetail.anchorUserId
+    this.checkFlag = this.$route.query.checkFlag
     this.$nextTick(() => {
       if (this.checkFlag) {
         this.query()
+      }else {
+        this.info = this.$route.query.videoDetail;
+        this.checkFlag = false;
+        if (this.info && this.info.frontCoverUrl) {
+          this.srcList = [this.info.frontCoverUrl]
+        }
       }
+      this.querylist();
+      this.getVideoProductList()
     })
-  },
-  mounted() {
-    this.querylist();
-    this.getVideoProductList()
   },
   computed: {
     // 审核状态图片
@@ -205,23 +210,6 @@ export default {
       if (this.info && this.info.approveStatus == 2) return require("@/assets/icon/icon_reject.png")
       return ""
     }
-  },
-  beforeRouteEnter(to, from, next) {
-    next((vm) => {
-      if (from.name === "videoManagement-videoApproval") {
-        // vm.query();
-        vm.checkFlag = true;
-        console.log(vm.info)
-
-      } else if (from.name === "videoManagement-VideoManagement") {
-        vm.info = vm.$route.query.videoDetail;
-        vm.checkFlag = false;
-        if (vm.info && vm.info.frontCoverUrl) {
-          vm.srcList = [vm.info.frontCoverUrl]
-        }
-        console.log(vm.info)
-      }
-    });
   },
   beforeDestroy() {
     if (this.checkFlag) {

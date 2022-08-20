@@ -7,8 +7,8 @@ export default {
     return {
       // 设置属性
       mixinViewModuleOptions: {
-        createdIsNeed: true,       // 此页面是否在创建时，调用查询数据列表接口？
-        activatedIsNeed: false,    // 此页面是否在激活（进入）时，调用查询数据列表接口？
+        createdIsNeed: false,       // 此页面是否在创建时，调用查询数据列表接口？
+        activatedIsNeed: true,    // 此页面是否在激活（进入）时，调用查询数据列表接口？
         getDataListURL: '',       // 数据列表接口，API地址
         getDataListIsPage: false, // 数据列表接口，是否需要分页？
         deleteURL: '',            // 删除接口，API地址
