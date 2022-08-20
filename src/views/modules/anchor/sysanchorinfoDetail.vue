@@ -363,18 +363,15 @@
 </template>
 
 <script>
-import mixinViewModule from "@/mixins/view-module";
+import commonModule from "@/mixins/common-module";
 export default {
-  mixins: [mixinViewModule],
+  mixins: [commonModule],
   name: "complainsRecords_detail",
   data() {
     return {
       userId: "",
       diaForm: {
         remark:''
-      },
-      mixinViewModuleOptions: {
-        createdIsNeed: false, // 此页面是否在创建时，调用查询数据列表接口？
       },
     };
   },

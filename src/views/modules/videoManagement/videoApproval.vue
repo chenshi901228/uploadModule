@@ -282,7 +282,7 @@ export default {
     viewVideo(row) {
       this.$router.push({
         name: "videoManagement-videoDetailAll",
-        query: { videoDetail: row },
+        query: { videoDetail: row, checkFlag: true },
       });
     },
     // 视频大小转换

@@ -307,11 +307,8 @@ export default {
       setText: "",
     };
   },
-  created() {},
-  mounted() {
-    this.goodsInfo = this.$route.query;
-  },
   activated() {
+    this.goodsInfo = this.$route.query;
     this.query();
   },
   methods: {
