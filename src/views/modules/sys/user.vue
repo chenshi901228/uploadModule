@@ -586,26 +586,23 @@ export default {
 .user-type-tab {
   display: flex;
   margin-bottom: 10px;
-
+  border-bottom: 2px solid rgb(228, 231, 237);
   .diaBoxRight_tabBtns {
     border-width: 0px;
-    width: 100px;
+    margin-right: 50px;
     height: 45px;
     text-align: center;
     cursor: pointer;
     line-height: 45px;
     background: inherit;
-    background-color: rgba(236, 245, 255, 1);
     border: none;
-    border-radius: 3px;
-    -moz-box-shadow: none;
-    -webkit-box-shadow: none;
     box-shadow: none;
   }
-
   .is-active {
-    background-color: rgba(64, 158, 255, 1);
-    color: #fff;
+    color: #4057CB;
+    bottom: -2px;
+    position: relative;
+    border-bottom: 2px solid #4057CB;
   }
 }
 </style>

@@ -5,7 +5,7 @@
         <div class="data_list">
           <div v-for="(item,index) in dataDetail" :key="index">
             <div>
-              <span>{{item.data=='unionIncome'||item.data=='getReward'||item.data=='commerceIncome'?'￥':''}}{{liveDetail[item.data]}}</span>
+              <span>{{item.data=='unionIncome'||item.data=='getReward'||item.data=='commerceIncome'?'￥':''}}{{numberChange(liveDetail[item.data])}}</span>
               <span>{{item.type}}</span>
             </div>
             <img :src="item.img" alt="">
@@ -16,21 +16,22 @@
         <div class="live_content_top">
           <div class="live_video">
             <div class="live_info">
-              <div>
-                直播间ID：{{liveDetail.liveStream&&liveDetail.liveStream.Data.RoomId}}
-              </div>
-              <div>
-
-              </div>
+              直播间ID：{{liveDetail.liveStream&&liveDetail.liveStream.Data.RoomId}}
             </div>
             <video-flv-component :url="videoUrl" class="live_video_flv"></video-flv-component>
+            <div class="banned" @click="bannedFun" v-if="liveDetail.liveState">
+              <img src="../../../assets/img/banned.png" alt="">
+              <span>禁播</span>
+            </div>
           </div>
           <div class="charts_title_box">
             <div class="charts_title">
               <div class="title">直播趋势</div>
               <div>
-                <div>直播间观看人数：{{cumulativeNum}}</div>
-                <div>在线人数：{{liveTrendsY[liveTrendsY.length-1]}}</div>
+                <div>直播间观看人数：{{numberChange(cumulativeNum)}} 
+                  <span></span>
+                </div>
+                <div>在线人数：{{numberChange(liveTrendsY[liveTrendsY.length-1])}}</div>
               </div>
             </div>
             <div id="live_trends"></div>
@@ -123,6 +124,31 @@ export default {
     this.getGetReward()
   },
   methods:{
+    numberChange(num, unit = "W") {
+      if(num == null) num = 0
+      num = Number(num)
+      return (num / 10000) > 1 ? parseFloat((num / 10000)).toFixed(1) + unit :  num;
+    },
+    bannedFun(){ //禁播
+      this.$confirm(`确认禁播该场直播？`,'禁播',{
+        confirmButtonText: this.$t("confirm"),
+        cancelButtonText: this.$t("cancel"),
+        type: "warning",
+      }).then(() => {
+         this.$http.put("/sys/liveList/stopLive", { id:this.liveDetail.id })
+          .then(({ data: res }) => {
+            if (res.code == 0) {
+              this.$message.success("禁播成功");
+              this.getliveDetail()
+            } else {
+              this.$message.error(res.msg);
+            }
+          })
+          .catch((err) => {
+            throw err;
+          });
+      }).catch(() => { });
+    },
     getLiveTrends(){ //直播趋势
       this.$http.get(`/sys/liveListSupervisory/getLiveOnlineNumTrend/${this.$route.query.id}`).then(({data:res})=>{
         if(!res.code==0) return this.$message.error(res.msg)
@@ -205,21 +231,30 @@ export default {
           boundaryGap: false,
           data: this.rewardGiftName
         },
-        yAxis: {
-          type: 'value'
-        },
+        yAxis:[
+          {
+            name:'礼物数量',
+            type: 'value',
+            minInterval:1,
+          },
+          {
+            name:'打赏收入',
+            type: 'value',
+            minInterval:0,
+            max:'dataMax',
+          }
+        ],
         series: [
           {
             name: '礼物数量',
             type: 'line',
-            stack: 'Total',
-            data: this.giftNum
+            data: this.giftNum,
           },
           {
             name: '打赏收入',
             type: 'line',
-            stack: 'Total',
-            data: this.giftPrice
+            data: this.giftPrice,
+            yAxisIndex:1
           },
         ]
       };
@@ -264,21 +299,29 @@ export default {
           boundaryGap: false,
           data: this.commerceName
         },
-        yAxis: {
-          type: 'value'
-        },
+        yAxis: [
+          {
+            name:'带货数量',
+            type: 'value',
+            minInterval:1
+          },
+          {
+            name:'带货收入',
+            type: 'value',
+            minInterval:0,
+          }
+        ],
         series: [
           {
             name: '带货数量',
             type: 'line',
-            stack: 'Total',
             data: this.commerceNum
           },
           {
             name: '带货收入',
             type: 'line',
-            stack: 'Total',
-            data: this.commercePrice
+            data: this.commercePrice,
+            yAxisIndex:1
           },
         ]
       };
@@ -407,6 +450,9 @@ export default {
   .live_content_top{
     .live_video{
       position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       .live_info{
         position: absolute;
         top: 0;
@@ -421,6 +467,26 @@ export default {
         color: #FFFFFF;
         padding: 0 10px;
         font-size: 14px;
+        z-index: 1;
+      }
+      .banned{
+        position: absolute;
+        bottom: 20px;
+        width: 230px;
+        height: 40px;
+        background: linear-gradient(89deg, #FA3622 0%, #FE055B 100%);
+        box-shadow: 0px 4px 10px 1px rgba(249,46,29,0.4);
+        border-radius: 20px;
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #FFFFFF;
+        font-size: 16px;
+        cursor: pointer;
+        >span{
+          margin-left: 10px;
+        }
       }
     }
     .charts_title_box{
@@ -437,6 +503,16 @@ export default {
         }
         >div:last-child{
           display: flex;
+          >div{
+            >span{
+              display: inline-block;
+              width: 10px;
+              height: 10px;
+              border-radius: 50%;
+              background: #3558CC;
+              margin:0px 10px;
+            }
+          }
         }
       }
       #live_trends{

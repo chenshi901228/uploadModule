@@ -9,11 +9,11 @@
             <el-form :model="dataForm" :rules="rules" ref="dataForm" size="small" label-width="110px">
                 <div style="display:flex">
                     <el-form-item label="直播主题" prop="liveTheme">
-                        <el-input style="width: 640px" v-model.trim="dataForm.liveTheme" maxlength="60" show-word-limit>
+                        <el-input style="width: 400px" v-model.trim="dataForm.liveTheme" maxlength="60" show-word-limit>
                         </el-input>
                     </el-form-item>
                     <el-form-item label="助手" prop="assistantIds">
-                        <el-select style="width: 640px" multiple v-model="dataForm.assistantIds" placeholder="请选择"
+                        <el-select style="width: 400px" multiple v-model="dataForm.assistantIds" placeholder="请选择"
                             :loading="getAssistantLoading" @visible-change="getAssistant" clearable>
                             <el-option v-for="item in assistantOptions" :key="item.weixinUserId" :label="item.label"
                                 :value="item.weixinUserId">
@@ -29,11 +29,11 @@
                     <p class="tips">格式限制：jpg/jpeg/png,建议图片尺寸不小于630px×347px，大小不得超过2M</p>
                 </el-form-item>
                 <el-form-item label="添加商品" prop="product">
-                    <el-input style="width: 640px" placeholder="请选择" v-model="dataForm.product"
+                    <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.product"
                         @click.native="chooseProduct"></el-input>
                 </el-form-item>
                 <el-form-item label="添加主播" prop="anchor">
-                    <el-input style="width: 640px" placeholder="请选择" v-model="dataForm.anchor"
+                    <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.anchor"
                         @click.native="chooseAnchor"></el-input>
                 </el-form-item>
                 <el-form-item label="直播背景">
