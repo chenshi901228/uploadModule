@@ -205,7 +205,7 @@
                 >创建直播</el-button
               >
             </el-form-item>
-            <el-form-item>
+            <!-- <el-form-item>
               <el-button
                 type="warning"
                 plain
@@ -214,7 +214,7 @@
                 @click="exportHandle"
                 >{{ $t("export") }}</el-button
               >
-            </el-form-item>
+            </el-form-item> -->
           </div>
           <div class="headerTool--handle-btns-right">
             <el-form-item>
