@@ -398,7 +398,7 @@
           show-overflow-tooltip
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.createDate || "--" }}</span>
+            <span>{{ scope.row.approveDate || "--" }}</span>
           </template>
         </el-table-column>
         <el-table-column
