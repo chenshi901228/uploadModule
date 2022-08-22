@@ -12,10 +12,10 @@
           <div class="login-body">
           <div style="margin:50px;display: flex;justify-content: space-between;align-items: center;">
             <div :style="{ color: !loginType ? '#111F2C' : '#707980', fontWeight: !loginType ? '600' : '400' }"
-              :class="!loginType ? 'changedBtn' : ''" @click="loginType = !loginType"
+              :class="!loginType ? 'changedBtn' : ''" @click="tabChange"
               style="color: #707980;cursor:pointer;font-size: 20px;">验证码登录</div>
             <div :style="{ color: loginType ? '#111F2C' : '#707980', fontWeight: loginType ? '600' : '400' }"
-              :class="loginType ? 'changedBtn' : ''" @click="loginType = !loginType"
+              :class="loginType ? 'changedBtn' : ''" @click="tabChange"
               style="color: #707980;cursor:pointer;font-size: 20px;">密码登录</div>
           </div>
           <!-- <span style="color:#66b1ff;cursor:pointer;" @click="loginType=!loginType">{{loginType?'手机号码登录':'密码登录'}}</span> -->
@@ -61,7 +61,7 @@
               </el-row>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="dataFormSubmitHandle()" class="w-percent-100">{{ $t('login.title') }}
+              <el-button type="primary" :disabled="loading" :loading="loading" @click="dataFormSubmitHandle()" class="w-percent-100">{{ $t('login.title') }}
               </el-button>
             </el-form-item>
           </el-form>
@@ -82,13 +82,13 @@
                     </svg>
                   </span>
                 </el-input>
-                <el-button @click.native.prevent="bindforgetSendCode" class="bind_code_gain" :disabled="disabled">{{
+                <el-button @click.native.prevent="bindforgetSendCode" class="bind_code_gain" :disabled="disabled || loading">{{
                     btnText
                 }}</el-button>
               </div>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="dataFormSubmitHandle()" class="w-percent-100">{{ $t('login.title') }}
+              <el-button :disabled="loading" :loading="loading" type="primary" @click="dataFormSubmitHandle()" class="w-percent-100">{{ $t('login.title') }}
               </el-button>
             </el-form-item>
           </el-form>
@@ -96,7 +96,7 @@
         </div>
     </div>
     <el-dialog title="选择账号" :modal="false" :visible.sync="dialogVisible" 
-    top="260px"
+      top="260px" :close-on-click-modal="false" :close-on-press-escape="false"
       :show-close="false" :center="true" width="350px">
       <div class="login_user">
         <div class="user_list" v-for="(item, index) in loginUserList" :key="index"
@@ -116,7 +116,7 @@
         <el-button size="small" style="    width: 100%;
     height: 50px;
     font-size: 16px;
-    background: #017FF8;" type="primary" @click="goToHome">进入</el-button>
+    background: #017FF8;" type="primary" :disabled="goToHomeLoading" :loading="goToHomeLoading" @click="goToHome">进入</el-button>
       </span>
     </el-dialog>
   </div>
@@ -150,7 +150,9 @@ export default {
       loginUserList: [],//登录账号列表
       dialogVisible: false,//登录账号选择弹窗
       active: 0,//登录账号选中
-      selectUserAnchor: {}//选择登录账号
+      selectUserAnchor: {},//选择登录账号
+      loading: false, //登录loading
+      goToHomeLoading: false, //选择账号进入loading
     }
   },
   computed: {
@@ -189,14 +191,24 @@ export default {
       this.selectUserAnchor = data
       this.active = index
     },
+    // 切换登录方式
+    tabChange() {
+      if(this.loading) return
+      this.loginType = !this.loginType
+    },
     goToHome() { //选择角色进入
       if(this.selectUserAnchor.disabledFlg) return this.$message.warning('该账号已被禁用处，无法登录')
+      this.goToHomeLoading = true
       this.$http.post('/sys/user/chooseLoginRole', { anchorId: this.selectUserAnchor.anchorId, type: this.selectUserAnchor.type }).then(({ data: res }) => {
+        this.goToHomeLoading = false
         if (res.code !== 0) {
           return this.$message.error(res.msg)
         }
         this.dialogVisible = false
         this.$router.replace({ name: 'home' })
+      }).catch((err) => {
+        this.goToHomeLoading = true
+        this.$message.error(JSON.stringify(err && err.message));
       })
     },
     // 获取验证码
@@ -206,11 +218,13 @@ export default {
     },
     // 表单提交
     dataFormSubmitHandle: debounce(function () {
+      if(this.loading) return
       if (this.loginType) {
         this.$refs['dataForm'].validate((valid) => {
           if (!valid) {
             return false
           }
+          this.loading = true
           this.$http.post('/auth/oauth/token', this.dataForm,
             {
               headers: {
@@ -220,12 +234,13 @@ export default {
             }
           ).then(({ data: res }) => {
             if (res.code !== 0) {
+              this.loading = false
               this.getCaptcha()
               return this.$message.error(res.msg)
             }
             Cookies.set('access_token', res.access_token)
             this.$http.get('/sys/user/getAnchorListWithLogin').then(({ data: res }) => {
-              console.log(res)
+              this.loading = false
               if (res.code !== 0) {
                 return this.$message.error(res.msg)
               }
@@ -237,14 +252,21 @@ export default {
                 this.$router.replace({ name: 'home' })
               }
 
+            }).catch((err) => {
+              this.loading = false
+              this.$message.error(JSON.stringify(err && err.message));
             })
-          }).catch(() => { })
+          }).catch((err) => {
+            this.loading = false
+            this.$message.error(JSON.stringify(err && err.message));
+          })
         })
       } else {
         this.$refs['dataFormPhone'].validate((valid) => {
           if (!valid) {
             return false
           }
+          this.loading = true
           this.$http.post('/auth/oauth/token', this.dataFormPhone,
             {
               headers: {
@@ -254,11 +276,12 @@ export default {
             }
           ).then(({ data: res }) => {
             if (res.code !== 0) {
+              this.loading = false
               return this.$message.error(res.msg)
             }
             Cookies.set('access_token', res.access_token)
             this.$http.get('/sys/user/getAnchorListWithLogin').then(({ data: res }) => {
-              console.log(res)
+              this.loading = false
               if (res.code !== 0) {
                 return this.$message.error(res.msg)
               }
@@ -269,8 +292,14 @@ export default {
               } else {
                 this.$router.replace({ name: 'home' })
               }
+            }).catch((err) => {
+              this.loading = false
+              this.$message.error(JSON.stringify(err && err.message));
             })
-          }).catch(() => { })
+          }).catch((err) => {
+            this.loading = false
+            this.$message.error(JSON.stringify(err && err.message));
+          })
         })
       }
     }, 1000, { 'leading': true, 'trailing': false }),
