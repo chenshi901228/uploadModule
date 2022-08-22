@@ -525,7 +525,7 @@ export default {
       } else {
         //单个操作
         this.$confirm(
-          `确认[${row.status == 0 ? "解除" : "禁用"}]${row.realName || row.nickName}?`,
+          `确认[${(this.diaTbas === 2 && row.disabledFlg == 1) || (this.diaTbas != 2 && row.status == 0) ? "解除" : "禁用"}]${row.realName || row.nickName}?`,
           "提示",
           {
             confirmButtonText: "确定",
