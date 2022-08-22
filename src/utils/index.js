@@ -252,3 +252,11 @@ export function secondToDate(value) {
   }
   return result;
 }
+
+
+// 身份证号码加密
+export function enCodeIdCard(idCard) {
+  if(!idCard) return ""
+  idCard += ""
+  return idCard.replace(/(.{6}).*(.{4})/, '$1********$2')
+}

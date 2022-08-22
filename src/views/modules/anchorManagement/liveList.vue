@@ -330,6 +330,23 @@
           width="200"
         >
           <template slot-scope="{ row }">
+
+            <el-button
+              type="text"
+              v-if="authEditOrDelete(row)"
+              @click="editLive(row)"
+              size="small"
+              icon="el-icon-edit"
+              >编辑</el-button
+            >
+            <el-button
+              type="text"
+              v-if="authEditOrDelete(row)"
+              @click="deleteLive(row)"
+              size="small"
+              icon="el-icon-delete"
+              >删除</el-button
+            >
             <el-button
               type="text"
               v-if="row.liveState == 1"
@@ -389,14 +406,26 @@
         @current-change="pageCurrentChangeHandle"
       >
       </el-pagination>
+
+
+      <!-- 删除直播备注弹框 -->
+      <remark-modal
+        ref="remarkModal"
+        @confirm="deleteLiveConfirm"
+        :title="deleteLiveTitle"
+      ></remark-modal>
     </div>
   </el-card>
 </template>
 
 <script>
 import mixinTableModule from "@/mixins/table-module";
+import RemarkModal from "@/components/common/remarkDialog";
 export default {
   mixins: [mixinTableModule],
+  components: {
+    RemarkModal
+  },
   data() {
     return {
       mixinTableModuleOptions: {
@@ -452,6 +481,7 @@ export default {
       getDynamicGroupLoading: false, //下拉框加载数据loading
       sonPage: null, //子页面
       sonPageTimer: null, //定时监听子页面关闭
+      deleteLiveTitle: "删除直播", //删除直播备注的标题
     };
   },
   created() {
@@ -568,6 +598,20 @@ export default {
       }
     },
 
+    // 是否有编辑或删除的权限
+    authEditOrDelete({ livePreviewId, liveState, planStartDate }) {
+      if(livePreviewId) { //直播预告创建的直播
+        if(liveState == 3) { //未开播
+          let date = new Date().getTime() - new Date(planStartDate).getTime()
+          date = Math.ceil(date / 1000 / 60)
+          return date <= 0  //超过开播时间无删除编辑
+        }
+        return liveState == 3 //未开播
+      }else { //直播列表创建的直播
+        return liveState == 3 //未开播
+      }
+    },
+
     //带货商品
     addProduct(row) {
       this.$router.push({
@@ -611,6 +655,32 @@ export default {
         callback: action => {}
       });
     },
+    // 编辑直播
+    editLive(row) {
+      this.$router.push({ path: "anchorManagement-liveUpdate", query: { id: row.id } })
+    },
+    // 删除直播
+    deleteLive(row) {
+      this.$refs.remarkModal.init(row.id);
+    },
+    // 删除直播确认
+    deleteLiveConfirm (remark, id, cb) {
+      this.$http.delete("/sys/liveList/delete", {
+        params: { remark, liveId: id }
+      }).then(({ data: res }) => {
+        cb()
+        if (res.code != 0) return this.$message.error(res.msg)
+        this.$message.success("删除直播成功")
+        this.$refs.remarkModal.close();
+        this.query()
+      }).catch(err => {
+        cb()
+        this.$refs.remarkModal.close()
+        this.$message.error(JSON.stringify(err.message))
+      })
+    }
+
+
   },
 };
 </script>

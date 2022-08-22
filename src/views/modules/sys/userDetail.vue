@@ -25,7 +25,7 @@
       <div class="title">基本资料</div>
       <div class="aside" style="margin-top: 30px;">
         <div style="margin-right: 50px;"> 身份证号</div>
-        <div>{{ userInfo.idCord || '-' }}</div>
+        <div>{{ enCodeIdCard(userInfo.idCord) || '-' }}</div>
       </div>
       <div class="aside">
         <div style="margin-right: 50px;"> 登录账号</div>
@@ -50,6 +50,7 @@
 </template>
 
 <script>
+import { enCodeIdCard } from "@/utils";
 import UpdatePassword from '../../main-navbar-update-password-code'
 export default {
   data() {
@@ -63,9 +64,13 @@ export default {
     UpdatePassword
   },
   methods: {
+    // 身份证号码加密
+    enCodeIdCard(val) {
+      return enCodeIdCard(val)
+    },
     getUserInfo() {
       this.$http
-        .get(`/sys/user/${this.$store.state.user.id}`)
+        .get(`/sys/user/info`)
         .then(({ data: res }) => {
           if (res.code == 0) {
             this.userInfo = res.data;

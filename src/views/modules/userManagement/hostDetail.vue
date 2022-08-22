@@ -17,13 +17,13 @@
           <div style="width:50%;display: inline-block;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">真实姓名</div>
             <div>
-              {{ diaForm.idCard || '-' }}
+              {{ diaForm.realName || '-' }}
             </div>
           </div>
           <div style="width:50%;display: inline-block;margin: 20px 0 0;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">身份证号</div>
             <div>
-              {{ diaForm.idCard || '-' }}
+              {{ enCodeIdCard(diaForm.idCard) || '-' }}
             </div>
           </div>
           <div style="width:50%;display: inline-block;margin: 20px 0 0;">
@@ -558,6 +558,7 @@
 </template>
 
 <script>
+import { enCodeIdCard } from "@/utils";
 export default {
   name: "LiveWebmanageUserdetail",
 
@@ -649,6 +650,10 @@ export default {
     this.changeTbas(1);
   },
   methods: {
+    // 身份证号码加密
+    enCodeIdCard(val) {
+      return enCodeIdCard(val)
+    },
     fansGroup() {
       this.$router.push({
         path: "/userManagement-fansGroup-index",

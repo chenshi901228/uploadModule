@@ -280,6 +280,22 @@
           <template slot-scope="{ row }">
             <el-button
               type="text"
+              v-if="authEditOrDelete(row, 1)"
+              @click="editLive(row)"
+              size="small"
+              icon="el-icon-edit"
+              >编辑</el-button
+            >
+            <el-button
+              type="text"
+              v-if="authEditOrDelete(row, 2)"
+              @click="deleteLive(row)"
+              size="small"
+              icon="el-icon-delete"
+              >删除</el-button
+            >
+            <el-button
+              type="text"
               size="small"
               icon="el-icon-circle-close"
               v-if="row.liveState == 1"
@@ -332,8 +348,8 @@
       <!-- 禁播备注弹框 -->
       <remark-modal
         ref="remarkModal"
-        @confirm="banLiveConfirm"
-        title="禁播"
+        @confirm="confirmHandle"
+        :title="remarkTitle"
       ></remark-modal>
     </div>
   </el-card>
@@ -397,6 +413,8 @@ export default {
       ],
       dynamicGroupOptions: [], //投放人群
       getDynamicGroupLoading: false, //下拉框加载数据loading
+      remarkTitle: "删除直播", //备注弹框的标题
+      remarkType: 1, //备注弹框类型---1：禁播，2：删除直播
     };
   },
   created() {
@@ -433,6 +451,8 @@ export default {
     // 禁播
     banLiveHandle(id) {
       if (!id) return;
+      this.remarkType = 1
+      this.remarkTitle = "禁播"
       this.$refs.remarkModal.init(id);
     },
     // 确认禁播
@@ -454,6 +474,29 @@ export default {
           this.$refs.remarkModal.close();
           throw err;
         });
+    },
+
+    // 弹框确认操作
+    confirmHandle(remark, id, cb) {
+      if(this.remarkType == 1) { //禁播确认
+        this.banLiveConfirm(remark, id, cb)
+      }else {
+        this.deleteLiveConfirm(remark, id, cb)
+      }
+    },
+
+    // 是否有编辑或删除的权限  type: 1-编辑，2-删除
+    authEditOrDelete({ livePreviewId, liveState, planStartDate }, type) {
+      if(livePreviewId) { //直播预告创建的直播
+        if(liveState == 3) { //未开播
+          let date = new Date().getTime() - new Date(planStartDate).getTime()
+          date = Math.ceil(date / 1000 / 60)
+          return date <= 0 || type == 2 //超过开播时间无编辑,有删除        
+        }
+        return liveState == 3 //未开播
+      }else { //直播列表创建的直播
+        return liveState == 3 //未开播
+      }
     },
 
     // 判断是否有操作按钮的权限---type:1-商品/主播，2-助手
@@ -518,6 +561,34 @@ export default {
         callback: action => {}
       });
     },
+    // 编辑直播
+    editLive(row) {
+      this.$router.push({ path: "liveManagement-liveUpdate", query: { id: row.id, anchorUserId: row.anchorUserId } })
+    },
+    // 删除直播
+    deleteLive(row) {
+      this.remarkType = 2
+      this.remarkTitle = "删除直播"
+      this.$refs.remarkModal.init(row.id);
+    },
+    // 删除直播确认
+    deleteLiveConfirm (remark, id, cb) {
+      this.$http.delete("/sys/liveList/delete", {
+        params: { remark, liveId: id }
+      }).then(({ data: res }) => {
+        cb()
+        if (res.code != 0) return this.$message.error(res.msg)
+        this.$message.success("删除直播成功")
+        this.$refs.remarkModal.close();
+        this.query()
+      }).catch(err => {
+        cb()
+        this.$refs.remarkModal.close()
+        this.$message.error(JSON.stringify(err.message))
+      })
+    }
+
+
   },
 };
 </script>

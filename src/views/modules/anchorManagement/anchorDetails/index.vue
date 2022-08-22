@@ -20,13 +20,13 @@
           <div style="width:50%;display: inline-block;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">真实姓名</div>
             <div>
-              {{ anchorDetails.idCard || '-' }}
+              {{ anchorDetails.realName || '-' }}
             </div>
           </div>
           <div style="width:50%;display: inline-block;margin: 20px 0 0;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">身份证号</div>
             <div>
-              {{ anchorDetails.idCard || '-' }}
+              {{ enCodeIdCard(anchorDetails.idCard) || '-' }}
             </div>
           </div>
           <div style="width:50%;display: inline-block;margin: 20px 0 0;">
@@ -88,7 +88,7 @@
           <div style="width:50%;display: inline-block;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">身份证号</div>
             <div>
-              {{ anchorDetails.idCard || '-' }}
+              {{ enCodeIdCard(anchorDetails.idCard) || '-' }}
             </div>
           </div>
           <div style="width:50%;display: inline-block;margin: 20px 0 0;">
@@ -796,7 +796,7 @@
 </template>
 
 <script>
-import { treeDataTranslate, getUUID } from "@/utils";
+import { treeDataTranslate, getUUID, enCodeIdCard } from "@/utils";
 import Cookies from "js-cookie";
 export default {
   name: "LiveWebmanageUserdetail",
@@ -966,6 +966,10 @@ export default {
     this.queryBankList();
   },
   methods: {
+    // 身份证号码加密
+    enCodeIdCard(val) {
+      return enCodeIdCard(val)
+    },
     //改变身份
     changePower(row) {
       this.userType = row.userType;
