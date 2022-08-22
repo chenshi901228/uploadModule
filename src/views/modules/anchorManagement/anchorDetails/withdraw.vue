@@ -30,7 +30,7 @@
                   </el-input>
                 
               </el-form-item>
-              <el-form-item label="提现金额" prop="amount" required>
+              <el-form-item label="提现金额" prop="amount">
                 <div style="display: inline-block">
                   <el-input
                     style="width:640px"
@@ -168,7 +168,7 @@
          
           </div>
           <div class="btns">
-            <el-button size="small" type="primary" @click="next"
+            <el-button size="small" type="primary" :disabled="nextBtnLoading" @click="next" :loading="nextBtnLoading"
               >下一步</el-button
             >
             <el-button size="small" @click="cancel">取 消</el-button>
@@ -385,7 +385,7 @@ export default {
       },
       anchorDetails: {},
       dataRule_withdraw: {
-        amount: [{ validator: checkWithdraw, trigger: "blur" }],
+        amount: [{ required: true, validator: checkWithdraw, trigger: "blur" }],
       },
       amount: null,
       invoiceLimit: 9, //发票上传图片数量限制
@@ -398,12 +398,12 @@ export default {
       btnText: "已确认知晓（5s）",
       invoiceInfo: {}, //发票信息
       invoiceAddress: {}, //发票地址信息
+      nextBtnLoading: false, //下一步请求协议
     };
   },
   watch: {},
   activated() {
     this.anchorDetails = this.$route.query.anchorDetails;
-    console.log();
   },
   computed: {
     uploadUrl() {
@@ -483,7 +483,7 @@ export default {
             type: "info",
             message: "已取消操作",
           });
-          reject();
+          this.active = 0
         });
     },
     //下一步
@@ -512,19 +512,18 @@ export default {
       });
     },
     // 协议确认倒计时
-    doLoop: function (seconds) {
+    doLoop(seconds) {
+      clearInterval(this.countdown);
       seconds = seconds ? seconds : 5;
       this.btnText = `已确认知晓（${seconds}s）`;
-      let countdown = setInterval(() => {
+      this.countdown = setInterval(() => {
         if (seconds > 0) {
           this.btnText = `已确认知晓（${seconds}s）`;
           --seconds;
         } else {
-          this.btnText = this.livePactDialogVisible
-            ? "已确认知晓"
-            : "已确认知晓，去直播";
+          this.btnText = "已确认知晓";
           this.btnDisabled = false;
-          clearInterval(countdown);
+          clearInterval(this.countdown);
         }
       }, 1000);
     },
@@ -575,18 +574,20 @@ export default {
     },
     //显示协议
     init() {
-      this.$http
-        .get(
+      this.nextBtnLoading = true
+      this.$http.get(
           "/sys/sysConsultativeManagement/getKey/apply_for_withdrawal_agreement"
         )
         .then(({ data: res }) => {
-          this.livePactDialogVisible = true; //未开播进入直播间阅读协议
+          this.nextBtnLoading = false
+          this.livePactDialogVisible = true; 
           this.doLoop(5);
           if (res.code != 0) return this.$message.error(res.msg);
           this.livePactInfo = res.data;
         })
         .catch((err) => {
-          this.livePactDialogVisible = true; //未开播进入直播间阅读协议
+          this.nextBtnLoading = false
+          this.livePactDialogVisible = true; 
           this.doLoop(5);
           this.$message.error(JSON.stringify(err.message));
         });
