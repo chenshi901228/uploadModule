@@ -95,7 +95,7 @@ export default {
       diaForm: {},
     };
   },
-  created() {
+  activated() {
     this.init()
   },
   computed: {

@@ -132,7 +132,7 @@
           </div>
         </div>
       </el-form>
-      <div class="content" v-loading="dataListLoading">
+      <div class="content" v-loading="dataListLoading" v-if="liveList.length">
         <div class="live_list" v-for="(item,index) in liveList" :key="index">
           <div class="header">
             <div class="anchor_info">
@@ -169,6 +169,7 @@
           <div :class="item.liveState==0?'end_live':item.liveState==1?'live_conduct':item.liveState==2?'live_prohibit':'no_live'">{{item.liveState==0?'已下播':item.liveState==1?'直播中':item.liveState==2?'已禁播':'未直播'}}</div>
         </div>
       </div>
+      <el-empty description="暂无数据" v-else></el-empty>
       <el-pagination
           background
           :current-page="page"
@@ -215,6 +216,9 @@ export default {
       },
       getLiveList(){
         this.dataListLoading = true
+        if(this.dataForm.liveState===""){
+          delete this.dataForm.liveState
+        }
         this.$http.get('/sys/liveListSupervisory/page',{
           params:{
             page:this.page,limit:this.limit,...this.dataForm
@@ -246,9 +250,9 @@ export default {
         this.dataForm = {
           livingRoomId:"",
           liveTheme:"",
-          liveStatus:"",
           anchorTel:"",
-          anchorUser:""
+          anchorUser:"",
+          liveState:""
         }
         this.page = 1
         this.getLiveList()

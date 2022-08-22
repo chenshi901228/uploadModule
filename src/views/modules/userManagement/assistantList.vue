@@ -239,6 +239,7 @@
           label="邀请人手机号码"
           header-align="center"
           align="center"
+          width="150"
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip

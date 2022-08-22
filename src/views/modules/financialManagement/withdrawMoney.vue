@@ -390,7 +390,7 @@
         </el-table-column>
 
         <el-table-column
-          prop="createDate"
+          prop="approveDate"
           label="申请时间"
           min-width="160px"
           header-align="center"
@@ -398,7 +398,7 @@
           show-overflow-tooltip
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.createDate || "--" }}</span>
+            <span>{{ scope.row.approveDate || "--" }}</span>
           </template>
         </el-table-column>
         <el-table-column

@@ -228,8 +228,10 @@ export default {
         },
         xAxis: {
           type: 'category',
-          boundaryGap: false,
-          data: this.rewardGiftName
+          data: this.rewardGiftName,
+          axisTick: {
+            alignWithLabel: true
+          }
         },
         yAxis:[
           {
@@ -249,12 +251,20 @@ export default {
             name: '礼物数量',
             type: 'line',
             data: this.giftNum,
+            itemStyle:{
+              color:"#EE2B2D"
+            },
           },
           {
             name: '打赏收入',
             type: 'line',
             data: this.giftPrice,
-            yAxisIndex:1
+            yAxisIndex:1,
+            type: 'bar',
+            itemStyle:{
+              color:"#3558CC"
+            },
+            barWidth : 30,//柱图宽度
           },
         ]
       };
@@ -296,8 +306,10 @@ export default {
         },
         xAxis: {
           type: 'category',
-          boundaryGap: false,
-          data: this.commerceName
+          data: this.commerceName,
+          axisTick: {
+            alignWithLabel: true
+          }
         },
         yAxis: [
           {
@@ -315,13 +327,21 @@ export default {
           {
             name: '带货数量',
             type: 'line',
-            data: this.commerceNum
+            data: this.commerceNum,
+            itemStyle:{
+              color:"#EE2B2D"
+            },
           },
           {
             name: '带货收入',
             type: 'line',
             data: this.commercePrice,
-            yAxisIndex:1
+            yAxisIndex:1,
+            type: 'bar',
+            itemStyle:{
+              color:"#3558CC"
+            },
+            barWidth : 30,//柱图宽度
           },
         ]
       };

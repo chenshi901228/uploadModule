@@ -444,7 +444,7 @@
               v-else-if="prop === 'level'">
               <template slot-scope="scope">
                 <div>
-                  {{ "V" + scope.row.level }}
+                  {{ scope.row.level }}
                 </div>
               </template>
             </el-table-column>

@@ -114,14 +114,14 @@
               @click="addOrUpdateHandle"
               >新增</el-button
             >
-            <el-button
+            <!-- <el-button
               type="warning"
               plain
               icon="el-icon-download"
               size="mini"
               @click="exportHandle"
               >{{ $t("export") }}</el-button
-            >
+            > -->
           </div>
           <div class="headerTool--handle-btns-right">
             <el-form-item>
@@ -366,7 +366,7 @@ export default {
     viewVideo(row) {
       this.$router.push({
         name: "videoManagement-videoDetail",
-        query: { videoDetail: row },
+        query: { videoDetail: row, checkFlag: false },
       });
     },
     // //删除视频
