@@ -560,21 +560,22 @@
         <el-descriptions-item label="直播主题">{{liveInfo.liveTheme}}</el-descriptions-item>
         <el-descriptions-item label="开播时间">{{liveInfo.startDate}}</el-descriptions-item>
         <el-descriptions-item label="下播时间">{{liveInfo.endDate}}</el-descriptions-item>
-        <el-descriptions-item label="直播时长">{{liveInfo.liveTime}}</el-descriptions-item>
-        <el-descriptions-item label="观看人数">{{liveInfo.audienceNum}}</el-descriptions-item>
-        <el-descriptions-item label="最高在线人数">{{liveInfo.maxOnlineNum}}</el-descriptions-item>
-        <el-descriptions-item label="累计点赞">{{liveInfo.giveLikeNum}}</el-descriptions-item>
-        <el-descriptions-item label="累计分享">{{liveInfo.shareNum}}</el-descriptions-item>
-        <el-descriptions-item label="礼物收益">{{liveInfo.rewardMoney}}</el-descriptions-item>
-        <el-descriptions-item label="粉丝团收益">{{liveInfo.unionIncome}}</el-descriptions-item>
-        <el-descriptions-item label="带货销售">{{liveInfo.commerceSale}}</el-descriptions-item>
+        <el-descriptions-item label="直播时长">{{liveInfo.liveTime || 0}}分钟</el-descriptions-item>
+        <el-descriptions-item label="观看人数">{{liveInfo.audienceNum || 0}}</el-descriptions-item>
+        <el-descriptions-item label="最高在线人数">{{liveInfo.maxOnlineNum || 0}}</el-descriptions-item>
+        <el-descriptions-item label="累计点赞">{{liveInfo.giveLikeNum || 0}}</el-descriptions-item>
+        <el-descriptions-item label="累计分享">{{liveInfo.shareNum ||0}}次</el-descriptions-item>
+        <el-descriptions-item label="礼物收益">￥{{liveInfo.getReward.toFixed(2) || 0}}</el-descriptions-item>
+        <el-descriptions-item label="粉丝团收益">￥{{liveInfo.unionIncome.toFixed(2) || 0}}</el-descriptions-item>
+        <el-descriptions-item label="带货销售">￥{{liveInfo.commerceSale.toFixed(2) || 0}}</el-descriptions-item>
       </el-descriptions>
       <el-descriptions title="主播" :column="2">
-        <el-descriptions-item label="新增用户">{{liveInfo.addUserNum}}</el-descriptions-item>
-        <el-descriptions-item label="增加粉丝">{{liveInfo.fansNum}}</el-descriptions-item>
-        <el-descriptions-item label="礼物收入">{{liveInfo.rewardMoney}}</el-descriptions-item>
-        <el-descriptions-item label="带货收入">{{liveInfo.commerceIncome}}</el-descriptions-item>
-        <el-descriptions-item label="粉丝团收入">{{liveInfo.unionIncome}}</el-descriptions-item>
+        <el-descriptions-item label="新增用户">{{liveInfo.addUserNum || 0}}人</el-descriptions-item>
+        <el-descriptions-item label="增加粉丝">{{liveInfo.addFansNum || 0}}人</el-descriptions-item>
+        <el-descriptions-item label="礼物收入" v-if="!isMuteLive">￥{{liveInfo.rewardMoney.toFixed(2) || 0}}</el-descriptions-item>
+        <el-descriptions-item label="礼物收入" v-else>不结算</el-descriptions-item>
+        <el-descriptions-item label="带货收入">待结算</el-descriptions-item>
+        <el-descriptions-item label="粉丝团收入">￥{{liveInfo.unionProfit.toFixed(2) || 0}}</el-descriptions-item>
       </el-descriptions>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" size="small" @click="confirmQuit">确 定</el-button>
@@ -870,6 +871,7 @@ export default {
       cameraStatus:true,
       microphoneStatus:true,
       liveInfo:{},//结束直播详情
+      isMuteLive:false,
     };
   },
   created() {
@@ -1761,7 +1763,8 @@ export default {
               confirmButtonText: '确定',
               callback: action => {
                 this.endLiveTitle = '您因违反规定已被禁播'
-                this.endLiveDialogVisible = true
+                this.isMuteLive = true
+                this.getEndLiveInfo()
               }
             });
           }
