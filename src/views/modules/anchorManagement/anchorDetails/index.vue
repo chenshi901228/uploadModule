@@ -1888,12 +1888,7 @@ export default {
         }).catch(() => { })
       }
 
-      this.$router.push({
-        path: 'anchorManagement-anchorDetails-withdraw',
-        query: {
-          anchorDetails: this.anchorDetails
-        }
-      })
+      this.$router.push({ path: 'anchorManagement-anchorDetails-withdraw' })
 
       // this.dialogVisible_withdraw = true;
     },
