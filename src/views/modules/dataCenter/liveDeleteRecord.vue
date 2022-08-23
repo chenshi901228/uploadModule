@@ -263,11 +263,6 @@
       >
       </el-pagination>
     </el-card>
-    <!-- 编辑 -->
-    <goods-add-or-update
-      ref="goodsAddOrUpdate"
-      @refreshDataList="getDataList"
-    ></goods-add-or-update>
   </div>
 </template>
 <script>
@@ -309,7 +304,6 @@ export default {
         { prop: "createPhone", label: "删除人手机号码" },
         { prop: "createDate", label: "删除时间" },
       ],
-      loading: false, //搜索loading
       getDynamicGroupLoading: false, //下拉框加载数据loading
       dynamicGroupOptions:[]
     };
