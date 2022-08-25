@@ -565,17 +565,17 @@
         <el-descriptions-item label="最高在线人数">{{liveInfo.maxOnlineNum || 0}}</el-descriptions-item>
         <el-descriptions-item label="累计点赞">{{liveInfo.giveLikeNum || 0}}</el-descriptions-item>
         <el-descriptions-item label="累计分享">{{liveInfo.shareNum ||0}}次</el-descriptions-item>
-        <el-descriptions-item label="礼物收益">￥{{liveInfo.getReward.toFixed(2) || 0}}</el-descriptions-item>
-        <el-descriptions-item label="粉丝团收益">￥{{liveInfo.unionIncome.toFixed(2) || 0}}</el-descriptions-item>
-        <el-descriptions-item label="带货销售">￥{{liveInfo.commerceSale.toFixed(2) || 0}}</el-descriptions-item>
+        <el-descriptions-item label="礼物收益">￥{{liveInfo.getReward&&liveInfo.getReward.toFixed(2) || 0}}</el-descriptions-item>
+        <el-descriptions-item label="粉丝团收益">￥{{liveInfo.unionIncome&&liveInfo.unionIncome.toFixed(2) || 0}}</el-descriptions-item>
+        <el-descriptions-item label="带货销售">￥{{liveInfo.commerceSale&&liveInfo.commerceSale.toFixed(2) || 0}}</el-descriptions-item>
       </el-descriptions>
       <el-descriptions title="主播" :column="2">
         <el-descriptions-item label="新增用户">{{liveInfo.addUserNum || 0}}人</el-descriptions-item>
         <el-descriptions-item label="增加粉丝">{{liveInfo.addFansNum || 0}}人</el-descriptions-item>
-        <el-descriptions-item label="礼物收入" v-if="!isMuteLive">￥{{liveInfo.rewardMoney.toFixed(2) || 0}}</el-descriptions-item>
+        <el-descriptions-item label="礼物收入" v-if="!isMuteLive">￥{{liveInfo.rewardMoney&&liveInfo.rewardMoney.toFixed(2) || 0}}</el-descriptions-item>
         <el-descriptions-item label="礼物收入" v-else>不结算</el-descriptions-item>
         <el-descriptions-item label="带货收入">待结算</el-descriptions-item>
-        <el-descriptions-item label="粉丝团收入">￥{{liveInfo.unionProfit.toFixed(2) || 0}}</el-descriptions-item>
+        <el-descriptions-item label="粉丝团收入">￥{{liveInfo.unionProfit&&liveInfo.unionProfit.toFixed(2) || 0}}</el-descriptions-item>
       </el-descriptions>
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" size="small" @click="confirmQuit">确 定</el-button>
