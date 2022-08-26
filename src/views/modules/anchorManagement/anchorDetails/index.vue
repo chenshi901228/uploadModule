@@ -138,16 +138,16 @@
           <div style="width:50%;display: inline-block">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">已提现金额</div>
             <div>
-             ￥{{ anchorDetails.anchorWithdraw || 0 }}元
+              ￥{{ anchorDetails.anchorWithdraw || 0 }}元
             </div>
           </div>
           <div style="width:50%;display: inline-block;margin: 20px 0 0;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">可提现余额</div>
             <div>
-             ￥{{ anchorDetails.anchorBalance || 0 }}元
+              ￥{{ anchorDetails.anchorBalance || 0 }}元
             </div>
           </div>
-    
+
         </div>
       </div>
       <div class="diaBoxRight">
@@ -925,7 +925,9 @@ export default {
       productTypeOptions: [], //商品类型下拉选项
       fansLevelsOptions: [], //粉丝等级options
       changePowerVisible: false,
-      powerform: {},
+      powerform: {
+        power:''
+      },
       userType: 0,
       changeUserTypeData: {},
       dataRule: {
@@ -973,6 +975,7 @@ export default {
     //改变身份
     changePower(row) {
       this.userType = row.userType;
+       this.powerform.power=''
       this.changePowerVisible = true;
       this.changeUserTypeData = row;
     },
@@ -1118,8 +1121,8 @@ export default {
               approveStatus: "",
               payStatus: "",
               date: "",
-              code:"",
-              withdrawStatus:""
+              code: "",
+              withdrawStatus: ""
             };
             this.page_dia = 1; // 当前页码
             this.diaDataList = [];
@@ -1154,8 +1157,8 @@ export default {
         approveStatus: "",
         payStatus: "",
         date: "",
-        code:"",
-        withdrawStatus:""
+        code: "",
+        withdrawStatus: ""
       };
       this.diaDataList = [];
       this.total_dia = 0;
@@ -1260,7 +1263,7 @@ export default {
             limit: this.limit_dia,
             page: this.page_dia,
             anchorId: this.userId,
-            code:this.diaSearchForm.code,
+            code: this.diaSearchForm.code,
             bankAccount: this.diaSearchForm.bankAccount,
             withdrawStatus: this.diaSearchForm.withdrawStatus,
             // approveStatus: this.diaSearchForm.approveStatus,
@@ -2107,8 +2110,8 @@ export default {
 }
 
 .diaBoxLeft_mes {
-   padding: 0 10px 20px;
-    border-bottom: 1px solid #E2E5EA;
+  padding: 0 10px 20px;
+  border-bottom: 1px solid #E2E5EA;
 
   .avatar {
     width: 110px;
@@ -2140,7 +2143,7 @@ export default {
 
 .diaBoxRight_tabBtns {
   border-width: 0px;
-    margin-right: 50px;
+  margin-right: 50px;
   height: 45px;
   text-align: center;
   cursor: pointer;
@@ -2154,10 +2157,10 @@ export default {
 
 .is-active {
   color: #4057CB;
-    position: relative;
-    bottom: -2px;
-  border-bottom:2px solid #4057CB;
- 
+  position: relative;
+  bottom: -2px;
+  border-bottom: 2px solid #4057CB;
+
 }
 
 /deep/.frontCoverImg {
