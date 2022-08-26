@@ -975,7 +975,7 @@ export default {
     //改变身份
     changePower(row) {
       this.userType = row.userType;
-       this.powerform.power=''
+      this.powerform.power=''
       this.changePowerVisible = true;
       this.changeUserTypeData = row;
     },
