@@ -15,7 +15,7 @@
         <div class="left-btn">
           <el-radio-group v-model="messageStatus" @change="getDiffStatusList(messageStatus)">
             <el-radio-button :label="-1">
-              全部消息<span>（{{ messageCount.readNum + messageCount.unReadNum}}）</span>
+              全部消息<span>（{{ Number(messageCount.readNum) + Number(messageCount.unReadNum)}}）</span>
             </el-radio-button>
             <el-radio-button :label="0">
               未读<span>（{{ messageCount.unReadNum || 0 }}）</span>

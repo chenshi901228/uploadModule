@@ -370,13 +370,23 @@ export default {
       }
     },
     sendPrompt(id){
-      this.$http.put(`/sys/liveplaybacknew/sendImMsg/${id}`).then(res=>{
-        if(res.data.code == 0){
-          this.$message.success('发送提醒成功！');
-        }else{
-          this.$message.error(res.msg);
-        }
+      this.$confirm("确认向观看该场直播的用户发送回放提醒?", "发送回放提醒", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
       })
+        .then(() => {
+          this.$http.put(`/sys/liveplaybacknew/sendImMsg/${id}`).then(res=>{
+            if(res.data.code == 0){
+              this.$message.success('发送提醒成功！');
+            }else{
+              this.$message.error(res.msg);
+            }
+          })
+        })
+        .catch(() => {
+          this.$message.info("已取消操作");
+        });
+     
     },
     // 投放人群下拉请求数据
     getDynamicGroup(value) {

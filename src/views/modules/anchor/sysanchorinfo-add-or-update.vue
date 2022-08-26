@@ -16,11 +16,11 @@
             <el-form-item label="介绍" prop="introduce">
               <el-input v-model="dataForm.introduce" placeholder="介绍"></el-input>
             </el-form-item>
-            <el-form-item label="认证用户（0:未认证,1:认证）" prop="legalizeFlg">
-              <el-input v-model="dataForm.legalizeFlg" placeholder="认证用户（0:未认证,1:认证）"></el-input>
+            <el-form-item label="认证用户（0:否,1:是）" prop="legalizeFlg">
+              <el-input v-model="dataForm.legalizeFlg" placeholder="认证用户（0:否,1:是）"></el-input>
             </el-form-item>
-            <el-form-item label="是否导师（0:未认证,1:认证）" prop="tutorFlg">
-              <el-input v-model="dataForm.tutorFlg" placeholder="是否导师（0:未认证,1:认证）"></el-input>
+            <el-form-item label="是否导师（0:否,1:是）" prop="tutorFlg">
+              <el-input v-model="dataForm.tutorFlg" placeholder="是否导师（0:否,1:是）"></el-input>
             </el-form-item>
             <el-form-item label="删除标记（0:未删除,1:已删除）" prop="delFlg">
               <el-input v-model="dataForm.delFlg" placeholder="删除标记（0:未删除,1:已删除）"></el-input>

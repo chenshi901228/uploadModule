@@ -1395,10 +1395,9 @@ export default {
     },
     //下架商品
     downProduct(id) {
-      this.$confirm("确认下架商品, 是否继续?", "提示", {
+      this.$confirm("确认下架该商品?", "下架", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning",
       })
         .then(() => {
           this.ids = [];
@@ -1406,7 +1405,7 @@ export default {
           this.confirmDel();
         })
         .catch(() => {
-          this.$message.info("已取消下架");
+          this.$message.info("已取消操作");
         });
     },
     fansGroup() {
@@ -1429,10 +1428,9 @@ export default {
     },
     //批量下架
     deleteSelect() {
-      this.$confirm("确认下架商品, 是否继续?", "提示", {
+      this.$confirm("确认下架商品?", "下架", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning",
       })
         .then(() => {
           this.dataListSelections.forEach((v) => {
@@ -1441,7 +1439,7 @@ export default {
           this.confirmDel();
         })
         .catch(() => {
-          this.$message.info("已取消下架");
+          this.$message.info("已取消操作");
         });
     },
     //批量选择
@@ -1548,29 +1546,27 @@ export default {
     addRecommend(id) {
       if (!id) {
         //批量添加
-        this.$confirm("确认添加为推荐主播, 是否继续?", "提示", {
+        this.$confirm("确认推荐主播?", "推荐", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
-          type: "warning",
         })
           .then(() => {
             this.addRecommendHandle(this.recommendListSelections);
           })
           .catch(() => {
-            this.$message.info("已取消添加");
+            this.$message.info("已取消操作");
           });
       } else {
         //单个操作
-        this.$confirm("确认添加为推荐主播, 是否继续?", "提示", {
+        this.$confirm("确认推荐主播?", "推荐", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
-          type: "warning",
         })
           .then(() => {
             this.addRecommendHandle([{ recommendAnchorId: id }]);
           })
           .catch(() => {
-            this.$message.info("已取消添加");
+            this.$message.info("已取消操作");
           });
       }
     },
@@ -1578,10 +1574,9 @@ export default {
     deleteRecommend(id) {
       if (!id) {
         //批量取消推荐
-        this.$confirm("确认取消推荐主播, 是否继续?", "提示", {
+        this.$confirm("确认取消推荐主播?", "取消推荐", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
-          type: "warning",
         })
           .then(() => {
             let arr = this.dataListSelections.map((item) => {
@@ -1594,10 +1589,9 @@ export default {
           });
       } else {
         //单个操作
-        this.$confirm("确认取消推荐主播, 是否继续?", "提示", {
+        this.$confirm("确认取消推荐该主播?", "取消推荐", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
-          type: "warning",
         })
           .then(() => {
             this.deleteRecommendHandle([{ recommendAnchorId: id }]);
@@ -1627,10 +1621,9 @@ export default {
     },
     //上架商品
     handleDeleteUser(index, row) {
-      this.$confirm("确认上架商品, 是否继续?", "提示", {
+      this.$confirm("确认上架该商品?", "上架", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning",
       })
         .then(() => {
           let ids = [];
@@ -1668,15 +1661,14 @@ export default {
             });
         })
         .catch(() => {
-          this.$message.info("已取消上架");
+          this.$message.info("已取消操作");
         });
     },
     //批量上架
     upSelect() {
-      this.$confirm("确认上架商品, 是否继续?", "提示", {
+      this.$confirm("确认上架商品?", "上架", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
-        type: "warning",
       })
         .then(() => {
           let ids = [];
@@ -1716,7 +1708,7 @@ export default {
             });
         })
         .catch(() => {
-          this.$message.info("已取消上架");
+          this.$message.info("已取消操作");
         });
     },
     // 分页, 每页条数

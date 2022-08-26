@@ -255,7 +255,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            {{ scope.row.legalizeFlg === 1 ? "认证" : "未认证" }}
+            {{ scope.row.legalizeFlg === 1 ? "是" : "否" }}
           </template>
         </el-table-column>
         <el-table-column
@@ -267,7 +267,7 @@
           width="120"
         >
           <template slot-scope="scope">
-            {{ scope.row.tutorFlg === 1 ? "认证" : "未认证" }}
+            {{ scope.row.tutorFlg === 1 ? "是" : "否" }}
           </template>
         </el-table-column>
         <el-table-column

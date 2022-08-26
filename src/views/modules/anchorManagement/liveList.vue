@@ -359,7 +359,7 @@
               type="text"
               icon="el-icon-d-arrow-right"
               size="small"
-              v-if="row.liveState == 1 || row.liveState == 3"
+              v-if="(row.liveState == 1 || row.liveState == 3) && row.showMode"
               @click="joinLiveHandle(row)"
               >进入直播间</el-button
             >

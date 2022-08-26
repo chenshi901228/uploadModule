@@ -46,8 +46,8 @@
             v-model="dataForm.legalizeFlg"
             clearable
           >
-            <el-option :value="0" label="未认证"></el-option>
-            <el-option :value="1" label="认证"></el-option>
+            <el-option :value="0" label="否"></el-option>
+            <el-option :value="1" label="是"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
@@ -61,8 +61,8 @@
             v-model="dataForm.tutorFlg"
             clearable
           >
-            <el-option :value="0" label="未认证"></el-option>
-            <el-option :value="1" label="认证"></el-option>
+            <el-option :value="0" label="否"></el-option>
+            <el-option :value="1" label="是"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
@@ -223,7 +223,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            {{ scope.row.legalizeFlg === 1 ? "认证" : "未认证" }}
+            {{ scope.row.legalizeFlg === 1 ? "是" : "否" }}
           </template>
         </el-table-column>
         <el-table-column
@@ -234,7 +234,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            {{ scope.row.tutorFlg === 1 ? "认证" : "未认证" }}
+            {{ scope.row.tutorFlg === 1 ? "是" : "否" }}
           </template>
         </el-table-column>
         <el-table-column
