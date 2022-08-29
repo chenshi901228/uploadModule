@@ -180,6 +180,15 @@ export default {
     },
     resetForm(formName) {
       this.$refs[formName].resetFields();
+      let tabName = this.$store.state.contentTabsActiveName
+      this.$store.state.contentTabs = this.$store.state.contentTabs.filter(item => item.name !== tabName)
+      if (this.$store.state.contentTabs.length <= 0) {
+        this.$store.state.sidebarMenuActiveName = this.$store.state.contentTabsActiveName = 'home'
+        return false
+      }
+      if (tabName === this.$store.state.contentTabsActiveName) {
+        this.$router.push({ name: this.$store.state.contentTabs[this.$store.state.contentTabs.length - 1].name })
+      }
     },
   },
 };

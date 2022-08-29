@@ -41,7 +41,6 @@
           :precision="0"
           :min="0"
           placeholder="库存数量"
-
           :max="9999999999"
         >
         </el-input-number>
@@ -58,7 +57,6 @@
           :precision="0"
           :min="0"
           placeholder="已购买人数"
-
           :max="9999999999"
         >
         </el-input-number>

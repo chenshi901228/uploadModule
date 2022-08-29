@@ -312,7 +312,7 @@ export default {
             editor: null,
             html: "<p><br></p>",
             toolbarConfig: {
-                excludeKeys: ["fullScreen", "blockquote", "emotion", "insertLink", "insertTable", "codeBlock", "todo"], //去掉不需要的功能
+                excludeKeys: ["fullScreen", "blockquote", "emotion", "insertLink", "insertTable", "codeBlock", "todo","fontFamily"], //去掉不需要的功能
             },
             editorConfig: {
                 placeholder: "请输入内容",

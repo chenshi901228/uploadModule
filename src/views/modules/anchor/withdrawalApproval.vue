@@ -435,7 +435,7 @@
               type="text"
               size="small"
               v-if="scope.row.approveStatus === 0"
-              @click="showDialog(scope.row.id)"
+              @click="showDialog(scope.row)"
               >确认</el-button
             >
           </template>
@@ -480,8 +480,12 @@
     </el-dialog>
 
 
-    <el-dialog title="确认" :visible.sync="dialogVisible">
-      <span>确认通过该提现申请</span>
+    <el-dialog title="确认" :visible.sync="dialogVisible" width="25%">
+      <el-descriptions :column="1">
+            <el-descriptions-item label="主播姓名">{{selectData.anchorName}}</el-descriptions-item>
+            <el-descriptions-item label="手机号码">{{selectData.phone}}</el-descriptions-item>
+            <el-descriptions-item label="提现金额">￥{{selectData.amount&&selectData.amount.toFixed(2)}}</el-descriptions-item>
+        </el-descriptions>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false"
           >取 消</el-button
@@ -525,7 +529,7 @@ export default {
         desc: "",
       },
       uuid: "",
-      id: "",
+      selectData:{},
       dialogVisible:false
     };
   },
@@ -536,9 +540,9 @@ export default {
     });
   },
   methods: {
-    showDialog(id) {
+    showDialog(data) {
       this.uuid = getUUID();
-      this.id = id;
+      this.selectData = data
       // this.dialogFormVisible = true;
       this.dialogVisible = true;
 
@@ -568,7 +572,7 @@ export default {
       )
         .then(() => {
           this.$http["put"]("/sys/finance/anchorWithdraw/updateApproveStatus", {
-            id: this.id,
+            id: this.selectData.id,
             approveStatus: status,
             uuid: this.uuid,
           })
@@ -587,7 +591,7 @@ export default {
     //确认
     confirm() {
       this.$http["put"]("/sys/finance/anchorWithdraw/updateApproveStatus", {
-            id: this.id,
+            id: this.selectData.id,
             approveStatus: 1,
             uuid: this.uuid,
           })

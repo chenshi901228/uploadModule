@@ -12,6 +12,7 @@
             :on-preview="handlePictureCardPreview"
             :on-remove="onRemove" 
             :file-list="fileList"
+            :disabled="disabled"
             :on-error="uploadError"
             :on-success="uploadSuccess"
             :on-exceed="onExceed">
@@ -49,6 +50,10 @@
                 type:Number,
                 default:null
             },
+            disabled:{
+              type:Boolean,
+              default:false
+            }
         },
         created() {
             this.uploadUrl = `${window.SITE_CONFIG['apiURL']}/oss/file/upload?access_token=${Cookies.get('access_token')}`

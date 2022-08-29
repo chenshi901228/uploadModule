@@ -9,12 +9,21 @@
         :close-on-press-escape="false"
         @close="close"
         width="30%">
+        <el-descriptions :column="1">
+            <el-descriptions-item label="商品名称">{{info.productName}}</el-descriptions-item>
+            <el-descriptions-item label="商品数量">{{info.num}}</el-descriptions-item>
+            <el-descriptions-item label="收件人">{{info.recipient}}</el-descriptions-item>
+            <el-descriptions-item label="收件人手机号码">{{info.recipientNumber}}</el-descriptions-item>
+            <el-descriptions-item label="省市区">{{info.provinceName+info.cityName+info.countyName}}</el-descriptions-item>
+            <el-descriptions-item label="详细地址">{{info.detailInfo}}</el-descriptions-item>
+        </el-descriptions>
         <el-form
             :model="formData"
             :rules="formDataRule"
             ref="form"
             size="small"
             label-width="100px"
+            label-position="left"
         >
             <el-form-item label="快递公司" prop="company">
                 <el-select 
@@ -52,6 +61,7 @@ export default {
     },
     methods: {
         init(data) {
+            console.log(data)
             this.info = data
             this.show = true
             this.getCompany()

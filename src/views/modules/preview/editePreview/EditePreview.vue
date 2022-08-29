@@ -138,14 +138,14 @@
                 <option value="18px">18px</option>
                 <option value="20px">20px</option>
               </select>
-              <select class="ql-font" title="字体">
+              <!-- <select class="ql-font" title="字体">
                 <option value="SimSun">宋体</option>
                 <option value="SimHei">黑体</option>
                 <option value="Microsoft-YaHei">微软雅黑</option>
                 <option value="KaiTi">楷体</option>
                 <option value="FangSong">仿宋</option>
                 <option value="Arial">Arial</option>
-              </select>
+              </select> -->
               <!-- Add subscript and superscript buttons -->
               <select class="ql-color" value="color" title="字体颜色"></select>
               <select
