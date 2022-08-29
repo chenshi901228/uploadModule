@@ -338,19 +338,19 @@
               @click="updateApproveStatus(scope.row.id, -1)"
               >驳回</el-button
             > -->
-            <el-button
+            <!-- <el-button
               type="text"
               size="small"
               icon="el-icon-edit-outline"
               v-if="scope.row.approveStatus === 0"
               @click="showDialog(scope.row.refundReason,scope.row.id)"
               >审批</el-button
-            >
+            > -->
             <el-button
               type="text"
               size="small"
               icon="el-icon-edit-outline"
-              @click="showDialogWithRemark(scope.row.refundReason,scope.row.approveReason)"
+              @click="showDialogWithRemark(scope.row)"
               >查看</el-button
             >
           </template>
@@ -368,7 +368,9 @@
       >
       </el-pagination>
     </div>
-    <el-dialog title="审批" :visible.sync="dialogFormVisible">
+
+    <!-- 审批/查看 -->
+    <el-dialog title="查看" :visible.sync="dialogFormWithRemarkVisible" @close="closeHandle">
       <el-form
         :model="ruleForm"
         ref="ruleForm"
@@ -376,10 +378,10 @@
         class="demo-ruleForm"
         size="small"
       >
-        <el-form-item label="退款原因">
-          <div>{{refundReason || '--'}}</div>
+        <el-form-item label="退款原因：">
+          <div>{{remarkWithDialogForm.refundReason || '--'}}</div>
         </el-form-item>
-        <el-form-item label="备注" prop="desc">
+        <el-form-item label="备注：" prop="desc" v-if="remarkWithDialogForm.approveStatus === 0">
           <el-input
             placeholder="请输入,可不填"
             type="textarea"
@@ -388,32 +390,14 @@
             v-model="ruleForm.desc"
           ></el-input>
         </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="updateApproveStatus(id, -1)">驳 回</el-button>
-        <el-button size="small" type="primary" @click="updateApproveStatus(id, 1)"
-          >通 过</el-button
-        >
-      </div>
-    </el-dialog>
-
-    <el-dialog title="查看" :visible.sync="dialogFormWithRemarkVisible">
-      <el-form
-        :model="ruleForm"
-        ref="ruleForm"
-        label-width="100px"
-        class="demo-ruleForm"
-        size="small"
-      >
-        <el-form-item label="退款原因">
-          <div>{{refundReason || '--'}}</div>
-        </el-form-item>
-        <el-form-item label="备注" prop="desc">
-          <div>{{remarkWithDialogForm || '--'}}</div>
+        <el-form-item label="备注：" prop="desc" v-else>
+          <div>{{remarkWithDialogForm.approveReason || '--'}}</div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormWithRemarkVisible = false">关 闭</el-button>
+        <el-button :disabled="submitLoading" :loading="submitLoading && submitStatus == -1" v-if="remarkWithDialogForm.approveStatus === 0" size="small" @click="updateApproveStatus(remarkWithDialogForm.id, -1)">驳 回</el-button>
+        <el-button :disabled="submitLoading" :loading="submitLoading && submitStatus == 1" v-if="remarkWithDialogForm.approveStatus === 0" size="small" type="primary" @click="updateApproveStatus(remarkWithDialogForm.id, 1)">通 过</el-button>
+        <el-button v-if="remarkWithDialogForm.approveStatus != 0" size="small" @click="dialogFormWithRemarkVisible = false">关 闭</el-button>
       </div>
     </el-dialog>
 
@@ -422,7 +406,6 @@
 
 <script>
 import mixinViewModule from "@/mixins/view-module";
-import { addDynamicRoute } from "@/router";
 import Template from "../devtools/template.vue";
 export default {
   mixins: [mixinViewModule],
@@ -445,14 +428,14 @@ export default {
       },
       dataList: [],
       userId: "",
-      dialogFormVisible: false,
       dialogFormWithRemarkVisible: false,
       ruleForm: {
         desc: "",
       },
       productTypeOptions: [], //商品类型下拉选项
-      refundReason:"",
-      remarkWithDialogForm:"",
+      remarkWithDialogForm: {},
+      submitLoading: false, //审核loading
+      submitStatus: 1, //通过/驳回
     };
   },
   components: { Template },
@@ -462,15 +445,9 @@ export default {
     });
   },
   methods: {
-    showDialog(refundReason,id) {
-      this.refundReason = refundReason
-      this.id = id;
-      this.dialogFormVisible = true;
-      this.ruleForm.desc = '';
-    },
-    showDialogWithRemark(refundReason,remark) {
-      this.refundReason = refundReason;
-      this.remarkWithDialogForm = remark;
+    // 审批/查看
+    showDialogWithRemark(row) {
+      this.remarkWithDialogForm = row;
       this.dialogFormWithRemarkVisible = true;
     },
     // 重置搜索条件
@@ -493,36 +470,34 @@ export default {
         this.$message.error(JSON.stringify(err))
       })
     },
+    // 弹框关闭
+    closeHandle() {
+      this.ruleForm.desc = ""
+      this.remarkWithDialogForm = {}
+    },
 
     // 审核
     updateApproveStatus(id, status) {
-      this.$confirm(
-        `是否执行 [${status == -1 ? "拒绝" : "同意"}] 操作`,
-        this.$t("prompt.title"),
-        {
-          confirmButtonText: this.$t("confirm"),
-          cancelButtonText: this.$t("cancel"),
-          type: "warning",
-        }
-      )
-        .then(() => {
-          this.$http["put"]("/sys/userRefund/updateApproveStatus", {
-            id,
-            approveStatus: status,
-            approveReason: this.ruleForm.desc,
-          })
-            .then(({ data: res }) => {
-              if (res.code !== 0) {
-                return this.$message.error(res.msg);
-              }
-              this.getDataList();
-              this.$message.success("操作成功");
-              this.ruleForm.desc = "";
-              this.dialogFormVisible = false;
-            })
-            .catch(() => {});
+      this.submitStatus = status
+      this.submitLoading = true
+      this.$http["put"]("/sys/userRefund/updateApproveStatus", {
+        id,
+        approveStatus: status,
+        approveReason: this.ruleForm.desc,
+      })
+        .then(({ data: res }) => {
+          this.submitLoading = false
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          this.$message.success("操作成功");
+          this.dialogFormWithRemarkVisible = false;
+          this.query();
         })
-        .catch(() => {});
+        .catch((err) => {
+          this.$message.error(JSON.stringify(err))
+          this.submitLoading = false
+        });
     },
   },
 };

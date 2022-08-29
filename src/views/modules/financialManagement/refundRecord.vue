@@ -77,9 +77,9 @@
             v-model="dataForm.confirmStatus"
             clearable
           >
-            <el-option :value="0" label="申请中"></el-option>
-            <el-option :value="1" label="同意"></el-option>
-            <el-option :value="-1" label="不同意"></el-option>
+            <el-option :value="0" label="待审批"></el-option>
+            <el-option :value="1" label="已通过"></el-option>
+            <el-option :value="-1" label="未通过"></el-option>
           </el-select>
         </el-form-item>
 
@@ -252,7 +252,7 @@
         >
           <template slot-scope="{ row }">
             <div>
-              {{row.productTypeNum === 1 || row.productTypeNum === 3 ? '仅退款' : '退货退款'}}
+              {{row.productTypeNum != 2 ? "仅退款" : row.productTypeNum == 2 && row.useStatus == 0 ? "仅退款" : "退货退款"}}
             </div>
           </template>
         </el-table-column>
@@ -270,10 +270,21 @@
           header-align="center"
           show-overflow-tooltip
           align="center"
+          width="150px"
         >
           <template slot-scope="{ row }">
             <div>
-              {{row.confirmStatus === 0 ? '申请中' : row.confirmStatus === -1 ? '不同意' : row.confirmStatus === 1 ? '同意' : '--'}}
+              <el-tag :type="
+                row.confirmStatus === 1 ? 'success' 
+                : row.confirmStatus === -1 ? 'danger': 'warning'">
+                {{
+                  row.confirmStatus === 1
+                  ? "已通过"
+                  : row.confirmStatus === -1
+                  ? "未通过"
+                  : "待审批"
+                }}
+              </el-tag>
             </div>
           </template>
         </el-table-column>
@@ -283,10 +294,21 @@
           header-align="center"
           show-overflow-tooltip
           align="center"
+          width="150px"
         >
           <template slot-scope="{ row }">
             <div>
-              {{row.flowStatus === 0 ? '审批中' : row.flowStatus === -1 ? '已驳回' : row.flowStatus === 1 ? '已通过' : '--'}}
+              <el-tag :type="
+                row.flowStatus === 1 ? 'success' 
+                : row.flowStatus === -1 ? 'danger': 'warning'">
+                {{
+                  row.flowStatus === 1
+                  ? "已通过"
+                  : row.flowStatus === -1
+                  ? "已驳回"
+                  : "审批中"
+                }}
+              </el-tag>
             </div>
           </template>
         </el-table-column>
@@ -350,26 +372,16 @@
             <el-button
               type="text"
               size="small"
+              icon="el-icon-edit-outline"
+              @click="showDialogWithRemark(scope.row)"
+              >查看</el-button>
+            <el-button
+              type="text"
+              size="small"
               icon="el-icon-position"
               v-if="scope.row.flowStatus === 1 && (scope.row.refundStatus === -2 || scope.row.refundStatus === -1)"
               @click="updateApproveStatus(scope.row.id)"
-              >确认退款</el-button
-            >
-            <el-button
-              v-if="scope.row.flowStatus === 0"
-              type="text"
-              size="small"
-              icon="el-icon-edit-outline"
-              @click="showDialog(scope.row.id)"
-              >审批</el-button
-            >
-            <el-button
-              type="text"
-              size="small"
-              icon="el-icon-edit-outline"
-              @click="showDialogWithRemark(scope.row)"
-              >查看</el-button
-            >
+              >确认退款</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -386,7 +398,7 @@
       </el-pagination>
     </div>
 
-    <el-dialog title="审批" :visible.sync="dialogFormVisible">
+    <el-dialog title="查看" :visible.sync="dialogFormWithRemarkVisible" @close="closeHandle">
       <el-form
         :model="ruleForm"
         ref="ruleForm"
@@ -394,7 +406,14 @@
         class="demo-ruleForm"
         size="small"
       >
-        <el-form-item label="备注" prop="desc">
+        <el-form-item label="退款原因：">
+          <div>{{infoWithDialogForm.refundReason || '--'}}</div>
+        </el-form-item>
+        <el-form-item label="运营备注：">
+          <div>{{infoWithDialogForm.approveReason || '--'}}</div>
+        </el-form-item>
+        <!-- 审批 -->
+        <el-form-item label="备注：" prop="desc" v-if="infoWithDialogForm.flowStatus === 0">
           <el-input
             placeholder="请输入,可不填"
             type="textarea"
@@ -403,35 +422,17 @@
             v-model="ruleForm.desc"
           ></el-input>
         </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button size="small" @click="refoundApproveStatus(refundId, -1)">驳 回</el-button>
-        <el-button size="small" type="primary" @click="refoundApproveStatus(refundId, 1)"
-          >通 过</el-button
-        >
-      </div>
-    </el-dialog>
-
-    <el-dialog title="查看" :visible.sync="dialogFormWithRemarkVisible">
-      <el-form
-        :model="ruleForm"
-        ref="ruleForm"
-        label-width="100px"
-        class="demo-ruleForm"
-        size="small"
-      >
-        <el-form-item label="退款原因">
-          <div>{{infoWithDialogForm.refundReason || '--'}}</div>
-        </el-form-item>
-        <el-form-item label="运营备注" prop="desc">
-          <div>{{infoWithDialogForm.approveReason || '--'}}</div>
-        </el-form-item>
-        <el-form-item label="财务备注" prop="desc">
+        <!-- 仅查看 -->
+        <el-form-item label="财务备注：" v-else>
           <div>{{infoWithDialogForm.confirmReason || '--'}}</div>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormWithRemarkVisible = false">关 闭</el-button>
+        <!-- 可审批 -->
+        <el-button :disabled="submitLoading" :loading="submitLoading && submitStatus == -1" v-if="infoWithDialogForm.flowStatus === 0" size="small" @click="refoundApproveStatus(infoWithDialogForm.id, -1)">驳 回</el-button>
+        <el-button :disabled="submitLoading" :loading="submitLoading && submitStatus == 1" v-if="infoWithDialogForm.flowStatus === 0" size="small" type="primary" @click="refoundApproveStatus(infoWithDialogForm.id, 1)">通 过</el-button>
+        <!-- 仅查看 -->
+        <el-button v-if="infoWithDialogForm.flowStatus != 0" @click="dialogFormWithRemarkVisible = false" size="small">关 闭</el-button>
       </div>
     </el-dialog>
   </el-card>
@@ -439,7 +440,6 @@
 
 <script>
 import mixinViewModule from "@/mixins/view-module";
-import { addDynamicRoute } from "@/router";
 import Template from "../devtools/template.vue";
 export default {
   mixins: [mixinViewModule],
@@ -465,13 +465,13 @@ export default {
       },
       dataList: [{ createDate: 1 }],
       userId: "",
-      dialogFormVisible:false,
       ruleForm: {
         desc: "",
       },
-      refundId:"",
       dialogFormWithRemarkVisible: false,
-      infoWithDialogForm: {}
+      infoWithDialogForm: {},
+      submitLoading: false, //审核loading
+      submitStatus: 1, //通过/驳回
     };
   },
   components: { Template },
@@ -481,6 +481,11 @@ export default {
     });
   },
   methods: {
+    // 弹框关闭
+    closeHandle() {
+      this.ruleForm.desc = "";
+      this.infoWithDialogForm = {}
+    },
     // 重置搜索条件
     resetDataForm() {
       this.dataForm = {
@@ -498,7 +503,7 @@ export default {
     },
     // 确认退款
     updateApproveStatus(id, status) {
-      this.$confirm(`是否执行退款操作`, this.$t("prompt.title"), {
+      this.$confirm("确认向该用户退款？", "确认退款", {
         confirmButtonText: this.$t("confirm"),
         cancelButtonText: this.$t("cancel"),
         type: "warning",
@@ -511,51 +516,40 @@ export default {
               if (res.code !== 0) {
                 return this.$message.error(res.msg);
               }
-              this.getDataList();
               this.$message.success("操作成功");
+              this.query();
             })
             .catch(() => {});
         })
         .catch(() => {});
     },
-    //审批
-    showDialog(id) {
-      this.refundId = id;
-      this.dialogFormVisible = true;
-    },
+    // 审批/查看
     showDialogWithRemark(remarkInfo) {
       this.infoWithDialogForm = remarkInfo;
       this.dialogFormWithRemarkVisible = true;
     },
     // 确认审核
     refoundApproveStatus(id, status) {
-      this.$confirm(
-        `是否执行 [${status == -1 ? "拒绝" : "同意"}] 操作`,
-        this.$t("prompt.title"),
-        {
-          confirmButtonText: this.$t("confirm"),
-          cancelButtonText: this.$t("cancel"),
-          type: "warning",
-        }
-      )
-        .then(() => {
-          this.$http["put"]("/sys/userRefund/updateConfirmStatus", {
-            id,
-            confirmStatus: status,
-            confirmReason: this.ruleForm.desc,
-          })
-            .then(({ data: res }) => {
-              if (res.code !== 0) {
-                return this.$message.error(res.msg);
-              }
-              this.getDataList();
-              this.$message.success("操作成功");
-              this.ruleForm.desc = "";
-              this.dialogFormVisible = false;
-            })
-            .catch(() => {});
+      this.submitStatus = status
+      this.submitLoading = true
+      this.$http["put"]("/sys/userRefund/updateConfirmStatus", {
+        id,
+        confirmStatus: status,
+        confirmReason: this.ruleForm.desc,
+      })
+        .then(({ data: res }) => {
+          this.submitLoading = false
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          this.$message.success("操作成功");
+          this.dialogFormWithRemarkVisible = false;
+          this.query();
         })
-        .catch(() => {});
+        .catch((err) => {
+          this.$message.error(JSON.stringify(err))
+          this.submitLoading = false
+        });
     },
   },
 };

@@ -218,7 +218,7 @@ export default {
     },
     // 表单提交
     dataFormSubmitHandle: debounce(function () {
-      if(this.loading) return
+      if(this.loading || this.dialogVisible) return
       if (this.loginType) {
         this.$refs['dataForm'].validate((valid) => {
           if (!valid) {
