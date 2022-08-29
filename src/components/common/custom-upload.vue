@@ -28,6 +28,7 @@
       </div>
     </div>
     <el-upload
+      v-if="uploadList.length < limit"
       class="upload-demo"
       :action="uploadUrl"
       :multiple="multiple"

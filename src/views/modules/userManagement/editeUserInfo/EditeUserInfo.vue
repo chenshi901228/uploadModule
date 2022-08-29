@@ -22,19 +22,28 @@
         ></el-input>
       </el-form-item>
       <el-form-item label="主播头像" required>
-        <!-- <el-upload
-          :action="uploadUrl"
-          list-type="picture-card"
-          :on-preview="handlePictureCardPreview"
-          :on-remove="handleRemove"
+        <upload
+          :fileList="fileList"
           :limit="1"
-        >
-          <i class="el-icon-plus"></i>
-        </el-upload> -->
-        <upload :fileList="fileList" :limit="1" :multiple="false" @getImg="getImg"></upload>
+          :fileMaxSize="2"
+          :fileType="['png', 'jpg', 'jpeg']"
+          ref="uploadFile"
+          @uploadSuccess="uploadSuccess"
+          @uploadRemove="uploadRemove"
+        ></upload>
+        <p class="tips">头像大小限制300px  *  300px</p>
       </el-form-item>
       <el-form-item label="主播二维码" required>
-        <upload :fileList="fileListQRcode" :limit="1" :multiple="false" @getImg="getImgQRcode"></upload>
+        <upload
+          :fileList="fileListQRcode"
+          :limit="1"
+          :fileMaxSize="2"
+          :fileType="['png', 'jpg', 'jpeg']"
+          ref="uploadQRcodeFile"
+          @uploadSuccess="uploadQRcodeSuccess"
+          @uploadRemove="uploadQRcodeRemove"
+        ></upload>
+        <p class="tips">二维码大小限制300px  *  300px</p>
       </el-form-item>
       <el-form-item>
         <!-- <el-button @click="resetForm('ruleForm')">取消</el-button> -->
@@ -50,8 +59,7 @@
 </template>
 
 <script>
-import Cookies from 'js-cookie'
-import Upload from "@/components/upload/index";
+import Upload from "@/components/common/custom-upload";
 import mixinTableModule from "@/mixins/table-module";
 export default {
   mixins: [mixinTableModule],
@@ -85,7 +93,6 @@ export default {
   activated() {
     let info = JSON.parse(this.$route.query.info)
     this.info = info
-    console.log(info)
     if(info) {
       this.id = info.id
       this.ruleForm.username = info.username
@@ -111,23 +118,19 @@ export default {
     
   },
   methods: {
-    cutDown(event) {
-      this.imgSrc = event.dataURL;
-      console.log(event.file);//输出为base64数据
-      var form = new FormData(); // FormData 对象
-      form.append("file", event.file); // 文件对象
-      this.$http.post(`/oss/file/upload?access_token=${Cookies.get('access_token')}`,form).then(res=>{
-        console.log(res)
-      })
+    // 头像上传、删除
+    uploadSuccess(file) {
+      this.fileList.push(file);
     },
-    // 头像上传
-    getImg(imgList) {
-      console.log(imgList)
-      this.fileList = imgList;
+    uploadRemove(file) {
+      this.fileList = []
     },
-    //二维码上传
-    getImgQRcode(imgList){
-      this.fileListQRcode = imgList;
+    // 二维码上传、删除
+    uploadQRcodeSuccess(file) {
+      this.fileListQRcode.push(file);
+    },
+    uploadQRcodeRemove(file) {
+      this.fileListQRcode = []
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -136,6 +139,10 @@ export default {
           //   confirmButtonText:'确认',
           //   cancelButtonText:'取消',
           // }).then(()=>{
+            if (!this.$refs.uploadFile.isUploadAll() || !this.$refs.uploadQRcodeFile.isUploadAll()) {
+              return this.$message.error("有附件正在上传中")
+            }
+
             if(!this.fileList.length) return this.$message.error("请上传主播头像")
             if(!this.fileListQRcode.length) return this.$message.error("请上传主播二维码")
             const loading = this.$loading({
