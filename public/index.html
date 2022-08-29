@@ -32,7 +32,7 @@
   <% if (process.env.VUE_APP_NODE_ENV === 'dev') { %>
     <!-- <script>window.SITE_CONFIG['apiURL'] = 'http://192.168.250.49:28080';</script> -->
     <!-- <script>window.SITE_CONFIG['apiURL'] = 'http://192.168.250.195:28080';</script> -->
-    <script>window.SITE_CONFIG['apiURL'] = 'https://live-mini-test.dayuzhongxue.com';</script>
+    <script>window.SITE_CONFIG['apiURL'] = 'https://zhibo-test.dayuzhongxue.com';</script>
   <% } %>
   <!-- 集成测试环境 -->
   <% if (process.env.VUE_APP_NODE_ENV === 'prod:sit') { %>
@@ -44,7 +44,7 @@
   <% } %>
   <!-- 生产环境 -->
   <% if (process.env.VUE_APP_NODE_ENV === 'prod') { %>
-    <script>window.SITE_CONFIG['apiURL'] = 'https://live-mini-test.dayuzhongxue.com';</script>
+    <script>window.SITE_CONFIG['apiURL'] = 'https://zhibo-test.dayuzhongxue.com';</script>
   <% } %>
 </head>
 <body>
