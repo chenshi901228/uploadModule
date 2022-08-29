@@ -556,7 +556,7 @@
         @selection-change="userListSelectionChangeHandle" style="width: 100%" max-height="500">
         <el-table-column type="selection" header-align="center" align="center" width="50" fixed="left">
         </el-table-column>
-        <el-table-column width="150" label="商品图片" prop="productImage" align="center">
+        <el-table-column width="100" label="商品图片" prop="productImage" align="center">
           <template slot-scope="{ row }">
             <div>
               <img style="width: 100%; height: 60px; object-fit: cover;" :src="
@@ -565,7 +565,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column width="150" label="商品名称" prop="productName" align="center">
+        <el-table-column label="商品名称" prop="productName" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.productName || "--" }}</span>
           </template>
@@ -580,27 +580,27 @@
             <span>{{ scope.row.oldPrice || "--" }}</span>
           </template>
         </el-table-column> -->
-        <el-table-column width="150" label="带货价格" prop="price" align="center">
+        <el-table-column label="带货价格" prop="price" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.price || "--" }}</span>
           </template>
         </el-table-column>
-        <el-table-column width="150" label="商品类型" prop="productType" align="center">
+        <el-table-column label="商品类型" prop="productType" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.productType || "--" }}</span>
           </template>
         </el-table-column>
-        <el-table-column width="150" label="是否免费" prop="isFree" align="center">
+        <el-table-column label="是否免费" prop="isFree" align="center">
           <template slot-scope="scope">
             <span>{{ scope.row.isFree === 1 ? "是" : "否" }}</span>
           </template>
         </el-table-column>
-        <el-table-column width="150" label="上架状态" prop="delFlg" align="center">
+        <el-table-column label="上架状态" prop="delFlg" align="center">
           <template slot-scope="scope">
             <span> {{ scope.row.isAdd === 1 ? "上架" : "下架" }}</span>
           </template>
         </el-table-column>
-        <el-table-column width="120" label="操作" fixed="right" header-align="center" align="center">
+        <el-table-column label="操作" fixed="right" header-align="center" align="center">
           <template slot-scope="scope">
             <el-button icon="el-icon-goods" size="mini" type="text" @click="handleDeleteUser(scope.$index, scope.row)">
               上架</el-button>
