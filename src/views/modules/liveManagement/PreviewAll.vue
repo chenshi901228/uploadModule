@@ -506,9 +506,9 @@
           <template slot-scope="scope">
             <el-button
               v-if="
-                scope.row.appointmentState !== 0 &&
                 scope.row.delFlg !== 1 &&
-                scope.row.liveState === 3
+                scope.row.liveState === 3 &&
+                timeFlag(scope.row.startDate)
               "
               type="text"
               size="small"
@@ -538,9 +538,7 @@
               >助手</el-button
             >
             <el-button
-              v-if="
-                scope.row.appointmentState === 1 && scope.row.liveState === 3 && scope.row.delFlg === 0
-              "
+              v-if="scope.row.appointmentState === 1 && scope.row.liveState === 3 && scope.row.delFlg === 0 && scope.row.showState == 0"
               type="text"
               size="small"
               icon="el-icon-edit"
@@ -548,7 +546,7 @@
               >编辑</el-button
             >
             <el-button
-              v-if="scope.row.liveState === 3 && scope.row.delFlg === 0"
+              v-if="scope.row.liveState === 3 && scope.row.delFlg === 0 && scope.row.showState == 0"
               type="text"
               size="small"
               icon="el-icon-delete"
@@ -666,6 +664,17 @@ export default {
     this.getDynamicGroupList();
   },
   methods: {
+    timeFlag(startDate) {
+      let nowTime = new Date().getTime();
+      let time = new Date(startDate).getTime();
+      let flg = true;
+      if ((nowTime - time) / 3600 / 1000 >= 2) {
+        flg = false;
+      } else {
+        flg = true;
+      }
+      return flg;
+    },
     //带货商品
     addProduct(row) {
       let nowTime = new Date().getTime();
@@ -678,7 +687,7 @@ export default {
       }
 
       let authEdit = 0;
-      if (row.liveState === 3 && timeFlg === 1) {
+      if (row.liveState === 3 && timeFlg === 1 && row.alreadyLive === 0) {
         authEdit = 1;
       } else {
         authEdit = 0;
@@ -705,7 +714,7 @@ export default {
         timeFlg = 1;
       }
       let authEdit = 0;
-      if (row.liveState === 3 && timeFlg === 1) {
+      if (row.liveState === 3 && timeFlg === 1 && row.alreadyLive === 0) {
         authEdit = 1;
       } else {
         authEdit = 0;
@@ -730,7 +739,7 @@ export default {
         timeFlg = 1;
       }
       let authEdit = 0;
-      if (row.liveState === 3 && timeFlg === 1) {
+      if (row.liveState === 3 && timeFlg === 1 && row.alreadyLive === 0) {
         authEdit = 1;
       } else {
         authEdit = 0;

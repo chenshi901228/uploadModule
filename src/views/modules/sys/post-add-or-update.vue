@@ -5,7 +5,7 @@
         <el-input v-model="dataForm.postCode"></el-input>
       </el-form-item>
       <el-form-item :label="$t('post.postName')" prop="postName">
-        <el-input v-model="dataForm.postName"></el-input>
+        <el-input v-model="dataForm.postName" maxlength="50" show-word-limit></el-input>
       </el-form-item>
       <el-form-item :label="$t('post.sort')" prop="sort">
         <el-input-number v-model="dataForm.sort" :min="0"></el-input-number>
