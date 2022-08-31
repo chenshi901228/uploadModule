@@ -74,6 +74,12 @@ export default {
       this.loading = false
     })
   },
+  mounted() {
+    this.$nextTick(() => {
+      let el = document.querySelector(".aui-wrapper")
+      if(el) el.style.setProperty("--themeColor", this.$store.state.theme)
+    })
+  },
   methods: {
     // 窗口改变大小
     windowResizeHandle () {
