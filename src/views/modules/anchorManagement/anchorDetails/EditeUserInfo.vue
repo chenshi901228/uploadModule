@@ -86,40 +86,39 @@ export default {
         ],
         introduce: [{ required: true, message: "请输入主播简介", trigger: "blur" }],
       },
-      imgSrc:'',
-      type:'',//平台还是主播
     };
   },
-  watch: {},
-  created() {},
   activated() {
-    let info = JSON.parse(this.$route.query.info)
-    this.info = info
-    if(info) {
-      this.id = info.id
-      this.ruleForm.username = info.username
-      this.ruleForm.introduce = info.introduce
-      this.type = info.type
-      this.fileList = [
-        {
-          name: new Date().getTime(),
-          url: info.avatarUrl || "https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/default_avatar.png"
-        }
-      ]
-      if(info.qrCode){
-        this.fileListQRcode = [
-          {
-            name: new Date().getTime(),
-            url: info.qrCode
-          }
-        ]
-      }
-    }
-  },
-  mounted() {
-    
+    this.id = this.$route.query.id
+    this.$nextTick(() => {
+      this.getAnchorInfo()
+    })
   },
   methods: {
+    // 获取用户详细信息
+    getAnchorInfo() {
+      this.$http.get(`/sys/anchor/info/getInfoWithAnchor`, { params: { anchorId: this.id } }).then(({ data: res }) => {
+        if (res.code !== 0) return this.$message.error(res.msg);
+        if(res.data) {
+          this.ruleForm.username = res.data.username
+          this.ruleForm.introduce = res.data.introduce
+          this.fileList = [
+            {
+              name: new Date().getTime(),
+              url: res.data.avatarUrl || "https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/default_avatar.png"
+            }
+          ]
+          if(res.data.qrCode){
+            this.fileListQRcode = [
+              {
+                name: new Date().getTime(),
+                url: res.data.qrCode
+              }
+            ]
+          }
+        }
+      }).catch((err) => this.$message.error(JSON.stringify(err.message)));
+    },
     // 头像上传、删除
     uploadSuccess(file) {
       this.fileList.push(file);

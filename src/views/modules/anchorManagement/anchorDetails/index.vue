@@ -1727,16 +1727,7 @@ export default {
     },
     //编辑主播信息
     editeUserInfo() {
-      let obj = {
-        id: this.anchorDetails.weixinUserId,
-        username: this.anchorDetails.username,
-        introduce: this.anchorDetails.introduce,
-        avatarUrl: this.anchorDetails.avatarUrl,
-        qrCode: this.anchorDetails.qrCode,
-      }
-      this.$router.push({
-        path: "/anchorManagement-anchorDetails-EditeUserInfo",
-        query: { info: JSON.stringify(obj) },
+      this.$router.push({ path: "/anchorManagement-anchorDetails-EditeUserInfo", query: { id: this.anchorDetails.weixinUserId },
       });
     },
     //编辑银行卡信息
