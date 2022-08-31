@@ -359,7 +359,7 @@
               type="text"
               icon="el-icon-d-arrow-right"
               size="small"
-              v-if="(row.liveState == 1 || row.liveState == 3) && row.showMode"
+              v-if="canJoinLiveRoom(row)"
               @click="joinLiveHandle(row)"
               >进入直播间</el-button
             >
@@ -578,6 +578,20 @@ export default {
           window.location.reload();
         }
       }, 1);
+    },
+
+    // 判断是否能进入直播间开播
+    canJoinLiveRoom({ livePreviewId, liveState, planStartDate, showMode }) {
+      if(livePreviewId) { //直播预告创建的直播
+        if(liveState == 3) { //未开播
+          let date = new Date().getTime() - new Date(planStartDate).getTime()
+          date = Math.ceil(date / 1000 / 60)
+          return date <= 120  //超过开播时间2小时无开播按钮
+        }
+        return liveState == 1 && showMode
+      }else { //直播列表创建的直播
+        return (liveState == 1 || liveState == 3) && showMode
+      }
     },
 
     // 判断是否有操作按钮的权限---type:1-商品/主播，2-助手

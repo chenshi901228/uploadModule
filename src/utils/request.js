@@ -61,7 +61,7 @@ http.interceptors.response.use(response => {
   if (response.data.code === 401 || response.data.code === 10001) {
     clearLoginInfo()
     router.replace({ name: 'login' })
-    return Promise.reject(response.data.msg)
+    return Promise.reject({message: response.data.msg})
   }
   return response
 }, error => {
