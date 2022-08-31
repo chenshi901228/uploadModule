@@ -2,7 +2,7 @@
   <el-dialog top="20px" width="45%" :visible.sync="visible" :title="!dataForm.id ? $t('add') : $t('update')" :close-on-click-modal="false" :close-on-press-escape="false">
     <el-form :model="dataForm" size="small" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmitHandle()" label-width="120px">
       <el-form-item prop="realName" :label="$t('user.username')">
-        <el-input v-model="dataForm.realName" :placeholder="$t('user.username')"></el-input>
+        <el-input v-model="dataForm.realName" maxlength="50" show-word-limit :placeholder="$t('user.username')"></el-input>
       </el-form-item>
       <el-form-item prop="deptName" :label="$t('user.deptName')">
         <ren-dept-tree v-model="dataForm.deptId" :placeholder="$t('dept.title')" :dept-name.sync="dataForm.deptName"></ren-dept-tree>

@@ -438,7 +438,8 @@
               v-if="
                 scope.row.delFlg !== 1 &&
                 scope.row.liveState === 3 &&
-                timeFlag(scope.row.startDate)
+                timeFlag(scope.row.startDate) &&
+                scope.row.alreadyLive === 0
               "
               type="text"
               size="small"
@@ -608,7 +609,7 @@ export default {
       } else {
         timeFlg = 1;
       }
-      if(row.liveState ===3 && timeFlg === 1){
+      if(row.liveState ===3 && timeFlg === 1 && row.alreadyLive === 0){
         authEdit = 1
       }else{
         authEdit = 0
@@ -634,7 +635,7 @@ export default {
       } else {
         timeFlg = 1;
       }
-      if(row.liveState ===3 && timeFlg === 1){
+      if(row.liveState ===3 && timeFlg === 1 && row.alreadyLive === 0){
         authEdit = 1
       }else{
         authEdit = 0
@@ -659,7 +660,7 @@ export default {
       } else {
         timeFlg = 1;
       }
-      if(row.liveState ===3 && timeFlg === 1){
+      if(row.liveState ===3 && timeFlg === 1 && row.alreadyLive === 0){
         authEdit = 1
       }else{
         authEdit = 0
