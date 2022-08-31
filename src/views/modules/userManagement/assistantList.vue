@@ -14,7 +14,7 @@
         <el-form-item
           label="助手昵称"
           prop="userName"
-          v-if="isOpen || formItemCount >= 1"
+          v-show="isOpen || formItemCount >= 1"
         >
           <el-input
             style="width: 200px"
@@ -26,7 +26,7 @@
         <el-form-item
           label="手机号码"
           prop="phone"
-          v-if="isOpen || formItemCount >= 2"
+          v-show="isOpen || formItemCount >= 2"
         >
           <el-input
             style="width: 200px"
@@ -38,7 +38,7 @@
         <el-form-item
           label="是否认证"
           prop="legalizeFlg"
-          v-if="isOpen || formItemCount >= 3"
+          v-show="isOpen || formItemCount >= 3"
         >
           <el-select
             style="width: 200px"
@@ -53,7 +53,7 @@
         <el-form-item
           label="是否认证导师"
           prop="tutorFlg"
-          v-if="isOpen || formItemCount >= 4"
+          v-show="isOpen || formItemCount >= 4"
         >
           <el-select
             style="width: 200px"
@@ -68,7 +68,7 @@
         <el-form-item
           label="邀请人"
           prop="inviteUserName"
-          v-if="isOpen || formItemCount >= 5"
+          v-show="isOpen || formItemCount >= 5"
         >
           <el-input
             style="width: 200px"
@@ -80,7 +80,7 @@
         <el-form-item
           label="邀请人手机号码"
           prop="inviteUserPhone"
-          v-if="isOpen || formItemCount >= 6"
+          v-show="isOpen || formItemCount >= 6"
         >
           <el-input
             style="width: 200px"
@@ -92,7 +92,7 @@
         <el-form-item
           label="账号状态"
           prop="status"
-          v-if="isOpen || formItemCount >= 7"
+          v-show="isOpen || formItemCount >= 7"
         >
           <el-select
             style="width: 200px"

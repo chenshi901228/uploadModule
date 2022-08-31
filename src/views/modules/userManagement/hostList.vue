@@ -13,7 +13,7 @@
         <el-form-item
           label="主播昵称"
           prop="anchorName"
-          v-if="isOpen || formItemCount >= 1"
+          v-show="isOpen || formItemCount >= 1"
         >
           <el-input
             placeholder="请输入"
@@ -25,7 +25,7 @@
         <el-form-item
           label="真实姓名"
           prop="realName"
-          v-if="isOpen || formItemCount >= 2"
+          v-show="isOpen || formItemCount >= 2"
         >
           <el-input
             style="width: 200px"
@@ -37,7 +37,7 @@
         <el-form-item
           label="手机号码"
           prop="phone"
-          v-if="isOpen || formItemCount >= 3"
+          v-show="isOpen || formItemCount >= 3"
         >
           <el-input
             style="width: 200px"
@@ -49,7 +49,7 @@
         <el-form-item
           label="身份证号"
           prop="idCard"
-          v-if="isOpen || formItemCount >= 4"
+          v-show="isOpen || formItemCount >= 4"
         >
           <el-input
             style="width: 200px"
@@ -61,7 +61,7 @@
         <el-form-item
           label="性别"
           prop="gender"
-          v-if="isOpen || formItemCount >= 5"
+          v-show="isOpen || formItemCount >= 5"
         >
           <el-select
             style="width: 200px"
@@ -77,7 +77,7 @@
         <el-form-item
           label="账号状态"
           prop="disabledFlg"
-          v-if="isOpen || formItemCount >= 6"
+          v-show="isOpen || formItemCount >= 6"
         >
           <el-select
             style="width: 200px"

@@ -10,7 +10,7 @@
         label-width="100px"
         @keyup.enter.native="getDataList"
       >
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="真实姓名" prop="realName">
+        <el-form-item v-show="isOpen || formItemCount >= 1" label="真实姓名" prop="realName">
           <el-input
             style="width: 200px"
             placeholder="请输入"
@@ -18,7 +18,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 3" label="手机号码" prop="phone">
+        <el-form-item v-show="isOpen || formItemCount >= 3" label="手机号码" prop="phone">
           <el-input
             style="width: 200px"
             placeholder="请输入"
@@ -26,7 +26,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="主播昵称" prop="username">
+        <el-form-item v-show="isOpen || formItemCount >= 2" label="主播昵称" prop="username">
           <el-input
             style="width: 200px"
             placeholder="请输入"
@@ -34,7 +34,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <!-- <el-form-item v-if="isOpen || formItemCount >= 4" label="身份证号" prop="idCard">
+        <!-- <el-form-item v-show="isOpen || formItemCount >= 4" label="身份证号" prop="idCard">
           <el-input
             style="width: 200px"
             placeholder="身份证号"
@@ -42,7 +42,7 @@
             clearable
           ></el-input>
         </el-form-item> -->
-        <el-form-item v-if="isOpen || formItemCount >= 5" label="更改类型" prop="updateType">
+        <el-form-item v-show="isOpen || formItemCount >= 5" label="更改类型" prop="updateType">
           <el-select 
             style="width: 200px"
             placeholder="请选择" 
@@ -55,7 +55,7 @@
             <el-option :value="5" label="主播二维码"></el-option>
           </el-select>
         </el-form-item>
-        <!-- <el-form-item v-if="isOpen || formItemCount >= 6" label="审批状态" prop="status">
+        <!-- <el-form-item v-show="isOpen || formItemCount >= 6" label="审批状态" prop="status">
           <el-select 
             style="width: 200px"
             placeholder="审批状态" 

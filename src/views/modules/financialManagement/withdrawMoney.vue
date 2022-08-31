@@ -11,7 +11,7 @@
         @keyup.enter.native="getDataList()"
       >
         <el-form-item
-          v-if="isOpen || formItemCount >= 1"
+          v-show="isOpen || formItemCount >= 1"
           label="主播昵称"
           prop="anchorName"
         >
@@ -23,7 +23,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 2"
+          v-show="isOpen || formItemCount >= 2"
           label="真实姓名"
           prop="realName"
         >
@@ -35,7 +35,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 3"
+          v-show="isOpen || formItemCount >= 3"
           label="手机号码"
           prop="phone"
         >
@@ -47,7 +47,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 4"
+          v-show="isOpen || formItemCount >= 4"
           label="账户类型"
           prop="type"
         >
@@ -63,7 +63,7 @@
         </el-form-item>
 
         <el-form-item
-          v-if="isOpen || formItemCount >= 5"
+          v-show="isOpen || formItemCount >= 5"
           label="提现状态"
           prop="withdrawStatus"
         >
@@ -83,7 +83,7 @@
 
         <el-form-item
           label="打款时间"
-          v-if="isOpen || formItemCount >= 6"
+          v-show="isOpen || formItemCount >= 6"
           prop="confirmDate"
         >
           <el-date-picker
@@ -96,7 +96,7 @@
         </el-form-item>
 
         <el-form-item
-          v-if="isOpen || formItemCount >= 7"
+          v-show="isOpen || formItemCount >= 7"
           label="提现单号"
           prop="code"
         >

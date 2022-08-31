@@ -10,7 +10,7 @@
         size="small"
         @keyup.enter.native="getDataList()"
       >
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="主播昵称" prop="sendUserName">
+        <el-form-item v-show="isOpen || formItemCount >= 1" label="主播昵称" prop="sendUserName">
           <el-input
             style="width: 200px"
             v-model="dataForm.sendUserName"
@@ -18,7 +18,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="主播手机号码" prop="sendUserPhone">
+        <el-form-item v-show="isOpen || formItemCount >= 2" label="主播手机号码" prop="sendUserPhone">
           <el-input
             style="width: 200px"
             v-model="dataForm.sendUserPhone"
@@ -26,7 +26,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 3" label="用户昵称" prop="toUserName">
+        <el-form-item v-show="isOpen || formItemCount >= 3" label="用户昵称" prop="toUserName">
           <el-input
             style="width: 200px"
             v-model="dataForm.toUserName"
@@ -34,7 +34,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 4" label="用户手机号码" prop="toUserPhone">
+        <el-form-item v-show="isOpen || formItemCount >= 4" label="用户手机号码" prop="toUserPhone">
           <el-input
             style="width: 200px"
             v-model="dataForm.toUserPhone"

@@ -16,7 +16,7 @@
         <el-form-item
           label="直播主题"
           prop="liveTheme"
-          v-if="isOpen || formItemCount >= 1"
+          v-show="isOpen || formItemCount >= 1"
         >
           <el-input
             style="width: 200px"
@@ -29,7 +29,7 @@
         <el-form-item
           label="主播"
           prop="username"
-          v-if="isOpen || formItemCount >= 2"
+          v-show="isOpen || formItemCount >= 2"
         >
           <el-input
             style="width: 200px"
@@ -42,7 +42,7 @@
         <el-form-item
           label="助手"
           prop="assistant"
-          v-if="isOpen || formItemCount >= 3"
+          v-show="isOpen || formItemCount >= 3"
         >
           <el-input
             style="width: 200px"
@@ -55,7 +55,7 @@
         <el-form-item
           label="预计开播时间"
           prop="startDate"
-          v-if="isOpen || formItemCount >= 4"
+          v-show="isOpen || formItemCount >= 4"
         >
           <el-date-picker
             v-model="dataForm.startDate"
@@ -67,7 +67,7 @@
         <el-form-item
           label="投放人群"
           prop="dynamicGroupName"
-          v-if="isOpen || formItemCount >= 5"
+          v-show="isOpen || formItemCount >= 5"
         >
           <el-select
             size="small"
@@ -90,7 +90,7 @@
         <el-form-item
           label="直播间ID"
           prop="livingRoomId"
-          v-if="isOpen || formItemCount >= 6"
+          v-show="isOpen || formItemCount >= 6"
         >
           <el-input
             style="width: 200px"
@@ -103,7 +103,7 @@
         <el-form-item
           label="是否创建预告"
           prop="fromPreview"
-          v-if="isOpen || formItemCount >= 7"
+          v-show="isOpen || formItemCount >= 7"
         >
           <el-select
             style="width: 200px"
@@ -119,7 +119,7 @@
         <el-form-item
           label="删除人"
           prop="createUserName"
-          v-if="isOpen || formItemCount >= 8"
+          v-show="isOpen || formItemCount >= 8"
         >
           <el-input
             style="width: 200px"
@@ -132,7 +132,7 @@
         <el-form-item
           label="删除人手机号"
           prop="createPhone"
-          v-if="isOpen || formItemCount >= 9"
+          v-show="isOpen || formItemCount >= 9"
         >
           <el-input
             style="width: 200px"

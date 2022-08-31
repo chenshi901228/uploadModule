@@ -13,7 +13,7 @@
         @keyup.enter.native="getLiveList"
       >
         <el-form-item
-          v-if="isOpen || formItemCount >= 1"
+          v-show="isOpen || formItemCount >= 1"
           label="主播昵称"
           prop="liveTheme"
         >
@@ -27,7 +27,7 @@
           </el-input>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 2"
+          v-show="isOpen || formItemCount >= 2"
           label="手机号码"
           prop="assistant"
         >
@@ -41,7 +41,7 @@
           </el-input>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 3"
+          v-show="isOpen || formItemCount >= 3"
           label="直播名称"
           prop="startDate"
         >
@@ -55,7 +55,7 @@
           </el-input>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 4"
+          v-show="isOpen || formItemCount >= 4"
           label="直播状态"
           prop="dynamicGroupName"
         >
@@ -73,7 +73,7 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 5"
+          v-show="isOpen || formItemCount >= 5"
           label="直播间ID"
           prop="livingRoomId"
         >

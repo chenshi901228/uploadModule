@@ -3,28 +3,28 @@
     <div class="mod-pay__order">
       <el-form class="headerTool" :inline="true" :model="dataForm" ref="rewardList" label-width="100px" size="small"
         @keyup.enter.native="getDataList()">
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="userName">
+        <el-form-item v-show="isOpen || formItemCount >= 1" label="用户昵称" prop="userName">
           <el-input style="width: 200px" v-model="dataForm.userName" clearable placeholder="请输入"></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
+        <el-form-item v-show="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
           <el-input style="width: 200px" v-model="dataForm.userPhone" clearable placeholder="请输入"></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 3" label="礼物名称" prop="name">
+        <el-form-item v-show="isOpen || formItemCount >= 3" label="礼物名称" prop="name">
           <el-select style="width: 200px" v-model="dataForm.name" clearable placeholder="请选择">
             <el-option v-for="(v, i) in getGiftList" :key="i" :value="v" :label="v"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 4" label="消费来源" prop="paySource">
+        <el-form-item v-show="isOpen || formItemCount >= 4" label="消费来源" prop="paySource">
           <el-select style="width: 200px" v-model="dataForm.paySource" clearable placeholder="请选择">
             <el-option :value="1" label="小程序"></el-option>
             <el-option :value="2" label="大于众学"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 5" label="直播名称" prop="liveTheme">
+        <el-form-item v-show="isOpen || formItemCount >= 5" label="直播名称" prop="liveTheme">
           <el-input style="width: 200px" v-model="dataForm.liveTheme" clearable placeholder="请输入"></el-input>
 
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 6" label="直播间id" prop="liveId">
+        <el-form-item v-show="isOpen || formItemCount >= 6" label="直播间id" prop="liveId">
           <el-input style="width: 200px" v-model="dataForm.liveId" clearable placeholder="请输入"></el-input>
 
         </el-form-item>

@@ -10,7 +10,7 @@
         size="small"
         @keyup.enter.native="getDataList()"
       >
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="userName">
+        <el-form-item v-show="isOpen || formItemCount >= 1" label="用户昵称" prop="userName">
           <el-input
             style="width: 200px"
             placeholder="请输入"
@@ -18,7 +18,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
+        <el-form-item v-show="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
           <el-input
             style="width: 200px"
             placeholder="请输入"
@@ -26,7 +26,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 3" label="商品名称" prop="productName">
+        <el-form-item v-show="isOpen || formItemCount >= 3" label="商品名称" prop="productName">
           <el-input
             style="width: 200px"
             placeholder="请输入"
@@ -34,7 +34,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 4" label="商品类型" prop="productType">
+        <el-form-item v-show="isOpen || formItemCount >= 4" label="商品类型" prop="productType">
           <el-select
             style="width: 200px"
             placeholder="请选择"
@@ -48,12 +48,12 @@
             <el-option value="书籍" label="书籍"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 5" label="退款方式" prop="payType">
+        <el-form-item v-show="isOpen || formItemCount >= 5" label="退款方式" prop="payType">
           <el-select style="width: 200px" placeholder="请选择" v-model="dataForm.payType" clearable>
             <el-option value="微信" label="微信"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 6" label="关联订单编号" prop="weixinUserProductId">
+        <el-form-item v-show="isOpen || formItemCount >= 6" label="关联订单编号" prop="weixinUserProductId">
           <el-input
             style="width: 200px"
             placeholder="请输入"
@@ -61,7 +61,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 7" label="退款单号" prop="id">
+        <el-form-item v-show="isOpen || formItemCount >= 7" label="退款单号" prop="id">
           <el-input
             style="width: 200px"
             placeholder="请输入"
@@ -70,7 +70,7 @@
           ></el-input>
         </el-form-item>
 
-        <el-form-item v-if="isOpen || formItemCount >= 8" label="审批节点状态" prop="confirmStatus">
+        <el-form-item v-show="isOpen || formItemCount >= 8" label="审批节点状态" prop="confirmStatus">
           <el-select
             style="width: 200px"
             placeholder="请选择"
@@ -83,7 +83,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item v-if="isOpen || formItemCount >= 9" label="审批流程状态" prop="flowStatus">
+        <el-form-item v-show="isOpen || formItemCount >= 9" label="审批流程状态" prop="flowStatus">
           <el-select
             style="width: 200px"
             placeholder="请选择"
@@ -96,7 +96,7 @@
           </el-select>
         </el-form-item>
 
-        <el-form-item v-if="isOpen || formItemCount >= 10" label="退款状态" prop="refundStatus">
+        <el-form-item v-show="isOpen || formItemCount >= 10" label="退款状态" prop="refundStatus">
           <el-select
             style="width: 200px"
             placeholder="请选择"

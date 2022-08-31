@@ -77,7 +77,7 @@
           <el-form-item
             label="用户昵称"
             prop="name"
-            v-if="isOpen || formItemCount >= 1"
+            v-show="isOpen || formItemCount >= 1"
           >
             <el-input
               style="width: 200px"
@@ -89,7 +89,7 @@
           <el-form-item
             label="手机号"
             prop="tel"
-            v-if="isOpen || formItemCount >= 2"
+            v-show="isOpen || formItemCount >= 2"
           >
             <el-input
               style="width: 200px"

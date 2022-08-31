@@ -3,16 +3,16 @@
     <div class="mod-sys__user">
       <el-form class="headerTool" :inline="true" :model="dataForm" ref="dataForm" size="small" label-width="100px"
         label-position="right" @keyup.enter.native="getUserList(diaTbas)">
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="用户名称" prop="nickName">
+        <el-form-item v-show="isOpen || formItemCount >= 1" label="用户名称" prop="nickName">
           <el-input v-model="dataForm.nickName" placeholder="请输入" clearable></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="phone">
+        <el-form-item v-show="isOpen || formItemCount >= 2" label="手机号码" prop="phone">
           <el-input v-model="dataForm.phone" placeholder="请输入"></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 3" label="用户类型" prop="roleStatus">
+        <el-form-item v-show="isOpen || formItemCount >= 3" label="用户类型" prop="roleStatus">
           <el-input v-model="dataForm.roleStatus" placeholder="请输入"></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 4" label="账号状态" prop="status">
+        <el-form-item v-show="isOpen || formItemCount >= 4" label="账号状态" prop="status">
           <el-select v-model="dataForm.status" clearable placeholder="请选择">
             <el-option label="正常" value="1">正常</el-option>
             <el-option label="停用" value="0">停用</el-option>

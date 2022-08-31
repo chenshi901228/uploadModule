@@ -15,7 +15,7 @@
         <el-form-item
           label="主播昵称"
           prop="level"
-          v-if="isOpen || formItemCount >= 1"
+          v-show="isOpen || formItemCount >= 1"
         >
           <el-input
             placeholder="请输入"
@@ -27,7 +27,7 @@
         <el-form-item
           label="手机号码"
           prop="level"
-          v-if="isOpen || formItemCount >= 2"
+          v-show="isOpen || formItemCount >= 2"
         >
           <el-input
             placeholder="请输入"

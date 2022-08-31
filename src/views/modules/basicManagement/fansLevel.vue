@@ -14,7 +14,7 @@
         <el-form-item
           label="等级"
           prop="level"
-          v-if="isOpen || formItemCount >= 1"
+          v-show="isOpen || formItemCount >= 1"
         >
           <el-select placeholder="请选择" @visible-change="getFansLevels" style="width: 200px" v-model="dataForm.level" clearable>
             <el-option v-for="item in fansLevelsOptions" :key="item" :value="item" :label="item"></el-option>
@@ -23,7 +23,7 @@
         <el-form-item
           label="等级名称"
           prop="levelName"
-          v-if="isOpen || formItemCount >= 2"
+          v-show="isOpen || formItemCount >= 2"
         >
           <el-input placeholder="请输入" style="width: 200px" clearable v-model="dataForm.levelName">
           </el-input>

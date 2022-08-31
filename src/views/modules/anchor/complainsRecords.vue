@@ -10,7 +10,7 @@
         label-width="100px"
         @keyup.enter.native="getDataList"
       >
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="username">
+        <el-form-item v-show="isOpen || formItemCount >= 1" label="用户昵称" prop="username">
           <el-input
             style="width: 200px"
             placeholder="请输入"
@@ -18,7 +18,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="phone">
+        <el-form-item v-show="isOpen || formItemCount >= 2" label="手机号码" prop="phone">
           <el-input
             style="width: 200px"
             placeholder="请输入"
@@ -26,7 +26,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 3" label="投诉主播昵称" prop="anchorUserName">
+        <el-form-item v-show="isOpen || formItemCount >= 3" label="投诉主播昵称" prop="anchorUserName">
           <el-input
             style="width: 200px"
             placeholder="请输入"
@@ -34,7 +34,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 4" label="主播手机号码" prop="anchorPhone">
+        <el-form-item v-show="isOpen || formItemCount >= 4" label="主播手机号码" prop="anchorPhone">
           <el-input
             style="width: 200px"
             placeholder="请输入"
@@ -43,7 +43,7 @@
           ></el-input>
         </el-form-item>
       
-        <el-form-item v-if="isOpen || formItemCount >= 5" label="投诉分类" prop="type">
+        <el-form-item v-show="isOpen || formItemCount >= 5" label="投诉分类" prop="type">
           <el-select 
             style="width: 200px"
             placeholder="请选择" 
@@ -53,7 +53,7 @@
             <el-option :value="3" label="主播投诉"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 6" label="投诉标签" prop="tag">
+        <el-form-item v-show="isOpen || formItemCount >= 6" label="投诉标签" prop="tag">
           <el-select 
             style="width: 200px"
             placeholder="请选择" 
@@ -77,7 +77,7 @@
             <el-option value="其他" label="其他"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 7" label="处理状态" prop="handlingStatus">
+        <el-form-item v-show="isOpen || formItemCount >= 7" label="处理状态" prop="handlingStatus">
           <el-select
             style="width: 200px"
             placeholder="请选择"
