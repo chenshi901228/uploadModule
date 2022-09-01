@@ -405,18 +405,9 @@ export default {
       //   name: "preview-editeUserInfo-EditeUserInfo",
       //   params: { info: data },
       // });
-      console.log(data)
-      let obj = {
-        id:data.weixinUserId,
-        username:data.username,
-        introduce:data.introduce,
-        avatarUrl:data.avatarUrl,
-        qrCode:data.qrCode,
-        type:'platform'
-      }
       this.$router.push({
         path: "/userManagement-editeUserInfo-EditeUserInfo",
-        query: { info: JSON.stringify(obj) },
+        query: { id: data.weixinUserId },
       });
     },
     forbiddenHandle(type, data) {
