@@ -219,7 +219,7 @@ export default {
     // 表单提交
     dataFormSubmitHandle: debounce(function () {
       if(this.loading || this.dialogVisible) return
-      if (this.loginType) {
+      if (this.loginType) { //账号密码登录
         this.$refs['dataForm'].validate((valid) => {
           if (!valid) {
             return false
@@ -261,7 +261,7 @@ export default {
             this.$message.error(JSON.stringify(err && err.message));
           })
         })
-      } else {
+      } else { //验证码登录
         this.$refs['dataFormPhone'].validate((valid) => {
           if (!valid) {
             return false

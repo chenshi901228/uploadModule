@@ -16,7 +16,7 @@
       </div>
       <div v-if="item.url" class="fileHandle">
         <i @click="previewImg(item)" class="el-icon-view"></i>
-        <i @click="deleteCount(item)" class="el-icon-delete"></i>
+        <i v-if="!disabled" @click="deleteCount(item)" class="el-icon-delete"></i>
       </div>
       <img
         v-if="item.url && imgTypes.includes(getFileType(item.url))"
@@ -35,6 +35,7 @@
       :show-file-list="false"
       :file-list="uploadList"
       :limit="limit"
+      :disabled="disabled"
       :on-success="uploadSuccess"
       :on-progress="uploadProgress"
       :on-error="uploadError"
@@ -111,6 +112,11 @@ export default {
       default: () => {
         return [];
       },
+    },
+    // 是否禁用
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     // 数量限制
     limit: {
