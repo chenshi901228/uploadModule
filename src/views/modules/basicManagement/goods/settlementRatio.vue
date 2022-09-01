@@ -247,12 +247,12 @@
 </template>
 
 <script>
-import mixinTableModule from "@/mixins/table-module";
-import settlementRatioUpdate from "./settlementRatio-update.vue";
+import mixinTableModule from '@/mixins/table-module'
+import SettlementRatioUpdate from "./settlementRatio-update.vue";
 export default {
-  mixins: [mixinTableModule],
+  mixins: [ mixinTableModule ],
   components: {
-    settlementRatioUpdate,
+    SettlementRatioUpdate,
   },
   data() {
     var check = (rule, value, callback) => {
@@ -274,7 +274,7 @@ export default {
           )
         );
       }
-    };
+    }
     return {
       mixinTableModuleOptions: {
         getDataListURL: "/sys/productProportion/pageAnchorWithProduct", // 数据列表接口，API地址
@@ -283,10 +283,12 @@ export default {
       dataForm: {
         username: "",
         phone: "",
-        productId: this.$route.query.productId,
+      },
+      params: {
+        productId: null
       },
       goodsInfo: {
-        id: "",
+        productId: "",
         productName: "",
       },
 
@@ -307,9 +309,10 @@ export default {
       setText: "",
     };
   },
-  activated() {
-    this.goodsInfo = this.$route.query;
-    this.query();
+   activated() {
+    this.goodsInfo = this.$route.query
+    this.params.productId = this.$route.query.productId
+    this.query()
   },
   methods: {
     // 批量or单独设置
