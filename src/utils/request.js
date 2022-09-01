@@ -59,9 +59,10 @@ http.interceptors.request.use(config => {
  */
 http.interceptors.response.use(response => {
   if (response.data.code === 401 || response.data.code === 10001) {
+    let message = response.data.code === 401 ? "登录已过期" : response.data.msg
     clearLoginInfo()
     router.replace({ name: 'login' })
-    return Promise.reject({message: response.data.msg})
+    return Promise.reject({ message: message })
   }
   return response
 }, error => {

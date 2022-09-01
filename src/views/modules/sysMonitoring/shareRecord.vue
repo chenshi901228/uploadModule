@@ -21,7 +21,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-show="isOpen || formItemCount >= 2" label="手机号码" prop="phone">
+        <el-form-item v-show="isOpen || formItemCount >= 2" label="分享人手机号" prop="phone">
           <el-input
             style="width: 200px"
             v-model="dataForm.shareUserTel"
@@ -110,7 +110,7 @@
         ></el-table-column>
         <el-table-column
           prop="shareUserTel"
-          label="手机号码"
+          label="分享人手机号"
           min-width="120px"
           header-align="center"
           align="center"
@@ -150,7 +150,7 @@
 
         <el-table-column
           prop="createDate"
-          label="创建时间"
+          label="分享时间"
           min-width="160px"
           header-align="center"
           align="center"
@@ -211,7 +211,7 @@
         >
         <el-table-column
           prop="passiveShareUserTel"
-          label="手机号码"
+          label="被分享人手机号码"
           min-width="120px"
           header-align="center"
           align="center"
