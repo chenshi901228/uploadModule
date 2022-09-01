@@ -147,24 +147,36 @@
       </div>
       <div class="diaBoxRight">
         <div style="display: flex">
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(1)" :class="{ 'is-active': diaTbas === 1 }">
-            收益记录
-          </div>
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(2)" :class="{ 'is-active': diaTbas === 2 }">
-            提现记录
-          </div>
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(3)" :class="{ 'is-active': diaTbas === 3 }">
-            关注记录
-          </div>
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(4)" :class="{ 'is-active': diaTbas === 4 }">
-            粉丝团成员
-          </div>
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(5)" :class="{ 'is-active': diaTbas === 5 }">
-            店铺
-          </div>
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(6)" :class="{ 'is-active': diaTbas === 6 }">
-            推荐主播
-          </div>
+          <el-tooltip effect="dark" content="收益记录" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(1)" :class="{ 'is-active': diaTbas === 1 }">
+              收益记录
+            </div>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="提现记录" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(2)" :class="{ 'is-active': diaTbas === 2 }">
+              提现记录
+            </div>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="关注记录" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(3)" :class="{ 'is-active': diaTbas === 3 }">
+              关注记录
+            </div>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="粉丝团成员" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(4)" :class="{ 'is-active': diaTbas === 4 }">
+              粉丝团成员
+            </div>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="店铺" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(5)" :class="{ 'is-active': diaTbas === 5 }">
+              店铺
+            </div>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="推荐主播" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(6)" :class="{ 'is-active': diaTbas === 6 }">
+              推荐主播
+            </div>
+          </el-tooltip>
         </div>
         <el-form :inline="true" :style="{ margin: '20px' }" :model="diaSearchForm" size="small" ref="searchForm"
           label-width="100px" @keyup.enter.native="queryPost_dia()">
@@ -282,6 +294,7 @@
           </el-form-item>
         </el-form>
         <el-table :data="diaDataList" style="width: 100%"
+          v-loading="dataListLoading"
           height="calc(calc(100vh - 50px - 36px - 30px - 45px - 90px - 47px) - 2px)"
           @selection-change="dataListSelectionChangeHandle">
           <!-- <el-table-column
@@ -595,6 +608,7 @@ export default {
       },
       dataListSelections: [], // 数据列表，多选项
       diaDataList: [],
+      dataListLoading: false,
       diaTableTitle: {
         amount: "收益金额",
         type: "收益类型",
@@ -880,11 +894,13 @@ export default {
         default:
           break;
       }
+      this.dataListLoading = true
       this.$http
         .get(url, {
           params: this.$httpParams(data),
         })
         .then(({ data: res }) => {
+          this.dataListLoading = false
           if (res.code !== 0) {
             this.diaDataList = [];
             this.total_dia = 0;
@@ -893,7 +909,9 @@ export default {
           this.diaDataList = res.data.list;
           this.total_dia = res.data.total;
         })
-        .catch(() => { });
+        .catch(() => { 
+          this.dataListLoading = false
+        });
     },
     // 下拉获取商品类型
     getProductType(type) {
@@ -1203,6 +1221,10 @@ export default {
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
   box-shadow: none;
+  display: inline-block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .is-active {
