@@ -70,18 +70,26 @@
       :append-to-body="true"
       >
       <div class="login_user">
-        <p>{{loginUserList.length&&loginUserList[0].userName}}的账号</p>
-        <div class="user_list" v-for="(item,index) in loginUserList" :key="index" :class="active==index?'active':''" @click="selectUser(item,index)">
-          <img :src="item.avatarUrl||require('@/assets/img/default_avatar.png')" alt="">
+        <!-- <p>{{loginUserList.length&&loginUserList[0].userName}}的账号</p> -->
+        <div class="user_list" v-for="(item,index) in loginUserList" :key="index"  @click="selectUser(item,index)">
+          <el-avatar :size="50" >
+            <img :src="item.avatarUrl||require('@/assets/img/default_avatar.png')" alt="">
+          </el-avatar>
           <div>
             <p>{{item.userName}}</p>
             <span>{{item.type==0?'平台':item.type==1?'主播':'助手'}}</span>
           </div>
-          <i class="el-icon-check" v-show="active==index"></i>
+          <!-- <i class="el-icon-check" v-show="active==index"></i> -->
+          <i class="el-icon-success" style="font-size: 16px;color: #017FF8;" v-show="active == index"></i>
+
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="small" type="primary" @click="goToHome">进入</el-button>
+         <el-button size="small" style="    width: 100%;
+    height: 50px;
+    font-size: 16px;
+    background: #017FF8;" type="primary"  @click="goToHome">进入</el-button>
+        <!-- <el-button size="small" type="primary" @click="goToHome">进入</el-button> -->
       </span>
     </el-dialog>
   </nav>
@@ -220,7 +228,7 @@ export default {
   .user_list{
     display: flex;
     align-items: center;
-    border-bottom: 1px solid #ccc;
+    border-bottom: 1px solid #F1F2F7;
     padding: 10px 0;
     cursor: pointer;
     position: relative;
@@ -257,6 +265,26 @@ export default {
   &::-webkit-scrollbar {
     width:0px;
     height:0px;
+  }
+}
+
+/deep/ .el-dialog__title{
+    font-size: 20px;
+font-family: PingFang HK-Semibold, PingFang HK;
+font-weight: 600;
+position: relative;
+color: #111F2C;
+&:after {
+    content: " ";
+    width: 30px;
+    height: 4px;
+    background: #017FF8;
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    -webkit-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
   }
 }
 </style>
