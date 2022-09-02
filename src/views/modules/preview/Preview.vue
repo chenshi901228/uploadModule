@@ -257,6 +257,7 @@
         ></el-table-column>
         <el-table-column
           width="150"
+          fixed="left"
           label="直播宣传图"
           prop="frontCoverUrl"
           align="center"
@@ -276,6 +277,7 @@
         <el-table-column
           width="120"
           label="直播主题"
+          fixed="left"
           prop="liveTheme"
           align="center"
         >

@@ -226,14 +226,14 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="introduce"
           label="主播介绍"
           show-overflow-tooltip
           header-align="center"
           align="center"
           width="150"
-        ></el-table-column>
+        ></el-table-column> -->
         <el-table-column
           prop="attentionNum"
           label="关注人数"
