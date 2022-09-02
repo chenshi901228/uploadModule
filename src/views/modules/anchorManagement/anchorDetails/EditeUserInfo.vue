@@ -20,7 +20,7 @@
           type="textarea"
           :rows="5"
           v-model="ruleForm.introduce"
-          maxlength="200"
+          maxlength="500"
           :show-word-limit="true"
         ></el-input>
       </el-form-item>

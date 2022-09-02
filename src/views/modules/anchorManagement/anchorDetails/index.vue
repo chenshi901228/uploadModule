@@ -183,7 +183,7 @@
             </div>
           </el-tooltip>
         </div>
-        <el-form :inline="true" :style="{ margin: '20px' }" :model="diaSearchForm" @keyup.enter.native="queryPost_dia()"
+        <el-form :inline="true" label-position="left" :style="{ margin: '20px' }" :model="diaSearchForm" @keyup.enter.native="queryPost_dia()"
           size="small" ref="searchForm" label-width="100px">
           <el-form-item label="收益类型" v-if="diaTbas === 1" prop="type">
             <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.type" clearable>
@@ -1806,7 +1806,7 @@ export default {
               this.bankForm.depositBankValue = v.dictValue;
             }
           });
-          this.$confirm("确认银行信息已填写无误", "提示", {
+          this.$confirm("确认信息已填写无误，确认提交", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning",
