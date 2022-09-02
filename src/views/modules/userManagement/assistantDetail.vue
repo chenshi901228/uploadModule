@@ -52,11 +52,15 @@
           </el-form-item>
         </div>
         <!-- 操作按钮 -->
-        <div class="headerTool-handle-btns">
+        <!-- <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left" style="display:flex;alignItems:center;">
             <span>助手昵称：{{assistantInfo.userName}}</span>
             <span style="marginLeft:10px">手机号码：{{assistantInfo.phone}}</span>
           </div>
+        </div> -->
+        <div class="header-assistant">
+          <span>助手昵称：{{assistantInfo.userName}}</span>
+          <span style="marginLeft:60px">手机号码：{{assistantInfo.phone}}</span>
         </div>
       </el-form>
       <el-table
@@ -159,3 +163,12 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+  .header-assistant{
+    width: 100%;
+    font-size: 18px;
+    text-align: center;
+    line-height: 50px;
+  }
+</style>

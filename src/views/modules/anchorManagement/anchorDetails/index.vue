@@ -31,7 +31,7 @@
           </div>
           <div style="width:50%;display: inline-block;margin: 20px 0 0;">
             <div style="color:#A8AAB3;margin-bottom: 10px;">主播简介</div>
-            <div style="max-height:120px;overflow:auto;">
+            <div style="max-height:105px;overflow:auto;">
               {{ anchorDetails.introduce || '-' }}
             </div>
           </div>

@@ -146,7 +146,7 @@
         </div>
       </div>
       <div class="diaBoxRight">
-        <div style="display: flex">
+        <div style="display: flex;border-bottom: 2px solid #E4E7ED">
           <el-tooltip effect="dark" content="收益记录" placement="top">
             <div class="diaBoxRight_tabBtns" @click="changeTbas(1)" :class="{ 'is-active': diaTbas === 1 }">
               收益记录
