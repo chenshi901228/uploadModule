@@ -542,8 +542,8 @@
                 {{checkStep===3?'重新检测':checkStep===2?'无法听到':'无法看到'}}
               </div>
               <div @click="addStep">
-                {{checkStep===3?'加入直播间':checkStep===2?'无法看到':'可以看到'}}
-              </div>
+                {{checkStep===3?'加入直播间':checkStep===2?'可以听到':'可以看到'}}
+              </div>  
             </div>
         </div>
     </el-dialog>
