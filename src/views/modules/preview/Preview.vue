@@ -488,7 +488,7 @@
               >{{ scope.row.showState === 0 ? "显示" : "隐藏" }}</el-button
             >
             <el-button
-              v-if="scope.row.appointmentState === 1 && scope.row.delFlg === 0"
+              v-if="scope.row.appointmentState === 1 && scope.row.delFlg === 0  && scope.row.showState == 0"
               type="text"
               icon="el-icon-edit"
               size="small"
@@ -496,7 +496,7 @@
               >编辑</el-button
             >
             <el-button
-              v-if="scope.row.appointmentState === 1 && scope.row.delFlg === 0"
+              v-if="scope.row.appointmentState === 1 && scope.row.delFlg === 0  && scope.row.showState == 0"
               type="text"
               icon="el-icon-delete"
               size="small"
