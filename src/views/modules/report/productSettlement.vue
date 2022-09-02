@@ -11,7 +11,7 @@
         @keyup.enter.native="getDataList()"
       >
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="商品名称" prop="productName">
+        <el-form-item v-show="isOpen || formItemCount >= 1" label="商品名称" prop="productName">
           <el-input
             style="width: 200px"
             v-model="dataForm.productName"
@@ -19,7 +19,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="商品类型" prop="productType">
+        <el-form-item v-show="isOpen || formItemCount >= 2" label="商品类型" prop="productType">
           <el-select
             style="width: 200px"
             v-model="dataForm.productType"

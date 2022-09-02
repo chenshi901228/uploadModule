@@ -11,7 +11,7 @@
         @keyup.enter.native="getDataList"
       >
         <el-form-item
-          v-if="isOpen || formItemCount >= 1"
+          v-show="isOpen || formItemCount >= 1"
           label="主播昵称"
           prop="anchorName"
         >
@@ -23,7 +23,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 2"
+          v-show="isOpen || formItemCount >= 2"
           label="真实姓名"
           prop="realName"
         >
@@ -35,7 +35,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 3"
+          v-show="isOpen || formItemCount >= 3"
           label="手机号码"
           prop="phone"
         >
@@ -47,7 +47,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 4"
+          v-show="isOpen || formItemCount >= 4"
           label="账户类型"
           prop="type"
         >
@@ -62,7 +62,7 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 5"
+          v-show="isOpen || formItemCount >= 5"
           label="提现状态"
           prop="withdrawStatus"
         >
@@ -80,7 +80,7 @@
           </el-select>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 6"
+          v-show="isOpen || formItemCount >= 6"
           label="提现单号"
           prop="code"
         >
@@ -291,7 +291,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span>￥{{scope.row.amount? scope.row.amount: "--" }}</span> 
+            <span>{{ numberConvert(scope.row.amount) }}</span> 
           </template>
         </el-table-column>
         <el-table-column
@@ -303,7 +303,7 @@
         >
           <template slot-scope="scope">
             
-            <span>￥{{scope.row.taxSum? parseFloat(scope.row.taxSum).toLocaleString()  :"--" }}</span> 
+            <span>{{ numberConvert(scope.row.taxSum) }}</span> 
 
           </template>
         </el-table-column>
@@ -312,11 +312,11 @@
           label="本次代征增值税"
           header-align="center"
           show-overflow-tooltip
+          width="150px"
           align="center"
         >
           <template slot-scope="scope">
-            <span>￥{{scope.row.addedValueTax? parseFloat(scope.row.addedValueTax).toLocaleString()  : "--" }}</span> 
-
+            <span>{{ numberConvert(scope.row.addedValueTax) }}</span> 
           </template>
         </el-table-column>
 
@@ -325,10 +325,11 @@
           label="本次代征附加税"
           header-align="center"
           show-overflow-tooltip
+          width="150px"
           align="center"
         >
           <template slot-scope="scope">
-            <span>￥{{scope.row.additionalTax? parseFloat(scope.row.additionalTax).toLocaleString()   : "--" }}</span> 
+            <span>{{ numberConvert(scope.row.additionalTax) }}</span> 
 
           </template>
         </el-table-column>
@@ -337,10 +338,11 @@
           label="本次代征个税"
           header-align="center"
           show-overflow-tooltip
+          width="150px"
           align="center"
         >
           <template slot-scope="scope">
-            <span>￥{{scope.row.personalIncomeTax?  parseFloat(scope.row.personalIncomeTax).toLocaleString()   : "--" }}</span> 
+            <span>{{ numberConvert(scope.row.personalIncomeTax) }}</span> 
 
           </template>
         </el-table-column>
@@ -352,7 +354,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span>￥{{scope.row.receivedAmount? scope.row.receivedAmount: "--" }}</span> 
+            <span>{{ numberConvert(scope.row.receivedAmount) }}</span> 
 
           </template>
         </el-table-column>
@@ -361,10 +363,11 @@
           label="本月累计提现金额"
           header-align="center"
           show-overflow-tooltip
+          width="150px"
           align="center"
         >
           <template slot-scope="scope">
-            <span>￥{{scope.row.accumulatedWithdrawalAmount? scope.row.accumulatedWithdrawalAmount:"--" }}</span> 
+            <span>{{ numberConvert(scope.row.accumulatedWithdrawalAmount) }}</span> 
 
           </template>
         </el-table-column>
@@ -434,6 +437,7 @@
             <el-button
               type="text"
               size="small"
+              icon="el-icon-check"
               v-if="scope.row.approveStatus === 0"
               @click="showDialog(scope.row)"
               >确认</el-button
@@ -501,9 +505,8 @@
 
 <script>
 import mixinViewModule from "@/mixins/view-module";
-import { addDynamicRoute } from "@/router";
 import Template from "../devtools/template.vue";
-import { getUUID } from "@/utils";
+import { getUUID, numberConvert } from "@/utils";
 export default {
   mixins: [mixinViewModule],
   data() {
@@ -540,6 +543,10 @@ export default {
     });
   },
   methods: {
+    // 添加金额符号
+    numberConvert(m) {
+      return numberConvert(m)
+    },
     showDialog(data) {
       this.uuid = getUUID();
       this.selectData = data

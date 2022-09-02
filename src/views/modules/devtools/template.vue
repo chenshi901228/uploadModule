@@ -33,7 +33,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <div v-if="isOpen">
+        <div v-show="isOpen">
         </div>
       </el-form>
       <el-table 

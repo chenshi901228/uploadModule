@@ -17,7 +17,7 @@
         <el-form-item
           label="视频主题"
           prop="liveTheme"
-          v-if="isOpen || formItemCount >= 1"
+          v-show="isOpen || formItemCount >= 1"
         >
           <el-input
             size="small"
@@ -32,7 +32,7 @@
         <el-form-item
           label="主播"
           prop="anchorUser"
-          v-if="isOpen || formItemCount >= 2"
+          v-show="isOpen || formItemCount >= 2"
         >
           <el-input
             size="small"
@@ -47,7 +47,7 @@
         <el-form-item
           label="视频显示"
           prop="showMode"
-          v-if="isOpen || formItemCount >= 3"
+          v-show="isOpen || formItemCount >= 3"
         >
           <el-select
             clearable
@@ -63,7 +63,7 @@
         <el-form-item
           label="显示状态"
           prop="showState"
-          v-if="isOpen || formItemCount >= 4"
+          v-show="isOpen || formItemCount >= 4"
         >
           <el-select
             clearable

@@ -175,7 +175,7 @@ export default {
                 // file 选中的文件，格式如 { key: file }
                 if (file[key].data.size / 1024 / 1024 > _this.imageUploadSize) {
                     _this.$message.error(`上传图片大小不能超过${_this.imageUploadSize}M`);
-                    return false;
+                    return Promise.reject(false);
                 }
                 _this.uploading = _this.$loading({
                     lock: true,
@@ -270,7 +270,7 @@ export default {
                 // file 选中的文件，格式如 { key: file }
                 if (file[key].data.size / 1024 / 1024 > _this.videoUploadSize) {
                     _this.$message.error(`上传视频大小不能超过${_this.videoUploadSize}M`);
-                    return false;
+                    return Promise.reject(false);
                 }
 
                 _this.uploading = _this.$loading({

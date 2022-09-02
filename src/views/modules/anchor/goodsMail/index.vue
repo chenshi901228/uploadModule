@@ -15,7 +15,7 @@
                 <el-form-item
                     label="收件人"
                     prop="recipient"
-                    v-if="isOpen || formItemCount >= 1"
+                    v-show="isOpen || formItemCount >= 1"
                 >
                     <el-input
                         maxlength="10"
@@ -25,9 +25,9 @@
                         clearable></el-input>
                 </el-form-item>
                 <el-form-item
-                    label="收件人手机号"
+                    label="收件人手机"
                     prop="recipientNumber"
-                    v-if="isOpen || formItemCount >= 2"
+                    v-show="isOpen || formItemCount >= 2"
                 >
                     <el-input
                         style="width: 200px"
@@ -39,7 +39,7 @@
                 <el-form-item
                     label="物流状态"
                     prop="logisticsStatus"
-                    v-if="isOpen || formItemCount >= 3"
+                    v-show="isOpen || formItemCount >= 3"
                 >
                     <el-select
                         clearable
@@ -55,7 +55,7 @@
                 <el-form-item
                     label="快递单号"
                     prop="courierNumber"
-                    v-if="isOpen || formItemCount >= 4"
+                    v-show="isOpen || formItemCount >= 4"
                 >
                     <el-input
                         maxlength="30"
@@ -67,7 +67,7 @@
                 <el-form-item
                     label="关联订单编号"
                     prop="userProductId"
-                    v-if="isOpen || formItemCount >= 5"
+                    v-show="isOpen || formItemCount >= 5"
                 >
                     <el-input
                         maxlength="30"

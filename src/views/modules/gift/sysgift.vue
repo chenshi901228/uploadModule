@@ -42,7 +42,7 @@
         <!-- <el-form-item
           label="是否免费"
           prop="isFree"
-          v-if="isOpen || formItemCount >= 2"
+          v-show="isOpen || formItemCount >= 2"
         >
           <el-select style="width: 200px" clearable v-model="dataForm.isFree" placeholder="请选择">
             <el-option label="是" :value="1"></el-option>

@@ -5,7 +5,7 @@
     <div class="mod-live__liveList">
       <el-form class="headerTool" :inline="true" :model="dataForm" ref="dataForm" size="small" label-width="100px"
         label-position="right" @keyup.enter.native="getDataList()">
-        <el-form-item label="封面图名称" prop="coverName" v-if="isOpen || formItemCount >= 1">
+        <el-form-item label="封面图名称" prop="coverName" v-show="isOpen || formItemCount >= 1">
           <el-input size="small" :clearable="true" style="width: 200px" v-model="dataForm.coverName" placeholder="请输入">
           </el-input>
         </el-form-item>

@@ -17,7 +17,7 @@
                     <el-form-item
                         label="评论人"
                         prop="commentUserName"
-                        v-if="isOpen || formItemCount >= 1"
+                        v-show="isOpen || formItemCount >= 1"
                     >
                         <el-input
                             style="width: 200px"
@@ -30,7 +30,7 @@
                     <el-form-item
                         label="评论内容"
                         prop="commentValue"
-                        v-if="isOpen || formItemCount >= 2"
+                        v-show="isOpen || formItemCount >= 2"
                     >
                         <el-input
                             style="width: 200px"
@@ -43,7 +43,7 @@
                     <el-form-item
                         label="删除状态"
                         prop="delFlg"
-                        v-if="isOpen || formItemCount >= 3"
+                        v-show="isOpen || formItemCount >= 3"
                     >
                         <el-select clearable style="width: 200px" v-model="dataForm.delFlg" placeholder="请选择">
                             <el-option label="已删除" :value="1"></el-option>

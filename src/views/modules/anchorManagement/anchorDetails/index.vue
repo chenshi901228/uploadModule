@@ -152,26 +152,36 @@
       </div>
       <div class="diaBoxRight">
         <div style="display: flex;border-bottom: 2px solid #E4E7ED">
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(1)" :class="{ 'is-active': diaTbas === 1 }"
-            v-if="$hasPermission('anchor:gain:list')">
-            收益记录
-          </div>
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(2)" :class="{ 'is-active': diaTbas === 2 }"
-            v-if="$hasPermission('anchor:withdraw:list')">
-            提现记录
-          </div>
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(3)" :class="{ 'is-active': diaTbas === 3 }">
-            关注记录
-          </div>
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(4)" :class="{ 'is-active': diaTbas === 4 }">
-            粉丝团成员
-          </div>
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(5)" :class="{ 'is-active': diaTbas === 5 }">
-            店铺
-          </div>
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(6)" :class="{ 'is-active': diaTbas === 6 }">
-            推荐主播
-          </div>
+          <el-tooltip effect="dark" content="收益记录" placement="top" v-if="$hasPermission('anchor:gain:list')">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(1)" :class="{ 'is-active': diaTbas === 1 }">
+              收益记录
+            </div>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="提现记录" placement="top" v-if="$hasPermission('anchor:withdraw:list')">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(2)" :class="{ 'is-active': diaTbas === 2 }">
+              提现记录
+            </div>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="关注记录" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(3)" :class="{ 'is-active': diaTbas === 3 }">
+              关注记录
+            </div>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="粉丝团成员" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(4)" :class="{ 'is-active': diaTbas === 4 }">
+              粉丝团成员
+            </div>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="店铺" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(5)" :class="{ 'is-active': diaTbas === 5 }">
+              店铺
+            </div>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="推荐主播" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(6)" :class="{ 'is-active': diaTbas === 6 }">
+              推荐主播
+            </div>
+          </el-tooltip>
         </div>
         <el-form :inline="true" :style="{ margin: '20px' }" :model="diaSearchForm" @keyup.enter.native="queryPost_dia()"
           size="small" ref="searchForm" label-width="100px">
@@ -1727,16 +1737,7 @@ export default {
     },
     //编辑主播信息
     editeUserInfo() {
-      let obj = {
-        id: this.anchorDetails.weixinUserId,
-        username: this.anchorDetails.username,
-        introduce: this.anchorDetails.introduce,
-        avatarUrl: this.anchorDetails.avatarUrl,
-        qrCode: this.anchorDetails.qrCode,
-      }
-      this.$router.push({
-        path: "/anchorManagement-anchorDetails-EditeUserInfo",
-        query: { info: JSON.stringify(obj) },
+      this.$router.push({ path: "/anchorManagement-anchorDetails-EditeUserInfo", query: { id: this.anchorDetails.weixinUserId },
       });
     },
     //编辑银行卡信息
@@ -2145,6 +2146,10 @@ export default {
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
   box-shadow: none;
+  display: inline-block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .is-active {

@@ -16,7 +16,7 @@
         <el-form-item
           label="直播主题"
           prop="liveTheme"
-          v-if="isOpen || formItemCount >= 1"
+          v-show="isOpen || formItemCount >= 1"
         >
           <el-input
             style="width: 200px"
@@ -28,7 +28,7 @@
         <el-form-item
           label="助手"
           prop="assistant"
-          v-if="isOpen || formItemCount >= 2"
+          v-show="isOpen || formItemCount >= 2"
         >
           <el-input
             style="width: 200px"
@@ -40,7 +40,7 @@
         <el-form-item
           label="预计开播时间"
           prop="startDate"
-          v-if="isOpen || formItemCount >= 3"
+          v-show="isOpen || formItemCount >= 3"
         >
           <el-date-picker
             :clearable="true"
@@ -56,7 +56,7 @@
         <el-form-item
           label="实际开播时间"
           prop="factStartDate"
-          v-if="isOpen || formItemCount >= 4"
+          v-show="isOpen || formItemCount >= 4"
         >
           <el-date-picker
             :clearable="true"
@@ -72,7 +72,7 @@
         <el-form-item
           label="投放人群"
           prop="dynamicGroupName"
-          v-if="isOpen || formItemCount >= 5"
+          v-show="isOpen || formItemCount >= 5"
         >
           <el-select
             v-model="dataForm.dynamicGroupName"
@@ -93,7 +93,7 @@
         <el-form-item
           label="直播间ID"
           prop="livingRoomId"
-          v-if="isOpen || formItemCount >= 6"
+          v-show="isOpen || formItemCount >= 6"
         >
           <el-input
             style="width: 200px"
@@ -105,7 +105,7 @@
         <el-form-item
           label="预约状态"
           prop="appointmentState"
-          v-if="isOpen || formItemCount >= 7"
+          v-show="isOpen || formItemCount >= 7"
         >
           <el-select
             style="width: 200px"
@@ -120,7 +120,7 @@
         <el-form-item
           label="直播状态"
           prop="liveState"
-          v-if="isOpen || formItemCount >= 8"
+          v-show="isOpen || formItemCount >= 8"
         >
           <el-select
             style="width: 200px"
@@ -137,7 +137,7 @@
         <el-form-item
           label="显示状态"
           prop="showState"
-          v-if="isOpen || formItemCount >= 9"
+          v-show="isOpen || formItemCount >= 9"
         >
           <el-select
             style="width: 200px"
@@ -149,7 +149,7 @@
             <el-option label="隐藏" :value="0"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 10" label="直播动态" prop="trendsOpen">
+        <el-form-item v-show="isOpen || formItemCount >= 10" label="直播动态" prop="trendsOpen">
           <el-select
             clearable
             v-model="dataForm.trendsOpen"

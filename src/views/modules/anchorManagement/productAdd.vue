@@ -48,7 +48,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <div v-if="isOpen">
+          <div v-show="isOpen">
             <el-row>
               <el-col :span="8">
                 <el-form-item label="关联产品编号" prop="linkedProductId">

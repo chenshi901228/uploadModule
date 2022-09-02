@@ -260,3 +260,15 @@ export function enCodeIdCard(idCard) {
   idCard += ""
   return idCard.replace(/(.{6}).*(.{4})/, '$1********$2')
 }
+
+// 数字处理-返回string，m-源数字，sign-前缀符号，n-小数位
+export function numberConvert(m, sign = "￥", n = 2) {
+  if(Object.prototype.toString.call(m) == "[object Number]") {
+    return m == 0 ? m : sign + m.toFixed(n)
+  }else if(m == null){
+    return "--"
+  }else {
+    return ""
+  }
+}
+

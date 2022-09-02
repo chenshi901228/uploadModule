@@ -10,7 +10,7 @@
         label-width="100px"
         @keyup.enter.native="getDataList"
       >
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="userName">
+        <el-form-item v-show="isOpen || formItemCount >= 1" label="用户昵称" prop="userName">
           <el-input
             style="width: 200px"
             v-model="dataForm.userName"
@@ -18,7 +18,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
+        <el-form-item v-show="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
           <el-input
             style="width: 200px"
             v-model="dataForm.userPhone"
@@ -26,7 +26,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 3" label="商品类型" prop="productType">
+        <el-form-item v-show="isOpen || formItemCount >= 3" label="商品类型" prop="productType">
           <el-select 
             @visible-change="getProductType" 
             style="width: 200px" 
@@ -36,7 +36,7 @@
               <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType" :label="item.productType"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 4" label="商品名称" prop="productName">
+        <el-form-item v-show="isOpen || formItemCount >= 4" label="商品名称" prop="productName">
           <el-input
             style="width: 200px"
             v-model="dataForm.productName"
@@ -44,7 +44,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 5" label="关联订单编号" prop="weixinUserProductId">
+        <el-form-item v-show="isOpen || formItemCount >= 5" label="关联订单编号" prop="weixinUserProductId">
           <el-input
             style="width: 200px"
             v-model="dataForm.weixinUserProductId"
@@ -52,7 +52,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 6" label="审批节点状态" prop="approveStatus">
+        <el-form-item v-show="isOpen || formItemCount >= 6" label="审批节点状态" prop="approveStatus">
           <el-select 
             v-model="dataForm.approveStatus"
             style="width: 200px"
@@ -63,7 +63,7 @@
             <el-option :value="-1" label="未通过"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 6" label="审批流程状态" prop="flowStatus">
+        <el-form-item v-show="isOpen || formItemCount >= 6" label="审批流程状态" prop="flowStatus">
           <el-select 
             v-model="dataForm.flowStatus"
             style="width: 200px"

@@ -11,7 +11,7 @@
         @keyup.enter.native="getDataList()"
       >
         <el-form-item
-          v-if="isOpen || formItemCount >= 1"
+          v-show="isOpen || formItemCount >= 1"
           label="主播昵称"
           prop="anchorName"
         >
@@ -23,7 +23,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 2"
+          v-show="isOpen || formItemCount >= 2"
           label="真实姓名"
           prop="realName"
         >
@@ -35,7 +35,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 3"
+          v-show="isOpen || formItemCount >= 3"
           label="手机号码"
           prop="phone"
         >
@@ -47,7 +47,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item
-          v-if="isOpen || formItemCount >= 4"
+          v-show="isOpen || formItemCount >= 4"
           label="账户类型"
           prop="type"
         >
@@ -63,7 +63,7 @@
         </el-form-item>
 
         <el-form-item
-          v-if="isOpen || formItemCount >= 5"
+          v-show="isOpen || formItemCount >= 5"
           label="提现状态"
           prop="withdrawStatus"
         >
@@ -83,10 +83,11 @@
 
         <el-form-item
           label="打款时间"
-          v-if="isOpen || formItemCount >= 6"
+          v-show="isOpen || formItemCount >= 6"
           prop="confirmDate"
         >
           <el-date-picker
+            style="width: 200px"
             v-model="dataForm.confirmDate"
             type="date"
             placeholder="选择日期"
@@ -96,7 +97,7 @@
         </el-form-item>
 
         <el-form-item
-          v-if="isOpen || formItemCount >= 7"
+          v-show="isOpen || formItemCount >= 7"
           label="提现单号"
           prop="code"
         >
@@ -179,7 +180,7 @@
           label="提现单号"
           header-align="center"
           align="center"
-          min-width="120px"
+          min-width="180px"
           show-overflow-tooltip
         >
           <template slot-scope="scope">
@@ -266,7 +267,7 @@
         <el-table-column
           prop="bankAccount"
           label="银行账号"
-          min-width="150px"
+          min-width="180px"
           header-align="center"
           align="center"
           show-overflow-tooltip
@@ -308,7 +309,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.amount || "--" }}</span>
+            <span>{{ numberConvert(scope.row.amount) }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -319,7 +320,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.taxSum || "--" }}</span>
+            <span>{{ numberConvert(scope.row.taxSum) }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -327,10 +328,11 @@
           label="本次代征增值税"
           header-align="center"
           show-overflow-tooltip
+          width="180px"
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.addedValueTax || "--" }}</span>
+            <span>{{ numberConvert(scope.row.addedValueTax) }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -338,10 +340,11 @@
           label="本次代征附加税"
           header-align="center"
           show-overflow-tooltip
+          width="180px"
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.additionalTax || "--" }}</span>
+            <span>{{ numberConvert(scope.row.additionalTax) }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -349,10 +352,11 @@
           label="本次代征个税"
           header-align="center"
           show-overflow-tooltip
+          width="180px"
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.personalIncomeTax || "--" }}</span>
+            <span>{{ numberConvert(scope.row.personalIncomeTax) }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -363,7 +367,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.receivedAmount || "--" }}</span>
+            <span>{{ numberConvert(scope.row.receivedAmount) }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -371,10 +375,11 @@
           label="本月累计提现金额"
           header-align="center"
           show-overflow-tooltip
+          width="200px"
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.accumulatedWithdrawalAmount || "--" }}</span>
+            <span>{{ numberConvert(scope.row.accumulatedWithdrawalAmount) }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -382,10 +387,11 @@
           label="本次开票金额"
           header-align="center"
           show-overflow-tooltip
+          width="150px"
           align="center"
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.amount || "--" }}</span>
+            <span>{{ numberConvert(scope.row.amount) }}</span>
           </template>
         </el-table-column>
 
@@ -556,9 +562,8 @@
 
 <script>
 import mixinViewModule from "@/mixins/view-module";
-import { addDynamicRoute } from "@/router";
 import Template from "../devtools/template.vue";
-import { getUUID } from "@/utils";
+import { getUUID, numberConvert } from "@/utils";
 export default {
   mixins: [mixinViewModule],
   data() {
@@ -674,6 +679,10 @@ export default {
     },
   },
   methods: {
+    // 添加金额符号
+    numberConvert(m) {
+      return numberConvert(m)
+    },
     //确认修改税费
     confirmEdite() {
       this.$refs.form_host.validate((valid) => {
@@ -754,7 +763,7 @@ export default {
   },
 };
 </script>
-<style lang="scss"  scoped>
+<style lang="scss" scoped>
 .forbiddenAllBtn {
   width: 120px;
   height: 35px;

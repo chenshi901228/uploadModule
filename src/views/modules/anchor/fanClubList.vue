@@ -3,16 +3,16 @@
     <div class="mod-message__sms">
       <el-form class="headerTool" :inline="true" :model="dataForm" ref="dataForm" size="small" label-width="100px"
         @keyup.enter.native="getDataList">
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="粉丝团名称" prop="title">
+        <el-form-item v-show="isOpen || formItemCount >= 1" label="粉丝团名称" prop="title">
           <el-input style="width: 200px" v-model="dataForm.title" placeholder="粉丝团名称" clearable></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="主播昵称" prop="username">
+        <el-form-item v-show="isOpen || formItemCount >= 2" label="主播昵称" prop="username">
           <el-input style="width: 200px" v-model="dataForm.username" placeholder="主播昵称" clearable></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 3" label="手机号码" prop="phone">
+        <el-form-item v-show="isOpen || formItemCount >= 3" label="手机号码" prop="phone">
           <el-input style="width: 200px" v-model="dataForm.phone" placeholder="手机号码" clearable></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 4" label="状态" prop="disabledFlg">
+        <el-form-item v-show="isOpen || formItemCount >= 4" label="状态" prop="disabledFlg">
           <el-select style="width: 200px" v-model="dataForm.disabledFlg" clearable placeholder="状态">
             <el-option value="1" label="禁用"></el-option>
             <el-option value="0" label="正常"></el-option>

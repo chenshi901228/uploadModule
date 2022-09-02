@@ -7,27 +7,27 @@
             <div class="mod-livePlayBackComment">
                 <el-form class="headerTool" :inline="true" :model="dataForm" ref="dataForm" size="small"
                     label-width="100px" @keyup.enter.native="getDataList">
-                    <el-form-item label="评论人" prop="commentUserName" v-if="isOpen || formItemCount >= 1">
+                    <el-form-item label="评论人" prop="commentUserName" v-show="isOpen || formItemCount >= 1">
                         <el-input style="width: 200px" v-model.trim="dataForm.commentUserName" placeholder="请输入昵称或手机号"
                             clearable>
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="评论内容" prop="commentValue" v-if="isOpen || formItemCount >= 2">
+                    <el-form-item label="评论内容" prop="commentValue" v-show="isOpen || formItemCount >= 2">
                         <el-input style="width: 200px" v-model.trim="dataForm.commentValue" placeholder="请输入内容关键字"
                             clearable>
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="视频主题" prop="liveTheme" v-if="isOpen || formItemCount >= 3">
+                    <el-form-item label="视频主题" prop="liveTheme" v-show="isOpen || formItemCount >= 3">
                         <el-input style="width: 200px" v-model.trim="dataForm.liveTheme" placeholder="请输入内容关键字"
                             clearable>
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="主播" prop="anchorUser" v-if="isOpen || formItemCount >= 4">
+                    <el-form-item label="主播" prop="anchorUser" v-show="isOpen || formItemCount >= 4">
                         <el-input style="width: 200px" v-model.trim="dataForm.anchorUser" placeholder="请输入昵称或手机号"
                             clearable>
                         </el-input>
                     </el-form-item>
-                    <el-form-item label="删除状态" prop="delFlg" v-if="isOpen || formItemCount >= 5">
+                    <el-form-item label="删除状态" prop="delFlg" v-show="isOpen || formItemCount >= 5">
                         <el-select clearable style="width: 200px" v-model="dataForm.delFlg" placeholder="请选择">
                             <el-option label="已删除" :value="1"></el-option>
                             <el-option label="未删除" :value="0"></el-option>

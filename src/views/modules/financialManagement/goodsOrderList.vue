@@ -10,7 +10,7 @@
         size="small"
         @keyup.enter.native="getDataList()"
       >
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="用户昵称" prop="userName">
+        <el-form-item v-show="isOpen || formItemCount >= 1" label="用户昵称" prop="userName">
           <el-input
             style="width: 200px"
             v-model="dataForm.userName"
@@ -18,7 +18,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
+        <el-form-item v-show="isOpen || formItemCount >= 2" label="手机号码" prop="userPhone">
           <el-input
             style="width: 200px"
             v-model="dataForm.userPhone"
@@ -26,7 +26,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 3" label="商品名称" prop="productName">
+        <el-form-item v-show="isOpen || formItemCount >= 3" label="商品名称" prop="productName">
           <el-input
             style="width: 200px"
             v-model="dataForm.productName"
@@ -34,7 +34,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 4" label="商品类型" prop="productType">
+        <el-form-item v-show="isOpen || formItemCount >= 4" label="商品类型" prop="productType">
           <!-- <el-input
           size="small"
           v-model="dataForm.productType"
@@ -53,13 +53,13 @@
             <!-- <el-option value="书籍" label="书籍"></el-option> -->
           </el-select>
         </el-form-item>
-       <el-form-item v-if="isOpen || formItemCount >= 5" label="支付方式" prop="payType">
+       <el-form-item v-show="isOpen || formItemCount >= 5" label="支付方式" prop="payType">
           <el-select style="width: 200px"  v-model="dataForm.payType" clearable>
             <el-option value="微信" label="微信"></el-option>
             <el-option value="支付宝" label="支付宝"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 6" label="消费来源" prop="consumptionSource">
+        <el-form-item v-show="isOpen || formItemCount >= 6" label="消费来源" prop="consumptionSource">
           <el-select
             style="width: 200px"
             v-model="dataForm.consumptionSource"
@@ -70,7 +70,7 @@
             <el-option value="大于众学" label="大于众学"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 7" label="订单状态" prop="status">
+        <el-form-item v-show="isOpen || formItemCount >= 7" label="订单状态" prop="status">
           <el-select style="width: 200px"  v-model="dataForm.status" clearable placeholder="请选择">
             <el-option :value="0" label="待支付"></el-option>
             <el-option :value="1" label="已支付"></el-option>
@@ -176,6 +176,9 @@
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="{ row }">
+            <span>{{ numberConvert(row.price) }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="payPrice"
@@ -184,6 +187,9 @@
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="{ row }">
+            <span>{{ numberConvert(row.payPrice) }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="payType"
@@ -254,8 +260,8 @@
 
 <script>
 import mixinViewModule from "@/mixins/view-module";
-import { addDynamicRoute } from "@/router";
 import Template from "../devtools/template.vue";
+import { numberConvert } from "@/utils";
 export default {
   mixins: [mixinViewModule],
   data() {
@@ -286,6 +292,10 @@ export default {
     });
   },
   methods: {
+    // 添加金额符号
+    numberConvert(m) {
+      return numberConvert(m)
+    },
   },
 };
 </script>

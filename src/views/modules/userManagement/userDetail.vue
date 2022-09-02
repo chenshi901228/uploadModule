@@ -120,24 +120,36 @@
       </div>
       <div class="diaBoxRight">
         <div style="display: flex;border-bottom: 2px solid #E4E7ED;">
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(1)" :class="{ 'is-active': diaTbas === 1 }">
-            充值记录
-          </div>
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(2)" :class="{ 'is-active': diaTbas === 2 }">
-            礼物记录
-          </div>
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(3)" :class="{ 'is-active': diaTbas === 3 }">
-            商品记录
-          </div>
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(6)" :class="{ 'is-active': diaTbas === 6 }">
-            书籍记录
-          </div>
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(5)" :class="{ 'is-active': diaTbas === 5 }">
-            粉丝团消费
-          </div>
-          <div class="diaBoxRight_tabBtns" @click="changeTbas(4)" :class="{ 'is-active': diaTbas === 4 }">
-            加入粉丝团
-          </div>
+          <el-tooltip effect="dark" content="充值记录" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(1)" :class="{ 'is-active': diaTbas === 1 }">
+              充值记录
+            </div>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="礼物记录" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(2)" :class="{ 'is-active': diaTbas === 2 }">
+              礼物记录
+            </div>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="商品记录" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(3)" :class="{ 'is-active': diaTbas === 3 }">
+              商品记录
+            </div>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="书籍记录" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(6)" :class="{ 'is-active': diaTbas === 6 }">
+              书籍记录
+            </div>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="粉丝团消费" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(5)" :class="{ 'is-active': diaTbas === 5 }">
+              粉丝团消费
+            </div>
+          </el-tooltip>
+          <el-tooltip effect="dark" content="加入粉丝团" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(4)" :class="{ 'is-active': diaTbas === 4 }">
+              加入粉丝团
+            </div>
+          </el-tooltip>
         </div>
         <el-form :inline="true" :style="{ margin: '20px' }" :model="diaSearchForm" @keyup.enter.native="queryPost_dia()"
           size="small" ref="searchForm" label-width="100px">
@@ -799,7 +811,7 @@ export default {
 
 .diaBoxRight_tabBtns {
   border-width: 0px;
-    margin-right: 50px;
+  margin-right: 50px;
   height: 45px;
   text-align: center;
   cursor: pointer;
@@ -809,6 +821,10 @@ export default {
   -moz-box-shadow: none;
   -webkit-box-shadow: none;
   box-shadow: none;
+  display: inline-block;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 
 .is-active {

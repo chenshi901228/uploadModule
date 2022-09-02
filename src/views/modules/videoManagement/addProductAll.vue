@@ -15,7 +15,7 @@
         <el-form-item
           label="商品名称"
           prop="productName"
-          v-if="isOpen || formItemCount >= 1"
+          v-show="isOpen || formItemCount >= 1"
         >
           <el-input
             size="small"
@@ -29,7 +29,7 @@
           label="商品类型"
           prop="productType"
           size="small"
-          v-if="isOpen || formItemCount >= 2"
+          v-show="isOpen || formItemCount >= 2"
         >
           <el-select
             @visible-change="getProductType"
@@ -50,7 +50,7 @@
         <el-form-item
           label="是否免费"
           prop="isFree"
-          v-if="isOpen || formItemCount >= 3"
+          v-show="isOpen || formItemCount >= 3"
         >
           <el-select
             clearable
@@ -65,7 +65,7 @@
         <el-form-item
           label="关联产品编号"
           prop="searchProductId"
-          v-if="isOpen || formItemCount >= 4"
+          v-show="isOpen || formItemCount >= 4"
         >
           <el-input
             size="small"
@@ -78,7 +78,7 @@
         <el-form-item
           label="添加状态"
           prop="isAdd"
-          v-if="isOpen || formItemCount >= 5"
+          v-show="isOpen || formItemCount >= 5"
         >
           <el-select
             clearable

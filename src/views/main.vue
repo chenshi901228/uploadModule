@@ -1,12 +1,12 @@
 <template>
-  <div v-loading.fullscreen.lock="loading" :element-loading-text="$t('loading')" :class="['aui-wrapper', { 'aui-sidebar--fold': $store.state.sidebarFold }]">
+  <div v-loading.fullscreen.lock="loading" :element-loading-text="$t('loading')" :style="{'--themeColor': theme}" :class="['aui-wrapper', { 'aui-sidebar--fold': $store.state.sidebarFold }]">
     <template v-if="!loading">
       <main-navbar />
       <main-sidebar />
       <div class="aui-content__wrapper" :style="{ 'min-height': (documentClientHeight - 52) + 'px' }">
         <main-content v-if="!$store.state.contentIsNeedRefresh"/>
       </div>
-      <main-theme-tools />
+      <!-- <main-theme-tools /> -->
     </template>
   </div>
 </template>
@@ -15,7 +15,7 @@
 import MainNavbar from './main-navbar'
 import MainSidebar from './main-sidebar'
 import MainContent from './main-content'
-import MainThemeTools from './main-theme-tools'
+// import MainThemeTools from './main-theme-tools'
 import debounce from 'lodash/debounce'
 import { isURL } from '@/utils/validate'
 
@@ -41,7 +41,7 @@ export default {
     MainNavbar,
     MainSidebar,
     MainContent,
-    MainThemeTools
+    // MainThemeTools
   },
   watch: {
     $route: 'routeHandle',
@@ -63,6 +63,9 @@ export default {
         this.$store.commit("updateDocumentClientWidth", val);
       },
     },
+    theme() {
+      return this.$store.state.theme
+    }
   },
   created () {
     this.windowResizeHandle()

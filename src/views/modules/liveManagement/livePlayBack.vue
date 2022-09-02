@@ -13,7 +13,7 @@
         size="small"
         @keyup.enter.native="getDataList"
       >
-        <el-form-item v-if="isOpen || formItemCount >= 1" label="回放主题" prop="liveTheme">
+        <el-form-item v-show="isOpen || formItemCount >= 1" label="回放主题" prop="liveTheme">
           <el-input
             v-model.trim="dataForm.liveTheme"
             placeholder="请输入选择"
@@ -22,7 +22,7 @@
           >
           </el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 2" label="主播" prop="anchorUser">
+        <el-form-item v-show="isOpen || formItemCount >= 2" label="主播" prop="anchorUser">
           <el-input
             v-model.trim="dataForm.anchorUser"
             placeholder="请输入姓名或手机号"
@@ -31,7 +31,7 @@
           >
           </el-input>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 3" label="视频显示" prop="showMode">
+        <el-form-item v-show="isOpen || formItemCount >= 3" label="视频显示" prop="showMode">
           <el-select
             clearable
             v-model="dataForm.showMode"
@@ -42,7 +42,7 @@
             <el-option label="竖屏" :value="0"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 4" label="投放人群" prop="dynamicGroupName">
+        <el-form-item v-show="isOpen || formItemCount >= 4" label="投放人群" prop="dynamicGroupName">
           <el-select
             v-model="dataForm.dynamicGroupName"
             placeholder="请选择投放人群"
@@ -60,7 +60,7 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-if="isOpen || formItemCount >= 5" label="生成状态" prop="productState">
+        <el-form-item v-show="isOpen || formItemCount >= 5" label="生成状态" prop="productState">
           <el-select
             clearable
             v-model="dataForm.productState"
@@ -71,7 +71,7 @@
             <el-option label="已生成" :value="1"></el-option>
           </el-select>
         </el-form-item>
-        <!-- <el-form-item v-if="isOpen || formItemCount >= 6" label="显示状态" prop="showState">
+        <!-- <el-form-item v-show="isOpen || formItemCount >= 6" label="显示状态" prop="showState">
           <el-select
             clearable
             v-model="dataForm.showState"

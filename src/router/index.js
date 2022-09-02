@@ -7,8 +7,16 @@ Vue.use(Router)
 
 // 跳转重复路由报错处理
 const originalPush = Router.prototype.push
-Router.prototype.push = function push(location) {
-    return originalPush.call(this, location).catch(err => err)
+const originalReplace = Router.prototype.replace
+// push
+Router.prototype.push = function push (location, onResolve, onReject) {
+  if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
+  return originalPush.call(this, location).catch(err => err)
+}
+// replace
+Router.prototype.replace = function push (location, onResolve, onReject) {
+  if (onResolve || onReject) return originalReplace.call(this, location, onResolve, onReject)
+  return originalReplace.call(this, location).catch(err => err)
 }
 
 // 页面路由(独立页面)

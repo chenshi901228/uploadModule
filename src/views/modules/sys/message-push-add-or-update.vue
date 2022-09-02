@@ -7,27 +7,38 @@
       ref="ruleForm"
       label-width="120px"
       class="demo-ruleForm"
+      size="small"
     >
       <el-form-item label="计划名称" prop="planName">
-        <el-input v-model="ruleForm.planName" :disabled="isDisable" style="width:600px"></el-input>
+        <el-input v-model="ruleForm.planName" :disabled="isDisable" style="width:600px" placeholder="请输入" clearable></el-input>
       </el-form-item>
       <el-form-item label="配置KEY" prop="configurationKey">
-        <el-input v-model="ruleForm.configurationKey" :disabled="isDisable" style="width:600px"></el-input>
+        <el-input v-model="ruleForm.configurationKey" :disabled="isDisable" style="width:600px" placeholder="请输入KEY" clearable></el-input>
       </el-form-item>
       <el-form-item label="推送类型">
-        <el-select v-model="ruleForm.pushType" :disabled="isDisable" placeholder="推送类型">
+        <el-select v-model="ruleForm.pushType" :disabled="isDisable" style="width:600px" placeholder="请选择" clearable>
           <el-option label="站内信" value="1"></el-option>
           <el-option label="短信" value="2"></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="路由" prop="route">
-        <el-input v-model="ruleForm.route" :disabled="isDisable" style="width:600px"></el-input>
+        <el-input v-model="ruleForm.route" :disabled="isDisable" style="width:600px" placeholder="例如：http：//2376482" clearable></el-input>
       </el-form-item>
       <el-form-item label="推送图标" required>
-        <upload :fileList="fileList" :limit="1" :disabled="isDisable" :multiple="false" @getImg="getImg"></upload>
+        <upload
+          :fileList="fileList"
+          :disabled="isDisable"
+          :limit="1"
+          :fileMaxSize="2"
+          :fileType="['bmp', 'png', 'jpg', 'jpeg']"
+          ref="uploadFile"
+          @uploadSuccess="uploadSuccess"
+          @uploadRemove="uploadRemove"
+        ></upload>
+        <p class="tips">图片大小必须小于2M,支持bmp、png、jpg、jpeg格式,尺寸为80px*80px</p>
       </el-form-item>
       <el-form-item label="推送标题" prop="pushTitle">
-        <el-input v-model="ruleForm.pushTitle" :disabled="isDisable" style="width:600px"></el-input>
+        <el-input v-model="ruleForm.pushTitle" :disabled="isDisable" style="width:600px" placeholder="请输入" clearable></el-input>
       </el-form-item>
       <el-form-item class="quill-editor" label="推送内容">
           <quill-editor v-model="ruleForm.pushContent" ref="myQuillEditor" style="width: 800px;"
@@ -87,7 +98,7 @@
           > -->
         </el-form-item>
       <el-form-item label="动态组">
-        <el-select v-model="ruleForm.dynamicGroupId" :disabled="isDisable"   placeholder="推送类型" >
+        <el-select v-model="ruleForm.dynamicGroupId" :disabled="isDisable" style="width:600px" multiple placeholder="请选择,可多选" clearable>
           <el-option v-for="item in allDynamicGroup" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
@@ -117,7 +128,7 @@
 </template>
 
 <script>
-import Upload from '@/components/upload/index'
+import Upload from "@/components/common/custom-upload"
 import mixinTableModule from '@/mixins/table-module'
 import { Quill, quillEditor } from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
@@ -170,12 +181,12 @@ export default {
         planName: '',
         pushContent: '',
         pushTitle: '',
-        pushType: '',
+        pushType: '1',
         configurationKey: '',
         route: '',
-        isTiming: '',
+        isTiming: "0",
         timing: '',
-        dynamicGroupId: ''
+        dynamicGroupId: []
       },
       fileList: [], // 推送图标
       dialogImageUrl: '',
@@ -210,21 +221,25 @@ export default {
     // type:1详情，2 编辑 3新增
     // 进入页面根据状态 重新调用就接口
     if (this.$route.query.type === '1' || this.$route.query.type === '2') {
-      this.$http.get(`/sys/syspush/${this.$route.query.id}`).then((res) => {
-        res.data.data.isTiming = (res.data.data.isTiming).toString()
-        this.ruleForm = { ...this.ruleForm, ...res.data.data }
+      this.$http.get(`/sys/syspush/${this.$route.query.id}`).then(({data:res}) => {
+        res.data.isTiming = (res.data.isTiming).toString()
+
+        // 动态组id转array
+        res.data.dynamicGroupId = res.data.dynamicGroupId ? res.data.dynamicGroupId.split(",") : []
+
+        this.ruleForm = { ...this.ruleForm, ...res.data }
         this.fileList = [
           {
             name: new Date().getTime(),
-            url: res.data.data.pushIcon
+            url: res.data.pushIcon
           }
         ]
       })
     }
   },
   mounted () {
-    this.$http.get('/sys/dynamicGroup/getAllDynamicGroupList').then((res) => {
-      this.allDynamicGroup = res.data.data
+    this.$http.get('/sys/dynamicGroup/getAllDynamicGroupList').then(({data: res}) => {
+      this.allDynamicGroup = res.data
     })
   },
   watch: {
@@ -237,7 +252,7 @@ export default {
           this.ruleForm.pushContent = ''
           this.ruleForm.pushType = ''
           this.allDynamicGroup = []
-          this.ruleForm.dynamicGroupId = ''
+          this.ruleForm.dynamicGroupId = []
         }
       },
       // 深度观察监听
@@ -250,9 +265,12 @@ export default {
     }
   },
   methods: {
-    // 头像上传
-    getImg (imgList) {
-      this.fileList = imgList
+    // 推送图标上传
+     uploadSuccess(file) {
+      this.fileList.push(file);
+    },
+    uploadRemove(file) {
+      this.fileList = []
     },
     onEditorChange (e) {
       e.quill.deleteText(2000, 4)
@@ -273,6 +291,9 @@ export default {
           //   confirmButtonText:'确认',
           //   cancelButtonText:'取消',
           // }).then(()=>{
+          if(!this.$refs.uploadFile.isUploadAll()) {
+            return this.$message.warning("还有附件正在上传，请稍后")
+          }
           if (!this.fileList.length) return this.$message.error('请上传推送图标')
           const loading = this.$loading({
             lock: true,
@@ -280,11 +301,26 @@ export default {
             spinner: 'el-icon-loading',
             background: 'rgba(0, 0, 0, 0.7)'
           })
+          // 动态组数据处理
+          let dynamicGroupIds = this.ruleForm.dynamicGroupId.length ? this.ruleForm.dynamicGroupId.join(",") : ""
+          let dynamicGroupNames = []
+          if(this.ruleForm.dynamicGroupId.length) {
+            this.ruleForm.dynamicGroupId.map(item => {
+              this.allDynamicGroup.map(v => {
+                if(item == v.id) {
+                  dynamicGroupNames.push(v.name)
+                }
+              })
+            })
+          }
+          dynamicGroupNames = dynamicGroupNames.join(",")
+          
           const params = {
             id: this.id,
             ...this.ruleForm,
-            pushIcon: this.fileList[0].response ? this.fileList[0].response.data.url : this.fileList[0].url,
-            dynamicGroupName: this.allDynamicGroup.find((item) => item.id === this.ruleForm.dynamicGroupId).name // 根据动态组id获取name
+            pushIcon: this.fileList[0].url,
+            dynamicGroupId: dynamicGroupIds,
+            dynamicGroupName: dynamicGroupNames
           }
           let result = null
           try {
@@ -338,23 +374,13 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.tips {
+    color: #666;
+}
 .mod-live__liveList {
   .frontCoverImg {
     width: 100%;
     height: 80px;
   }
-}
-/deep/.el-input {
-  width: 300px;
-}
-/deep/.el-textarea {
-  width: 600px;
-}
-/deep/.el-textarea__inner {
-  padding-bottom: 50px;
-  padding-right: 60px;
-}
-/deep/.el-input__count {
-  right: 30px;
 }
 </style>
