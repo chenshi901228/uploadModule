@@ -240,7 +240,11 @@
           show-overflow-tooltip
           header-align="center"
           align="center"
-        ></el-table-column>
+        >
+          <template slot-scope="{ row }">
+            {{ row.attentionNum && parseFloat(row.attentionNum).toLocaleString('en-IN') }}
+          </template>
+        </el-table-column>
         <el-table-column
           prop="fansNum"
           label="粉丝团成员"
@@ -248,7 +252,11 @@
           header-align="center"
           align="center"
           width="100"
-        ></el-table-column>
+        >
+          <template slot-scope="{ row }">
+            {{ row.fansNum && parseFloat(row.fansNum).toLocaleString('en-IN') }}
+          </template>
+        </el-table-column>
         <!-- <el-table-column
           prop="dynamicGroupFlg"
           label="动态组授权"

@@ -2112,24 +2112,25 @@ export default {
     position: relative;
     margin: 0 auto;
     margin-bottom: 30px;
+    border-radius: 50%;
+    overflow: hidden;
 
     img {
       width: 100%;
       height: 100%;
-      border-radius: 50%;
     }
 
     .role {
-      width: 50px;
-      line-height: 20px;
-      border-radius: 4px;
+      width: 94px;
+      line-height: 26px;
       color: #fff;
-      background: rgba(22, 155, 213, 1);
+      background: rgba(0, 0, 0, 0.7);
       text-align: center;
       position: absolute;
-      bottom: -10px;
+      bottom: 0;
       left: 50%;
       transform: translateX(-50%);
+      font-size: 14px;
     }
   }
 }

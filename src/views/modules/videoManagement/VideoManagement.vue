@@ -178,6 +178,14 @@
                 alt=""
               />
             </div>
+            <!-- 播放次数 -->
+            <span v-else-if="item.prop == 'playbackNum'">
+              {{ row.playbackNum && parseFloat(row.playbackNum).toLocaleString('en-IN') }}
+            </span>
+            <!-- 评论次数 -->
+            <span v-else-if="item.prop == 'commentNum'">
+              {{ row.commentNum && parseFloat(row.commentNum).toLocaleString('en-IN') }}
+            </span>
             <!-- 视频显示 -->
             <span v-else-if="item.prop == 'showMode'">
               {{ row.showMode ? "横屏" : "竖屏" }}
@@ -337,7 +345,7 @@ export default {
         { prop: "approveStatus", label: "审核状态" },
         { prop: "showState", label: "显示状态" },
         { prop: "createByName", label: "创建人" },
-        { prop: "createDate", label: "创建时间" },
+        { prop: "createDate", label: "创建时间", width: 180 },
       ],
       dynamicGroupOptions: [], //投放人群
       getDynamicGroupLoading: false, //下拉框加载数据loading

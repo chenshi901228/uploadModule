@@ -415,7 +415,7 @@ export default {
   computed: {
     // 审核状态图片
     statusImg() {
-      if(this.diaForm && this.diaForm.status == 0) return require("@/assets/icon/icon_applying.png")
+      if(this.diaForm && this.diaForm.status == 0) return require("@/assets/icon/icon_applying_1.png")
       if(this.diaForm && this.diaForm.status == 1) return require("@/assets/icon/icon_agree.png")
       if(this.diaForm && this.diaForm.status == -1) return require("@/assets/icon/icon_reject.png")
       return ""

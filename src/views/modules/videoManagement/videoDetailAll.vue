@@ -15,13 +15,13 @@ border-radius: 5px 5px 5px 5px;position: relative;">
         </el-col>
         <el-col :span="10">封面图：
           <el-image :preview-src-list="srcList" v-if="info && info.frontCoverUrl" :src="info && info.frontCoverUrl"
-            style="width: 200px; height: 180px">
+            style="width: 200px; height: 180px" fit="cover">
           </el-image>
         </el-col>
         <el-col :span="10">视频：
           <video ref="video" id="video" :src="info.relationLiveUrl" :autoplay="videolist.autoplay"
             :controls="videolist.controls" :controlslist="videolist.controlslist"
-            :webkit-playsinline="webkitplaysinline" style="width: 200px; height: 200px"></video>
+            :webkit-playsinline="webkitplaysinline" style="width: 200px; height: 180px"></video>
         </el-col>
         <el-col :span="2">
           <img v-if="statusImg" class="statusImg" :src="statusImg" alt="">
