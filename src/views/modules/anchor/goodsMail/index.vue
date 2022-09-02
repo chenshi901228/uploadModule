@@ -25,7 +25,7 @@
                         clearable></el-input>
                 </el-form-item>
                 <el-form-item
-                    label="收件人手机号"
+                    label="收件人手机"
                     prop="recipientNumber"
                     v-show="isOpen || formItemCount >= 2"
                 >

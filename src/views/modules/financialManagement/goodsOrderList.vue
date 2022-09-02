@@ -176,6 +176,9 @@
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="{ row }">
+            <span>{{ numberConvert(row.price) }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="payPrice"
@@ -184,6 +187,9 @@
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="{ row }">
+            <span>{{ numberConvert(row.payPrice) }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="payType"
@@ -254,8 +260,8 @@
 
 <script>
 import mixinViewModule from "@/mixins/view-module";
-import { addDynamicRoute } from "@/router";
 import Template from "../devtools/template.vue";
+import { numberConvert } from "@/utils";
 export default {
   mixins: [mixinViewModule],
   data() {
@@ -286,6 +292,10 @@ export default {
     });
   },
   methods: {
+    // 添加金额符号
+    numberConvert(m) {
+      return numberConvert(m)
+    },
   },
 };
 </script>
