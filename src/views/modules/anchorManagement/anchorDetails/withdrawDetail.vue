@@ -5,7 +5,7 @@
     <div class="mod-live__liveList">
       <el-descriptions :title="'提现单号:' + id"></el-descriptions>
       <div class="tag">
-        <el-tag
+        <!-- <el-tag
           :type="$route.query.withdrawStatus === '4' ? 'success' : 'info'"
           >{{
             $route.query.withdrawStatus === '1'
@@ -20,7 +20,8 @@
               ? "未到账"
               : "--"
           }}</el-tag
-        >
+        > -->
+        <img :src="getStatusPic($route.query.withdrawStatus)" alt="">
       </div>
       <el-descriptions title="用户信息">
         <el-descriptions-item label="提现金额:">{{
@@ -200,19 +201,47 @@ export default {
         })
         .catch((err) => {});
     },
+    //获取图片地址
+    getStatusPic(status) {
+      let src = ''
+      switch(status) {
+        case '1':
+          src = require('@/assets/img/in_review_yl.png')
+          break
+        case '2':
+          src = require('@/assets/img/accounting_yl.png')
+          break
+        case '3':
+          src = require('@/assets/img/in_account_yl.png')
+          break
+        case '4':
+          src = require('@/assets/img/is_received_yl.png')
+          break
+        case '5':
+          src = require('@/assets/img/not_received_yl.png')
+          break
+        default:
+          src = require('@/assets/img/not_received_yl.png')
+      }
+      return src
+    },
   },
 };
 </script>
 <style lang="scss" scoped>
 .mod-live__liveList {
+  position: relative;
   /deep/.el-descriptions__header {
     border-left: 5px solid #409eff;
     padding-left: 5px;
   }
   .tag {
-    display: flex;
-    justify-content: flex-end;
-    width: 100%;
+    // display: flex;
+    // justify-content: flex-end;
+    // width: 100%;
+    position: absolute;
+    top: 0;
+    right: 0;
   }
   /deep/.btn {
     width: 100%;
