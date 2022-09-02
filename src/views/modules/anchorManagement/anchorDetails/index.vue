@@ -31,7 +31,7 @@
           </div>
           <div style="width:50%;display: inline-block;margin: 20px 0 0;">
             <div style="color:#A8AAB3;margin-bottom: 10px;">主播简介</div>
-            <div style="max-height:120px;overflow:auto;">
+            <div style="max-height:105px;overflow:auto;">
               {{ anchorDetails.introduce || '-' }}
             </div>
           </div>
@@ -183,7 +183,7 @@
             </div>
           </el-tooltip>
         </div>
-        <el-form :inline="true" :style="{ margin: '20px' }" :model="diaSearchForm" @keyup.enter.native="queryPost_dia()"
+        <el-form :inline="true" label-position="left" :style="{ margin: '20px' }" :model="diaSearchForm" @keyup.enter.native="queryPost_dia()"
           size="small" ref="searchForm" label-width="100px">
           <el-form-item label="收益类型" v-if="diaTbas === 1" prop="type">
             <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.type" clearable>
@@ -323,7 +323,55 @@
             v-if="diaTbas === 5 || diaTbas === 6"></el-table-column>
           <template v-for="(label, prop) in diaTableTitle">
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
-              v-if="prop === 'paySource'">
+              v-if="prop === 'amount'">
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.amount) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'sumTax'">
+              <template slot="header">
+                税费
+                <el-tooltip class="item" effect="dark" content="税费=增值税+附加税+个税" placement="bottom">
+                  <i class="el-icon-question"></i>
+                </el-tooltip>
+              </template>
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.sumTax) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center" width="150px"
+              v-else-if="prop === 'addedValueTax'">
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.addedValueTax) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center" width="150px"
+              v-else-if="prop === 'additionalTax'">
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.additionalTax) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center" width="150px"
+              v-else-if="prop === 'personalIncomeTax'">
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.personalIncomeTax) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'receivedAmount'">
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.receivedAmount) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'price'">
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.price) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'paySource'">
               <template slot-scope="scope">
                 <div>
                   {{ scope.row.paySource === 1 ? "小程序" : "大于众学" }}
@@ -331,7 +379,7 @@
               </template>
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center" width="120"
-              v-if="prop === 'productImage'">
+              v-else-if="prop === 'productImage'">
               <template slot-scope="{ row }">
                 <div>
                   <img style="width: 100%; height: 60px; object-fit: cover" class="productImage" :src="row.productImage"
@@ -387,16 +435,6 @@
             </el-table-column>
 
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
-              v-else-if="prop === 'sumTax'">
-              <template slot="header">
-                税费
-                <el-tooltip class="item" effect="dark" content="税费=增值税+附加税+个税" placement="bottom">
-                  <i class="el-icon-question"></i>
-                </el-tooltip>
-              </template>
-            </el-table-column>
-
-            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
               v-else-if="prop === 'userType' && diaTbas === 2">
               <template slot-scope="scope">
                 <div>
@@ -442,7 +480,7 @@
                 " alt="" style="width: 60px; height: 60px; object-fit: cover" />
               </template>
             </el-table-column>
-            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center" width="100px"
               v-else-if="prop === 'userType'">
               <template slot-scope="scope">
                 <div>
@@ -806,7 +844,7 @@
 </template>
 
 <script>
-import { treeDataTranslate, getUUID, enCodeIdCard } from "@/utils";
+import { treeDataTranslate, getUUID, enCodeIdCard, numberConvert } from "@/utils";
 import Cookies from "js-cookie";
 export default {
   name: "LiveWebmanageUserdetail",
@@ -978,6 +1016,10 @@ export default {
     this.queryBankList();
   },
   methods: {
+    // 添加金额符号
+    numberConvert(m) {
+      return numberConvert(m)
+    },
     // 身份证号码加密
     enCodeIdCard(val) {
       return enCodeIdCard(val)
@@ -1806,7 +1848,7 @@ export default {
               this.bankForm.depositBankValue = v.dictValue;
             }
           });
-          this.$confirm("确认银行信息已填写无误", "提示", {
+          this.$confirm("确认信息已填写无误，确认提交", "提示", {
             confirmButtonText: "确定",
             cancelButtonText: "取消",
             type: "warning",
@@ -2112,24 +2154,25 @@ export default {
     position: relative;
     margin: 0 auto;
     margin-bottom: 30px;
+    border-radius: 50%;
+    overflow: hidden;
 
     img {
       width: 100%;
       height: 100%;
-      border-radius: 50%;
     }
 
     .role {
-      width: 50px;
-      line-height: 20px;
-      border-radius: 4px;
+      width: 94px;
+      line-height: 26px;
       color: #fff;
-      background: rgba(22, 155, 213, 1);
+      background: rgba(0, 0, 0, 0.7);
       text-align: center;
       position: absolute;
-      bottom: -10px;
+      bottom: 0;
       left: 50%;
       transform: translateX(-50%);
+      font-size: 14px;
     }
   }
 }

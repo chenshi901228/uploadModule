@@ -698,7 +698,7 @@ export default {
      height: 50px;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 25px;border-bottom:1px solid #EBEEF5;
       }
       .money-content {
- 
+        
       }
       .user-title {
      height: 50px;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 25px;border-bottom:1px solid #EBEEF5;
@@ -780,5 +780,8 @@ export default {
           .el-form-item {
             flex: 1;
           }
+        }
+        /deep/.el-col {
+          margin-bottom: 10px;
         }
 </style>

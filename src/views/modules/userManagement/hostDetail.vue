@@ -27,8 +27,8 @@
             </div>
           </div>
           <div style="width:50%;display: inline-block;margin: 20px 0 0;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">主播简介</div>
-            <div>
+            <div style="color:#A8AAB3;margin-bottom: 10px;">主播简介</div>
+            <div style="max-height:120px;overflow:auto;">
               {{ diaForm.introduce || '-' }}
             </div>
           </div>
@@ -146,7 +146,7 @@
         </div>
       </div>
       <div class="diaBoxRight">
-        <div style="display: flex">
+        <div style="display: flex;border-bottom: 2px solid #E4E7ED">
           <el-tooltip effect="dark" content="收益记录" placement="top">
             <div class="diaBoxRight_tabBtns" @click="changeTbas(1)" :class="{ 'is-active': diaTbas === 1 }">
               收益记录
@@ -307,7 +307,13 @@
           ></el-table-column> -->
           <template v-for="(label, prop) in diaTableTitle">
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
-              v-if="prop === 'paySource'">
+              v-if="prop === 'amount'">
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.amount) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'paySource'">
               <template slot-scope="scope">
                 <div>
                   {{ scope.row.paySource === 1 ? "小程序" : "大于众学" }}
@@ -315,7 +321,7 @@
               </template>
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
-              v-if="prop === 'productImage'">
+              v-else-if="prop === 'productImage'">
               <template slot-scope="{ row }">
                 <div>
                   <img style="width: 100%; height: 60px" class="productImage" :src="
@@ -429,6 +435,18 @@
                 </div>
               </template>
             </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'oldPrice'">
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.oldPrice) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'price'">
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.price) }}</span>
+              </template>
+            </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center" v-else
               min-width="120" show-overflow-tooltip>
             </el-table-column>
@@ -457,6 +475,8 @@
         </el-pagination>
       </div>
     </div>
+
+
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
       <span>确认删除吗？</span>
       <span slot="footer" class="dialog-footer">
@@ -524,12 +544,12 @@
         </el-table-column>
         <el-table-column width="120" label="商品价格" prop="oldPrice" align="center">
           <template slot-scope="scope">
-            <span>{{ scope.row.oldPrice || "--" }}</span>
+            <span>{{ numberConvert(scope.row.oldPrice) }}</span>
           </template>
         </el-table-column>
         <el-table-column width="150" label="销售价格" prop="price" align="center">
           <template slot-scope="scope">
-            <span>{{ scope.row.price || "--" }}</span>
+            <span>{{ numberConvert(scope.row.price) }}</span>
           </template>
         </el-table-column>
         <el-table-column width="150" label="商品类型" prop="productType" align="center">
@@ -571,7 +591,7 @@
 </template>
 
 <script>
-import { enCodeIdCard } from "@/utils";
+import { enCodeIdCard, numberConvert } from "@/utils";
 export default {
   name: "LiveWebmanageUserdetail",
 
@@ -664,6 +684,10 @@ export default {
     this.changeTbas(1);
   },
   methods: {
+    // 添加金额符号
+    numberConvert(m) {
+      return numberConvert(m)
+    },
     // 身份证号码加密
     enCodeIdCard(val) {
       return enCodeIdCard(val)
@@ -1187,24 +1211,25 @@ export default {
     position: relative;
     margin: 0 auto;
     margin-bottom: 30px;
+    border-radius: 50%;
+    overflow: hidden;
 
     img {
       width: 100%;
       height: 100%;
-      border-radius: 50%;
     }
 
     .role {
-      width: 50px;
-      line-height: 20px;
-      border-radius: 4px;
+      width: 94px;
+      line-height: 26px;
       color: #fff;
-      background: rgba(22, 155, 213, 1);
+      background: rgba(0, 0, 0, 0.7);
       text-align: center;
       position: absolute;
-      bottom: -10px;
+      bottom: 0;
       left: 50%;
       transform: translateX(-50%);
+      font-size: 14px;
     }
   }
 }

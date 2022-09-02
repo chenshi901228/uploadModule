@@ -275,6 +275,7 @@
           width="150"
           label="直播宣传图"
           prop="frontCoverUrl"
+          fixed="left"
           align="center"
         >
           <template slot-scope="{ row }">
@@ -294,6 +295,7 @@
           width="120"
           label="直播主题"
           prop="liveTheme"
+          fixed="left"
           align="center"
           show-overflow-tooltip
         >

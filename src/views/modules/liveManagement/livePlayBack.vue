@@ -149,6 +149,7 @@
           :key="item.prop"
           :prop="item.prop"
           :label="item.label"
+          :fixed="item.fixed"
           :width="item.width || 120"
           show-overflow-tooltip
         >
@@ -312,8 +313,8 @@ export default {
       },
 
       tableItem: [
-        { prop: "frontCoverUrl", label: "直播宣传图" },
-        { prop: "liveTheme", label: "回放主题" },
+        { prop: "frontCoverUrl", label: "直播宣传图", fixed:true },
+        { prop: "liveTheme", label: "回放主题", fixed:true },
         { prop: "anchorUser", label: "主播" },
         { prop: "anchorTel", label: "手机号码" },
         { prop: "showMode", label: "视频显示" },

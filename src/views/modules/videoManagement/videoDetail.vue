@@ -10,17 +10,17 @@ border-radius: 5px 5px 5px 5px;position: relative;">
             size="small" style="width:calc(100% - 120px)"></el-input>
         </el-col>
         <el-col :span="24" style="display:flex;align-items: center;">视频显示：<el-input disabled
-            :value="info.showMode === 0 ? '竖屏' : '横屏'" size="small" style="width:calc(100% - 120px)"></el-input>
+            :value="info.showMode === 0 ? '竖屏' : '横屏'" size="small" style="width:calc(50% - 120px)"></el-input>
         </el-col>
         <el-col :span="10">封面图：
           <el-image :preview-src-list="srcList" v-if="info && info.frontCoverUrl" :src="info && info.frontCoverUrl"
-            style="width: 200px; height: 180px">
+            style="width: 200px; height: 180px" fit="cover">
           </el-image>
         </el-col>
         <el-col :span="10">视频：
           <video ref="video" id="video" :src="info.relationLiveUrl" :autoplay="videolist.autoplay"
             :controls="videolist.controls" :controlslist="videolist.controlslist"
-            :webkit-playsinline="webkitplaysinline" style="width: 200px; height: 200px"></video>
+            :webkit-playsinline="webkitplaysinline" style="width: 200px; height: 180px"></video>
         </el-col>
         <el-col :span="2">
           <!-- 审核状态图片 -->

@@ -240,7 +240,7 @@ export default {
                             this.bankForm.depositBankValue = v.dictValue;
                         }
                     });
-                    this.$confirm("确认银行信息已填写无误", "提示", {
+                    this.$confirm("确认信息已填写无误，确认提交", "提示", {
                         confirmButtonText: "确定",
                         cancelButtonText: "取消",
                         type: "warning",

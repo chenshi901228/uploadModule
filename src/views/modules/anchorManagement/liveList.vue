@@ -257,6 +257,7 @@
           :key="item.prop"
           :prop="item.prop"
           :label="item.label"
+          :fixed="item.fixed"
           :width="item.width || 120"
           show-overflow-tooltip
           :sortable="
@@ -449,20 +450,20 @@ export default {
       },
 
       tableItem: [
-        { prop: "frontCoverUrl", label: "直播宣传图" },
-        { prop: "liveTheme", label: "直播主题" },
+        { prop: "frontCoverUrl", label: "直播宣传图", fixed:true },
+        { prop: "liveTheme", label: "直播主题", fixed:true},
         { prop: "liveBroadcastWay", label: "推流端" },
         { prop: "showMode", label: "显示方式" },
         { prop: "assistant", label: "助手" },
         { prop: "startDate", label: "开播时间", width: 180 },
         { prop: "endDate", label: "结束时间", width: 180 },
+        { prop: "liveTime", label: "直播时长" },
         { prop: "dynamicGroupName", label: "投放人群" },
         { prop: "liveHot", label: "直播间亲密度" },
         { prop: "audienceNum", label: "观众总数" },
         { prop: "maxOnlineNum", label: "最高同时在线" },
         // { prop: "anchorUser", label: "主播" },
         // { prop: "anchorTel", label: "手机号码" },
-        // { prop: "liveTime", label: "直播时长（分）" },
         { prop: "giveLikeNum", label: "点赞次数" },
         { prop: "interactionNum", label: "互动次数" },
         { prop: "shareNum", label: "分享次数" },
