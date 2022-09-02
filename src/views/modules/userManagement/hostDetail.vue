@@ -309,7 +309,7 @@
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
               v-if="prop === 'amount'">
               <template slot-scope="{ row }">
-                {{ numberConvert(row.amount) }}
+                <span>{{ numberConvert(row.amount) }}</span>
               </template>
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"

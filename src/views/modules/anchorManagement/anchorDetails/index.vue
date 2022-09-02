@@ -323,7 +323,55 @@
             v-if="diaTbas === 5 || diaTbas === 6"></el-table-column>
           <template v-for="(label, prop) in diaTableTitle">
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
-              v-if="prop === 'paySource'">
+              v-if="prop === 'amount'">
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.amount) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'sumTax'">
+              <template slot="header">
+                税费
+                <el-tooltip class="item" effect="dark" content="税费=增值税+附加税+个税" placement="bottom">
+                  <i class="el-icon-question"></i>
+                </el-tooltip>
+              </template>
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.sumTax) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center" width="150px"
+              v-else-if="prop === 'addedValueTax'">
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.addedValueTax) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center" width="150px"
+              v-else-if="prop === 'additionalTax'">
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.additionalTax) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center" width="150px"
+              v-else-if="prop === 'personalIncomeTax'">
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.personalIncomeTax) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'receivedAmount'">
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.receivedAmount) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'price'">
+              <template slot-scope="{ row }">
+                <span>{{ numberConvert(row.price) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'paySource'">
               <template slot-scope="scope">
                 <div>
                   {{ scope.row.paySource === 1 ? "小程序" : "大于众学" }}
@@ -331,7 +379,7 @@
               </template>
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center" width="120"
-              v-if="prop === 'productImage'">
+              v-else-if="prop === 'productImage'">
               <template slot-scope="{ row }">
                 <div>
                   <img style="width: 100%; height: 60px; object-fit: cover" class="productImage" :src="row.productImage"
@@ -387,16 +435,6 @@
             </el-table-column>
 
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
-              v-else-if="prop === 'sumTax'">
-              <template slot="header">
-                税费
-                <el-tooltip class="item" effect="dark" content="税费=增值税+附加税+个税" placement="bottom">
-                  <i class="el-icon-question"></i>
-                </el-tooltip>
-              </template>
-            </el-table-column>
-
-            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
               v-else-if="prop === 'userType' && diaTbas === 2">
               <template slot-scope="scope">
                 <div>
@@ -442,7 +480,7 @@
                 " alt="" style="width: 60px; height: 60px; object-fit: cover" />
               </template>
             </el-table-column>
-            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center" width="100px"
               v-else-if="prop === 'userType'">
               <template slot-scope="scope">
                 <div>
@@ -806,7 +844,7 @@
 </template>
 
 <script>
-import { treeDataTranslate, getUUID, enCodeIdCard } from "@/utils";
+import { treeDataTranslate, getUUID, enCodeIdCard, numberConvert } from "@/utils";
 import Cookies from "js-cookie";
 export default {
   name: "LiveWebmanageUserdetail",
@@ -978,6 +1016,10 @@ export default {
     this.queryBankList();
   },
   methods: {
+    // 添加金额符号
+    numberConvert(m) {
+      return numberConvert(m)
+    },
     // 身份证号码加密
     enCodeIdCard(val) {
       return enCodeIdCard(val)
