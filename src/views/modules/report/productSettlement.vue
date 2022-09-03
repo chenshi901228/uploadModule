@@ -1,3 +1,5 @@
+<!-- 主播收益结算报表 -->
+
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-pay__order">
@@ -10,7 +12,6 @@
         size="small"
         @keyup.enter.native="getDataList()"
       >
-        </el-form-item>
         <el-form-item v-show="isOpen || formItemCount >= 1" label="商品名称" prop="productName">
           <el-input
             style="width: 200px"
@@ -55,14 +56,14 @@
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
-            <el-form-item>
+            <!-- <el-form-item>
               <el-button 
                 type="warning"
                 plain
                 icon="el-icon-download" 
                 size="mini"
                 @click="exportHandle">{{ $t("export") }}</el-button>
-            </el-form-item>
+            </el-form-item> -->
           </div>
           <div class="headerTool--handle-btns-right">
             <el-form-item>
@@ -90,14 +91,13 @@
           show-overflow-tooltip
         ></el-table-column>
         <el-table-column
-          prop="oldPrice"
-          label="商品价格"
+          prop="productType"
+          label="商品类型"
           header-align="center"
           align="center"
-          min-width="100px"
           show-overflow-tooltip
-        ></el-table-column>
-
+        >
+        </el-table-column>
         <el-table-column
           prop="price"
           label="销售价格"
@@ -106,6 +106,9 @@
           align="center"
           show-overflow-tooltip
         >
+          <template slot-scope="{ row }">
+            <span>{{ numberConvert(row.price) }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="num"
@@ -124,15 +127,9 @@
           align="center"
           show-overflow-tooltip
         >
-        </el-table-column>
-
-        <el-table-column
-          prop="productType"
-          label="商品类型"
-          header-align="center"
-          align="center"
-          show-overflow-tooltip
-        >
+          <template slot-scope="{ row }">
+            <span>{{ numberConvert(row.payPrice) }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="proportion"
@@ -151,6 +148,9 @@
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="{ row }">
+            <span>{{ numberConvert(row.anchorAmount) }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="platformProportion"
@@ -169,6 +169,9 @@
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="{ row }">
+            <span>{{ numberConvert(row.platformAmount) }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="id"
@@ -207,7 +210,7 @@
 
 <script>
 import mixinViewModule from "@/mixins/view-module";
-import { addDynamicRoute } from "@/router";
+import { numberConvert } from "@/utils"
 import Template from "../devtools/template.vue";
 export default {
   mixins: [mixinViewModule],
@@ -234,6 +237,10 @@ export default {
     });
   },
   methods: {
+    // 添加金额符号
+    numberConvert(m) {
+      return numberConvert(m)
+    }
   },
 };
 </script>
