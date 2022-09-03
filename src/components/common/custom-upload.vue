@@ -82,6 +82,7 @@
 <script>
 import VideoFlvComponent from "@/components/common/videoFlvComponent";
 import SvgaDialog from "@/components/common/svgaDialog.vue"
+import { getImageWH } from "@/utils"
 import Cookies from "js-cookie";
 export default {
   components: {
@@ -127,6 +128,11 @@ export default {
     fileMaxSize: {
       type: Number,
       default: 200,
+    },
+    // 上传附件尺寸限制----- "eg:300/300"
+    fileWH: {
+      type: String,
+      default: ""
     },
     // 是否多选
     multiple: {
@@ -182,88 +188,42 @@ export default {
       type = type[type.length - 1].toLocaleLowerCase()
       return type
     },
-    //限制图片尺寸
-    limitFileWH(E_width, E_height, file) {
-      let _this = this;
-      let imgWidth = "";
-      let imgHight = "";
-      const isSize = new Promise(function (resolve, reject) {
-        let width = E_width;
-        let height = E_height;
-        let _URL = window.URL || window.webkitURL;
-        let img = new Image();
-        img.onload = function () {
-          imgWidth = img.width;
-          imgHight = img.height;
-          let valid = img.width >= width && img.height >= height;
-          valid ? resolve() : reject();
-        };
-        img.src = _URL.createObjectURL(file);
-      }).then(
-        () => {
-          return true;
-        },
-        () => {
-          _this.$message.warning({
-            message:
-              "上传文件的图片大小不合符标准,宽需要为" +
-              E_width +
-              "px，高需要为" +
-              E_height +
-              "px。当前上传图片的宽高分别为：" +
-              imgWidth +
-              "px和" +
-              imgHight +
-              "px",
-            btn: false,
-          });
-          return false;
-        }
-      );
-      return isSize;
-    },
     // 上传前
-    beforeUpload(file) {
+    async beforeUpload(file) {
       let type = file.type ? file.type.split("/") : file.name.split(".");
       type = type[type.length - 1];
       let fileType = this.fileType.includes(type.toLocaleLowerCase());
 
       let fileSize = file.size / 1024 / 1024 < this.fileMaxSize;
 
+      // 附件大小
       if (!fileSize) {
         this.$message.error(`上传附件大小不能超过 ${this.fileMaxSize}M!`);
-        return false;
+        return Promise.reject(false);
       }
-
+      // 附件格式
       if (!fileType) {
         this.$message.error(`上传格式错误（允许${this.fileType.join(",")}）`);
-        return false;
+        return Promise.reject(false);
+      }
+      // 附件尺寸-视频/图片
+      if(this.fileWH) {
+        let WH = this.fileWH.split("/")
+        let res = await getImageWH(file)
+        if(res && (Math.abs(res.width - WH[0]) || Math.abs(res.height - WH[1]))) {
+          this.$message.error(`附件尺寸大小限制为${WH[0]}px*${WH[1]}px`);
+          return Promise.reject(false);
+        }
       }
 
-      // if (file.type.indexOf("image") !== -1) {
-      //   //调用[限制图片尺寸]函数
-      //   this.limitFileWH(630, 347, file).then((res) => {
-      //     if (res) {
-            this.uploadList.push({
-              uid: file.uid,
-              uploading: true,
-              progress: 0,
-              type: file.type,
-              name: file.name,
-            });
-            return true;
-      //     }
-      //   });
-      // } else if (file.type.indexOf("video") !== -1) {
-      //   this.uploadList.push({
-      //     uid: file.uid,
-      //     uploading: true,
-      //     progress: 0,
-      //     type: file.type,
-      //     name: file.name,
-      //   });
-      //   return true;
-      // }
+      this.uploadList.push({
+        uid: file.uid,
+        uploading: true,
+        progress: 0,
+        type: file.type,
+        name: file.name,
+      });
+      return true;
     },
     // 上传中
     uploadProgress(event, file, fileList) {
