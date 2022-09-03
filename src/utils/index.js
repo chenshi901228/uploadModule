@@ -154,7 +154,8 @@ export function getImageWH(file) {
           resolve({width: image.width, height: image.height})
         }
         image.onerror = _ => {
-          reject(_)
+          console.log(_)
+          reject()
         }
     }
   })

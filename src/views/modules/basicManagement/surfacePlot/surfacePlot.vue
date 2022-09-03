@@ -112,8 +112,9 @@
       </span>
     </el-dialog>
 
+    <!-- 新增 -->
     <el-dialog title="上传封面图" :visible.sync="upImgDialog" width="30%">
-      <el-form :model="imgForm" ref="imgForm" label-width="100px" class="demo-ruleForm">
+      <el-form :model="imgForm" :rules="imgFormRules" ref="imgForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="上传" prop="img" required>
           <el-upload :action="uploadUrl" list-type="picture-card" :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove" :on-success="handleSuccess" :on-exceed="handleExceed1" :before-upload="beforeUpload" :limit="1" ref="upload"
@@ -122,10 +123,10 @@
           </el-upload>
         </el-form-item>
         <el-form-item>
-          <div>图片大小不得小于630px*347px</div>
+          <div>图片尺寸大小为630px*347px，不得超过2M</div>
         </el-form-item>
-        <el-form-item label="封面图名称" prop="name" required>
-          <el-input maxlength="15" v-model="imgForm.name"></el-input>
+        <el-form-item label="封面图名称" prop="name">
+          <el-input maxlength="15" v-model="imgForm.name" show-word-limit></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -153,8 +154,10 @@
       </span>
     </el-dialog>
 
+
+    <!-- 编辑 -->
     <el-dialog title="编辑封面图" :visible.sync="editeImgDialog" width="30%">
-      <el-form :model="editeImgForm" ref="imgForm" label-width="100px" class="demo-ruleForm">
+      <el-form :model="editeImgForm" :rules="imgFormRules" ref="imgForm" label-width="100px" class="demo-ruleForm">
         <el-form-item label="上传" prop="img">
           <div v-if="editeUrl.length !== 0" style="position: relative; display: inline-block">
             <el-image style="width: 146px; height: 146px; margin-right: 0" :src="editeUrl"
@@ -180,8 +183,11 @@
           </div>
           <span>点击可看大图</span>
         </el-form-item>
+        <el-form-item>
+          <div>图片尺寸大小为630px*347px，不得超过2M</div>
+        </el-form-item>
         <el-form-item label="封面图名称" prop="name">
-          <el-input maxlength="15" v-model="editeImgForm.name"></el-input>
+          <el-input maxlength="15" v-model="editeImgForm.name" show-word-limit></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -197,6 +203,7 @@
 
 <script>
 import mixinTableModule from "@/mixins/table-module";
+import { getImageWH } from "@/utils"
 import Cookies from "js-cookie";
 export default {
   mixins: [mixinTableModule],
@@ -231,6 +238,9 @@ export default {
         img: "",
         name: "",
       },
+      imgFormRules: {
+        name: [{ required: true, message: "请输入封面图名称", trigger: "blur" }]
+      },
       showImgDialog: false,
       bigUrl: "",
       srcList: [],
@@ -263,12 +273,16 @@ export default {
           img: "",
           name: "",
         };
+        // 移除表单验证
+        if(this.$refs.imgForm) this.$refs.imgForm.clearValidate() 
       }
     },
     editeImgDialog(n, o) {
       if (!n) {
         this.editeImgForm.img = "";
         this.editeImgForm.name = "";
+        // 移除表单验证
+        if(this.$refs.editeImgForm) this.$refs.editeImgForm.clearValidate() 
       }
     },
   },
@@ -281,22 +295,19 @@ export default {
   },
   methods: {
     // 上传前
-    beforeUpload(file) {
+    async beforeUpload(file) {
       let type = file.type ? file.type.split("/") : file.name.split(".");
       type = type[type.length - 1];
       let fileSize = file.size / 1024 / 1024 < 2;
+      let res = await getImageWH(file)
+      if(res && (Math.abs(res.width - 630) > 6 || Math.abs(res.height - 347) > 6) ) {
+        this.$message.error(`图片尺寸大小为630px*347px`);
+        return Promise.reject(false);
+      }
       if (!fileSize) {
         this.$message.error(`上传附件大小不能超过2M!`);
-        return false;
+        return Promise.reject(false);
       }
-      // this.uploadList.push({
-      //   uid: file.uid,
-      //   uploading: true,
-      //   progress: 0,
-      //   type: file.type,
-      //   name: file.name,
-      // });
-      // return true;
     },
     handleExceed1(file, fileList) {
       if (fileList.length >= 1) {
