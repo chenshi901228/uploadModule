@@ -28,6 +28,7 @@
                 <el-form-item label="支行名称" prop="branchName">
                     <el-input
                         style="width:400px"
+                        maxlength="20"
                         v-model="bankForm.branchName"
                         placeholder="请输入"></el-input>
                 </el-form-item>
@@ -46,12 +47,14 @@
                 <el-form-item label="账户名称" prop="accountName">
                     <el-input
                         style="width:400px"
+                        maxlength="20"
                         v-model="bankForm.accountName"
                         placeholder="请输入"></el-input>
                 </el-form-item>
                 <el-form-item label="银行账户" prop="bankAccount">
                     <el-input
                         style="width:400px"
+                        maxlength="20"
                         v-model="bankForm.bankAccount"
                         placeholder="请输入"></el-input>
                 </el-form-item>
@@ -69,6 +72,13 @@
 import { treeDataTranslate, getUUID } from "@/utils";
 export default {
     data() {
+        var checkBankAccount = (rule, value, callback) => {
+            if(value && !value.match(/^[0-9]*$/)) {
+                callback(new Error("请输入正确的银行账户"))
+            }else {
+                callback()
+            }
+        }
         return {
             dataRule_bank: {
                 address: [
@@ -79,15 +89,13 @@ export default {
                 ],
                 accountName: [
                     { required: true, message: "请填写账户名称", trigger: "blur" },
-                    { max: 20, message: '最大输入20位', trigger: 'blur' }
                 ],
                 bankAccount: [
                     { required: true, message: "请填写银行账户", trigger: "blur" },
-                    { max: 20, message: '最大输入20位', trigger: 'blur' }
+                    { validator: checkBankAccount, trigger: 'change' }
                 ],
                 branchName:[
                     { required: true, message: "请填写支行名称", trigger: "blur" },
-                    { max: 20, message: '最大输入20位', trigger: 'blur' }
                 ]
             },
             bankForm: {
