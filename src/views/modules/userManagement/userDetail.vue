@@ -456,6 +456,7 @@ export default {
       productTypeOptions: [], //商品类型下拉选项
       refundReason: "",
       refundLoading: false,
+
     };
   },
 
@@ -478,11 +479,12 @@ export default {
         };
       })
       .catch(() => { });
-    this.changeTbas(1);
+    this.changeTbas(this.diaTbas);
   },
   methods: {
     changeTbas(n) {
       this.diaTbas = n;
+      this.tab=n
       this.diaSearchForm = {
         payType: "",
         paySource: "",
@@ -586,7 +588,9 @@ export default {
         default:
           break;
       }
+
       this.queryPost_dia();
+      
     },
 
     query(){
