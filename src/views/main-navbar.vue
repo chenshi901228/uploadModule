@@ -17,22 +17,22 @@
         <!-- <breadcrumb id="breadcrumb-container" class="breadcrumb-container"/> -->
       </el-menu>
       <el-menu class="aui-navbar__menu" mode="horizontal">
-        <el-menu-item index="1">
+        <!-- <el-menu-item index="1">
           <el-dropdown placement="bottom" :show-timeout="0">
             <el-button size="mini">{{ $t('_lang') }}</el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item v-for="(val, key) in i18nMessages" :key="key" @click.native="$i18n.locale = key">{{ val._lang }}</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-        </el-menu-item>
+        </el-menu-item> -->
         <!-- <el-menu-item index="2">
           <a href="javascript:void(0);" target="_blank">
             <svg class="icon-svg aui-navbar__icon-menu" aria-hidden="true"><use xlink:href="#icon-earth"></use></svg>
           </a>
         </el-menu-item> -->
-        <el-menu-item index="4" v-if="$hasPermission('sys:notice:all')">
-          <el-badge :is-dot="messageTip">
-            <a href="#"  @click="myNoticeRouter()"><i class="el-icon-bell"></i></a>
+        <el-menu-item index="4" @click="myNoticeRouter()">
+          <el-badge :value="$store.state.user.unReadNum>0?$store.state.user.unReadNum:''" :max="99">
+            <div><i class="el-icon-bell"></i></div>
           </el-badge>
         </el-menu-item>
         <el-menu-item index="3" @click="fullscreenHandle()">
@@ -107,7 +107,6 @@ export default {
     return {
       i18nMessages: messages,
       updatePasswordVisible: false,
-      messageTip: false,
       accountSelectVisible: false, //账号切换弹框 
       loginUserList: [],//登录账号列表
       active: 0,//登录账号选中
@@ -124,16 +123,14 @@ export default {
   },
   methods: {
     myNoticeRouter () {
-      this.$router.replace('sys-notice-user')
+      this.$router.push({name:'myMessage-index'})
     },
     getUnReadCount () {
-      this.$http.get(`/sys/notice/mynotice/unread`).then(({ data: res }) => {
+      this.$http.get(`/sys/personalNotice/getUnReadNoticeCount`).then(({ data: res }) => {
         if (res.code !== 0) {
           return this.$message.error(res.msg)
         }
-        if (res.data > 0) {
-          this.messageTip = true
-        }
+        this.$store.state.user.unReadNum = res.data
       }).catch(() => {})
     },
     // 全屏
@@ -285,6 +282,16 @@ color: #111F2C;
     -webkit-transform: translateX(-50%);
     -o-transform: translateX(-50%);
     transform: translateX(-50%);
+  }
+}
+/deep/ .el-badge{
+  >div{
+    display: flex;
+  align-items: center;
+  }
+  .el-badge__content{
+    position: absolute;
+    top: -25px;
   }
 }
 </style>

@@ -566,19 +566,27 @@ export default {
     },
     // 进入直播间
     joinLiveHandle(row) {
-      let t = this.$router.resolve({
-        name: "liveRoom",
-        query: { liveTheme: row.liveTheme, TaskId: row.id, trendsOpen: row.trendsOpen },
-      });
-      // 关闭窗口刷新父页面
-      this.sonPage = window.open(t.href, "_blank");
-      this.sonPageTimer = setInterval(() => {
-        if (this.sonPage.closed) {
-          clearInterval(this.sonPageTimer);
-          this.sonPageTimer = null;
-          window.location.reload();
+      this.$http.get('/sys/mixedflow/getLiving').then(res=>{//进入直播间获取直播状态
+        if(!res.data.code==0) return this.$message.error(res.data.msg)
+        if(res.data.data.liveId){
+          this.$message.warning('当前直播正在进行中...')
+          return
+        }else{
+          let t = this.$router.resolve({
+            name: "liveRoom",
+            query: { liveTheme: row.liveTheme, TaskId: row.id, trendsOpen: row.trendsOpen },
+          });
+          // 关闭窗口刷新父页面
+          this.sonPage = window.open(t.href, "_blank");
+          this.sonPageTimer = setInterval(() => {
+            if (this.sonPage.closed) {
+              clearInterval(this.sonPageTimer);
+              this.sonPageTimer = null;
+              window.location.reload();
+            }
+          }, 1);
         }
-      }, 1);
+      })
     },
 
     // 判断是否能进入直播间开播
@@ -594,6 +602,7 @@ export default {
         return (liveState == 1 || liveState == 3) && showMode
       }
     },
+    
 
     // 判断是否有操作按钮的权限---type:1-商品/主播，2-助手
     isHandleAuth({ livePreviewId, liveState, planStartDate }, type) {
