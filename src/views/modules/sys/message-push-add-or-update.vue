@@ -5,26 +5,55 @@
       :model="ruleForm"
       :rules="rules"
       ref="ruleForm"
-      label-width="120px"
       class="demo-ruleForm"
       size="small"
     >
-      <el-form-item label="计划名称" prop="planName">
+      <el-form-item label-width="120px" label="计划名称" prop="planName">
         <el-input v-model="ruleForm.planName" :disabled="isDisable" style="width:600px" placeholder="请输入" clearable></el-input>
       </el-form-item>
-      <el-form-item label="配置KEY" prop="configurationKey">
+      <el-form-item label-width="120px" label="配置KEY" prop="configurationKey">
         <el-input v-model="ruleForm.configurationKey" :disabled="isDisable" style="width:600px" placeholder="请输入KEY" clearable></el-input>
       </el-form-item>
-      <el-form-item label="推送类型">
+      <el-form-item label-width="120px" label="推送类型">
         <el-select v-model="ruleForm.pushType" :disabled="isDisable" style="width:600px" placeholder="请选择" clearable>
           <el-option label="站内信" value="1"></el-option>
           <el-option label="短信" value="2"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="路由" prop="route">
+      <!-- <el-form-item label="路由" prop="route">
         <el-input v-model="ruleForm.route" :disabled="isDisable" style="width:600px" placeholder="例如：http：//2376482" clearable></el-input>
+      </el-form-item> -->
+      <el-form-item label-width="120px" style="display:inline-block" label="跳转页面" prop="type">
+        <el-select v-model="ruleForm.type" :disabled="isDisable" @change="selectPage" placeholder="请选择分类" clearable>
+          <el-option
+            v-for="item in pageType"
+            :key="item.id"
+            :label="item.dictLabel"
+            :value="item.dictValue"
+          ></el-option>
+        </el-select>
       </el-form-item>
-      <el-form-item label="推送图标" required>
+      <el-form-item style="display:inline-block" prop="anchorId">
+        <el-select v-if="selectType.type!=='other'" style="marginLeft:10px;width:300px;" :disabled="isDisable" v-model="ruleForm.anchorId" filterable remote reserve-keyword clearable
+          placeholder="请输入选择主播" :remote-method="getAnchorInfo" :loading="loading" @change="changeAnchorId">
+          <el-option v-for="item in anchorOptions" :key="item.value" :label="item.label" :value="item.value">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item style="display:inline-block" prop="pushBusines">
+        <el-select v-if="selectType.type===0||selectType.type===1||selectType.type===2" style="marginLeft:10px;width:300px;" :disabled="isDisable" v-model="ruleForm.pushBusines" clearable
+          :placeholder="selectType.type===0?'请选择直播':selectType.type===1?'请选择直播预告':'请选择短视频'" @change="changePushBusines">
+          <el-option v-for="item in pushBusines" :key="item.id" :label="item.liveTheme" :value="item.id">
+          </el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item style="display:inline-block" prop="route">
+        <el-input style="marginLeft:10px;width:300px;" v-if="selectType.type==='other'" v-model="ruleForm.route" :disabled="isDisable" placeholder="请输入路由" clearable></el-input>
+      </el-form-item>
+      <el-form-item style="display:inline-block" prop="parameter">
+        <el-input style="marginLeft:10px;width:300px;" v-if="selectType.type==='other'" v-model="ruleForm.parameter" :disabled="isDisable" placeholder="请输入参数" clearable></el-input>
+      </el-form-item>
+      <el-form-item label-width="120px" label="推送图标" required>
         <upload
           :fileList="fileList"
           :disabled="isDisable"
@@ -37,10 +66,10 @@
         ></upload>
         <p class="tips">图片大小必须小于2M,支持bmp、png、jpg、jpeg格式,尺寸为80px*80px</p>
       </el-form-item>
-      <el-form-item label="推送标题" prop="pushTitle">
+      <el-form-item label-width="120px" label="推送标题" prop="pushTitle">
         <el-input v-model="ruleForm.pushTitle" :disabled="isDisable" style="width:600px" placeholder="请输入" clearable></el-input>
       </el-form-item>
-      <el-form-item class="quill-editor" label="推送内容">
+      <el-form-item label-width="120px" class="quill-editor" label="推送内容">
           <quill-editor v-model="ruleForm.pushContent" ref="myQuillEditor" style="width: 800px;"
             :options="editorOption" @change="onEditorChange($event)">
             <!-- 自定义toolar -->
@@ -97,18 +126,18 @@
             >{{ TiLength }}/2000</span
           > -->
         </el-form-item>
-      <el-form-item label="动态组">
+      <el-form-item label-width="120px" label="动态组">
         <el-select v-model="ruleForm.dynamicGroupId" :disabled="isDisable" style="width:600px" multiple placeholder="请选择,可多选" clearable>
           <el-option v-for="item in allDynamicGroup" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="是否定时"  prop="isTiming">
+      <el-form-item label-width="120px" label="是否定时"  prop="isTiming">
         <el-radio-group v-model="ruleForm.isTiming" >
           <el-radio label="1" :disabled="isDisable" >是</el-radio>
           <el-radio label="0" :disabled="isDisable" >否</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item prop="timing"  v-if="ruleForm.isTiming === '1'"  label="计划推送时间">
+      <el-form-item label-width="120px" prop="timing"  v-if="ruleForm.isTiming === '1'"  label="计划推送时间">
         <el-popover v-model="cronPopover">
           <cron v-show="!isDisable" @change="changeCron" @close="cronPopover=false" i18n="cn"></cron>
           <el-input slot="reference" @click="cronPopover=true" :disabled="isDisable" v-model="ruleForm.timing" :placeholder="$t('schedule.cronExpressionTips')"></el-input>
@@ -186,7 +215,11 @@ export default {
         route: '',
         isTiming: "0",
         timing: '',
-        dynamicGroupId: []
+        dynamicGroupId: [],
+        pushBusines:'',
+        anchorId:'',
+        type:'',
+        parameter:'',
       },
       fileList: [], // 推送图标
       dialogImageUrl: '',
@@ -198,8 +231,8 @@ export default {
         configurationKey: [
           { required: true, message: '请输入配置key', trigger: 'blur' }
         ],
-        route: [
-          { required: true, message: '请输入路由', trigger: 'blur' }
+        type: [
+          { required: true, message: '请选择分类', trigger: 'change' }
         ],
         pushTitle: [
           { required: true, message: '请输入推送标题', trigger: 'blur' }
@@ -212,30 +245,25 @@ export default {
         ]
       },
       imgSrc: '',
-      allDynamicGroup: [] // 动态组
+      allDynamicGroup: [], // 动态组
+      pageType:[],
+      anchorOptions:[],
+      loading:false,
+      selectType:{
+        url:'',
+        type:'',
+      },
+      pushBusinesParams:{
+        anchorId:'',
+        type:'',
+      },
+      pushBusines:[],
     }
   },
   created () {
   },
   activated () {
-    // type:1详情，2 编辑 3新增
-    // 进入页面根据状态 重新调用就接口
-    if (this.$route.query.type === '1' || this.$route.query.type === '2') {
-      this.$http.get(`/sys/syspush/${this.$route.query.id}`).then(({data:res}) => {
-        res.data.isTiming = (res.data.isTiming).toString()
-
-        // 动态组id转array
-        res.data.dynamicGroupId = res.data.dynamicGroupId ? res.data.dynamicGroupId.split(",") : []
-
-        this.ruleForm = { ...this.ruleForm, ...res.data }
-        this.fileList = [
-          {
-            name: new Date().getTime(),
-            url: res.data.pushIcon
-          }
-        ]
-      })
-    }
+    this.getPageType()
   },
   mounted () {
     this.$http.get('/sys/dynamicGroup/getAllDynamicGroupList').then(({data: res}) => {
@@ -265,8 +293,113 @@ export default {
     }
   },
   methods: {
+    selectPage(value){
+      this.ruleForm.route = ''
+      this.ruleForm.parameter = ''
+      let obj = value&&JSON.parse(value)
+      if(obj.url){
+        this.selectType = obj
+        this.pushBusinesParams.type = obj.type
+        if(this.pushBusinesParams.anchorId&&this.pushBusinesParams.anchorId!='other'&&this.pushBusinesParams.anchorId!=''){
+          this.getPushBusines()
+        }
+      }else{
+        this.selectType.type = 'other'
+      }
+    },
+    changeAnchorId(value){
+      this.pushBusinesParams.anchorId = value
+      if(this.pushBusinesParams.anchorId&&this.pushBusinesParams.anchorId!='other'&&this.pushBusinesParams.anchorId!=''){
+        this.getPushBusines()
+      }
+    },
+    changePushBusines(value){
+      this.ruleForm.pushBusines = value
+    },
+
+    // 输入选择主播
+    getAnchorInfo(s) {
+      if (s.trim() != "") {
+        this.loading = true;
+        this.$http
+          .get("/sys/anchor/info/getSysAnchorInfos/" + s)
+          .then(({ data: res }) => {
+            this.loading = false;
+            if (res.code == 0) {
+              let arr = [];
+              res.data.map((item) => {
+                arr.push({
+                  value: item.weixinUserId,
+                  label: `主播：${item.username}  手机号：${item.phone}`,
+                });
+              });
+              this.anchorOptions = arr;
+            } else {
+              this.anchorOptions = [];
+              this.$message.error(res.msg);
+            }
+          })
+          .catch((err) => {
+            this.loading = false;
+            this.anchorOptions = [];
+            throw err;
+          });
+      } else {
+        this.anchorOptions = [];
+      }
+    },
+    getPageType(){
+      this.$http.get('/sys/dict/data/page',{params:{dictTypeId:'1565870317622063106'}}).then(({data:res})=>{
+        this.pageType = res.data.list
+        // type:1详情，2 编辑 3新增
+        // 进入页面根据状态 重新调用就接口
+        if (this.$route.query.type === '1' || this.$route.query.type === '2') {
+          this.$http.get(`/sys/syspush/${this.$route.query.id}`).then(({data:res}) => {
+            res.data.isTiming = (res.data.isTiming).toString()
+            res.data.parameter = res.data.parameter.split(',')
+            let type = res.data.parameter[res.data.parameter.length-1]
+            if(type!==''){
+              this.pageType.forEach(item=>{
+              if(JSON.parse(item.dictValue).type==type){
+                  this.ruleForm.type = item.dictValue
+                  this.selectType = JSON.parse(item.dictValue)
+                }
+              })
+              this.anchorOptions=[{label:res.data.anchorUser,value:res.data.parameter[0]}]
+              this.ruleForm.anchorId= res.data.parameter[0]
+              this.pushBusinesParams.type = this.selectType.type
+              this.pushBusinesParams.anchorId = res.data.parameter[0]
+              this.getPushBusines(()=>{
+                this.ruleForm.pushBusines = res.data.parameter[1]
+              })
+            }else{
+              this.ruleForm.type = "{}"
+              this.ruleForm.parameter = res.data.parameter
+              this.selectType.type = 'other'
+            }
+            // 动态组id转array
+            res.data.dynamicGroupId = res.data.dynamicGroupId ? res.data.dynamicGroupId.split(",") : []
+            this.ruleForm = { ...this.ruleForm, ...res.data }
+            this.fileList = [
+              {
+                name: new Date().getTime(),
+                url: res.data.pushIcon
+              }
+            ]
+          })
+        }
+      })
+    },
+    getPushBusines(cb){
+      this.pushBusines = []
+      this.ruleForm.pushBusines = ''
+      this.$http.get('/sys/syspush/getPushBusines',{params:{...this.pushBusinesParams}}).then(({data:res})=>{
+        this.pushBusines = res.data
+        if(cb)cb()
+      })
+    },
     // 推送图标上传
-     uploadSuccess(file) {
+    uploadSuccess(file) {
       this.fileList.push(file);
     },
     uploadRemove(file) {
@@ -291,6 +424,29 @@ export default {
           //   confirmButtonText:'确认',
           //   cancelButtonText:'取消',
           // }).then(()=>{
+          if(this.selectType.type!='other'){
+            if(!this.ruleForm.anchorId){
+              return this.$message.warning("请选择主播")
+            }
+            if(this.selectType.type===0||this.selectType.type===1||this.selectType.type===2){
+              if(!this.ruleForm.pushBusines){
+                return this.$message.warning("请选择跳转具体目地")
+              }
+            }
+            if(this.selectType.type===0||this.selectType.type===1||this.selectType.type===2){
+              this.ruleForm.parameter = this.ruleForm.anchorId+','+this.ruleForm.pushBusines+','+this.selectType.type
+            }else{
+              this.ruleForm.parameter = this.ruleForm.anchorId+','+this.selectType.type
+            }
+            this.ruleForm.route = this.selectType.url
+          }else{
+            if(!this.ruleForm.route){
+              return this.$message.warning("请输入路由")
+            }
+            if(!this.ruleForm.parameter){
+              return this.$message.warning("请输入参数")
+            }
+          }
           if(!this.$refs.uploadFile.isUploadAll()) {
             return this.$message.warning("还有附件正在上传，请稍后")
           }
@@ -331,7 +487,11 @@ export default {
             }
             const { data: res } = result
             if (res.code === 0) {
-              this.$message.success('添加消息推送成功')
+              if(this.$route.query.type === '2'){
+                this.$message.success('修改消息推送成功')
+              }else{
+                this.$message.success('添加消息推送成功')
+              }
               this.resetForm(formName)
               this.fileList = []
               this.id = null

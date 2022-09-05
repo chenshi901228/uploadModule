@@ -253,6 +253,14 @@
             >
             <el-button
               size="small"
+              icon="el-icon-view"
+              style="margin-left: 10px"
+              type="text"
+              @click="checkRemark(row)"
+              >查看备注</el-button
+            >
+            <el-button
+              size="small"
               icon="el-icon-sort"
               style="margin-left: 10px"
               type="text"
@@ -344,6 +352,7 @@ export default {
         { prop: "addUserNum", label: "新增用户" },
         { prop: "approveStatus", label: "审核状态" },
         { prop: "showState", label: "显示状态" },
+        { prop: "liveState", label: "删除状态" },
         { prop: "createByName", label: "创建人" },
         { prop: "createDate", label: "创建时间", width: 180 },
       ],
@@ -455,6 +464,13 @@ export default {
       this.$router.push({
         name: "videoManagement-addProduct",
         query: { playbackId: id, anchorId: anchorUserId },
+      });
+    },
+    // 查看备注
+    checkRemark({ remark }) {
+      this.$alert(remark || '暂无备注', '查看备注', {
+        confirmButtonText: '关闭',
+        callback: action => {}
       });
     },
   },

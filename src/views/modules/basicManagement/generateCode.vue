@@ -112,15 +112,14 @@
           show-overflow-tooltip
         >
           <template slot-scope="{ row }">
-            <!-- 封面图 -->
-            <div v-if="item.prop == 'frontCoverUrl'">
-              
-            </div>
-            <!-- 是否创建预告 -->
-            <span v-else-if="item.prop == 'frompreview'">
-              <el-tag size="small" :type="row.frompreview ? 'success' : 'danger'">{{
-                row.frompreview ? "是" : "否"
-              }}</el-tag>
+            <!-- 使用状态 -->
+            
+            <span v-if="item.prop == 'useFlg'">
+              <el-tag size="small" :type="row.useFlg ? 'danger' : 'success'">{{row.useFlg ? "已使用" : "未使用"}}</el-tag>
+            </span>
+            <!-- 失效状态 -->
+            <span v-else-if="item.prop == 'invalidFlg'">
+              <el-tag size="small" :type="row.invalidFlg ? 'danger' : 'success'">{{row.invalidFlg ? "已失效" : "未失效"}}</el-tag>
             </span>
             <span v-else>
               {{ row[item.prop] || "-" }}
@@ -148,18 +147,20 @@
         <el-form-item label="姓名" prop="username">
           <!-- <el-input v-model="formLabelAlign.username" placeholder="请输入"></el-input> -->
           <el-select
+            style="width:100%"
+            clearable
             v-model="formLabelAlign.username"
-            multiple
             filterable
             remote
             reserve-keyword
             placeholder="请输入选择"
             :remote-method="remoteMethod"
+            @change="selectUser"
             :loading="loading">
             <el-option
               v-for="item in options"
               :key="item.mobile"
-              :label="item.label"
+              :label="item.realName+' '+item.mobile"
               :value="item.mobile">
             </el-option>
           </el-select>
@@ -176,7 +177,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="confirm">确 定</el-button>
+        <!-- <el-button size="mini" type="primary" @click="confirm">确 定</el-button> -->
       </span>
     </el-dialog>
   </div>
@@ -203,7 +204,7 @@ export default {
         { prop: "phone", label: "手机号码" },
         { prop: "code", label: "验证码" },
         { prop: "useFlg", label: "使用状态" },
-        { prop: "assistant", label: "失效状态" },
+        { prop: "invalidFlg", label: "失效状态" },
         { prop: "createDate", label: "生成时间" },
       ],
       dialogVisible: false,
@@ -221,22 +222,33 @@ export default {
         ],
       },
       loading:false,
-      options:[]
+      options:[],
     };
   },
   activated() {
     this.query();
   },
   methods: {
+    selectUser(value){
+      console.log(value)
+      this.options.forEach(item=>{
+        if(item.mobile===value){
+          this.formLabelAlign.username = item.realName
+          this.formLabelAlign.phone = value
+        }
+      })
+    },
     remoteMethod(value){
-      if (value !== '') {
+      if (value.trim()) {
         this.loading = true;
-        this.$http.get('/sys/user/page',{params:value}).then(({data:res})=>{
+        this.$http.get('/sys/user/listWithUserCode',{params:{searchValue:value}}).then(({data:res})=>{
           console.log(res)
           if(res.code!=0) return this.$message.error(res.msg)
-          this.options = res.data.list
+          this.options = res.data
+          this.loading = false;
         }).catch(err=>{
-
+          this.loading = false;
+          console.error(err)
         })
       } else {
         this.options = [];
@@ -245,10 +257,12 @@ export default {
     generateCode(){
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
-          this.$http.post('/sys/userCode',this.formLabelAlign).then(res => {
+          this.$http.post('/sys/userCode',{username:this.formLabelAlign.username,phone:this.formLabelAlign.phone}).then(res => {
             console.log(res)
             if(res.data.code!=0) return this.$message.error(res.data.msg)
             this.formLabelAlign.code = res.data.data
+            this.$message.success('验证码生成成功')
+            this.confirm()
           }).catch(err => {
             
           });
@@ -261,6 +275,9 @@ export default {
     confirm(){
       this.query()
       this.dialogVisible = false
+      this.formLabelAlign.username = ''
+      this.formLabelAlign.phone = ''
+      this.formLabelAlign.code = ''
     }
   },
 };
