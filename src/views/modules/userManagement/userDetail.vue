@@ -242,6 +242,19 @@
             </el-button>
             <el-button size="mini" icon="el-icon-refresh" @click="mainReset">重置</el-button>
           </el-form-item>
+
+          <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+          </div>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                <el-button size="small" icon="el-icon-refresh" circle @click="query"></el-button>
+              </el-tooltip>
+            </el-form-item>
+          </div>
+        </div>
         </el-form>
         <el-table :data="diaDataList" v-loading="dataListLoading" ref="table"
           height="calc(calc(100vh - 50px - 36px - 30px - 45px - 90px - 47px) - 70px)">
@@ -250,7 +263,7 @@
               show-overflow-tooltip v-if="prop === 'paySource'">
               <template slot-scope="scope">
                 <div>
-                  {{ scope.row.paySource === 1 ? "小程序" : "大于众学" }}
+                  {{ scope.row.paySource === 1 ? "小程序端" : "大于众学" }}
                 </div>
               </template>
             </el-table-column>
@@ -361,6 +374,22 @@
               </template>
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'liveId'" show-overflow-tooltip min-width="300">
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.liveId}}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'createDate'" show-overflow-tooltip min-width="200">
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.createDate}}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
               min-width="120" show-overflow-tooltip v-else>
             </el-table-column>
           </template>
@@ -427,6 +456,7 @@ export default {
       productTypeOptions: [], //商品类型下拉选项
       refundReason: "",
       refundLoading: false,
+
     };
   },
 
@@ -449,11 +479,12 @@ export default {
         };
       })
       .catch(() => { });
-    this.changeTbas(1);
+    this.changeTbas(this.diaTbas);
   },
   methods: {
     changeTbas(n) {
       this.diaTbas = n;
+      this.tab=n
       this.diaSearchForm = {
         payType: "",
         paySource: "",
@@ -557,7 +588,13 @@ export default {
         default:
           break;
       }
+
       this.queryPost_dia();
+      
+    },
+
+    query(){
+      this.queryPost_dia()
     },
     // 获取跟进记录列表数据
     queryPost_dia() {
@@ -680,7 +717,7 @@ export default {
     },
     applyRefund(row) {//申请退款
       // 书籍申请退款
-      if (this.diaTbas == 3) return this.$message.warning("暂支持书籍退款")
+      if (this.diaTbas == 3) return this.$message.warning("暂不支持该功能")
       this.refundInfo = row
       this.dialogVisible = true
     },
@@ -834,4 +871,12 @@ export default {
   border-bottom:2px solid #4057CB;
  
 }
+
+.headerTool-handle-btns {
+    display: flex;
+    justify-content: space-between;
+    .el-form-item{
+      margin: 0;
+    }
+  }
 </style>
