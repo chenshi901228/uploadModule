@@ -62,7 +62,10 @@
       <div class="right">
         <div class="right-top">
           <span class="title">{{ messageInfo.title }}</span>
-          <span class="date">{{ messageInfo.senderDate }}</span>
+          <div>
+            <span class="date" style="margin: 0 20px">{{ messageInfo.senderName }}</span>
+            <span class="date">{{ messageInfo.senderDate }}</span>
+          </div>
         </div>
 
         <div class="right-content">
@@ -304,6 +307,12 @@ export default {
                 color: #303133;
                 font-size: 14px;
                 font-weight: 400;
+                width: calc(100% - 120px);
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                -o-text-overflow: ellipsis;
+                word-break: break-all;
               }
 
               .date {
