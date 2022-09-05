@@ -145,21 +145,38 @@
       :visible.sync="dialogVisible"
       width="30%">
       <el-form :rules="rules" ref="ruleForm" size="mini" label-width="80px" :model="formLabelAlign">
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="formLabelAlign.name" placeholder="请输入"></el-input>
+        <el-form-item label="姓名" prop="username">
+          <!-- <el-input v-model="formLabelAlign.username" placeholder="请输入"></el-input> -->
+          <el-select
+            v-model="formLabelAlign.username"
+            multiple
+            filterable
+            remote
+            reserve-keyword
+            placeholder="请输入选择"
+            :remote-method="remoteMethod"
+            :loading="loading">
+            <el-option
+              v-for="item in options"
+              :key="item.mobile"
+              :label="item.label"
+              :value="item.mobile">
+            </el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="手机号码" prop="phone">
-          <el-input v-model="formLabelAlign.region" placeholder="请输入"></el-input>
-        </el-form-item>
+        <!-- <el-form-item label="手机号码" prop="phone">
+          <el-input v-model="formLabelAlign.phone" placeholder="请输入"></el-input>
+        </el-form-item> -->
+        
         <el-form-item label="验证码">
-          <el-input v-model="formLabelAlign.type" disabled>
-            <el-button type="primary" slot="append">生成验证码</el-button>
+          <el-input v-model="formLabelAlign.code" disabled>
+            <el-button type="primary" slot="append" @click="generateCode">生成验证码</el-button>
           </el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="generateCode">确 定</el-button>
+        <el-button size="mini" type="primary" @click="confirm">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -173,8 +190,8 @@ export default {
   data() {
     return {
       mixinTableModuleOptions: {
-        getDataListURL: "/sys/liveDeleteRecord/page", // 数据列表接口，API地址
-        exportURL: "/sys/liveDeleteRecord/export", // 导出接口，API地址
+        getDataListURL: "/sys/userCode/page", // 数据列表接口，API地址
+        exportURL: "/sys/userCode/export", // 导出接口，API地址
       },
       dataForm: {
         username:"",
@@ -182,40 +199,68 @@ export default {
       },
 
       tableItem: [
-        { prop: "frontCoverUrl", label: "姓名" },
-        { prop: "liveTheme", label: "手机号码" },
-        { prop: "username", label: "验证码" },
-        { prop: "phone", label: "使用状态" },
+        { prop: "username", label: "姓名" },
+        { prop: "phone", label: "手机号码" },
+        { prop: "code", label: "验证码" },
+        { prop: "useFlg", label: "使用状态" },
         { prop: "assistant", label: "失效状态" },
-        { prop: "liveTime", label: "生成时间" },
+        { prop: "createDate", label: "生成时间" },
       ],
       dialogVisible: false,
       formLabelAlign:{
-
+        username:"",
+        phone:"",
+        code:"",
       },
       rules:{
-        name: [
+        username: [
           { required: true, message: '请输入姓名', trigger: 'blur' },
         ],
         phone: [
           { required: true, message: '请输入手机号码', trigger: 'blur' }
         ],
-      }
+      },
+      loading:false,
+      options:[]
     };
   },
   activated() {
     this.query();
   },
   methods: {
+    remoteMethod(value){
+      if (value !== '') {
+        this.loading = true;
+        this.$http.get('/sys/user/page',{params:value}).then(({data:res})=>{
+          console.log(res)
+          if(res.code!=0) return this.$message.error(res.msg)
+          this.options = res.data.list
+        }).catch(err=>{
+
+        })
+      } else {
+        this.options = [];
+      }
+    },
     generateCode(){
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
-          alert('submit!');
+          this.$http.post('/sys/userCode',this.formLabelAlign).then(res => {
+            console.log(res)
+            if(res.data.code!=0) return this.$message.error(res.data.msg)
+            this.formLabelAlign.code = res.data.data
+          }).catch(err => {
+            
+          });
         } else {
           console.log('error submit!!');
           return false;
         }
       });
+    },
+    confirm(){
+      this.query()
+      this.dialogVisible = false
     }
   },
 };

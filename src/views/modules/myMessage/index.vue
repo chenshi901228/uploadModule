@@ -62,7 +62,10 @@
       <div class="right">
         <div class="right-top">
           <span class="title">{{ messageInfo.title }}</span>
-          <span class="date">{{ messageInfo.senderDate }}</span>
+          <div>
+            <span class="date" style="margin: 0 20px">{{ messageInfo.senderName }}</span>
+            <span class="date">{{ messageInfo.senderDate }}</span>
+          </div>
         </div>
 
         <div class="right-content">
@@ -93,14 +96,18 @@ export default {
       tip: '获取中...',
     }
   },
-
-  created() {
+  activated(){
     const params = this.messageStatus == -1 ?
         {} : {
           readStatus: this.messageStatus,
         }
+    this.messageList=[]
+    this.messageInfo = {}
     this.getUnReadCount()
     this.getMessageList(params)
+  },
+  created() {
+    
   },
 
   methods: {
@@ -113,6 +120,7 @@ export default {
 
           const { data } = res
           this.messageCount = data || {}
+          this.$store.state.user.unReadNum = this.messageCount&&this.messageCount.unReadNum
         })
         .catch(err => {
           return this.$message.error(err.msg)
@@ -299,6 +307,12 @@ export default {
                 color: #303133;
                 font-size: 14px;
                 font-weight: 400;
+                width: calc(100% - 120px);
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                -o-text-overflow: ellipsis;
+                word-break: break-all;
               }
 
               .date {
