@@ -5,5 +5,6 @@ export default {
     realName: '',
     superAdmin: 0,
     headUrl:'',
+    unReadNum:0,
   }
 }

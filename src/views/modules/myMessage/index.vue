@@ -93,14 +93,18 @@ export default {
       tip: '获取中...',
     }
   },
-
-  created() {
+  activated(){
     const params = this.messageStatus == -1 ?
         {} : {
           readStatus: this.messageStatus,
         }
+    this.messageList=[]
+    this.messageInfo = {}
     this.getUnReadCount()
     this.getMessageList(params)
+  },
+  created() {
+    
   },
 
   methods: {
@@ -113,6 +117,7 @@ export default {
 
           const { data } = res
           this.messageCount = data || {}
+          this.$store.state.user.unReadNum = this.messageCount&&this.messageCount.unReadNum
         })
         .catch(err => {
           return this.$message.error(err.msg)
