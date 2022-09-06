@@ -204,6 +204,9 @@ export default {
         if (res.code !== 0) {
           return this.$message.error(res.msg)
         }
+        // 保存当前登录id到本地
+        localStorage.setItem("curLoginUserId", JSON.stringify(this.selectUserAnchor.anchorId))
+
         this.dialogVisible = false
         this.$router.replace({ name: 'home' })
       }).catch((err) => {

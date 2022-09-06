@@ -198,7 +198,7 @@ export default {
 
       // 附件大小
       if (!fileSize) {
-        this.$message.error(`上传附件大小不能超过 ${this.fileMaxSize}M!`);
+        this.$message.warning(`上传附件大小不能超过 ${this.fileMaxSize}M!`);
         return Promise.reject(false);
       }
       // 附件格式
@@ -211,7 +211,7 @@ export default {
         let WH = this.fileWH.split("/")
         let res = await getImageWH(file)
         if(res && (Math.abs(res.width - WH[0]) || Math.abs(res.height - WH[1]))) {
-          this.$message.error(`附件尺寸大小限制为${WH[0]}px*${WH[1]}px`);
+          this.$message.warning(`附件尺寸大小限制为${WH[0]}px*${WH[1]}px`);
           return Promise.reject(false);
         }
       }
@@ -269,7 +269,7 @@ export default {
     },
     // 超出上传数量
     uploadExceed() {
-      this.$message.error(`只能上传${this.limit}个附件`);
+      this.$message.warning(`只能上传${this.limit}个附件`);
     },
     // 预览图片
     previewImg(data) {

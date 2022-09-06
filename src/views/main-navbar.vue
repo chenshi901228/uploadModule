@@ -68,6 +68,7 @@
       :center="true"
       width="30%"
       :append-to-body="true"
+      @close="accountSelectClose"
       >
       <div class="login_user">
         <!-- <p>{{loginUserList.length&&loginUserList[0].userName}}的账号</p> -->
@@ -166,6 +167,7 @@ export default {
           if (res.code !== 0) {
             return this.$message.error(res.msg)
           }
+          localStorage.removeItem("curLoginUserId")
           clearLoginInfo()
           this.$router.push({ name: 'login' })
         }).catch(() => {})
@@ -175,6 +177,11 @@ export default {
     setting() {
       this.$store.state.tool = !this.$store.state.tool
     },
+    // 关闭账号切换弹框
+    accountSelectClose() {
+      this.active = 0
+      this.selectUserAnchor = {}
+    },
     // 切换账号
     switchAccount() {
       this.$http.get('/sys/user/getAnchorListWithLogin').then(({ data: res })=>{
@@ -183,8 +190,19 @@ export default {
         }
         if(res.data && res.data.length > 0) {
           this.loginUserList = res.data
+
+          let curLoginId = JSON.parse(localStorage.getItem("curLoginUserId"))
+          this.loginUserList.map((item, index) => {
+            if(item.anchorId == curLoginId) {
+              this.selectUserAnchor = item
+              this.active = index
+            }
+          })
+          // 未匹配到当前登录id
+          if(JSON.stringify(this.selectUserAnchor) == "{}") {
+            this.selectUserAnchor = this.loginUserList[0]
+          }
           this.accountSelectVisible = true
-          this.selectUserAnchor =this.loginUserList[0]
         } else {
           this.$message.info("暂无其他账号")
         }
@@ -199,6 +217,9 @@ export default {
       if(this.selectUserAnchor.disabledFlg) return this.$message.warning('该账号已被禁用处，无法登录')
       this.$http.post('/sys/user/chooseLoginRole',{anchorId:this.selectUserAnchor.anchorId,type:this.selectUserAnchor.type}).then(({data:res})=>{
         if(res.code !== 0) return this.$message.error(res.msg)
+
+        // 保存当前登录id到本地
+        localStorage.setItem("curLoginUserId", JSON.stringify(this.selectUserAnchor.anchorId))
         this.accountSelectVisible = false
 
         this.$store.state.contentTabs = this.$store.state.contentTabs.filter(item => item.name === 'home')
