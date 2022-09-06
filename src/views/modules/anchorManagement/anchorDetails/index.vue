@@ -1026,6 +1026,9 @@ export default {
     },
     //改变身份
     changePower(row) {
+      if (this.$refs.powerform){
+        this.$refs.powerform.resetFields();
+      }
       this.userType = row.userType;
       this.powerform.power=''
       this.changePowerVisible = true;
