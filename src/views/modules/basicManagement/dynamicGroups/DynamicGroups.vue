@@ -738,7 +738,7 @@ export default {
     },
     dowloadXlx() {
       window.open(
-        "https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/gruopUserImport.xlsx"
+        "https://live-mini-oss-test-1257778766.cos.ap-beijing.myqcloud.com/liveImages/gruopUserImport.xlsx"
       );
     },
     importXlx() {
