@@ -58,6 +58,7 @@
           v-show="isOpen || formItemCount >= 4"
         >
           <el-date-picker
+            style="width: 200px"
             v-model="dataForm.startDate"
             type="datetime"
             placeholder="选择日期时间"
@@ -295,7 +296,7 @@ export default {
         { prop: "username", label: "主播" },
         { prop: "phone", label: "手机号码" },
         { prop: "assistant", label: "助手" },
-        { prop: "liveTime", label: "预计开播时长" },
+        { prop: "liveTime", label: "预计开播时长"},
         { prop: "dynamicGroupName", label: "投放人群" },
         { prop: "livingRoomId", label: "直播间ID" },
         { prop: "frompreview", label: "是否创建预告" },
