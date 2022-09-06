@@ -566,27 +566,19 @@ export default {
     },
     // 进入直播间
     joinLiveHandle(row) {
-      this.$http.get('/sys/mixedflow/getLiving').then(res=>{//进入直播间获取直播状态
-        if(!res.data.code==0) return this.$message.error(res.data.msg)
-        if(res.data.data.liveId){
-          this.$message.warning('当前直播正在进行中...')
-          return
-        }else{
-          let t = this.$router.resolve({
-            name: "liveRoom",
-            query: { liveTheme: row.liveTheme, TaskId: row.id, trendsOpen: row.trendsOpen },
-          });
-          // 关闭窗口刷新父页面
-          this.sonPage = window.open(t.href, "_blank");
-          this.sonPageTimer = setInterval(() => {
-            if (this.sonPage.closed) {
-              clearInterval(this.sonPageTimer);
-              this.sonPageTimer = null;
-              window.location.reload();
-            }
-          }, 1);
+      let t = this.$router.resolve({
+        name: "liveRoom",
+        query: { liveTheme: row.liveTheme, TaskId: row.id, trendsOpen: row.trendsOpen },
+      });
+      // 关闭窗口刷新父页面
+      this.sonPage = window.open(t.href, "_blank");
+      this.sonPageTimer = setInterval(() => {
+        if (this.sonPage.closed) {
+          clearInterval(this.sonPageTimer);
+          this.sonPageTimer = null;
+          window.location.reload();
         }
-      })
+      }, 1);
     },
 
     // 判断是否能进入直播间开播

@@ -256,7 +256,7 @@
               <span>{{item.text}}</span>
               <div class="tool_nav_son" v-show="item.type=='setUp'&&showBtn">
                 <p @click.stop="beautifyDialog = true">美化</p>
-                <p @click.stop="streamAddressDialog = true">推流地址</p>
+                <p @click.stop="streamAddress">推流地址</p>
               </div>
             </div>
           </div>
@@ -1029,6 +1029,13 @@ export default {
     })
   },  
   methods: {
+    streamAddress(){
+      if(this.liveStatus){
+        this.streamAddressDialog = true
+      }else{
+        this.$message.warning("直播暂未开启，请先开启直播")
+      }
+    },
     copyFun(){
       var clipboard = new Clipboard('.copy_btn')
       clipboard.on('success', e => {
@@ -1750,7 +1757,7 @@ export default {
       //接收到消息
       const event = value;
       let list = [];
-      console.log("收到消息", event);
+      console.log("收到消息1111", event);
       event.data.forEach((item) => {
         if (item.type === "TIMGroupSystemNoticeElem") {
           // 被PC端禁播
@@ -1775,16 +1782,14 @@ export default {
             }
           }
         }
-        // if (item.type === "TIMGroupTipElem") {
-          
-        // }
         if (
           this.conversation &&
           item.conversationID === this.conversation.conversationID
         ) {
-          list.push(Object.assign(item));
           if (item.payload && item.payload.data) {
-            let applyInfo = JSON.parse(item.payload.data);
+            item.payload.data = JSON.parse(item.payload.data)
+            list.push(item);
+            let applyInfo = item.payload.data;
             if (applyInfo.message.type === 3) {
               console.log("提问消息");
               this.questionMessageInfo.push(applyInfo);
@@ -1839,9 +1844,6 @@ export default {
             }
           }
         }
-      });
-      list.forEach((item) => {
-        item.payload.data = JSON.parse(item.payload.data);
       });
       this.barrageData = this.barrageData.concat(list); //弹幕消息
       this.$nextTick(() => {
@@ -2135,9 +2137,10 @@ p {
   height: 100vh;
   background-image: url("../../assets/img/liveRoom_bg.png");
   background-repeat: no-repeat;
-  background-size: 100%;
+  background-size: cover;
   padding: 0 20px 20px;
   box-sizing: border-box;
+  background-color: #000;
   > .el-container {
     width: 100%;
     height: 100%;
