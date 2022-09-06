@@ -69,7 +69,7 @@
         </div>
 
         <div class="right-content">
-          <div class="msg">{{ messageInfo.content }}</div>
+          <div class="msg" v-html="messageInfo.content || '--'"></div>
         </div>
       </div>
     </div>
