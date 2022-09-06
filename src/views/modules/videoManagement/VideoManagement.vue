@@ -190,6 +190,10 @@
             <span v-else-if="item.prop == 'showMode'">
               {{ row.showMode ? "横屏" : "竖屏" }}
             </span>
+            <!-- 删除状态 -->
+            <span v-else-if="item.prop == 'liveState'">
+              {{ row.liveState == 0 ? "已删除" : "未删除" }}
+            </span>
             <!-- 显示状态 -->
             <span v-else-if="item.prop == 'showState'">
               {{ row.showState ? "显示" : "隐藏" }}
@@ -264,7 +268,7 @@
               icon="el-icon-sort"
               style="margin-left: 10px"
               type="text"
-              v-if="row.approveStatus !== 0"
+              v-if="row.approveStatus !== 0 && row.liveState !== 0"
               @click="showOrHide(row)"
               >{{ row.showState ? "隐藏" : "显示" }}</el-button
             >
@@ -273,12 +277,12 @@
               icon="el-icon-shopping-cart-2"
               style="margin-left: 10px"
               type="text"
-              v-if="row.approveStatus != 0"
+              v-if="row.approveStatus != 0 && row.liveState !== 0"
               @click="addProduct(row)"
               >带货商品</el-button
             >
             <el-button
-              v-if="row.approveStatus !== 0"
+              v-if="row.approveStatus !== 0 && row.liveState !== 0"
               size="small"
               icon="el-icon-delete"
               style="margin-left: 10px"

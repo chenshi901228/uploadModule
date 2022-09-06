@@ -9,10 +9,10 @@
       size="small"
     >
       <el-form-item label-width="120px" label="计划名称" prop="planName">
-        <el-input v-model="ruleForm.planName" :disabled="isDisable" style="width:600px" placeholder="请输入" clearable></el-input>
+        <el-input :maxlength="50" show-word-limit v-model="ruleForm.planName" :disabled="isDisable" style="width:600px" placeholder="请输入" clearable></el-input>
       </el-form-item>
       <el-form-item label-width="120px" label="配置KEY" prop="configurationKey">
-        <el-input v-model="ruleForm.configurationKey" :disabled="isDisable" style="width:600px" placeholder="请输入KEY" clearable></el-input>
+        <el-input :maxlength="50" show-word-limit v-model="ruleForm.configurationKey" :disabled="isDisable" style="width:600px" placeholder="请输入KEY" clearable></el-input>
       </el-form-item>
       <el-form-item label-width="120px" label="推送类型">
         <el-select v-model="ruleForm.pushType" :disabled="isDisable" style="width:600px" placeholder="请选择" clearable>
@@ -67,10 +67,10 @@
         <p class="tips">图片大小必须小于2M,支持bmp、png、jpg、jpeg格式,尺寸为80px*80px</p>
       </el-form-item>
       <el-form-item label-width="120px" label="推送标题" prop="pushTitle">
-        <el-input v-model="ruleForm.pushTitle" :disabled="isDisable" style="width:600px" placeholder="请输入" clearable></el-input>
+        <el-input :maxlength="50" show-word-limit v-model="ruleForm.pushTitle" :disabled="isDisable" style="width:600px" placeholder="请输入" clearable></el-input>
       </el-form-item>
       <el-form-item label-width="120px" class="quill-editor" label="推送内容">
-          <quill-editor v-model="ruleForm.pushContent" ref="myQuillEditor" style="width: 800px;"
+          <quill-editor :disabled="isDisable" v-model="ruleForm.pushContent" ref="myQuillEditor" style="width: 800px;"
             :options="editorOption" @change="onEditorChange($event)">
             <!-- 自定义toolar -->
             <div id="toolbar" slot="toolbar">
@@ -127,7 +127,7 @@
           > -->
         </el-form-item>
       <el-form-item label-width="120px" label="动态组">
-        <el-select v-model="ruleForm.dynamicGroupId" :disabled="isDisable" style="width:600px" multiple placeholder="请选择,可多选" clearable>
+        <el-select v-model="ruleForm.dynamicGroupId" :disabled="isDisable" style="width:600px" multiple :placeholder="isDisable?'':'请选择,可多选'" clearable>
           <el-option v-for="item in allDynamicGroup" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
@@ -264,11 +264,12 @@ export default {
   },
   activated () {
     this.getPageType()
-  },
-  mounted () {
     this.$http.get('/sys/dynamicGroup/getAllDynamicGroupList').then(({data: res}) => {
       this.allDynamicGroup = res.data
     })
+  },
+  mounted () {
+    
   },
   watch: {
     $route: {
@@ -446,6 +447,7 @@ export default {
             if(!this.ruleForm.parameter){
               return this.$message.warning("请输入参数")
             }
+            this.ruleForm.parameter =this.ruleForm.parameter+','+5
           }
           if(!this.$refs.uploadFile.isUploadAll()) {
             return this.$message.warning("还有附件正在上传，请稍后")
