@@ -144,7 +144,7 @@
       :visible.sync="dialogVisible"
       width="30%">
       <el-form :rules="rules" ref="ruleForm" size="mini" label-width="80px" :model="formLabelAlign">
-        <el-form-item label="姓名" prop="username">
+        <el-form-item label="电话号码" prop="username">
           <!-- <el-input v-model="formLabelAlign.username" placeholder="请输入"></el-input> -->
           <el-select
             style="width:100%"
