@@ -6,13 +6,13 @@
 
           <el-descriptions-item>
             <template slot="label">
-              用户昵称
+              <div style="font-weight:bold">用户昵称</div>
             </template>
             {{ diaForm.username }}
           </el-descriptions-item>
           <el-descriptions-item>
             <template slot="label">
-              手机号码
+              <div style="font-weight:bold">手机号码</div>
             </template>
             {{ diaForm.phone }}
           </el-descriptions-item>
@@ -35,25 +35,25 @@
         投诉主播
       </div>
       <div style="display:flex;width: 48%;align-items: center;">
-        <div style="text-align: right;">主播昵称</div>
+        <div style="text-align: right;font-weight:bold">主播昵称</div>
         <div style="display: flex; margin: 0 10px ; width: calc(100% - 100px );">
-          <el-input v-model="diaForm.anchorUserName" disabled style="border:1px solid #D7DAE2" size="small"></el-input>
+          <el-input v-model="diaForm.anchorUserName" disabled  size="small"></el-input>
         </div>
       </div>
       <div style="display:flex;width: 48%;align-items: center;">
-        <div style="text-align: right;">手机号码</div>
+        <div style="text-align: right;font-weight:bold">手机号码</div>
         <div style="display: flex; margin: 0 10px ; width: calc(100% - 100px );">
-          <el-input v-model="diaForm.anchorPhone" disabled style="border:1px solid #D7DAE2" size="small"></el-input>
+          <el-input v-model="diaForm.anchorPhone" disabled size="small"></el-input>
         </div>
       </div>
       <div style="display:flex;width: 100%;align-items: center;margin: 20px 0;">
-        <div style="text-align: right;">投诉内容</div>
+        <div style="text-align: right;font-weight:bold">投诉内容</div>
         <div style="display: flex; margin: 0 10px ; width: calc(100% - 100px );">
-          <el-input v-model="diaForm.content" disabled style="border:1px solid #D7DAE2" size="small"></el-input>
+          <el-input v-model="diaForm.content" disabled size="small"></el-input>
         </div>
       </div>
       <div style="display:flex;width: 48%;align-items: center;">
-        <div style="text-align: right;">投诉图片</div>
+        <div style="text-align: right;font-weight:bold">投诉图片</div>
         <div style="display: flex; margin: 0 10px ; width: calc(100% - 100px );">
           <el-image v-for="(url, k) in diaForm.fileUrl" :key="k" style="width: 80px; height: 80px; margin-right: 20px"
           :src="url" fit="cover" :preview-src-list="diaForm.fileUrl">
@@ -61,17 +61,17 @@
         </div>
       </div>
       <div style="display:flex;width: 48%;align-items: center;">
-        <div style="text-align: right;">联系方式</div>
+        <div style="text-align: right;font-weight:bold">联系方式</div>
         <div style="display: flex; margin: 0 10px ; width: calc(100% - 100px );">
-          <el-input v-model="diaForm.contactPhone" disabled style="border:1px solid #D7DAE2" size="small"></el-input>
+          <el-input v-model="diaForm.contactPhone" disabled size="small"></el-input>
         </div>
       </div>
     </div>
     <div class="detalilBox_top" style="display:flex;">
-      <div style="display: flex; margin: 0px 0 10px">处理方案</div>
+      <div style="display: flex; margin: 0px 0 10px;font-weight:bold">处理方案</div>
       <div style="display: flex; margin: 0 20px ;   width: calc(100% - 100px );">
         <el-input v-model="diaForm.solution" type="textarea" :rows="2"
-          :disabled="diaForm.handlingStatus == 1 ? true : false" style="border:1px solid #D7DAE2" maxlength="200"
+          :disabled="diaForm.handlingStatus == 1 ? true : false" maxlength="200"
           show-word-limit></el-input>
       </div>
     </div>
@@ -160,13 +160,15 @@ export default {
 <style lang="scss" scoped>
 .detalilBox {
   height: 100%;
+  background: #fff;
   min-height: calc(calc(100vh - 50px - 38px - 30px));
   padding: 10px;
 
   .detalilBox_top {
     background: #fff;
     padding: 10px;
-    box-shadow: 0px 0px 4px 3px rgba(0, 0, 0, 0.1600);
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1600);
+    border-radius: 6px;
   }
 
   .detalilBox_bottom {

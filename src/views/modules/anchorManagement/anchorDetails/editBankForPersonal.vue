@@ -8,59 +8,76 @@
                 ref="bankForm_host"
                 label-width="120px"
                 size="small">
-                <el-form-item label="账户类型">
+                <!-- <el-form-item label="账户类型">
                     <span>个人</span>
                 </el-form-item>
                 <el-form-item label="姓名" required>
                     <span>{{userInfo.realName || '-'}}</span>
-                </el-form-item>
-                <el-form-item label="身份证号" required>
-                    <span>{{userInfo.idCard || '-'}}</span>
-                </el-form-item>
-                <el-form-item label="开户银行" prop="depositBank">
-                    <el-autocomplete
-                        style="width:400px"
-                        v-model="bankForm.depositBank"
-                        :fetch-suggestions="querySearchAsync"
-                        placeholder="请输入"
-                        @select="handleSelect"></el-autocomplete>
-                </el-form-item>
-                <el-form-item label="支行名称" prop="branchName">
-                    <el-input
-                        style="width:400px"
-                        maxlength="20"
-                        v-model="bankForm.branchName"
-                        placeholder="请输入"></el-input>
-                </el-form-item>
-                <el-form-item label="开户行所在地" prop="address">
-                    <el-cascader
-                        :options="regionData"
-                        filterable
-                        style="width:400px"
-                        v-model="bankForm.address"
-                        :props="{ label: 'name', value: 'id', children: 'children' }"
-                        :clearable="true"
-                        :placeholder="'请选择省/市/区县'">
-                    </el-cascader>
-                </el-form-item>
+                </el-form-item> -->
+                <div style="display:flex">
+                    <el-form-item style="min-width: 520px" label="账户类型">
+                        <span>个人</span>
+                    </el-form-item>
+                    <el-form-item style="width: 400px" label="姓名" required>
+                        <span>{{userInfo.realName || '-'}}</span>
+                    </el-form-item>
+                </div>
+                <div style="display:flex">
+                    <el-form-item style="min-width: 520px" label="身份证号" required>
+                        <span>{{userInfo.idCard || '-'}}</span>
+                    </el-form-item>
+                    <el-form-item label="开户银行" prop="depositBank">
+                        <el-autocomplete
+                            style="width:400px"
+                            v-model="bankForm.depositBank"
+                            :fetch-suggestions="querySearchAsync"
+                            placeholder="请输入"
+                            @select="handleSelect"></el-autocomplete>
+                    </el-form-item>
+                </div>
 
-                <el-form-item label="账户名称" prop="accountName">
-                    <el-input
-                        style="width:400px"
-                        maxlength="20"
-                        v-model="bankForm.accountName"
-                        placeholder="请输入"></el-input>
-                </el-form-item>
-                <el-form-item label="银行账户" prop="bankAccount">
-                    <el-input
-                        style="width:400px"
-                        maxlength="20"
-                        v-model="bankForm.bankAccount"
-                        placeholder="请输入"></el-input>
-                </el-form-item>
-                <el-form-item style="textAlign:right;width:60%;marginTop:30px;">
-                    <el-button size="small" @click="resetForm('bankForm_host')">取消</el-button>
+                <div style="display:flex">
+                    <el-form-item style="min-width:520px" label="支行名称" prop="branchName">
+                        <el-input
+                            style="width:400px"
+                            maxlength="20"
+                            v-model="bankForm.branchName"
+                            placeholder="请输入"></el-input>
+                    </el-form-item>
+                    <el-form-item label="开户行所在地" prop="address">
+                        <el-cascader
+                            :options="regionData"
+                            filterable
+                            style="width:400px"
+                            v-model="bankForm.address"
+                            :props="{ label: 'name', value: 'id', children: 'children' }"
+                            :clearable="true"
+                            :placeholder="'请选择省/市/区县'">
+                        </el-cascader>
+                    </el-form-item>
+                </div>
+                
+                <div style="display:flex">
+                    <el-form-item style="min-width:520px" label="账户名称" prop="accountName">
+                        <el-input
+                            style="width:400px"
+                            maxlength="20"
+                            v-model="bankForm.accountName"
+                            placeholder="请输入"></el-input>
+                    </el-form-item>
+                    <el-form-item label="银行账户" prop="bankAccount">
+                        <el-input
+                            style="width:400px"
+                            maxlength="20"
+                            v-model="bankForm.bankAccount"
+                            placeholder="请输入"></el-input>
+                    </el-form-item>
+                </div>
+
+                
+                <el-form-item style="textAlign:left;width:60%;marginTop:30px;margin-left:0">
                     <el-button size="small" type="primary" @click="submitForm('bankForm_host')">确定</el-button>
+                    <el-button size="small" @click="resetForm('bankForm_host')">取消</el-button>
                 </el-form-item>
             </el-form>
         </div>
