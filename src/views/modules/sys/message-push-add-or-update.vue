@@ -472,7 +472,9 @@ export default {
             })
           }
           dynamicGroupNames = dynamicGroupNames.join(",")
-          
+          if(this.ruleForm.isTiming=='0'){
+            this.ruleForm.timing = ''
+          }
           const params = {
             id: this.id,
             ...this.ruleForm,
