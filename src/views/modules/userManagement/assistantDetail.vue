@@ -58,6 +58,34 @@
             <span style="marginLeft:10px">手机号码：{{assistantInfo.phone}}</span>
           </div>
         </div> -->
+        <!-- 操作按钮 -->
+        <div class="headerTool-handle-btns">
+          <div class="headerTool--handle-btns-left">
+            <!-- <el-button 
+              type="warning"
+              plain
+              icon="el-icon-download" 
+              size="mini"
+              @click="exportHandle">{{ $t("export") }}</el-button> -->
+          </div>
+          <div class="headerTool--handle-btns-right">
+            <el-form-item>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="刷新"
+                placement="top"
+              >
+                <el-button
+                  size="small"
+                  icon="el-icon-refresh"
+                  circle
+                  @click="query"
+                ></el-button>
+              </el-tooltip>
+            </el-form-item>
+          </div>
+        </div>
         <div class="header-assistant">
           <span>助手昵称：{{assistantInfo.userName}}</span>
           <span style="marginLeft:60px">手机号码：{{assistantInfo.phone}}</span>
@@ -142,6 +170,10 @@ export default {
         }
       })
     },
+    query(){
+      this.getAssistantListDetail()
+    },
+
     // 分页, 每页条数
     pageSizeChangeHandle (val) {
       this.dataForm.page = 1
