@@ -315,6 +315,19 @@
             </el-button>
             <el-button size="mini" icon="el-icon-refresh" @click="mainReset">重置</el-button>
           </el-form-item>
+
+          <!-- 操作按钮 -->
+          <div class="headerTool-handle-btns">
+            <div class="headerTool--handle-btns-left">
+            </div>
+            <div class="headerTool--handle-btns-right">
+              <el-form-item>
+                <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                  <el-button size="small" icon="el-icon-refresh" circle @click="query"></el-button>
+                </el-tooltip>
+              </el-form-item>
+            </div>
+          </div>
         </el-form>
         <el-table :data="diaDataList" v-loading="dataListLoading" style="width: 100%"
           height="calc(calc(100vh - 50px - 36px - 30px - 45px - 90px - 47px) - 80px)"
@@ -1006,13 +1019,14 @@ export default {
       .catch(() => { });
     this.getAnchorInfo()
     this.getAccountAmount();
-    if (this.$hasPermission('anchor:gain:list')) {
-      this.changeTbas(1);
-    } else if (this.$hasPermission('anchor:withdraw:list')) {
-      this.changeTbas(2);
-    } else {
-      this.changeTbas(3);
-    }
+    // if (this.$hasPermission('anchor:gain:list')) {
+    //   this.changeTbas(1);
+    // } else if (this.$hasPermission('anchor:withdraw:list')) {
+    //   this.changeTbas(2);
+    // } else {
+    //   this.changeTbas(3);
+    // }
+    this.changeTbas(this.diaTbas);
     this.queryBankList();
   },
   methods: {
@@ -1296,6 +1310,11 @@ export default {
       }
       this.queryPost_dia();
     },
+
+    query(){
+      this.queryPost_dia()
+    },
+
     // 获取跟进记录列表数据
     queryPost_dia() {
       let data, url;
@@ -2294,5 +2313,13 @@ export default {
   .el-dialog {
     width: 30%;
   }
+}
+
+.headerTool-handle-btns {
+    display: flex;
+    justify-content: space-between;
+    .el-form-item{
+      margin: 0;
+    }
 }
 </style>

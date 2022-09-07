@@ -244,17 +244,17 @@
           </el-form-item>
 
           <!-- 操作按钮 -->
-        <div class="headerTool-handle-btns">
-          <div class="headerTool--handle-btns-left">
+          <div class="headerTool-handle-btns">
+            <div class="headerTool--handle-btns-left">
+            </div>
+            <div class="headerTool--handle-btns-right">
+              <el-form-item>
+                <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                  <el-button size="small" icon="el-icon-refresh" circle @click="query"></el-button>
+                </el-tooltip>
+              </el-form-item>
+            </div>
           </div>
-          <div class="headerTool--handle-btns-right">
-            <el-form-item>
-              <el-tooltip class="item" effect="dark" content="刷新" placement="top">
-                <el-button size="small" icon="el-icon-refresh" circle @click="query"></el-button>
-              </el-tooltip>
-            </el-form-item>
-          </div>
-        </div>
         </el-form>
         <el-table :data="diaDataList" v-loading="dataListLoading" ref="table"
           height="calc(calc(100vh - 50px - 36px - 30px - 45px - 90px - 47px) - 70px)">
@@ -878,5 +878,5 @@ export default {
     .el-form-item{
       margin: 0;
     }
-  }
+}
 </style>

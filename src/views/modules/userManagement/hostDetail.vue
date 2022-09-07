@@ -292,6 +292,18 @@
             </el-button>
             <el-button icon="el-icon-refresh" size="mini" @click="mainReset">重置</el-button>
           </el-form-item>
+          <!-- 操作按钮 -->
+          <div class="headerTool-handle-btns">
+            <div class="headerTool--handle-btns-left">
+            </div>
+            <div class="headerTool--handle-btns-right">
+              <el-form-item>
+                <el-tooltip class="item" effect="dark" content="刷新" placement="top">
+                  <el-button size="small" icon="el-icon-refresh" circle @click="query"></el-button>
+                </el-tooltip>
+              </el-form-item>
+            </div>
+          </div>
         </el-form>
         <el-table :data="diaDataList" style="width: 100%"
           v-loading="dataListLoading"
@@ -681,7 +693,7 @@ export default {
           .catch(() => { });
       }, 100);
 
-    this.changeTbas(1);
+    this.changeTbas(this.diaTbas);
   },
   methods: {
     // 添加金额符号
@@ -838,6 +850,11 @@ export default {
       }
       this.queryPost_dia();
     },
+
+    query(){
+      this.queryPost_dia()
+    },
+
     // 获取跟进记录列表数据
     queryPost_dia() {
       let data, url;
@@ -1349,4 +1366,12 @@ export default {
     width: 30%;
   }
 }
+
+.headerTool-handle-btns {
+    display: flex;
+    justify-content: space-between;
+    .el-form-item{
+      margin: 0;
+    }
+  }
 </style>
