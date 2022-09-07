@@ -29,12 +29,34 @@
                     <p class="tips">格式限制：jpg/jpeg/png,建议图片尺寸不小于630px×347px，大小不得超过2M</p>
                 </el-form-item>
                 <el-form-item label="添加商品" prop="product">
-                    <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.product"
-                        @click.native="chooseProduct"></el-input>
+                    <!-- <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.product"
+                        @click.native="chooseProduct"></el-input> -->
+                    <el-button @click.native="chooseProduct" type="primary">添加</el-button>
+                    <div class="product-box" v-if="!!productIds.length">
+                        <el-tag
+                            v-for="(item, index) in productIds"
+                            :key="index"
+                            closable
+                            @close="closeProductId(index)"
+                            type="info">
+                            {{item.productName}}
+                        </el-tag>
+                    </div>
                 </el-form-item>
                 <el-form-item label="添加主播" prop="anchor">
-                    <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.anchor"
-                        @click.native="chooseAnchor"></el-input>
+                    <!-- <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.anchor"
+                        @click.native="chooseAnchor"></el-input> -->
+                    <el-button @click.native="chooseAnchor" type="primary">添加</el-button>
+                    <div class="product-box" v-if="!!recommendedAnchorList.length">
+                        <el-tag
+                            v-for="(item, index) in recommendedAnchorList"
+                            :key="index"
+                            closable
+                            @close="closeAnchor(index)"
+                            type="info">
+                            {{item.username}}
+                        </el-tag>
+                    </div>
                 </el-form-item>
                 <el-form-item label="直播背景">
                     <custom-upload ref="bgLiveUpload" :fileMaxSize="2" :fileType="['png', 'jpg', 'jpeg']"
@@ -139,6 +161,10 @@ export default {
             this.$refs.chooseAnchor.init(this.recommendedAnchorList)
         },
 
+        closeAnchor(index) {
+            this.recommendedAnchorList.splice(index, 1)
+        },
+
         // 确认添加推荐主播
         addAnchorConfirm(data) {
 
@@ -150,6 +176,10 @@ export default {
         // 推荐商品弹框
         chooseProduct() {
             this.$refs.chooseProduct.init(this.productIds)
+        },
+
+        closeProductId(index) {
+            this.productIds.splice(index, 1)
         },
 
         // 确认添加推荐商品
@@ -259,6 +289,22 @@ export default {
     display: inline-block;
     margin-left: 10px;
     color: #909399;
+}
+
+/deep/.product-box {
+    width: 400px;
+    border-radius: 5px;
+    border: 1px solid #D7DAE2;
+    padding: 12px;
+    margin-top: 10px;
+
+    .el-tag {
+        margin-right: 10px;
+    }
+
+    .el-tag:last-child {
+        margin-right: 0
+    }
 }
 /deep/ .upload-demo .custom-style {
     width: 380px;

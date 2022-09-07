@@ -57,14 +57,25 @@
         </div>
       </el-form-item>
       <el-form-item label="添加商品" prop="goods">
-        <el-input
+        <!-- <el-input
           style="width: 640px"
           placeholder="请输入"
           @click.native="chooseProduct"
           v-model="dataForm.goods"
           readonly
           clearable
-        ></el-input>
+        ></el-input> -->
+        <el-button @click.native="chooseProduct" type="primary">添加</el-button>
+        <div class="product-box" v-if="!!productIds.length">
+            <el-tag
+                v-for="(item, index) in productIds"
+                :key="index"
+                closable
+                @close="closeProductId(index)"
+                type="info">
+                {{item.productName}}
+            </el-tag>
+        </div>
       </el-form-item>
     </el-form>
     <div class="footer">
@@ -160,6 +171,10 @@ export default {
       this.productIds = data;
       // this.dataForm.livePlaybackProductList = data;
       this.dataForm.goods = data.length ? `已选择${data.length}个商品` : "";
+    },
+
+    closeProductId(index) {
+      this.productIds.splice(index, 1)
     },
     // 封面图上传
     frontCoverUploadSuccess(file) {
@@ -325,5 +340,20 @@ export default {
     -ms-flex-align: center;
     align-items: center;
     border-radius: 2px;
+}
+/deep/.product-box {
+    width: 640px;
+    border-radius: 5px;
+    border: 1px solid #D7DAE2;
+    padding: 12px;
+    margin-top: 10px;
+
+    .el-tag {
+        margin-right: 10px;
+    }
+
+    .el-tag:last-child {
+        margin-right: 0
+    }
 }
 </style>

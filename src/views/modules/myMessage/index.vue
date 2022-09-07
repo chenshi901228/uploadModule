@@ -42,7 +42,7 @@
                 <span class="date">{{ item.senderDate }}</span>
               </div>
               <div class="bottom">
-                <span class="msg">{{ item.content }}</span>
+                <span class="msg" v-html="item.content || '--'"></span>
                 <el-tag
                   :type="item.readStatus == 1 ? 'info' : 'danger'">
                   {{item.readStatus == 1 ? '已读' : '未读'}}
