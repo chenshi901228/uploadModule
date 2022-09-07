@@ -4,7 +4,6 @@
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-live__liveList">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" size="small" label-width="150px" class="demo-ruleForm">
-        <div style="display:flex">
           <el-form-item label="直播主题" prop="liveTheme">
             <el-input style="width: 400px" v-model.trim="ruleForm.liveTheme" maxlength="60" show-word-limit>
             </el-input>
@@ -15,22 +14,10 @@
             </el-date-picker>
           </el-form-item>
 
-        </div>
-        <div style="display:flex">
-
           <el-form-item label="预计时长(分)" prop="estimateLiveTime">
             <el-input style="width: 400px" placeholder="请输入" maxlength="4" v-model="ruleForm.estimateLiveTime">
             </el-input>
           </el-form-item>
-          <el-form-item label="助手" prop="assistantIds">
-            <el-select style="width: 400px" v-model="ruleForm.assistantIds" filterable multiple placeholder="请选择"
-              :clearable="true">
-              <el-option v-for="(item, index) in assistantOptions" :key="index" :label="item.label"
-                :value="item.weixinUserId">
-              </el-option>
-            </el-select>
-          </el-form-item>
-        </div>
 
 
         <el-form-item label="直播宣传图" prop="frontCoverUrl" class="img-item">
@@ -48,6 +35,15 @@
             <i slot="default" class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
+
+        <el-form-item label="助手" prop="assistantIds">
+            <el-select style="width: 400px" v-model="ruleForm.assistantIds" filterable multiple placeholder="请选择"
+              :clearable="true">
+              <el-option v-for="(item, index) in assistantOptions" :key="index" :label="item.label"
+                :value="item.weixinUserId">
+              </el-option>
+            </el-select>
+          </el-form-item>
 
         <el-form-item class="quill-editor" label="直播介绍" prop="liveIntroduce">
           <quill-editor v-model="ruleForm.liveIntroduce" ref="myQuillEditor" style="width: 800px; height: 380px"
@@ -107,13 +103,35 @@
           > -->
         </el-form-item>
         <el-form-item label="添加商品" prop="goods">
-          <el-input style="width: 400px" placeholder="请选择" @click.native="chooseProduct" v-model="ruleForm.goods"
-            readonly clearable></el-input>
+          <!-- <el-input style="width: 400px" placeholder="请选择" @click.native="chooseProduct" v-model="ruleForm.goods"
+            readonly clearable></el-input> -->
+            <el-button @click.native="chooseProduct" type="primary">添加</el-button>
+              <div class="product-box" v-if="!!ruleForm.productIds.length">
+                  <el-tag
+                      v-for="(item, index) in ruleForm.productIds"
+                      :key="index"
+                      closable
+                      @close="closeProductId(index)"
+                      type="info">
+                      {{item.productName}}
+                  </el-tag>
+              </div>
         </el-form-item>
 
         <el-form-item label="添加主播" prop="anchors">
-          <el-input style="width: 400px" placeholder="请选择" @click.native="chooseAnchor" v-model="ruleForm.anchors"
-            readonly clearable></el-input>
+          <!-- <el-input style="width: 400px" placeholder="请选择" @click.native="chooseAnchor" v-model="ruleForm.anchors"
+            readonly clearable></el-input> -->
+          <el-button @click.native="chooseAnchor" type="primary">添加</el-button>
+          <div class="product-box" v-if="!!ruleForm.recommendedAnchorList.length">
+              <el-tag
+                  v-for="(item, index) in ruleForm.recommendedAnchorList"
+                  :key="index"
+                  closable
+                  @close="closeAnchor(index)"
+                  type="info">
+                  {{item.username}}
+              </el-tag>
+          </div>
         </el-form-item>
 
         <el-form-item label="直播背景">
@@ -352,10 +370,19 @@ export default {
       this.ruleForm.anchors = data.length ? `已选择${data.length}个主播` : ""
     },
 
+    closeAnchor(index) {
+      this.ruleForm.recommendedAnchorList.splice(index, 1)
+    },
+
     // 推荐商品弹框
     chooseProduct() {
       this.$refs.chooseProduct.init(this.ruleForm.productIds);
     },
+
+    closeProductId(index) {
+      this.ruleForm.productIds.splice(index, 1)
+    },
+
 
     // 确认添加推荐商品
     addProductConfirm(data) {
@@ -594,5 +621,20 @@ export default {
   -ms-flex-align: center;
   align-items: center;
   border-radius: 2px;
+}
+/deep/.product-box {
+    width: 400px;
+    border-radius: 5px;
+    border: 1px solid #D7DAE2;
+    padding: 12px;
+    margin-top: 10px;
+
+    .el-tag {
+        margin-right: 10px;
+    }
+
+    .el-tag:last-child {
+        margin-right: 0
+    }
 }
 </style>
