@@ -35,3 +35,8 @@ export default {
   }
 }
 </script>
+<style lang="scss">
+.el-menu-item.is-active {
+  background-color: #2e3b42 !important;
+}
+</style>
