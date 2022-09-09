@@ -227,4 +227,13 @@ export default {
         color: #409EFF;
         cursor: pointer;
     }
+
+    /deep/.el-dialog .el-dialog__body {
+  padding: 20px; /*这个不重要*/
+  max-height: 75vh;
+  flex: 1;
+  -ms-flex: 1 1 auto; /* 兼容IE */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
 </style>
