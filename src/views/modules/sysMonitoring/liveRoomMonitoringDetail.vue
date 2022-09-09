@@ -19,7 +19,11 @@
               直播间ID：{{liveDetail.liveStream&&liveDetail.liveStream.Data.RoomId}}
             </div>
             <video-flv-component :url="videoUrl" class="live_video_flv"></video-flv-component>
-            <div class="banned" @click="bannedFun" v-if="liveDetail.liveState">
+            <div class="banned" @click="bannedFun" v-if="liveDetail.liveState && bannedDisble=='1'">
+              <img src="../../../assets/img/banned.png" alt="">
+              <span>禁播</span>
+            </div>
+            <div class="banned-disable" v-if="liveDetail.liveState && bannedDisble=='0'">
               <img src="../../../assets/img/banned.png" alt="">
               <span>禁播</span>
             </div>
@@ -110,18 +114,22 @@ export default {
       giftPrice:[],//礼物价格
       commerceName:[],//课名称
       commerceNum:[],//礼物数量
-      commercePrice:[]//礼物价格
+      commercePrice:[],//礼物价格
+
+      bannedDisble:'1'//禁播按钮自定义状态显示，1为启用，0为禁止
     }
   },
   created(){
     this.userId = 'looker_admin'+this.$store.state.user.id
     this.userName = 'looker_userName'+this.$store.state.user.id
+    this.bannedDisble='1'
   },
   activated(){
     this.getliveDetail()
     this.getLiveTrends()
     this.getCommerceIncome()
     this.getGetReward()
+    this.bannedDisble='1'
   },
   methods:{
     numberChange(num, unit = "W") {
@@ -140,6 +148,7 @@ export default {
             if (res.code == 0) {
               this.$message.success("禁播成功");
               this.getliveDetail()
+              this.bannedDisble='0'
             } else {
               this.$message.error(res.msg);
             }
@@ -496,6 +505,24 @@ export default {
         height: 40px;
         background: linear-gradient(89deg, #FA3622 0%, #FE055B 100%);
         box-shadow: 0px 4px 10px 1px rgba(249,46,29,0.4);
+        border-radius: 20px;
+        z-index: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #FFFFFF;
+        font-size: 16px;
+        cursor: pointer;
+        >span{
+          margin-left: 10px;
+        }
+      }
+      .banned-disable{
+        position: absolute;
+        bottom: 20px;
+        width: 230px;
+        height: 40px;
+        background: rgb(171, 167, 167);
         border-radius: 20px;
         z-index: 1;
         display: flex;

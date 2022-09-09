@@ -467,7 +467,9 @@
             >
 
             <el-button
-              v-if="scope.row.withdrawStatus === '2'"
+              v-if="scope.row.withdrawStatus === '2'||
+              scope.row.withdrawStatus === '5'
+              "
               type="text"
               size="small"
               icon="el-icon-edit"
@@ -712,8 +714,8 @@ export default {
         amount: row.amount,
         accumulatedWithdrawalAmount: row.accumulatedWithdrawalAmount,
         taxSum: row.taxSum,
-        addedValueTax: 0,
-        additionalTax: 0,
+        addedValueTax: row.addedValueTax,
+        additionalTax: row.additionalTax,
         personalIncomeTax: row.personalIncomeTax,
       };
       this.dialogFormVisible = true;

@@ -1,5 +1,5 @@
 <template>
-  <el-submenu v-if="menu.children && menu.children.length >= 1" :index="menu.id" :popper-append-to-body="false">
+  <el-submenu class="navTab" v-if="menu.children && menu.children.length >= 1" :index="menu.id" :popper-append-to-body="false">
     <template slot="title">
       <svg class="icon-svg aui-sidebar__menu-icon" aria-hidden="true"><use :xlink:href="`#${menu.icon}`"></use></svg>
       <span>{{ menu.name }}</span>
@@ -90,6 +90,11 @@ export default {
     display: block;
     color: inherit;
     text-decoration: none;
+  }
+}
+.navTab{
+  .el-menu-item.is-active {
+    background-color: #2e3b42 !important;
   }
 }
 </style>
