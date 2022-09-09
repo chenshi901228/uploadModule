@@ -777,8 +777,6 @@ export default {
       studentList: [],//在线用户列表
       searchUser:"",
       userInfo: {}, //用户信息
-      goodsPushTimer: null, //商品推送定时
-      livePredictionTimer: null, //直播预告推送定时
       deviceNav:[
         {
           img: require("@/assets/img/nomike.png"),
@@ -1338,6 +1336,7 @@ export default {
               type: 20,
               replyUserId: data.userId,
               isTalk: true,
+              isHigh:true,
             });
             this.getMuteStatus({
               isAll: 0,
@@ -1351,6 +1350,7 @@ export default {
               type: 20,
               replyUserId: data.userId,
               isTalk: false,
+              isHigh:true,
             });
             this.getMuteStatus({
               isAll: 0,
@@ -1366,14 +1366,14 @@ export default {
     allMute(type) {
       switch (type) {
         case 1:
-          this.sendMessage({ type: 20, allMute: true }); //全员禁言
+          this.sendMessage({ type: 20, allMute: true,isHigh:true }); //全员禁言
           this.getMuteStatus({ isAll: 1, isTalk: 1 }).then((res) => {
             this.studentList.forEach((item) => (item.isTalk = 1));
           });
 
           break;
         case 2:
-          this.sendMessage({ type: 20, allMute: false }); //全员解禁
+          this.sendMessage({ type: 20, allMute: false,isHigh:true }); //全员解禁
           this.getMuteStatus({ isAll: 1, isTalk: 0 }).then((res) => {
             this.studentList.forEach((item) => (item.isTalk = 0));
           });
@@ -1914,6 +1914,7 @@ export default {
       const message = this.tim.createCustomMessage({
         to: this.getToAccount(),
         conversationType: this.conversation.type,
+        priority: messageInfo && messageInfo.isHigh ? 'TIM.TYPES.MSG_PRIORITY_HIGH' : 'TIM.TYPES.MSG_PRIORITY_NORMAL',
         payload: {
           data: JSON.stringify(data),
         },
@@ -2032,31 +2033,13 @@ export default {
     pushMethod(type, data) {
       if (type === "goods") {
         //推送商品
-        if (this.goodsPushTimer)
-          return this.$message({
-            message: "您已经推送过了，请稍后再试",
-            type: "warning",
-          });
-        this.sendMessage({ type: 8, pushData: data }, () =>
+        this.sendMessage({ type: 8, pushData: data,isHigh:true }, () =>
           this.$message({ message: "商品推送成功", type: "success" })
         );
-        this.goodsPushTimer = setTimeout(() => {
-          clearTimeout(this.goodsPushTimer);
-          this.goodsPushTimer = null;
-        }, 60 * 1000);
       } else {
-        if (this.livePredictionTimer)
-          return this.$message({
-            message: "您已经推送过了，请稍后再试",
-            type: "warning",
-          });
-        this.sendMessage({ type: 7, pushData: data }, () =>
+        this.sendMessage({ type: 7, pushData: data,isHigh:true }, () =>
           this.$message({ message: "预告推送成功", type: "success" })
         );
-        this.livePredictionTimer = setTimeout(() => {
-          clearTimeout(this.livePredictionTimer);
-          this.livePredictionTimer = null;
-        }, 60 * 1000);
       }
     },
     replyConnect(status, type, connectType, userId) {
@@ -2066,6 +2049,7 @@ export default {
         connectType,
         replyType: 1,
         replyUserId: userId,
+        isHigh:true,
       };
       if (status === 1) {
         let arr = this.connectMessageInfo.filter(item=>item.connectStatus)
@@ -2098,6 +2082,7 @@ export default {
         connectType: info.message.connectType,
         replyUserId: info.userInfo.userId,
         replyType: -3, // 连麦后挂断
+        isHigh:true,
       };
       this.sendMessage(messageInfo);
       const ind = this.connectMessageInfo.findIndex(
@@ -2110,14 +2095,6 @@ export default {
     }
   },
   destroyed() {
-    if (this.livePredictionTimer) {
-      clearTimeout(this.livePredictionTimer);
-      this.livePredictionTimer = null;
-    }
-    if (this.goodsPushTimer) {
-      clearTimeout(this.goodsPushTimer);
-      this.goodsPushTimer = null;
-    }
     // this.stopPublishingStream
     let arr = this.connectMessageInfo.filter(item=>item.connectStatus)
     arr.forEach(item=>{

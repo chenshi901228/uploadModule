@@ -350,7 +350,7 @@
             >
             <el-button
               type="text"
-              v-if="row.liveState == 1"
+              v-if="row.liveState == 1 && showMode"
               @click="closeLiveHandle(row.anchorUserId)"
               size="small"
               icon="el-icon-video-pause"
