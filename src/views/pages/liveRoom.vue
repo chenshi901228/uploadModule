@@ -73,13 +73,17 @@
                       <span class="nickName"
                         >{{ item.payload.data.userInfo.nickName }}&nbsp;</span
                       >
-                      <div class="fansCard" v-if="item.payload.data.fansInfo &&item.payload.data.fansInfo.isFans">
+                      <div class="fansCard" v-if="item.payload.data.fansInfo && item.payload.data.fansInfo.isFans">
                         <i class="el-icon-star-on" style="color:#c2f8ff;"></i>
                         粉丝&nbsp;{{ item.payload.data.fansInfo.grade }}
                       </div>
-                      <div class="fansCard" style="background:#E58D26;" v-else>
+                      <div class="fansCard" style="background:#E58D26;" v-else-if="item.payload.data.fansInfo && item.payload.data.fansInfo.isAttention && !item.payload.data.fansInfo.isFans">
                         <i class="el-icon-star-on" style="color:#fde7c8;"></i>
                         用户&nbsp;{{ item.payload.data.fansInfo.grade }}
+                      </div>
+                      <div class="fansCard" style="background:#FA321F;" v-else-if="item.payload.data.fansInfo && !item.payload.data.fansInfo.isFans && !item.payload.data.fansInfo.isAttention">
+                        <i class="el-icon-star-on" style="color:#fde7c8;"></i>
+                        游客&nbsp;{{ item.payload.data.fansInfo.grade }}
                       </div>
                     </div>
                     <p class="normalMsg">
@@ -105,13 +109,17 @@
                       <span class="nickName"
                         >{{ item.payload.data.userInfo.nickName }}&nbsp;</span
                       >
-                       <div class="fansCard" v-if="item.payload.data.fansInfo &&item.payload.data.fansInfo.isFans">
+                      <div class="fansCard" v-if="item.payload.data.fansInfo && item.payload.data.fansInfo.isFans">
                         <i class="el-icon-star-on" style="color:#c2f8ff;"></i>
                         粉丝&nbsp;{{ item.payload.data.fansInfo.grade }}
                       </div>
-                      <div class="fansCard" style="background:#E58D26;" v-else>
+                      <div class="fansCard" style="background:#E58D26;" v-else-if="item.payload.data.fansInfo && item.payload.data.fansInfo.isAttention && !item.payload.data.fansInfo.isFans">
                         <i class="el-icon-star-on" style="color:#fde7c8;"></i>
                         用户&nbsp;{{ item.payload.data.fansInfo.grade }}
+                      </div>
+                      <div class="fansCard" style="background:#FA321F;" v-else-if="item.payload.data.fansInfo && !item.payload.data.fansInfo.isFans && !item.payload.data.fansInfo.isAttention">
+                        <i class="el-icon-star-on" style="color:#fde7c8;"></i>
+                        游客&nbsp;{{ item.payload.data.fansInfo.grade }}
                       </div>
                     </div>
                     <p class="normalMsg">
@@ -283,14 +291,26 @@
                 />
                 <div class="quit_board" @click="quitBoard">退出白板</div>
               </div>
+             
               <video
                 autoplay
+                v-if="screenStream.active"
+                id="videoEle"
+                :src-object.prop="screenStream"
+                class="push_video 1"
+                :style="{width:'100%',height:'calc(100% - 60px)'}"
+              >
+              </video>
+              <video
+                autoplay
+                v-else
                 id="videoEle"
                 :src-object.prop="stream"
                 class="push_video"
                 :style="{width:'100%',height:'calc(100% - 60px)'}"
               >
               </video>
+              
               <div class="device_set">
                 <div v-for="(item,index) in deviceNav" :key="index">
                     <img :src="item.status?item.activeImg:item.img" alt=""  @click="changeDevice(item)"/>
@@ -910,7 +930,6 @@ export default {
     this.zg.getCameras().then(res=>{
       console.log('摄像头',res)
       this.camerasList = res
-      // this.cameraId = this.camerasList[0].deviceID
     })
    
     //获取麦克风列表
@@ -1153,12 +1172,11 @@ export default {
       if(res){
         this.$http.post('/sys/mixedflow/openDesktopSharing',{RoomId:this.roomId,StreamId:'shareDesk'+this.roomId}).then(res=>{
           console.log(res)
-          if(res.data.code == 0){
-            this.$message({
-              message:'共享开启成功',
-              type:'success'
-            })
-          }
+          if(res.data.code!= 0) return this.$message.error(res.data.msg)
+          this.$message({
+            message:'共享开启成功',
+            type:'success'
+          })
         })
       }
     },
@@ -1390,8 +1408,8 @@ export default {
       this.checkStream = await this.zg.createStream({ //摄像头
         camera: {
           videoQuality: 4,
-          // width: parseInt(document.getElementById('videoEle').getBoundingClientRect().width * 1),
-          // height: parseInt(document.getElementById('videoEle').getBoundingClientRect().height * 1),
+          width: parseInt(document.getElementById('videoEle').getBoundingClientRect().width * 1),
+          height: parseInt(document.getElementById('videoEle').getBoundingClientRect().height * 1),
           frameRate: 15,
           bitrate: 2000,
           videoInput:this.cameraId,
@@ -1491,12 +1509,12 @@ export default {
     // 开始推流、开始直播
     async startPublishingStream() {
       let res = await this.zg.startPublishingStream(this.roomId, this.stream);
-      console.log(res);
+      console.log(res,'666666666');
       if (res) {
         this.$loading().close();
         if (!this.liveStatus) {
           this.$message({
-            message: "直播预开启成功，可以开启直播",
+            message: "直播预开启成功，可以开始上课",
             type: "success",
           });
         } else {
@@ -1580,7 +1598,7 @@ export default {
         cancelButtonText: "取消",
         type: "warning"
       }).then(() => {
-        this.$loading({background: "rgba(0,0,0,.5)"})
+        this.$loading({background: "rgba(0,0,0,.5)",text: "下课结算中..."})
         this.$http
           .post("/sys/mixedflow/stopMixedFlow", {
             UserId: this.userID,
