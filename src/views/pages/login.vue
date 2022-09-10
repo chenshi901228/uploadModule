@@ -313,6 +313,9 @@ export default {
         if (!errorMessage) {
           this.$http.post('/message/sms/sendCodeWithLogin', { mobile: this.dataFormPhone.phone }).then(res => {
             if (res) {
+              if (res.data.code !== 0) {
+                return this.$message.error(res.data.msg)
+              }
               this.$message({
                 message: "已发送验证码，请查收",
                 type: 'success'
