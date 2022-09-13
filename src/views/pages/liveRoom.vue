@@ -73,13 +73,17 @@
                       <span class="nickName"
                         >{{ item.payload.data.userInfo.nickName }}&nbsp;</span
                       >
-                      <div class="fansCard" v-if="item.payload.data.fansInfo &&item.payload.data.fansInfo.isFans">
+                      <div class="fansCard" v-if="item.payload.data.fansInfo && item.payload.data.fansInfo.isFans">
                         <i class="el-icon-star-on" style="color:#c2f8ff;"></i>
                         粉丝&nbsp;{{ item.payload.data.fansInfo.grade }}
                       </div>
-                      <div class="fansCard" style="background:#E58D26;" v-else>
+                      <div class="fansCard" style="background:#E58D26;" v-else-if="item.payload.data.fansInfo && item.payload.data.fansInfo.isAttention && !item.payload.data.fansInfo.isFans">
                         <i class="el-icon-star-on" style="color:#fde7c8;"></i>
                         用户&nbsp;{{ item.payload.data.fansInfo.grade }}
+                      </div>
+                      <div class="fansCard" style="background:#FA321F;" v-else-if="item.payload.data.fansInfo && !item.payload.data.fansInfo.isFans && !item.payload.data.fansInfo.isAttention">
+                        <i class="el-icon-star-on" style="color:#fde7c8;"></i>
+                        游客&nbsp;{{ item.payload.data.fansInfo.grade }}
                       </div>
                     </div>
                     <p class="normalMsg">
@@ -105,13 +109,17 @@
                       <span class="nickName"
                         >{{ item.payload.data.userInfo.nickName }}&nbsp;</span
                       >
-                       <div class="fansCard" v-if="item.payload.data.fansInfo &&item.payload.data.fansInfo.isFans">
+                      <div class="fansCard" v-if="item.payload.data.fansInfo && item.payload.data.fansInfo.isFans">
                         <i class="el-icon-star-on" style="color:#c2f8ff;"></i>
                         粉丝&nbsp;{{ item.payload.data.fansInfo.grade }}
                       </div>
-                      <div class="fansCard" style="background:#E58D26;" v-else>
+                      <div class="fansCard" style="background:#E58D26;" v-else-if="item.payload.data.fansInfo && item.payload.data.fansInfo.isAttention && !item.payload.data.fansInfo.isFans">
                         <i class="el-icon-star-on" style="color:#fde7c8;"></i>
                         用户&nbsp;{{ item.payload.data.fansInfo.grade }}
+                      </div>
+                      <div class="fansCard" style="background:#FA321F;" v-else-if="item.payload.data.fansInfo && !item.payload.data.fansInfo.isFans && !item.payload.data.fansInfo.isAttention">
+                        <i class="el-icon-star-on" style="color:#fde7c8;"></i>
+                        游客&nbsp;{{ item.payload.data.fansInfo.grade }}
                       </div>
                     </div>
                     <p class="normalMsg">
@@ -283,14 +291,26 @@
                 />
                 <div class="quit_board" @click="quitBoard">退出白板</div>
               </div>
+             
               <video
                 autoplay
+                v-if="screenStream.active"
+                id="videoEle"
+                :src-object.prop="screenStream"
+                class="push_video 1"
+                :style="{width:'100%',height:'calc(100% - 60px)'}"
+              >
+              </video>
+              <video
+                autoplay
+                v-else
                 id="videoEle"
                 :src-object.prop="stream"
                 class="push_video"
                 :style="{width:'100%',height:'calc(100% - 60px)'}"
               >
               </video>
+              
               <div class="device_set">
                 <div v-for="(item,index) in deviceNav" :key="index">
                     <img :src="item.status?item.activeImg:item.img" alt=""  @click="changeDevice(item)"/>
@@ -777,8 +797,6 @@ export default {
       studentList: [],//在线用户列表
       searchUser:"",
       userInfo: {}, //用户信息
-      goodsPushTimer: null, //商品推送定时
-      livePredictionTimer: null, //直播预告推送定时
       deviceNav:[
         {
           img: require("@/assets/img/nomike.png"),
@@ -912,7 +930,6 @@ export default {
     this.zg.getCameras().then(res=>{
       console.log('摄像头',res)
       this.camerasList = res
-      // this.cameraId = this.camerasList[0].deviceID
     })
    
     //获取麦克风列表
@@ -1155,12 +1172,11 @@ export default {
       if(res){
         this.$http.post('/sys/mixedflow/openDesktopSharing',{RoomId:this.roomId,StreamId:'shareDesk'+this.roomId}).then(res=>{
           console.log(res)
-          if(res.data.code == 0){
-            this.$message({
-              message:'共享开启成功',
-              type:'success'
-            })
-          }
+          if(res.data.code!= 0) return this.$message.error(res.data.msg)
+          this.$message({
+            message:'共享开启成功',
+            type:'success'
+          })
         })
       }
     },
@@ -1338,6 +1354,7 @@ export default {
               type: 20,
               replyUserId: data.userId,
               isTalk: true,
+              isHigh:true,
             });
             this.getMuteStatus({
               isAll: 0,
@@ -1351,6 +1368,7 @@ export default {
               type: 20,
               replyUserId: data.userId,
               isTalk: false,
+              isHigh:true,
             });
             this.getMuteStatus({
               isAll: 0,
@@ -1366,14 +1384,14 @@ export default {
     allMute(type) {
       switch (type) {
         case 1:
-          this.sendMessage({ type: 20, allMute: true }); //全员禁言
+          this.sendMessage({ type: 20, allMute: true,isHigh:true }); //全员禁言
           this.getMuteStatus({ isAll: 1, isTalk: 1 }).then((res) => {
             this.studentList.forEach((item) => (item.isTalk = 1));
           });
 
           break;
         case 2:
-          this.sendMessage({ type: 20, allMute: false }); //全员解禁
+          this.sendMessage({ type: 20, allMute: false,isHigh:true }); //全员解禁
           this.getMuteStatus({ isAll: 1, isTalk: 0 }).then((res) => {
             this.studentList.forEach((item) => (item.isTalk = 0));
           });
@@ -1390,8 +1408,8 @@ export default {
       this.checkStream = await this.zg.createStream({ //摄像头
         camera: {
           videoQuality: 4,
-          // width: parseInt(document.getElementById('videoEle').getBoundingClientRect().width * 1),
-          // height: parseInt(document.getElementById('videoEle').getBoundingClientRect().height * 1),
+          width: parseInt(document.getElementById('videoEle').getBoundingClientRect().width * 1),
+          height: parseInt(document.getElementById('videoEle').getBoundingClientRect().height * 1),
           frameRate: 15,
           bitrate: 2000,
           videoInput:this.cameraId,
@@ -1491,12 +1509,12 @@ export default {
     // 开始推流、开始直播
     async startPublishingStream() {
       let res = await this.zg.startPublishingStream(this.roomId, this.stream);
-      console.log(res);
+      console.log(res,'666666666');
       if (res) {
         this.$loading().close();
         if (!this.liveStatus) {
           this.$message({
-            message: "直播预开启成功，可以开启直播",
+            message: "直播预开启成功，可以开始上课",
             type: "success",
           });
         } else {
@@ -1580,7 +1598,7 @@ export default {
         cancelButtonText: "取消",
         type: "warning"
       }).then(() => {
-        this.$loading({background: "rgba(0,0,0,.5)"})
+        this.$loading({background: "rgba(0,0,0,.5)",text: "下课结算中..."})
         this.$http
           .post("/sys/mixedflow/stopMixedFlow", {
             UserId: this.userID,
@@ -1914,6 +1932,7 @@ export default {
       const message = this.tim.createCustomMessage({
         to: this.getToAccount(),
         conversationType: this.conversation.type,
+        priority: messageInfo && messageInfo.isHigh ? 'TIM.TYPES.MSG_PRIORITY_HIGH' : 'TIM.TYPES.MSG_PRIORITY_NORMAL',
         payload: {
           data: JSON.stringify(data),
         },
@@ -2032,31 +2051,13 @@ export default {
     pushMethod(type, data) {
       if (type === "goods") {
         //推送商品
-        if (this.goodsPushTimer)
-          return this.$message({
-            message: "您已经推送过了，请稍后再试",
-            type: "warning",
-          });
-        this.sendMessage({ type: 8, pushData: data }, () =>
+        this.sendMessage({ type: 8, pushData: data,isHigh:true }, () =>
           this.$message({ message: "商品推送成功", type: "success" })
         );
-        this.goodsPushTimer = setTimeout(() => {
-          clearTimeout(this.goodsPushTimer);
-          this.goodsPushTimer = null;
-        }, 60 * 1000);
       } else {
-        if (this.livePredictionTimer)
-          return this.$message({
-            message: "您已经推送过了，请稍后再试",
-            type: "warning",
-          });
-        this.sendMessage({ type: 7, pushData: data }, () =>
+        this.sendMessage({ type: 7, pushData: data,isHigh:true }, () =>
           this.$message({ message: "预告推送成功", type: "success" })
         );
-        this.livePredictionTimer = setTimeout(() => {
-          clearTimeout(this.livePredictionTimer);
-          this.livePredictionTimer = null;
-        }, 60 * 1000);
       }
     },
     replyConnect(status, type, connectType, userId) {
@@ -2066,6 +2067,7 @@ export default {
         connectType,
         replyType: 1,
         replyUserId: userId,
+        isHigh:true,
       };
       if (status === 1) {
         let arr = this.connectMessageInfo.filter(item=>item.connectStatus)
@@ -2098,6 +2100,7 @@ export default {
         connectType: info.message.connectType,
         replyUserId: info.userInfo.userId,
         replyType: -3, // 连麦后挂断
+        isHigh:true,
       };
       this.sendMessage(messageInfo);
       const ind = this.connectMessageInfo.findIndex(
@@ -2110,14 +2113,6 @@ export default {
     }
   },
   destroyed() {
-    if (this.livePredictionTimer) {
-      clearTimeout(this.livePredictionTimer);
-      this.livePredictionTimer = null;
-    }
-    if (this.goodsPushTimer) {
-      clearTimeout(this.goodsPushTimer);
-      this.goodsPushTimer = null;
-    }
     // this.stopPublishingStream
     let arr = this.connectMessageInfo.filter(item=>item.connectStatus)
     arr.forEach(item=>{

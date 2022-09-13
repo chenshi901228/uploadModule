@@ -122,6 +122,9 @@ export default {
       //手机号 为空的话
       this.$http.post('/message/sms/sendCodeWithChangePwd',{mobile:this.$store.state.user.name}).then(res=>{
         if(res){
+          if (res.data.code !== 0) {
+            return this.$message.error(res.data.msg)
+          }
           this.$message({
             message:"已发送验证码，请查收",
             type:'success'
