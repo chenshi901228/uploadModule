@@ -228,9 +228,19 @@ export default {
 
 
                         // 商品ids
-                        params.productIds = this.productIds.map(item => item.id)
+                        if(this.productIds){
+                            params.productIds = this.productIds.map(item => item.id)
+                        }else{
+                            params.productIds=[]
+                        }
                         // 主播ids
-                        params.recommendedAnchorList = this.recommendedAnchorList.map(item => item.anchorId)
+                        if(this.recommendedAnchorList){
+                            params.recommendedAnchorList = this.recommendedAnchorList.map(item => item.anchorId)
+                        }else{
+                            params.recommendedAnchorList=[]
+                        }
+                        //  params.productIds = this.productIds.map(item => item.id)
+                        //  params.recommendedAnchorList = this.recommendedAnchorList.map(item => item.anchorId)
 
                         // 当前主播id
                         params.anchorUserId = this.userId
