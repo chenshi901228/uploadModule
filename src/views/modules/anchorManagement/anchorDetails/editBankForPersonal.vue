@@ -108,7 +108,7 @@ export default {
                     { required: true, message: "请填写账户名称", trigger: "blur" },
                 ],
                 bankAccount: [
-                    { required: true, message: "请填写银行账户", trigger: "blur" },
+                    { required: true, message: "请填写银行账户", trigger: "change" },
                     { validator: checkBankAccount, trigger: 'change' }
                 ],
                 branchName:[
