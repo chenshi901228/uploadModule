@@ -86,9 +86,28 @@
             </el-form-item>
           </div>
         </div>
-        <div class="header-assistant">
+        <!-- <div class="header-assistant">
           <span>助手昵称：{{assistantInfo.userName}}</span>
           <span style="marginLeft:60px">手机号码：{{assistantInfo.phone}}</span>
+        </div> -->
+        <div class="detalilBox_top" style="display:flex;">
+          <div style="border:1px solid #E7EBF5;width: 100%">
+            <el-descriptions class="margin-top" :column="2" size="small" border>
+
+              <el-descriptions-item>
+                <template slot="label">
+                  <div style="font-weight:bold">用户昵称</div>
+                </template>
+                {{ assistantInfo.userName }}
+              </el-descriptions-item>
+              <el-descriptions-item>
+                <template slot="label">
+                  <div style="font-weight:bold">手机号码</div>
+                </template>
+                {{ assistantInfo.phone }}
+              </el-descriptions-item>
+            </el-descriptions>
+          </div>
         </div>
       </el-form>
       <el-table
@@ -100,6 +119,7 @@
           show-overflow-tooltip
           prop="userName"
           label="主播昵称"
+          width="400"
           header-align="center"
           align="center"
         ></el-table-column>
@@ -107,6 +127,7 @@
           show-overflow-tooltip
           prop="phone"
           label="手机号码"
+          
           header-align="center"
           align="center"
         >
@@ -115,9 +136,9 @@
           show-overflow-tooltip
           prop="createDate"
           label="创建时间"
+          width="400"
           header-align="center"
           align="center"
-          width="180"
         ></el-table-column>
         
       </el-table>
@@ -197,10 +218,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .header-assistant{
-    width: 100%;
-    font-size: 18px;
-    text-align: center;
-    line-height: 50px;
+  .detalilBox_top {
+    background: #fff;
+    padding: 10px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1600);
+    border-radius: 6px;
+    margin-bottom: 20px;
   }
 </style>
