@@ -86,10 +86,6 @@
             </el-form-item>
           </div>
         </div>
-        <!-- <div class="header-assistant">
-          <span>助手昵称：{{assistantInfo.userName}}</span>
-          <span style="marginLeft:60px">手机号码：{{assistantInfo.phone}}</span>
-        </div> -->
         <div class="detalilBox_top" style="display:flex;">
           <div style="border:1px solid #E7EBF5;width: 100%">
             <el-descriptions class="margin-top" :column="2" size="small" border>
@@ -224,5 +220,9 @@ export default {
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1600);
     border-radius: 6px;
     margin-bottom: 20px;
+  }
+  /deep/ th.el-descriptions-item__cell.el-descriptions-item__label.is-bordered-label {
+    width: 120px;
+    text-align: right;
   }
 </style>
