@@ -70,7 +70,7 @@ export default {
     },
     getUserInfo() {
       this.$http
-        .get(`/sys/user/info`)
+        .get(`/sys/user/infoByPersonalCenter`)
         .then(({ data: res }) => {
           if (res.code == 0) {
             this.userInfo = res.data;
