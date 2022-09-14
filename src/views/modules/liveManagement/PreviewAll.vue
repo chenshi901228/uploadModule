@@ -559,6 +559,7 @@
               type="text"
               icon="el-icon-view"
               size="small"
+              v-if="scope.row.delFlg === 1"
               @click="checkRemark(scope.row)"
               >查看备注</el-button
             >

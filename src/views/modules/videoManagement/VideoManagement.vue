@@ -260,6 +260,7 @@
               icon="el-icon-view"
               style="margin-left: 10px"
               type="text"
+              v-if="row.liveState == 0"
               @click="checkRemark(row)"
               >查看备注</el-button
             >
