@@ -100,7 +100,7 @@
                         <template slot-scope="{ row }">
                             <el-button icon="el-icon-document" type="text" size="small" @click="checkComment(row)">查看回复
                             </el-button>
-                            <el-button type="text" icon="el-icon-view" size="small" @click="checkRemark(row)">查看备注
+                            <el-button v-if="row.delFlg === 1" type="text" icon="el-icon-view" size="small" @click="checkRemark(row)">查看备注
                             </el-button>
                             <el-button icon="el-icon-delete" v-if="!row.delFlg" type="text" size="small"
                                 @click="deleteComment(row.id)">删除</el-button>
