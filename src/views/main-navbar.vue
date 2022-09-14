@@ -192,8 +192,9 @@ export default {
           this.loginUserList = res.data
 
           let curLoginId = JSON.parse(localStorage.getItem("curLoginUserId"))
+          let curLoginType = this.$store.state.user.loginType
           this.loginUserList.map((item, index) => {
-            if(item.anchorId == curLoginId) {
+            if(item.anchorId == curLoginId && item.type == curLoginType) {
               this.selectUserAnchor = item
               this.active = index
             }
