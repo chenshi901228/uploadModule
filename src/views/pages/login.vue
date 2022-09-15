@@ -314,6 +314,12 @@ export default {
           this.$http.post('/message/sms/sendCodeWithLogin', { mobile: this.dataFormPhone.phone }).then(res => {
             if (res) {
               if (res.data.code !== 0) {
+                if(res.data.code == 100003003) {
+                  this.$alert('今日短信验证码已达上限10次，请拨打400-092-1288，联系客服获取验证码', '提示', {
+                    confirmButtonText: '确定',
+                  })
+                  return
+                }
                 return this.$message.error(res.data.msg)
               }
               this.$message({

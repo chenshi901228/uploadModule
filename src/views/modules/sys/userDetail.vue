@@ -25,7 +25,7 @@
       <div class="title">基本资料</div>
       <div class="aside" style="margin-top: 30px;">
         <div style="margin-right: 50px;"> 身份证号</div>
-        <div>{{ enCodeIdCard(userInfo.idCord) || '-' }}</div>
+        <div>{{ enCodeIdCard(userInfo.idCard) || '-' }}</div>
       </div>
       <div class="aside">
         <div style="margin-right: 50px;"> 登录账号</div>
