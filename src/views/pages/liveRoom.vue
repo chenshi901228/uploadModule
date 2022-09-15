@@ -264,7 +264,7 @@
               <span>{{item.text}}</span>
               <div class="tool_nav_son" v-show="item.type=='setUp'&&showBtn">
                 <p @click.stop="beautifyDialog = true">美化</p>
-                <p @click.stop="streamAddress">推流地址</p>
+                <p @click.stop="streamAddress">拉流地址</p>
               </div>
             </div>
           </div>
@@ -669,7 +669,7 @@
         </div>
     </el-dialog>
     <el-dialog
-      title="推流地址"
+      title="拉流地址"
       :visible.sync="streamAddressDialog"
       top="200px"
       width="440px">
