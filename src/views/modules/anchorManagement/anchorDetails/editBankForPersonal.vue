@@ -131,7 +131,8 @@ export default {
         }
     },
     activated() {
-        this.userId = this.$store.state.user.id;
+        // this.userId = this.$store.state.user.id;
+        this.userId = this.$store.state.user.weixinUserId;
         this.getAnchorInfo()
         this.queryBankList()
         this.getAddressOptions()

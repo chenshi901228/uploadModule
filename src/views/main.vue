@@ -134,6 +134,7 @@ export default {
         this.$store.state.user.superAdmin = res.data.superAdmin
         this.$store.state.user.headUrl = res.data.headUrl
         this.$store.state.user.loginType = res.data.loginType
+        this.$store.state.user.weixinUserId = res.data.weixinUserId
       }).catch(() => {})
     },
     // 获取权限
