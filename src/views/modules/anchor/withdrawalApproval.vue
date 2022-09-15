@@ -495,7 +495,7 @@
           >取 消</el-button
         >
         <el-button size="small" type="primary" @click="confirm"
-          >通 过</el-button
+          >确 认</el-button
         >
       </div>
     </el-dialog>
