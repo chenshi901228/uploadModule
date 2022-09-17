@@ -294,6 +294,7 @@
              
               <video
                 autoplay
+                muted
                 v-if="screenStream.active"
                 id="videoEle"
                 :src-object.prop="screenStream"
@@ -303,6 +304,7 @@
               </video>
               <video
                 autoplay
+                muted
                 v-else
                 id="videoEle"
                 :src-object.prop="stream"
@@ -336,6 +338,7 @@
                 >
                   <video
                     autoplay
+                    muted
                     :src-object.prop="item.stream"
                     :style="{
                       width:
@@ -440,6 +443,7 @@
               <span>预览</span>
               <video
                 autoplay
+                muted
                 class="check_camera_video"
                 :src-object.prop="checkStream"
               ></video>
@@ -638,6 +642,7 @@
           <div class="beautify_set">
             <video
               autoplay
+              muted
               :src-object.prop="stream"
               class="beautify_video"
               v-if="beautifyDialog"
@@ -1936,7 +1941,7 @@ export default {
       const message = this.tim.createCustomMessage({
         to: this.getToAccount(),
         conversationType: this.conversation.type,
-        priority: messageInfo && messageInfo.isHigh ? 'TIM.TYPES.MSG_PRIORITY_HIGH' : 'TIM.TYPES.MSG_PRIORITY_NORMAL',
+        priority: messageInfo && messageInfo.isHigh ? TIM.TYPES.MSG_PRIORITY_HIGH : TIM.TYPES.MSG_PRIORITY_NORMAL,
         payload: {
           data: JSON.stringify(data),
         },
