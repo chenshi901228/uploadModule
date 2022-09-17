@@ -1937,7 +1937,7 @@ export default {
       const message = this.tim.createCustomMessage({
         to: this.getToAccount(),
         conversationType: this.conversation.type,
-        priority: messageInfo && messageInfo.isHigh ? 'TIM.TYPES.MSG_PRIORITY_HIGH' : 'TIM.TYPES.MSG_PRIORITY_NORMAL',
+        priority: messageInfo && messageInfo.isHigh ? TIM.TYPES.MSG_PRIORITY_HIGH : TIM.TYPES.MSG_PRIORITY_NORMAL,
         payload: {
           data: JSON.stringify(data),
         },
