@@ -244,7 +244,7 @@
         </div>
       </div> -->
 
-      <div v-if="diaForm.userType==2 || diaForm.userType=='企业'" class="info_type detalilBox_top" style="margin:20px 0;display: flex;justify-content: space-between;flex-wrap: wrap;    padding: 10px 80px 10px 10px;">
+      <div class="info_type detalilBox_top" style="margin:20px 0;display: flex;justify-content: space-between;flex-wrap: wrap;    padding: 10px 80px 10px 10px;">
         <div
           style="height: 50px;width:100%;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 15px;border-bottom:1px solid #EBEEF5;">
           银行账号
