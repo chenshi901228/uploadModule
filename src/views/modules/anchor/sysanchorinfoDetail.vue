@@ -244,7 +244,7 @@
         </div>
       </div> -->
 
-      <div class="info_type detalilBox_top" style="margin:20px 0;display: flex;justify-content: space-between;flex-wrap: wrap;    padding: 10px 80px 10px 10px;">
+      <div v-if="diaForm.bankInfo" class="info_type detalilBox_top" style="margin:20px 0;display: flex;justify-content: space-between;flex-wrap: wrap;    padding: 10px 80px 10px 10px;">
         <div
           style="height: 50px;width:100%;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 15px;border-bottom:1px solid #EBEEF5;">
           银行账号
@@ -321,7 +321,7 @@
         </div>
       </div> -->
 
-      <div v-if="diaForm.userType==2 || diaForm.userType=='企业'" class="info_type detalilBox_top" style="margin:20px 0;display: flex;justify-content: space-between;flex-wrap: wrap;    padding: 10px 80px 10px 10px;">
+      <div class="info_type detalilBox_top" style="margin:20px 0;display: flex;justify-content: space-between;flex-wrap: wrap;    padding: 10px 80px 10px 10px;">
         <div v-if="diaForm.status != 0">
           <span>备注：{{diaForm.remark}}</span>
         </div>
@@ -377,34 +377,42 @@ export default {
   },
   activated(){
     this.$http.get(`/sys/anchor/applyInfo/${this.$route.query.id}`).then(res=>{
+
       if(res.data.code===0){
-        
-        if(res.data.data.gender == 0){
-          res.data.data.gender = '男'
-        }else if(res.data.data.gender == 1){
-          res.data.data.gender = '女'
-        }else{
-          res.data.data.gender = '保密'
+        switch (res.data.data.gender){
+            case 0:
+              res.data.data.gender='男'
+              break;
+            case 1:
+              res.data.data.gender = '女'
+              break;
+            default:
+              res.data.data.gender = '保密'
         }
 
-        if(res.data.data.legalizeFlg == 1){
-          res.data.data.legalizeFlg = '是'
-        }else{
-          res.data.data.legalizeFlg = '否'
+        switch (res.data.data.legalizeFlg){
+            case 1:
+              res.data.data.legalizeFlg='是'
+              break;
+            default:
+              res.data.data.legalizeFlg = '否'
         }
-
-        if(res.data.data.tutorFlg == 1){
-          res.data.data.tutorFlg = '是'
-        }else{
-          res.data.data.tutorFlg = '否'
+        switch (res.data.data.tutorFlg){
+            case 1:
+              res.data.data.tutorFlg='是'
+              break;
+            default:
+              res.data.data.tutorFlg = '否'
         }
-
-        if(res.data.data.userType == 1){
-          res.data.data.userType = '个人'
-        }else if(res.data.data.userType == 2){
-          res.data.data.userType = '企业'
-        }else{
-          res.data.data.userType=''
+        switch (res.data.data.userType){
+            case 1:
+              res.data.data.userType = '个人'
+              break;
+            case 2:
+              res.data.data.userType = '企业'
+              break;
+            default:
+              res.data.data.userType=''
         }
         
         this.diaForm = res.data.data
