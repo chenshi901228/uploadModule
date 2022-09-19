@@ -327,9 +327,9 @@
               >
                 <div
                   class="video_div"
-                  v-loading="!item.connectStatus"
+                  v-loading="!item.connectStatus || item.getReplyConnectLoading"
                   :element-loading-text="
-                    item.message.connectType == 2
+                    item.getReplyConnectLoading ? '连接中' : item.connectStatus ? '' : item.message.connectType == 2
                       ? '申请视频连麦中'
                       : '申请语音连麦中'
                   "
@@ -1008,9 +1008,11 @@ export default {
               item.stream = await this.zg.startPlayingStream(
                 streamItem.streamID
               );
+              item.getReplyConnectLoading = false
             }
           });
-          this.$loading().close();
+          // this.$loading().close();
+          
           if (this.roomId != streamItem.streamID) {
             let extraInfo = streamItem.extraInfo;
             let extraInfoObj = null;
@@ -1018,16 +1020,17 @@ export default {
               extraInfoObj = JSON.parse(extraInfo);
             } catch (e) {}
             this.$http.post("/sys/mixedflow/startEvenWheat", {
-                UserId: streamItem.user.userID, //用户ID；
-                RoomId: this.roomId, //房间ID；
-                joinRoomId: streamItem.streamID,
-                joinType:
-                  extraInfoObj && extraInfoObj.connectType == 1
-                    ? "voice"
-                    : "watch",
-              }).then((res) => {
+              UserId: streamItem.user.userID, //用户ID；
+              RoomId: this.roomId, //房间ID；
+              joinRoomId: streamItem.streamID,
+              joinType:
+              extraInfoObj && extraInfoObj.connectType == 1
+              ? "voice"
+              : "watch",
+            }).then((res) => {
                 console.log(res);
-              }).catch((err) => {});
+              }).catch((err) => {
+              });
           }
         });
       } else if (updateType == "DELETE") {
@@ -2078,11 +2081,13 @@ export default {
         let arr = this.connectMessageInfo.filter(item=>item.connectStatus)
         if(arr.length==3) return this.$message.warning("当前连麦人数已达上限")
         //同意
-        this.$loading({ background: "rgba(0,0,0,.5)", text: "连接中..." });
+        // this.$loading({ background: "rgba(0,0,0,.5)", text: "连接中..." });
+        
         this.sendMessage(messageInfo);
         this.connectMessageInfo.forEach((item) => {
           if (item.userInfo.userId === userId) {
             item.connectStatus = true;
+            item.getReplyConnectLoading = userId
           }
         });
       } else {
