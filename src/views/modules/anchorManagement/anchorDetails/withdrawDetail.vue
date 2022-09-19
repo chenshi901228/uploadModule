@@ -250,4 +250,7 @@ export default {
     justify-content: flex-end;
   }
 }
+/deep/.el-descriptions-item__label.has-colon::after{
+  content:'',
+}
 </style>
