@@ -135,12 +135,12 @@
         style="width: 100%"
         ref="table"
       >
-        <el-table-column
+        <!-- <el-table-column
           type="selection"
           header-align="center"
           align="center"
           width="50"
-        ></el-table-column>
+        ></el-table-column> -->
         <el-table-column
           prop="icon"
           label="礼物图标"
