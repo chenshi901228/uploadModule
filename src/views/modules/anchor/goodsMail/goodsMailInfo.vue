@@ -24,7 +24,7 @@
                 </el-steps>
             </div>
             <!-- 电子面单 -->
-            <p style="display: inline-block" v-if="type == 2 && template" v-html="template"></p>
+            <p style="display: inline-block;min-height:500px" v-if="type == 2 && template" v-html="template"></p>
             <p v-if="type == 2 && !template">暂无信息</p>
 
         </div>
