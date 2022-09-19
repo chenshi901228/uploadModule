@@ -327,9 +327,9 @@
               >
                 <div
                   class="video_div"
-                  v-loading="!item.connectStatus || getReplyConnectLoading == item.userInfo.userId"
+                  v-loading="!item.connectStatus || item.getReplyConnectLoading"
                   :element-loading-text="
-                    getReplyConnectLoading == item.userInfo.userId ? '连接中' : item.connectStatus ? '' : item.message.connectType == 2
+                    item.getReplyConnectLoading ? '连接中' : item.connectStatus ? '' : item.message.connectType == 2
                       ? '申请视频连麦中'
                       : '申请语音连麦中'
                   "
@@ -895,7 +895,6 @@ export default {
       microphoneStatus:true,
       liveInfo:{},//结束直播详情
       isMuteLive:false,
-      getReplyConnectLoading: "", //同意连麦后拉流loading
     };
   },
   created() {
@@ -1009,10 +1008,10 @@ export default {
               item.stream = await this.zg.startPlayingStream(
                 streamItem.streamID
               );
+              item.getReplyConnectLoading = false
             }
           });
           // this.$loading().close();
-          this.getReplyConnectLoading = ""
           
           if (this.roomId != streamItem.streamID) {
             let extraInfo = streamItem.extraInfo;
@@ -2083,11 +2082,12 @@ export default {
         if(arr.length==3) return this.$message.warning("当前连麦人数已达上限")
         //同意
         // this.$loading({ background: "rgba(0,0,0,.5)", text: "连接中..." });
-        this.getReplyConnectLoading = userId
+        
         this.sendMessage(messageInfo);
         this.connectMessageInfo.forEach((item) => {
           if (item.userInfo.userId === userId) {
             item.connectStatus = true;
+            item.getReplyConnectLoading = userId
           }
         });
       } else {
