@@ -50,16 +50,25 @@
           </div>
         </div>
       </div>
+      <!-- 禁播备注弹框 -->
+      <remark-modal
+        ref="remarkModal"
+        @confirm="confirmHandle"
+        title="禁播"
+      ></remark-modal>
     </el-card>
 </template>
 
 <script>
 import VideoFlvComponent from "@/components/common/videoFlvComponent.vue"
+import RemarkModal from "@/components/common/remarkDialog";
+
 // import echarts from "echarts"
 import * as echarts from 'echarts';
 export default {
   components:{
     VideoFlvComponent,
+    RemarkModal
   },
   data(){
     return{
@@ -137,26 +146,29 @@ export default {
       num = Number(num)
       return (num / 10000) > 1 ? parseFloat((num / 10000)).toFixed(1) + unit :  num;
     },
+    // 弹框确认操作
+    confirmHandle(remark, id) {
+      console.log(remark,id)
+      this.$http.put("/sys/liveList/stopLive", { id,remark })
+      .then(({ data: res }) => {
+        if (res.code == 0) {
+          this.$message.success("禁播成功");
+          this.getliveDetail()
+          this.bannedDisble='0'
+          this.$refs.remarkModal.close();
+        } else {
+          this.$message.error(res.msg);
+        }
+      })
+      .catch((err) => {
+        throw err;
+      });
+    },
+    // confirmHandle(){
+  
+    // },
     bannedFun(){ //禁播
-      this.$confirm(`确认禁播该场直播？`,'禁播',{
-        confirmButtonText: this.$t("confirm"),
-        cancelButtonText: this.$t("cancel"),
-        type: "warning",
-      }).then(() => {
-         this.$http.put("/sys/liveList/stopLive", { id:this.liveDetail.id })
-          .then(({ data: res }) => {
-            if (res.code == 0) {
-              this.$message.success("禁播成功");
-              this.getliveDetail()
-              this.bannedDisble='0'
-            } else {
-              this.$message.error(res.msg);
-            }
-          })
-          .catch((err) => {
-            throw err;
-          });
-      }).catch(() => { });
+      this.$refs.remarkModal.init(this.liveDetail.id);
     },
     getLiveTrends(){ //直播趋势
       this.$http.get(`/sys/liveListSupervisory/getLiveOnlineNumTrend/${this.$route.query.id}`).then(({data:res})=>{
