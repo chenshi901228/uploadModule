@@ -46,16 +46,16 @@
       <el-descriptions title="提现账户">
         <el-descriptions-item
           :label="
-            info.userType === 1 ? '个人' : info.userType === 2 ? '企业' : '--'
+            info.userType === 1 ? '个人:' : info.userType === 2 ? '企业:' : '--'
           "
           >{{ info.username || "--" }}</el-descriptions-item
         >
         <el-descriptions-item
           :label="
             info.userType === 1
-              ? '身份证号'
+              ? '身份证号:'
               : info.userType === 2
-              ? '统一社会信用代码'
+              ? '统一社会信用代码:'
               : '--'
           "
           >{{ info.companyCreditCode || "--" }}</el-descriptions-item
