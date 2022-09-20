@@ -328,6 +328,7 @@
               type="text"
               icon="el-icon-view"
               size="small"
+              v-if="row.liveState == 2"
               @click="checkRemark(row)"
               >查看备注</el-button
             >
