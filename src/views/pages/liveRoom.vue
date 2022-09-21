@@ -379,7 +379,8 @@
                         1,
                         item.message.type,
                         item.message.connectType,
-                        item.userInfo.userId
+                        item.userInfo.userId,
+                        item.userInfo.nickName
                       )
                     "
                     v-if="!item.connectStatus"
@@ -1011,6 +1012,7 @@ export default {
               item.getReplyConnectLoading = false
             }
           });
+          console.log(this.connectMessageInfo,5555555)
           // this.$loading().close();
           
           if (this.roomId != streamItem.streamID) {
@@ -1037,6 +1039,16 @@ export default {
         // 流删除，停止拉流
         console.log("流减少------------", streamList);
         streamList.forEach((streamItem) => {
+          let arr = JSON.stringify(this.connectMessageInfo)
+          arr = JSON.parse(arr)
+          arr.forEach(item => {
+            if (item.userInfo.userId === streamItem.user.userID) {
+             let ind = this.connectMessageInfo.findIndex(item => item.userInfo.userId === streamItem.user.userID)
+              if(ind>-1){
+                this.connectMessageInfo.splice(ind, 1)
+              }
+            }
+          });
           this.$http.post("/sys/mixedflow/finishEvenWheat", {
               UserId: streamItem.user.userID, //用户ID；
               RoomId: this.roomId, //房间ID；
@@ -1168,11 +1180,11 @@ export default {
     async shareDesk(){
       this.screenStream = await this.zg.createStream({ //屏幕共享流
         screen: {
-          videoQuality: 4,
-          width:1920,
-          height:1080,
-          frameRate: 15,
-          bitrate: 2000,
+          videoQuality: 2,
+          // width:1920,
+          // height:1080,
+          // frameRate: 15,
+          // bitrate: 2000,
         },
       });
       let res = await this.zg.startPublishingStream('shareDesk'+this.roomId, this.screenStream); //共享桌面流
@@ -1415,12 +1427,12 @@ export default {
       // 创建流和渲染
       this.checkStream = await this.zg.createStream({ //摄像头
         camera: {
-          videoQuality: 4,
-          width: parseInt(document.getElementById('videoEle').getBoundingClientRect().width * 1),
-          height: parseInt(document.getElementById('videoEle').getBoundingClientRect().height * 1),
-          frameRate: 15,
-          bitrate: 2000,
-          videoInput:this.cameraId,
+          videoQuality: 3,
+          // width: parseInt(document.getElementById('videoEle').getBoundingClientRect().width * 1),
+          // height: parseInt(document.getElementById('videoEle').getBoundingClientRect().height * 1),
+          // frameRate: 15,
+          // bitrate: 2000,
+          // videoInput:this.cameraId,
         },
       });
     },
@@ -1500,12 +1512,12 @@ export default {
       this.stream = await this.zg.createStream({ //摄像头
         camera: {
           videoQuality: 4,
-          // width: parseInt(document.getElementById('videoEle').getBoundingClientRect().width * 1),
-          // height: parseInt(document.getElementById('videoEle').getBoundingClientRect().height * 1),
-          width:1280,
-          height:720,
-          frameRate: 20,
-          bitrate: 1500,
+          width: parseInt(document.getElementById('videoEle').getBoundingClientRect().width * 1),
+          height: parseInt(document.getElementById('videoEle').getBoundingClientRect().height * 1),
+          // width:1280,
+          // height:720,
+          frameRate: 15,
+          bitrate: 2000,
           videoInput:this.cameraId,
         },
         // custom: {
@@ -2070,7 +2082,7 @@ export default {
         );
       }
     },
-    replyConnect(status, type, connectType, userId) {
+    replyConnect(status, type, connectType, userId,nickName) {
       //同意申请连麦
       let messageInfo = {
         type,
@@ -2084,25 +2096,42 @@ export default {
         if(arr.length==3) return this.$message.warning("当前连麦人数已达上限")
         //同意
         // this.$loading({ background: "rgba(0,0,0,.5)", text: "连接中..." });
-        
+        //连接超时
+        var timer = setTimeout(()=>{
+          let arr = JSON.stringify(this.connectMessageInfo)
+          arr = JSON.parse(arr)
+          console.log(arr,333333333)
+          arr.forEach(item=>{
+            if(item.getReplyConnectLoading){
+              this.$message.error(nickName+"连接失败")
+              messageInfo.replyType = -3
+              this.sendMessage(messageInfo)
+              const ind = this.connectMessageInfo.findIndex(item => item.userInfo.userId === userId)
+              if(ind>-1){
+                this.connectMessageInfo.splice(ind, 1)
+              }
+            }
+          })
+          clearTimeout(timer)
+        },10000)
         this.sendMessage(messageInfo);
         this.connectMessageInfo.forEach((item) => {
           if (item.userInfo.userId === userId) {
             item.connectStatus = true;
-            item.getReplyConnectLoading = userId
+            item.getReplyConnectLoading = true
           }
         });
+
       } else {
         //拒绝
-        if (this.connectMessageInfo.length == 1) {
-          this.applyShow = false;
-        }
         messageInfo.replyType = -2;
         this.sendMessage(messageInfo);
         const ind = this.connectMessageInfo.findIndex(
           (item) => item.userInfo.userId === userId
         );
-        this.connectMessageInfo.splice(ind, 1);
+        if(ind>-1){
+          this.connectMessageInfo.splice(ind, 1);
+        }
       }
     },
     hangup(info) {
@@ -2118,7 +2147,9 @@ export default {
       const ind = this.connectMessageInfo.findIndex(
         (item) => item.userInfo.userId === info.userInfo.userId
       );
-      this.connectMessageInfo.splice(ind, 1); //移除挂断的一条连麦信息
+      if(ind>-1){
+        this.connectMessageInfo.splice(ind, 1); //移除挂断的一条连麦信息
+      }
     },
     confirmQuit(){//退出直播间，关闭页面
       window.close()
@@ -2126,8 +2157,10 @@ export default {
   },
   destroyed() {
     // this.stopPublishingStream
-    let arr = this.connectMessageInfo.filter(item=>item.connectStatus)
-    arr.forEach(item=>{
+    let arr = JSON.stringify(this.connectMessageInfo)
+    arr = JSON.parse(arr)
+    let connectArr = arr.filter(item=>item.connectStatus)
+    connectArr.forEach(item=>{
       this.hangup(item)
     })
   },
