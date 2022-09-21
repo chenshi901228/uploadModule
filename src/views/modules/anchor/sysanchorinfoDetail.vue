@@ -280,7 +280,7 @@
               <el-input v-model="diaForm.bankInfo.bankAccount" disabled style="border-radius:5px" size="small"></el-input>
             </div>
           </div>
-          <div style="display:flex;width: 48%;align-items: center;">
+          <div v-if="diaForm.userType==2 || diaForm.userType=='企业'" style="display:flex;width: 48%;align-items: center;">
             <div style="text-align: right;width:140px">验证金额</div>
             <div style="display: flex; margin:0 10px ; width: calc(100% - 100px );">
               <el-input v-model="diaForm.bankInfo.attestAmount" disabled style="border-radius:5px" size="small"></el-input>
