@@ -898,6 +898,7 @@ export default {
       isMuteLive:false,
       livePlayerList:[],//流列表
       connectTimer:{},//超时定时器
+      isOpenDesktopSharing:false,//是否开启屏幕共享
     };
   },
   created() {
@@ -949,6 +950,7 @@ export default {
     this.zg.setSoundLevelDelegate(true,1000)
     //屏幕共享中断
     this.zg.on("screenSharingEnded",(stream)=>{
+      console.log(stream,'屏幕共享')
       if(!stream.active){
         this.$http.post('/sys/mixedflow/closeDesktopSharing',{RoomId:this.roomId}).then(res=>{
           if(res.data.code==0){
@@ -958,6 +960,8 @@ export default {
             })
             this.zg.stopPublishingStream('shareDesk'+this.roomId)
             this.zg.destroyStream(this.screenStream);
+            this.isOpenDesktopSharing = false
+            localStorage.setItem('isOpenDesktopSharing',false)
           }
         })
       }
@@ -1113,6 +1117,7 @@ export default {
             this.liveStatus = true
             this.isRecord = res.data.data.startRecord==1
             this.pauseRecord = res.data.data.pauseRecord==1
+            this.isOpenDesktopSharing = JSON.parse(localStorage.getItem('isOpenDesktopSharing'))
             this.getTimUserSig()
           }).catch(()=>{
             window.close()
@@ -1194,6 +1199,9 @@ export default {
       }
     },
     async shareDesk(){
+      if(this.isOpenDesktopSharing){
+        return this.$message.warning('请先关闭当前屏幕共享')
+      }
       this.screenStream = await this.zg.createStream({ //屏幕共享流
         screen: {
           videoQuality: 4,
@@ -1209,6 +1217,8 @@ export default {
         this.$http.post('/sys/mixedflow/openDesktopSharing',{RoomId:this.roomId,StreamId:'shareDesk'+this.roomId}).then(res=>{
           console.log(res)
           if(res.data.code!= 0) return this.$message.error(res.data.msg)
+          this.isOpenDesktopSharing = true
+          localStorage.setItem('isOpenDesktopSharing',JSON.stringify(true))
           this.$message({
             message:'共享开启成功',
             type:'success'
@@ -1798,6 +1808,16 @@ export default {
       this.userName = userInfo.username;
       this.userInfo = userInfo;
       this.userInfo.nickName = userInfo.username;
+      if(this.isOpenDesktopSharing){ //关闭屏幕共享
+        this.$http.post('/sys/mixedflow/closeDesktopSharing',{RoomId:this.roomId}).then(res=>{
+          if(res.data.code==0){
+            this.zg.stopPublishingStream('shareDesk'+this.roomId)
+            this.zg.destroyStream(this.screenStream);
+            this.isOpenDesktopSharing = false
+            localStorage.setItem('isOpenDesktopSharing',JSON.stringify(false))
+          }
+        })
+      }
       let options = {
         SDKAppID: 1400341701, // 接入时需要将0替换为您的即时通信 IM 应用的 SDKAppID
       };
