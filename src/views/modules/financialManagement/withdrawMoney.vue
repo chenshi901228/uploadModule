@@ -241,7 +241,7 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="depositBank"
+          prop="depositBankName"
           label="开户银行"
           min-width="120px"
           header-align="center"
@@ -249,7 +249,7 @@
           show-overflow-tooltip
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.depositBank || "--" }}</span>
+            <span>{{ scope.row.depositBankName || "--" }}</span>
           </template></el-table-column
         >
         <el-table-column
