@@ -304,8 +304,8 @@
               </video>
               <video
                 autoplay
-                muted
                 v-else
+                muted
                 id="videoEle"
                 :src-object.prop="stream"
                 class="push_video"
@@ -338,7 +338,6 @@
                 >
                   <video
                     autoplay
-                    muted
                     :src-object.prop="item.stream"
                     :style="{
                       width:
@@ -643,7 +642,6 @@
           <div class="beautify_set">
             <video
               autoplay
-              muted
               :src-object.prop="stream"
               class="beautify_video"
               v-if="beautifyDialog"
@@ -896,12 +894,16 @@ export default {
       microphoneStatus:true,
       liveInfo:{},//结束直播详情
       isMuteLive:false,
+      livePlayerList:[],//流列表
+      connectTimer:{},//超时定时器
+      isOpenDesktopSharing:false,//是否开启屏幕共享
     };
   },
   created() {
   },
   computed: {},
   async mounted() {
+    window.addEventListener('beforeunload', e => this.beforeunloadHandler(e))
     document.addEventListener("click",(e)=>{
       if(e.target.className&&e.target.className.indexOf('set_up') == -1){
         this.showBtn = false
@@ -946,6 +948,7 @@ export default {
     this.zg.setSoundLevelDelegate(true,1000)
     //屏幕共享中断
     this.zg.on("screenSharingEnded",(stream)=>{
+      console.log(stream,'屏幕共享')
       if(!stream.active){
         this.$http.post('/sys/mixedflow/closeDesktopSharing',{RoomId:this.roomId}).then(res=>{
           if(res.data.code==0){
@@ -955,6 +958,8 @@ export default {
             })
             this.zg.stopPublishingStream('shareDesk'+this.roomId)
             this.zg.destroyStream(this.screenStream);
+            this.isOpenDesktopSharing = false
+            localStorage.setItem('isOpenDesktopSharing',false)
           }
         })
       }
@@ -1004,6 +1009,7 @@ export default {
         // 流新增，开始拉流
         console.log("流新增------------", streamList);
         streamList.forEach((streamItem) => {
+          this.livePlayerList.push(streamItem)
           this.connectMessageInfo.forEach(async (item) => {
             if (item.userInfo.userId === streamItem.user.userID) {
               item.stream = await this.zg.startPlayingStream(
@@ -1012,7 +1018,7 @@ export default {
               item.getReplyConnectLoading = false
             }
           });
-          console.log(this.connectMessageInfo,5555555)
+          console.log(this.livePlayerList,5555555)
           // this.$loading().close();
           
           if (this.roomId != streamItem.streamID) {
@@ -1039,6 +1045,11 @@ export default {
         // 流删除，停止拉流
         console.log("流减少------------", streamList);
         streamList.forEach((streamItem) => {
+          let index = this.livePlayerList.findIndex(item => item.streamID === streamItem.streamID)
+					if(index>-1){
+						this.livePlayerList.splice(index, 1)
+          }
+          console.log("流减少后流list------------", this.livePlayerList);
           let arr = JSON.stringify(this.connectMessageInfo)
           arr = JSON.parse(arr)
           arr.forEach(item => {
@@ -1066,6 +1077,13 @@ export default {
     })
   },  
   methods: {
+    beforeunloadHandler(e) { //关闭页面提示
+      e = e || window.event
+      if (e) {
+        e.returnValue = '关闭提示'
+      }
+      return '关闭提示'
+    },
     streamAddress(){
       if(this.liveStatus){
         this.streamAddressDialog = true
@@ -1097,6 +1115,7 @@ export default {
             this.liveStatus = true
             this.isRecord = res.data.data.startRecord==1
             this.pauseRecord = res.data.data.pauseRecord==1
+            this.isOpenDesktopSharing = JSON.parse(localStorage.getItem('isOpenDesktopSharing'))
             this.getTimUserSig()
           }).catch(()=>{
             window.close()
@@ -1178,13 +1197,16 @@ export default {
       }
     },
     async shareDesk(){
+      if(this.isOpenDesktopSharing){
+        return this.$message.warning('请先关闭当前屏幕共享')
+      }
       this.screenStream = await this.zg.createStream({ //屏幕共享流
         screen: {
-          videoQuality: 2,
-          // width:1920,
-          // height:1080,
-          // frameRate: 15,
-          // bitrate: 2000,
+          videoQuality: 4,
+          width:1920,
+          height:1080,
+          frameRate: 15,
+          bitrate: 2000,
         },
       });
       let res = await this.zg.startPublishingStream('shareDesk'+this.roomId, this.screenStream); //共享桌面流
@@ -1193,6 +1215,8 @@ export default {
         this.$http.post('/sys/mixedflow/openDesktopSharing',{RoomId:this.roomId,StreamId:'shareDesk'+this.roomId}).then(res=>{
           console.log(res)
           if(res.data.code!= 0) return this.$message.error(res.data.msg)
+          this.isOpenDesktopSharing = true
+          localStorage.setItem('isOpenDesktopSharing',JSON.stringify(true))
           this.$message({
             message:'共享开启成功',
             type:'success'
@@ -1540,6 +1564,9 @@ export default {
         //   bitrate: 2000,
         // },
       });
+      //设置关闭视频流时静态图片
+      let res = await this.zg.setDummyCaptureImagePath('https://live-mini-oss-test-1257778766.cos.ap-beijing.myqcloud.com/liveImages/web_live_wait_hz.png',this.stream)
+      console.log(res,656565556)
       // Step4
       this.startPublishingStream();
     },
@@ -1561,6 +1588,22 @@ export default {
                   console.log(res);
                   this.streamUrl = res.data.data.Data.PlayInfo[0].FLV
                   this.$message({ message: "刷新成功", type: "success" });
+                  if(this.livePlayerList.length){
+                    let arr = JSON.stringify(this.livePlayerList)
+                    arr = JSON.parse(arr)
+                    arr.forEach(item=>{
+                      item.extraInfo = JSON.parse(item.extraInfo)
+                      //挂断
+                      let messageInfo = {
+                        type: 5, //消息类型(1:普通信息、2:关注信息、3:提问信息、4:礼物信息、5:语音连麦信息：{1、同意，2、拒绝}、6:视频连麦信息：{1、同意，2、拒绝}、)
+                        connectType: item.extraInfo.connectType,
+                        replyUserId: item.user.userID,
+                        replyType: -3, // 连麦后挂断
+                        isHigh:true,
+                      };
+                      this.sendMessage(messageInfo);
+                    })
+                  }
                 }).catch((err) => {
                   this.$message({ message: "刷新失败", type: "error" });
                 });
@@ -1781,6 +1824,16 @@ export default {
       this.userName = userInfo.username;
       this.userInfo = userInfo;
       this.userInfo.nickName = userInfo.username;
+      if(this.isOpenDesktopSharing){ //关闭屏幕共享
+        this.$http.post('/sys/mixedflow/closeDesktopSharing',{RoomId:this.roomId}).then(res=>{
+          if(res.data.code==0){
+            this.zg.stopPublishingStream('shareDesk'+this.roomId)
+            this.zg.destroyStream(this.screenStream);
+            this.isOpenDesktopSharing = false
+            localStorage.setItem('isOpenDesktopSharing',JSON.stringify(false))
+          }
+        })
+      }
       let options = {
         SDKAppID: 1400341701, // 接入时需要将0替换为您的即时通信 IM 应用的 SDKAppID
       };
@@ -1882,6 +1935,10 @@ export default {
                 applyInfo.message.replyType === -1
                   ? this.$message("用户已取消连麦申请")
                   : this.$message("用户已断开连麦");
+                if(this.connectTimer[userId]){
+                  clearTimeout(this.connectTimer[userId])
+                  delete this.connectTimer[userId]
+                }
                 this.$loading().close();
               }
             }
@@ -2129,6 +2186,7 @@ export default {
           })
           clearTimeout(timer)
         },10000)
+        this.connectTimer[userId] = timer
         this.sendMessage(messageInfo);
         this.connectMessageInfo.forEach((item) => {
           if (item.userInfo.userId === userId) {
@@ -2150,6 +2208,10 @@ export default {
       }
     },
     hangup(info) {
+      if(this.connectTimer[info.userInfo.userId]){
+        clearTimeout(this.connectTimer[info.userInfo.userId])
+        delete this.connectTimer[info.userInfo.userId]
+      }
       //挂断
       let messageInfo = {
         type: info.message.type, //消息类型(1:普通信息、2:关注信息、3:提问信息、4:礼物信息、5:语音连麦信息：{1、同意，2、拒绝}、6:视频连麦信息：{1、同意，2、拒绝}、)
