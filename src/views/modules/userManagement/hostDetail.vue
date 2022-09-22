@@ -795,7 +795,7 @@ export default {
             amount: "提现金额",
             accountName: "账户姓名",
             bankAccount: "银行账户",
-            depositBank: "开户银行",
+            depositBankName: "开户银行",
             branchName: "支行名称",
             address: "开户行所在地",
             createDate: "提现时间",

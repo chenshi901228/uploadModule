@@ -32,14 +32,16 @@
                 </el-col>
                 <el-col :span="12">
                   <el-form-item label="提现金额" prop="amount">
-                    <el-input
+                    <el-input-number
                       v-model="withdrawForm.amount"
+                      :controls='false'
                       placeholder="请输入"
-                      type="number"
+                      :precision="2"
+                      :step="0.1"
                       :min="0"
                       :max="anchorDetails.anchorBalance"
                     >
-                    </el-input>
+                    </el-input-number>
                     <div>
                       <span style="color: red">（提现金额需大于0元）</span>
                     </div>
@@ -183,12 +185,15 @@
                 <el-row>
                   <el-col :span="12">
                     <el-form-item label="开票金额" >
-                      <el-input
+                      <el-input-number
                           v-model="amount"
                           placeholder="请输入"
+                          :controls='false'
+                          :precision="2"
+                          :step="0.1"
                           disabled
                         >
-                        </el-input>
+                        </el-input-number>
                       
                     </el-form-item>
                   </el-col>
@@ -446,7 +451,7 @@ export default {
           this.submitLoading = true
           this.$http
             .post("/sys/anchorWithdraw", {
-              amount: parseInt(this.amount),
+              amount: this.amount,
               uuid: getUUID(),
             })
             .then(({ data: res }) => {

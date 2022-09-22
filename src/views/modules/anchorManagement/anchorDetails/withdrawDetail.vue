@@ -64,7 +64,7 @@
           info.userType === 1 ? "个人" : info.userType === 2 ? "企业" : "--"
         }}</el-descriptions-item>
         <el-descriptions-item label="开户银行:">{{
-          info.depositBank || "--"
+          info.depositBankName || "--"
         }}</el-descriptions-item>
         <el-descriptions-item label="支行名称:">{{
           info.branchName || "--"

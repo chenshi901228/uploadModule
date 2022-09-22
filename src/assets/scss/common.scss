@@ -520,7 +520,8 @@ img {
     }
     .el-menu-item.is-active,
     .el-submenu.is-active > .el-submenu__title {
-      color: var(--themeColor) !important;
+      // color: var(--themeColor) !important;
+      color: #fff !important;
     }
     .el-submenu.is-opened > .el-submenu__title {
       color: rgba(0, 0, 0, 0.7) !important;
