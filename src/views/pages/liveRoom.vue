@@ -923,7 +923,7 @@ export default {
     }
   },
   async mounted() {
-    window.addEventListener('beforeunload', e => this.beforeunloadHandler(e))
+    window.addEventListener('beforeunload',this.beforeunloadHandler)
     document.addEventListener("click",(e)=>{
       if(e.target.className&&e.target.className.indexOf('set_up') == -1){
         this.showBtn = false
@@ -1052,6 +1052,15 @@ export default {
             }).then((res) => {
                 console.log(res);
               }).catch((err) => {
+                //混流失败挂断用户
+                let messageInfo = {
+                  type: 5, //消息类型(1:普通信息、2:关注信息、3:提问信息、4:礼物信息、5:语音连麦信息：{1、同意，2、拒绝}、6:视频连麦信息：{1、同意，2、拒绝}、)
+                  connectType: extraInfoObj.connectType,
+                  replyUserId: streamItem.user.userID,
+                  replyType: -3, // 连麦后挂断
+                  isHigh:true,
+                };
+                this.sendMessage(messageInfo);
               });
           }
         });
@@ -1214,10 +1223,10 @@ export default {
       this.screenStream = await this.zg.createStream({ //屏幕共享流
         screen: {
           videoQuality: 4,
-          width:1920,
-          height:1080,
-          frameRate: 15,
-          bitrate: 2000,
+          width:1280,
+          height:720,
+          frameRate: 60,
+          bitrate: 900,
         },
       });
       let res = await this.zg.startPublishingStream('shareDesk'+this.roomId, this.screenStream); //共享桌面流
@@ -1458,11 +1467,11 @@ export default {
       // 创建流和渲染
       this.checkStream = await this.zg.createStream({ //摄像头
         camera: {
-          videoQuality: 3,
-          // width: parseInt(document.getElementById('videoEle').getBoundingClientRect().width * 1),
-          // height: parseInt(document.getElementById('videoEle').getBoundingClientRect().height * 1),
-          // frameRate: 15,
-          // bitrate: 2000,
+          videoQuality: 2,
+          // width:1280,
+          // height:720,
+          // frameRate: 60,
+          // bitrate: 900,
           // videoInput:this.cameraId,
         },
       });
@@ -1558,12 +1567,10 @@ export default {
       this.stream = await this.zg.createStream({ //摄像头
         camera: {
           videoQuality: 4,
-          width: parseInt(document.getElementById('videoEle').getBoundingClientRect().width * 1),
-          height: parseInt(document.getElementById('videoEle').getBoundingClientRect().height * 1),
-          // width:1280,
-          // height:720,
-          frameRate: 15,
-          bitrate: 2000,
+          width:1280,
+          height:720,
+          frameRate: 60,
+          bitrate: 900,
           videoInput:this.cameraId,
         },
         // custom: {
@@ -1572,7 +1579,8 @@ export default {
         // },
       });
       //设置关闭视频流时静态图片
-      let res = await this.zg.setDummyCaptureImagePath('../../assets/img/web_live_wait.png',this.stream)
+      let res = await this.zg.setDummyCaptureImagePath(require('@/assets/img/web_live_wait.png'),this.stream)
+      console.log(res,'设置关闭视频流时静态图片')
       // Step4
       this.startPublishingStream();
     },
@@ -1587,7 +1595,7 @@ export default {
             type: "success",
           });
         } else {
-          setTimeout(()=>{
+          let timer = setTimeout(()=>{
             this.$http.post("/sys/mixedflow/startEvenWheat", { //重新进入直播间发起混流任务
                   RoomId: this.roomId, //房间ID；
                 }).then((res) => {
@@ -1609,7 +1617,9 @@ export default {
                       this.sendMessage(messageInfo);
                     })
                   }
+                  clearTimeout(timer)
                 }).catch((err) => {
+                  clearTimeout(timer)
                   this.$message({ message: "刷新失败,请刷新重试", type: "error" });
                 });
           },500)
@@ -1694,6 +1704,7 @@ export default {
             if (res.data.success && res.data.msg == "success") {
               this.$message({ message: "直播已关闭", type: "success" });
               this.liveStatus = false;
+              window.removeEventListener('beforeunload',this.beforeunloadHandler)
               this.tim.logout(); //退出IM
               this.tim.destroy();
               this.getEndLiveInfo()
