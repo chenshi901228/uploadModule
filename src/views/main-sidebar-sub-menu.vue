@@ -94,6 +94,7 @@ export default {
 }
 .navTab{
   .el-menu-item.is-active {
+    color: #fff !important;
     background-color: #2e3b42 !important;
   }
 }
