@@ -304,8 +304,8 @@
               </video>
               <video
                 autoplay
-                muted
                 v-else
+                muted
                 id="videoEle"
                 :src-object.prop="stream"
                 class="push_video"
@@ -338,7 +338,6 @@
                 >
                   <video
                     autoplay
-                    muted
                     :src-object.prop="item.stream"
                     :style="{
                       width:
