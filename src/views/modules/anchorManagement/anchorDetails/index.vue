@@ -1255,7 +1255,7 @@ export default {
             userType: "账户类型",
             accountName: "账户名称",
             bankAccount: "银行账号",
-            depositBank: "开户银行",
+            depositBankName: "开户银行",
             branchName: "支行名称",
             address: "开户行所在地",
             createDate: "提现时间",
