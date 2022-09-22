@@ -643,7 +643,6 @@
           <div class="beautify_set">
             <video
               autoplay
-              muted
               :src-object.prop="stream"
               class="beautify_video"
               v-if="beautifyDialog"
@@ -1551,6 +1550,9 @@ export default {
         //   bitrate: 2000,
         // },
       });
+      //设置关闭视频流时静态图片
+      let res = await this.zg.setDummyCaptureImagePath('https://live-mini-oss-test-1257778766.cos.ap-beijing.myqcloud.com/liveImages/web_live_wait_hz.png',this.stream)
+      console.log(res,656565556)
       // Step4
       this.startPublishingStream();
     },
