@@ -1257,6 +1257,9 @@ export default {
           this.stream,
           !data.status
         );
+
+        // let result = await this.zg.mutePublishStreamVideo(this.stream,true,false)
+        console.log(result,'摄像头')
         if (result) {
           this.deviceNav[1].status = !data.status;
         }
