@@ -1494,6 +1494,7 @@ export default {
     },
     // 获取token的方法
     getTokenFun(appID, userID) {
+      let apiUrl = window.SITE_CONFIG['apiURL']
       return new Promise((resolve, reject) => {
         const xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = (e) => {
@@ -1507,7 +1508,7 @@ export default {
         };
         xmlhttp.open(
           "GET",
-          `https://wsliveroom-alpha.zego.im:8282/token?app_id=${appID}&id_name=${userID}`,
+          `${apiUrl}/sys/mixedflow/getZegoToken?userId=${userID}`,
           true
         );
         xmlhttp.send(null);
@@ -1515,14 +1516,28 @@ export default {
     },
     // 获取token开启直播预览
     async startLive() {
-      if (!this.liveStatus) {
-        this.$loading({
-          background: "rgba(0,0,0,.5)",
-          text: "直播预览开启中...",
-        });
+      try {
+        if (!this.liveStatus) {
+          this.$loading({
+            background: "rgba(0,0,0,.5)",
+            text: "直播预览开启中...",
+          });
+        }
+        let res = await this.getTokenFun(this.appID, this.userID);
+        if(res) {
+          res = JSON.parse(res)
+        }
+        if(res && res.code == 0 && res.data && res.data.token) {
+          this.token = res.data.token
+          this.loginRoom();
+        }else {
+          this.$message.error("登录即构失败")
+          this.$loading().close()
+        }
+      }catch(err) {
+        this.$message.error("登录即构失败")
+        this.$loading().close()
       }
-      this.token = await this.getTokenFun(this.appID, this.userID);
-      this.loginRoom();
     },
     // 登陆房间
     async loginRoom() {
