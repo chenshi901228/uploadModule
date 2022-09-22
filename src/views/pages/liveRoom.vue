@@ -277,7 +277,11 @@
                 <div class="online_info">
                   <p>FPS：{{videoFPS}}</p>
                   <p>丢包率：{{videoPacketsLostRate}}</p>
-                  <p>网络状态：正常</p>
+                  <div>网络状态：
+                    <div >
+                      <span v-for="i in videoQualityNum" :key="i">1</span>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="screenShare" v-if="superboardShow">
@@ -900,8 +904,24 @@ export default {
     };
   },
   created() {
+   
   },
-  computed: {},
+  computed: {
+     videoQualityNum(){
+      switch(this.videoQuality){
+        case 0:
+        return 5;
+        case 1:
+        return 4;
+        case 2:
+        return 3;
+        case 3:
+        return 2;
+        case 4:
+        return 1;
+      }
+    }
+  },
   async mounted() {
     window.addEventListener('beforeunload', e => this.beforeunloadHandler(e))
     document.addEventListener("click",(e)=>{
@@ -918,7 +938,6 @@ export default {
     );
     //检测设备能力
     let checkSystemRes = await this.zg.checkSystemRequirements()
-    console.log(checkSystemRes,'55555')
     if(!checkSystemRes.camera){
       this.cameraStatus = checkSystemRes.camera
       this.$message.warning('请先打开摄像头权限')
@@ -936,7 +955,6 @@ export default {
 
     //获取摄像头列表
     this.zg.getCameras().then(res=>{
-      console.log('摄像头',res)
       this.camerasList = res
     })
    
@@ -948,7 +966,6 @@ export default {
     this.zg.setSoundLevelDelegate(true,1000)
     //屏幕共享中断
     this.zg.on("screenSharingEnded",(stream)=>{
-      console.log(stream,'屏幕共享')
       if(!stream.active){
         this.$http.post('/sys/mixedflow/closeDesktopSharing',{RoomId:this.roomId}).then(res=>{
           if(res.data.code==0){
@@ -983,7 +1000,7 @@ export default {
 
     this.zg.on("roomUserUpdate", (roomID, updateType, userList) => {
       // 其他用户进出房间的通知
-      console.log(userList);
+      // console.log(userList);
     });
 
     // 监听推流状态
@@ -996,7 +1013,7 @@ export default {
 
     this.zg.on("publishQualityUpdate", (streamID, stats) => {
       // 推流质量
-      console.log("推流质量----", streamID, stats);
+      // console.log("推流质量----", streamID, stats);
       this.streamID = streamID;
       this.videoFPS = stats.video.videoFPS.toFixed(2); //视频FPS
       this.videoPacketsLostRate = stats.video.videoPacketsLostRate.toFixed(2); //视频丢包率
@@ -1018,9 +1035,6 @@ export default {
               item.getReplyConnectLoading = false
             }
           });
-          console.log(this.livePlayerList,5555555)
-          // this.$loading().close();
-          
           if (this.roomId != streamItem.streamID) {
             let extraInfo = streamItem.extraInfo;
             let extraInfoObj = null;
@@ -1049,7 +1063,6 @@ export default {
 					if(index>-1){
 						this.livePlayerList.splice(index, 1)
           }
-          console.log("流减少后流list------------", this.livePlayerList);
           let arr = JSON.stringify(this.connectMessageInfo)
           arr = JSON.parse(arr)
           arr.forEach(item => {
@@ -1073,7 +1086,6 @@ export default {
     //监听本地预览流麦克风音浪大小
     this.zg.on('capturedSoundLevelUpdate',(res)=>{
       this.soundWaves = Math.round(res)
-      console.log(this.soundWaves,565665655655988)
     })
   },  
   methods: {
@@ -1137,7 +1149,6 @@ export default {
       })
     },
     updateOnline() {//网络状态
-      console.log(navigator.onLine)
       if(!navigator.onLine){
         // return this.$message.error('当前无网络连接，请检查网络')
         return this.$confirm("当前无网络连接，请检查网络", "提示", {
@@ -1210,7 +1221,6 @@ export default {
         },
       });
       let res = await this.zg.startPublishingStream('shareDesk'+this.roomId, this.screenStream); //共享桌面流
-      console.log(res)
       if(res){
         this.$http.post('/sys/mixedflow/openDesktopSharing',{RoomId:this.roomId,StreamId:'shareDesk'+this.roomId}).then(res=>{
           console.log(res)
@@ -1224,9 +1234,6 @@ export default {
         })
       }
     },
-    uploadFile({file}){
-      console.log(file)
-    },
     selectCamera(value){ //选择摄像头
       this.cameraId = value
       this.checkCamera()
@@ -1235,7 +1242,6 @@ export default {
       this.microphoneId = value
     },
     changeTrends(){
-      console.log(this.trends)
       this.trends==1?this.trends=0:this.trends=1
     },
     quitBoard(){
@@ -1253,12 +1259,12 @@ export default {
         }
       } else if (data.type === "camera") {
         //摄像头
-        let result = await this.zg.enableVideoCaptureDevice(
-          this.stream,
-          !data.status
-        );
+        // let result = await this.zg.enableVideoCaptureDevice(
+        //   this.stream,
+        //   !data.status
+        // );
 
-        // let result = await this.zg.mutePublishStreamVideo(this.stream,true,false)
+        let result = await this.zg.mutePublishStreamVideo(this.stream,this.deviceNav[1].status,!this.deviceNav[1].status)
         console.log(result,'摄像头')
         if (result) {
           this.deviceNav[1].status = !data.status;
@@ -1330,7 +1336,6 @@ export default {
           })
         }else if(this.isRecord&&!this.pauseRecord){ //暂停录制
           this.$http.post("/sys/mixedflow/pauseRecord", {}).then(res=>{
-            console.log(res)
             if(res.data.code===0){
               this.pauseRecord = true //暂停录制状态
               this.$message({
@@ -1379,7 +1384,6 @@ export default {
           document.querySelector('#videoEle').style.height = 'calc(100% - 60px)'
         }
       }
-      console.log(this.headerNavActive)
     },
     handleClick(tab, event) {
       this.params.page=1
@@ -1568,15 +1572,13 @@ export default {
         // },
       });
       //设置关闭视频流时静态图片
-      let res = await this.zg.setDummyCaptureImagePath('https://live-mini-oss-test-1257778766.cos.ap-beijing.myqcloud.com/liveImages/web_live_wait_hz.png',this.stream)
-      console.log(res,656565556)
+      let res = await this.zg.setDummyCaptureImagePath('../../assets/img/web_live_wait.png',this.stream)
       // Step4
       this.startPublishingStream();
     },
     // 开始推流、开始直播
     async startPublishingStream() {
       let res = await this.zg.startPublishingStream(this.roomId, this.stream);
-      console.log(res,'666666666');
       if (res) {
         this.$loading().close();
         if (!this.liveStatus) {
@@ -1585,10 +1587,10 @@ export default {
             type: "success",
           });
         } else {
-          this.$http.post("/sys/mixedflow/startEvenWheat", { //重新进入直播间发起混流任务
+          setTimeout(()=>{
+            this.$http.post("/sys/mixedflow/startEvenWheat", { //重新进入直播间发起混流任务
                   RoomId: this.roomId, //房间ID；
                 }).then((res) => {
-                  console.log(res);
                   this.streamUrl = res.data.data.Data.PlayInfo[0].FLV
                   this.$message({ message: "刷新成功", type: "success" });
                   if(this.livePlayerList.length){
@@ -1608,8 +1610,9 @@ export default {
                     })
                   }
                 }).catch((err) => {
-                  this.$message({ message: "刷新失败", type: "error" });
+                  this.$message({ message: "刷新失败,请刷新重试", type: "error" });
                 });
+          },500)
         }
       }
     },
@@ -1709,7 +1712,6 @@ export default {
     },
     async getEndLiveInfo(){ //结束获取直播详情
       let {data:res} = await this.$http.get("/sys/liveList/getNearLive")
-      console.log(res)
       if(res.code == -10099){
         setTimeout(()=>{
           this.getEndLiveInfo()
@@ -1734,9 +1736,6 @@ export default {
     async openEffect() {
       if(this.stream.active){
         let res = await this.zg.setEffectsBeauty(this.stream, true, this.beautifyParams);
-        if(res){
-          console.log('sdasdasdasdsadasd',res)
-        }
       }
     },
     changeEffect(value){
@@ -1868,7 +1867,6 @@ export default {
       //接收到消息
       const event = value;
       let list = [];
-      console.log("收到消息1111", event);
       event.data.forEach((item) => {
         if (item.type === "TIMGroupSystemNoticeElem") {
           // 被PC端禁播
@@ -1902,7 +1900,6 @@ export default {
             list.push(item);
             let applyInfo = item.payload.data;
             if (applyInfo.message.type === 3) {
-              console.log("提问消息");
               this.questionMessageInfo.push(applyInfo);
             }
             //连麦信息
@@ -1924,7 +1921,6 @@ export default {
                 if (arr.indexOf(applyInfo.userInfo.userId) === -1) {
                   this.connectMessageInfo.push(applyInfo);
                 }
-                console.log("连麦列表", this.connectMessageInfo);
               }
               if (
                 applyInfo.message.replyType &&
@@ -1965,7 +1961,6 @@ export default {
         let barragediv = document.getElementById("barrage");
         barragediv.scrollTop = barragediv.scrollHeight;
       });
-      console.log("barrageData", this.barrageData);
     },
     // 获取发送类型
     getToAccount() {
@@ -2073,10 +2068,8 @@ export default {
       this.$http
         .get(`/sys/mixedflow/getOnlineUsers`,{params})
         .then(({data:res}) => {
-          console.log("在线用户列表", res.data.list);
           if(!res.code==0) return this.$message.error(res.msg)
           let data = res.data.list;
-          console.log(data)
           this.studentList = this.studentList.concat(data)
           this.total = res.data.total
         });
@@ -2096,7 +2089,6 @@ export default {
         .get(`/sys/anchorProduct/live/pageWithLive`,{params})
         .then((res) => {
           if(!res.data.code==0) return this.$message.error(res.data.msg)
-          console.log("主播推荐商品", res.data.data);
           let data = res.data.data.list;
           data.forEach((item) => {
             if (item.productTag) {
@@ -2175,7 +2167,6 @@ export default {
         var timer = setTimeout(()=>{
           let arr = JSON.stringify(this.connectMessageInfo)
           arr = JSON.parse(arr)
-          console.log(arr,333333333)
           arr.forEach(item=>{
             if(item.getReplyConnectLoading){
               this.$message.error(nickName+"连接失败")
