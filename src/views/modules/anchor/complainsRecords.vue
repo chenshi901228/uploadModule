@@ -169,6 +169,15 @@
           </template>
         </el-table-column>
         <el-table-column
+          prop="anchorRealName"
+          label="主播姓名"
+          header-align="center"
+          align="center"
+          width="150"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
           prop="anchorUserName"
           label="投诉主播昵称"
           header-align="center"
