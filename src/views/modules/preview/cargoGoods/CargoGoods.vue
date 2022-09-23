@@ -200,13 +200,13 @@
           header-align="center"
           align="center"
         ></el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="price"
           label="销售价格"
           header-align="center"
           align="center"
         >
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="productType"
           label="商品类型"
@@ -223,14 +223,14 @@
             {{ scope.row.isFree === 1 ? "是" : "否" }}
           </template></el-table-column
         >
-        <el-table-column
+        <!-- <el-table-column
           prop="linkedProductId"
           label="关联产品编号"
           header-align="center"
           align="center"
           width="280"
           show-overflow-tooltip
-        ></el-table-column>
+        ></el-table-column> -->
         <el-table-column
           prop="isAdd"
           label="添加状态"
