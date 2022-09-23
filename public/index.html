@@ -31,20 +31,41 @@
   <!-- 开发环境 -->
   <% if (process.env.VUE_APP_NODE_ENV === 'dev') { %>
     <!-- <script>window.SITE_CONFIG['apiURL'] = 'http://192.168.250.49:28080';</script> -->
-    <!-- <script>window.SITE_CONFIG['apiURL'] = 'http://192.168.250.195:28080';</script> -->
-    <script>window.SITE_CONFIG['apiURL'] = 'https://zhibo-test.dayuzhongxue.com';</script>
+    <script>
+      window.SITE_CONFIG['apiURL'] = 'https://zhibo-test.dayuzhongxue.com';
+      // window.SITE_CONFIG['apiURL'] = 'http://192.168.250.195:28080';
+      window.SITE_CONFIG['appID'] =  467572390;
+      window.SITE_CONFIG['server'] =  "wss://webliveroom467572390-api.imzego.com/ws";
+      window.SITE_CONFIG['SDKAppID'] =  1400741995
+    </script>
+    <!-- <script>window.SITE_CONFIG['apiURL'] = 'https://zhibo-test.dayuzhongxue.com';</script> -->
   <% } %>
   <!-- 集成测试环境 -->
   <% if (process.env.VUE_APP_NODE_ENV === 'prod:sit') { %>
-    <script>window.SITE_CONFIG['apiURL'] = ' http://192.168.250.195:28080';</script>
+    <script>
+      window.SITE_CONFIG['apiURL'] = ' http://192.168.250.195:28080';
+      window.SITE_CONFIG['appID'] =  467572390;
+      window.SITE_CONFIG['server'] =  "wss://webliveroom-test.imzego.com/ws";
+      window.SITE_CONFIG['SDKAppID'] =  1400741995;
+    </script>
   <% } %>
   <!-- 验收测试环境 -->
   <% if (process.env.VUE_APP_NODE_ENV === 'prod:uat') { %>
-    <script>window.SITE_CONFIG['apiURL'] = ' http://192.168.250.195:28080';</script>
+    <script>
+      window.SITE_CONFIG['apiURL'] = ' http://192.168.250.195:28080';
+      window.SITE_CONFIG['appID'] =  467572390;
+      window.SITE_CONFIG['server'] =  "wss://webliveroom-test.imzego.com/ws";
+      window.SITE_CONFIG['SDKAppID'] =  1400741995;
+    </script>
   <% } %>
   <!-- 生产环境 -->
   <% if (process.env.VUE_APP_NODE_ENV === 'prod') { %>
-    <script>window.SITE_CONFIG['apiURL'] = 'https://zhibo-test.dayuzhongxue.com';</script>
+    <script>
+      window.SITE_CONFIG['apiURL'] = 'https://zhibo-test.dayuzhongxue.com';
+      window.SITE_CONFIG['appID'] =  467572390;
+      window.SITE_CONFIG['server'] =  "wss://webliveroom467572390-api.imzego.com/ws";
+      window.SITE_CONFIG['SDKAppID'] =  1400741995
+    </script>
   <% } %>
 </head>
 <body>
