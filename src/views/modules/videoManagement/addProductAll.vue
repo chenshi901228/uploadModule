@@ -276,7 +276,7 @@ export default {
       tableItem: [
         { prop: "productImage", label: "商品图片" },
         { prop: "productName", label: "商品名称", width: 180 },
-        { prop: "oldPrice", label: "带货价格" },
+        { prop: "oldPrice", label: "商品价格" },
         // { prop: "price", label: "销售价格" },
         { prop: "productType", label: "商品类型" },
         { prop: "isFree", label: "是否免费" },
