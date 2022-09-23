@@ -1514,12 +1514,12 @@ export default {
       // 创建流和渲染
       this.checkStream = await this.zg.createStream({ //摄像头
         camera: {
-          videoQuality: 2,
-          // width:1280,
-          // height:720,
-          // frameRate: 60,
-          // bitrate: 900,
-          // videoInput:this.cameraId,
+          videoQuality: 4,
+          width:1280,
+          height:720,
+          frameRate: 60,
+          bitrate: 900,
+          videoInput:this.cameraId,
         },
       });
     },
@@ -1545,6 +1545,7 @@ export default {
           let res = await this.zg.useVideoDevice(this.stream,this.cameraId) //切换摄像头
           let resTwo = await this.zg.useAudioDevice(this.stream,this.microphoneId) //切换麦克风
           if(res&&resTwo){
+            this.deviceDialogVisible = false
             this.$message.success('设备切换成功')
           }
         }else{
