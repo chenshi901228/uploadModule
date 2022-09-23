@@ -2967,7 +2967,7 @@ p {
           }
         }
       }
-      
+
       .el-main {
         padding: 0 0 0 20px;
         .live_content {
@@ -3076,7 +3076,7 @@ p {
             }
             .device_set{
               position: absolute;
-              bottom: 10px;
+              bottom: 20px;
               right: 10px;
               z-index: 2;
               display: flex;
