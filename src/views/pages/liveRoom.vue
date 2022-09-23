@@ -2967,6 +2967,7 @@ p {
           }
         }
       }
+      
       .el-main {
         padding: 0 0 0 20px;
         .live_content {
