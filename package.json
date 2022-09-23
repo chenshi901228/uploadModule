@@ -57,7 +57,7 @@
     "vuex": "^3.5.1",
     "vxe-table": "^2.9.19",
     "xe-utils": "^2.7.10",
-    "zego-express-engine-webrtc": "^2.15.0",
+    "zego-express-engine-webrtc": "^2.19.0",
     "zego-superboard-web": "^2.2.2"
   },
   "devDependencies": {
