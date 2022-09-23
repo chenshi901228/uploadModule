@@ -277,9 +277,12 @@
                 <div class="online_info">
                   <p>FPS：{{videoFPS}}</p>
                   <p>丢包率：{{videoPacketsLostRate}}</p>
-                  <div>网络状态：
-                    <div >
-                      <span v-for="i in videoQualityNum" :key="i">1</span>
+                  <div class="online_info_status">
+                    <p>网络状态：
+                      <span :style="videoQualityStyle">{{videoQualityText}}</span>
+                    </p>
+                    <div>
+                      <span :style="videoQualityNumStyle" v-for="i in videoQualityNum" :key="i"></span>
                     </div>
                   </div>
                 </div>
@@ -907,7 +910,7 @@ export default {
    
   },
   computed: {
-     videoQualityNum(){
+    videoQualityNum(){
       switch(this.videoQuality){
         case 0:
         return 5;
@@ -919,6 +922,50 @@ export default {
         return 2;
         case 4:
         return 1;
+      }
+    },
+    videoQualityText(){
+      switch(this.videoQuality){
+        case 0:
+        return '极好';
+        case 1:
+        return '好';
+        case 2:
+        return '中等';
+        case 3:
+        return '差';
+        case 4:
+        return '极差';
+      }
+    },
+    videoQualityStyle(){
+      let style = ''
+      switch(this.videoQuality){
+        case 0:
+        return style+='color:#00FF31;';
+        case 1:
+        return style+='color:#00FF31;';
+        case 2:
+        return style+='color:#FF8924;';
+        case 3:
+        return style+='color:#FE0013;';
+        case 4:
+        return style+='color:#FE0013;';
+      }
+    },
+    videoQualityNumStyle(){
+      let style = ''
+      switch(this.videoQuality){
+        case 0:
+        return style+='backgroudColor:#00FF31;';
+        case 1:
+        return style+='backgroudColor:#00FF31;';
+        case 2:
+        return style+='backgroudColor:#FF8924;';
+        case 3:
+        return style+='backgroudColor:#FE0013;';
+        case 4:
+        return style+='backgroudColor:#FE0013;';
       }
     }
   },
@@ -1710,7 +1757,7 @@ export default {
               this.getEndLiveInfo()
             } else {
               this.$nextTick(() => {
-                
+
                 // 以服务的方式调用的 Loading 需要异步关闭
                 this.$loading().close();
               });
@@ -2957,6 +3004,41 @@ p {
                 font-size: 16px;
                 > p {
                   margin-right: 10px;
+                }
+                .online_info_status{
+                  display: flex;
+                  >div{
+                    display: flex;
+                    align-items: flex-end;
+                    justify-content: flex-start;
+                    margin-bottom: 6px;
+                    margin-left: 4px;
+                    width: 26px;
+                    >span{
+                      display: inline-block;
+                      width:4px;
+                      background: #00FF31;
+                    }
+                    >span:nth-child(1){
+                      height:8px;
+                      margin-right: 2px;
+                    }
+                    >span:nth-child(2){
+                      height:10px;
+                      margin-right: 2px;
+                    }
+                    >span:nth-child(3){
+                      height:12px;
+                      margin-right: 2px;
+                    }
+                    >span:nth-child(4){
+                      height:14px;
+                      margin-right: 2px;
+                    }
+                    >span:nth-child(5){
+                      height:16px;
+                    }
+                  }
                 }
               }
             }
