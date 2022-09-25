@@ -1148,6 +1148,16 @@ export default {
       this.soundWaves = Math.round(res)
     })
   },  
+  watch:{
+    livePlayerList() {
+      this.connectMessageInfo.forEach((item,index)=>{
+        var arr = this.livePlayerList.filter(info=>info.streamID.includes(item.userInfo.userId)&&item.connectStatus)
+        if(!arr.length){
+          this.connectMessageInfo.splice(index,1)
+        }
+      })
+    },
+  },
   methods: {
     beforeunloadHandler(e) { //关闭页面提示
       e = e || window.event
