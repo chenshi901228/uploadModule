@@ -1149,14 +1149,18 @@ export default {
     })
   },  
   watch:{
-    livePlayerList() {
-      this.connectMessageInfo.forEach((item,index)=>{
-        var arr = this.livePlayerList.filter(info=>info.streamID.includes(item.userInfo.userId)&&item.connectStatus)
-        if(!arr.length){
-          this.connectMessageInfo.splice(index,1)
-        }
-      })
-    },
+    // livePlayerList() {
+    //   let deleteArr = []
+    //   this.connectMessageInfo.forEach((item,index)=>{
+    //     var arr = this.livePlayerList.filter(info=>info.streamID.includes(item.userInfo.userId) && item.connectStatus && item.getReplyConnectLoading != null)
+    //     if(!arr.length && item.getReplyConnectLoading != null){
+    //       deleteArr.push(index)
+    //     }
+    //     console.error("arr", arr)
+    //   })
+    //   deleteArr.map(item => this.connectMessageInfo.splice(item, 1))
+    //   console.error("connectMessageInfo", this.connectMessageInfo)
+    // },
   },
   methods: {
     beforeunloadHandler(e) { //关闭页面提示
@@ -2005,6 +2009,7 @@ export default {
                 applyInfo.message.replyType === 0
               ) {
                 applyInfo.connectStatus = false; //定义连麦状态
+                applyInfo.getReplyConnectLoading = null; //定义连接中状态
                 applyInfo.stream = {}; //连麦流
                 let arr = [];
                 this.connectMessageInfo.forEach((item) =>
