@@ -395,7 +395,7 @@
                   </div>
                   <div
                     class="btn gua_btn"
-                    @click="hangup(item)"
+                    @click="hangupHandle(item)"
                     v-if="item.connectStatus"
                   >
                     挂断
@@ -981,7 +981,6 @@ export default {
     this.liveTheme = this.$route.query.liveTheme;
     if(this.$route.query.trendsOpente != undefined) this.trends = this.$route.query.trendsOpente
     this.appID = parseInt(window.SITE_CONFIG['appID'])
-    console.error("this", window.SITE_CONFIG['appID'], window.SITE_CONFIG['server'], window.SITE_CONFIG['SDKAppID'])
     // 初始化实例  Step1
     this.zg = new ZegoExpressEngine(
       parseInt(window.SITE_CONFIG['appID']),
@@ -2279,6 +2278,21 @@ export default {
         }
       }
     },
+    hangupHandle(item) {
+      this.$confirm(`确认挂断用户[${item.userInfo.nickName || ""}]`, "提示", {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.hangup(item)
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消挂断'
+        });
+      })
+    },
+    // 挂断方法
     hangup(info) {
       if(this.connectTimer[info.userInfo.userId]){
         clearTimeout(this.connectTimer[info.userInfo.userId])
