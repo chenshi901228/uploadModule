@@ -395,7 +395,7 @@
                   </div>
                   <div
                     class="btn gua_btn"
-                    @click="hangup(item)"
+                    @click="hangupHandle(item)"
                     v-if="item.connectStatus"
                   >
                     挂断
@@ -786,7 +786,9 @@ export default {
       activeName: "first",
       userName: "",
       userID: "",
-      appID: 467572390,
+      appID: null,
+      server: "",
+      SDKAppID: null,
       zg: {},
       tim: null, //IM实例
       token: "",
@@ -978,10 +980,11 @@ export default {
     })
     this.liveTheme = this.$route.query.liveTheme;
     if(this.$route.query.trendsOpente != undefined) this.trends = this.$route.query.trendsOpente
+    this.appID = parseInt(window.SITE_CONFIG['appID'])
     // 初始化实例  Step1
     this.zg = new ZegoExpressEngine(
-      this.appID,
-      "wss://webliveroom467572390-api.imzego.com/ws"
+      parseInt(window.SITE_CONFIG['appID']),
+      window.SITE_CONFIG['server']
     );
     //检测设备能力
     let checkSystemRes = await this.zg.checkSystemRequirements()
@@ -1190,18 +1193,23 @@ export default {
             window.close()
           })
         }else{
-          this.$http.get("/sys/sysConsultativeManagement/getKey/use_live_agreement").then(({data: res}) => {
-            this.liveStatus = false
-            this.livePactDialogVisible = true //未开播进入直播间阅读协议
-            this.doLoop(5)
-            if(res.code != 0) return this.$message.error(res.msg)
-            this.livePactInfo = res.data
-          }).catch(err => {
-            this.liveStatus = false
-            this.livePactDialogVisible = true //未开播进入直播间阅读协议
-            this.doLoop(5)
-            this.$message.error(JSON.stringify(err.message))
-          })
+          let haveReadprotocol = JSON.parse(localStorage.getItem("haveReadprotocol"))
+          if(haveReadprotocol) { // 已经查看过协议
+            this.initLiveRoom()
+          }else {
+            this.$http.get("/sys/sysConsultativeManagement/getKey/use_live_agreement").then(({data: res}) => {
+              this.liveStatus = false
+              this.livePactDialogVisible = true //未开播进入直播间阅读协议
+              this.doLoop(5)
+              if(res.code != 0) return this.$message.error(res.msg)
+              this.livePactInfo = res.data
+            }).catch(err => {
+              this.liveStatus = false
+              this.livePactDialogVisible = true //未开播进入直播间阅读协议
+              this.doLoop(5)
+              this.$message.error(JSON.stringify(err.message))
+            })
+          }
         }
       })
     },
@@ -1251,7 +1259,8 @@ export default {
       })
     },
     initLiveRoom(){ //初始化直播间
-      this.liveActionDialogVisible = false
+      if(this.liveActionDialogVisible) this.liveActionDialogVisible = false
+      localStorage.setItem("haveReadprotocol", JSON.stringify("1"))
       this.getTimUserSig();
     },
     load () {//在线用户列表加载
@@ -1555,7 +1564,7 @@ export default {
       }
     },
     // 获取token的方法
-    getTokenFun(appID, userID) {
+    getTokenFun(userID) {
       let apiUrl = window.SITE_CONFIG['apiURL']
       return new Promise((resolve, reject) => {
         const xmlhttp = new XMLHttpRequest();
@@ -1585,7 +1594,7 @@ export default {
             text: "直播预览开启中...",
           });
         }
-        let res = await this.getTokenFun(this.appID, this.userID);
+        let res = await this.getTokenFun(this.userID);
         if(res) {
           res = JSON.parse(res)
         }
@@ -1874,45 +1883,53 @@ export default {
       this.tim.on(TIM.EVENT.MESSAGE_RECEIVED, this.$onMessageReceived, this);
     },
     async getTimUserSig() {
-      let res = await this.$http.get(
-        "/sys/manage/tencentCloudIm/getTxCloudUserSig"
-      );
-      //获取腾讯IM签名
-      let userId = res.data.data.liveUserId && res.data.data.liveUserId;
-      let userSig = res.data.data.userSig && res.data.data.userSig;
-      let userInfo = res.data.data.userInfo;
-      this.groupID = "LIVE@" + userInfo.id;
-      this.roomId = userInfo.id;
-      this.userID = userInfo.id;
-      this.userName = userInfo.username;
-      this.userInfo = userInfo;
-      this.userInfo.nickName = userInfo.username;
-      if(this.isOpenDesktopSharing){ //关闭屏幕共享
-        this.$http.post('/sys/mixedflow/closeDesktopSharing',{RoomId:this.roomId}).then(res=>{
-          if(res.data.code==0){
-            this.zg.stopPublishingStream('shareDesk'+this.roomId)
-            this.zg.destroyStream(this.screenStream);
-            this.isOpenDesktopSharing = false
-            localStorage.setItem('isOpenDesktopSharing',JSON.stringify(false))
-          }
-        })
-      }
-      let options = {
-        SDKAppID: 1400341701, // 接入时需要将0替换为您的即时通信 IM 应用的 SDKAppID
-      };
-      // 创建 SDK 实例，TIM.create() 方法对于同一个 SDKAppID 只会返回同一份实例
-      this.tim = TIM.create(options); // SDK 实例通常用 tim 表示
-      if (!this.liveStatus) {
-        this.tim.login({ userID: userId, userSig: userSig }); //登录腾讯IM
-      } else {
-        this.tim.login({ userID: userId, userSig: userSig }).then((imResponse) => {
-            //登录腾讯IM
-            if (imResponse.data) {
-              this.waitSdkReady();
+      try{
+        this.$loading({ background: "rgba(0,0,0,.5)", text: "获取消息配置" })
+        let res = await this.$http.get(
+          "/sys/manage/tencentCloudIm/getTxCloudUserSig"
+        );
+        //获取腾讯IM签名
+        let userId = res.data.data.liveUserId && res.data.data.liveUserId;
+        let userSig = res.data.data.userSig && res.data.data.userSig;
+        let userInfo = res.data.data.userInfo;
+        this.groupID = "LIVE@" + userInfo.id;
+        this.roomId = userInfo.id;
+        this.userID = userInfo.id;
+        this.userName = userInfo.username;
+        this.userInfo = userInfo;
+        this.userInfo.nickName = userInfo.username;
+        if(this.isOpenDesktopSharing){ //关闭屏幕共享
+          this.$http.post('/sys/mixedflow/closeDesktopSharing',{RoomId:this.roomId}).then(res=>{
+            if(res.data.code==0){
+              this.zg.stopPublishingStream('shareDesk'+this.roomId)
+              this.zg.destroyStream(this.screenStream);
+              this.isOpenDesktopSharing = false
+              localStorage.setItem('isOpenDesktopSharing',JSON.stringify(false))
             }
-          });
+          })
+        }
+        let options = {
+          SDKAppID: parseInt(window.SITE_CONFIG['SDKAppID']), // 接入时需要将0替换为您的即时通信 IM 应用的 SDKAppID
+        };
+        // 创建 SDK 实例，TIM.create() 方法对于同一个 SDKAppID 只会返回同一份实例
+        this.tim = TIM.create(options); // SDK 实例通常用 tim 表示
+        if (!this.liveStatus) {
+          this.tim.login({ userID: userId, userSig: userSig }); //登录腾讯IM
+        } else {
+          this.tim.login({ userID: userId, userSig: userSig }).then((imResponse) => {
+              //登录腾讯IM
+              if (imResponse.data) {
+                this.waitSdkReady();
+              }
+            });
+        }
+        this.$loading().close()
+        this.startLive();
+      }catch(err) {
+        this.$message.error(JSON.stringify(err))
+        this.$loading().close()
       }
-      this.startLive();
+      
     },
     onSdkReady(event) {
       //监听IM sdk状态
@@ -2262,6 +2279,21 @@ export default {
         }
       }
     },
+    hangupHandle(item) {
+      this.$confirm(`确认挂断用户[${item.userInfo.nickName || ""}]`, "提示", {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.hangup(item)
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消挂断'
+        });
+      })
+    },
+    // 挂断方法
     hangup(info) {
       if(this.connectTimer[info.userInfo.userId]){
         clearTimeout(this.connectTimer[info.userInfo.userId])
