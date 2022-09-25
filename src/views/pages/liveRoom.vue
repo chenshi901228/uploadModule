@@ -1085,7 +1085,7 @@ export default {
               item.getReplyConnectLoading = false
             }
           });
-          
+
           if (this.roomId != streamItem.streamID) {
             let extraInfo = streamItem.extraInfo;
             let extraInfoObj = null;
