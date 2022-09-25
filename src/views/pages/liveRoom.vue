@@ -1082,7 +1082,8 @@ export default {
               item.getReplyConnectLoading = false
             }
           });
-          if (this.roomId != streamItem.streamID) {
+          let arr = this.connectMessageInfo.filter(item=>{item.userInfo.userId === streamItem.user.userID})
+          if (this.roomId != streamItem.streamID && arr.length) {
             let extraInfo = streamItem.extraInfo;
             let extraInfoObj = null;
             try {
