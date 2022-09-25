@@ -1149,14 +1149,14 @@ export default {
     })
   },  
   watch:{
-    livePlayerList() {
-      this.connectMessageInfo.forEach((item,index)=>{
-        var arr = this.livePlayerList.filter(info=>info.streamID.includes(item.userInfo.userId)&&item.connectStatus&&!item.getReplyConnectLoading)
-        if(!arr.length){
-          this.connectMessageInfo.splice(index,1)
-        }
-      })
-    },
+    // livePlayerList() {
+    //   this.connectMessageInfo.forEach((item,index)=>{
+    //     var arr = this.livePlayerList.filter(info=>info.streamID.includes(item.userInfo.userId)&&item.connectStatus&&item.getReplyConnectLoading)
+    //     if(!arr.length){
+    //       this.connectMessageInfo.splice(index,1)
+    //     }
+    //   })
+    // },
   },
   methods: {
     beforeunloadHandler(e) { //关闭页面提示
@@ -1692,6 +1692,22 @@ export default {
                   clearTimeout(timer)
                 }).catch((err) => {
                   clearTimeout(timer)
+                  if(this.livePlayerList.length){
+                    let arr = JSON.stringify(this.livePlayerList)
+                    arr = JSON.parse(arr)
+                    arr.forEach(item=>{
+                      item.extraInfo = JSON.parse(item.extraInfo)
+                      //挂断
+                      let messageInfo = {
+                        type: 5, //消息类型(1:普通信息、2:关注信息、3:提问信息、4:礼物信息、5:语音连麦信息：{1、同意，2、拒绝}、6:视频连麦信息：{1、同意，2、拒绝}、)
+                        connectType: item.extraInfo.connectType,
+                        replyUserId: item.user.userID,
+                        replyType: -3, // 连麦后挂断
+                        isHigh:true,
+                      };
+                      this.sendMessage(messageInfo);
+                    })
+                  }
                   this.$message({ message: "刷新失败,请刷新重试", type: "error" });
                 });
           },500)
