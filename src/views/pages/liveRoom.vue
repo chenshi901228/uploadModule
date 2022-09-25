@@ -1185,8 +1185,9 @@ export default {
         clipboard.destroy()// 释放内存
       })
     },
-    init(){
-      this.$http.get('/sys/mixedflow/getLiving').then(res=>{//进入直播间获取直播状态
+    async init(){
+      try {
+        let res = await this.$http.get('/sys/mixedflow/getLiving')
         if(!res.data.code==0) return this.$message.error(res.data.msg)
         if(res.data.data.liveId){
           this.$confirm("上次直播异常退出，重新进入", "提示", {
@@ -1202,11 +1203,10 @@ export default {
           }).catch(()=>{
             window.close()
           })
-        }else{
-          let haveReadprotocol = JSON.parse(localStorage.getItem("haveReadprotocol"))
-          if(haveReadprotocol) { // 已经查看过协议
-            this.initLiveRoom()
-          }else {
+        }else {
+          let res_pro = await this.$http.get('/sys/mixedflow/isFirstOpenLive')
+          if(res_pro.data.code != 0) return this.$message.error(res_pro.data.msg)
+          if(res_pro.data.data) { // 第一次
             this.$http.get("/sys/sysConsultativeManagement/getKey/use_live_agreement").then(({data: res}) => {
               this.liveStatus = false
               this.livePactDialogVisible = true //未开播进入直播间阅读协议
@@ -1219,9 +1219,14 @@ export default {
               this.doLoop(5)
               this.$message.error(JSON.stringify(err.message))
             })
+          }else {
+            this.initLiveRoom()
           }
         }
-      })
+      } catch (error) {
+        console.error(error)
+        this.$message.error(JSON.stringify(error))
+      }
     },
     updateOnline() {//网络状态
       if(!navigator.onLine){
@@ -1270,7 +1275,6 @@ export default {
     },
     initLiveRoom(){ //初始化直播间
       if(this.liveActionDialogVisible) this.liveActionDialogVisible = false
-      localStorage.setItem("haveReadprotocol", JSON.stringify("1"))
       this.getTimUserSig();
     },
     load () {//在线用户列表加载
