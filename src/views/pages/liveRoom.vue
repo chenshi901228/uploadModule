@@ -1085,7 +1085,7 @@ export default {
               item.getReplyConnectLoading = false
             }
           });
-          
+
           if (this.roomId != streamItem.streamID) {
             let extraInfo = streamItem.extraInfo;
             let extraInfoObj = null;
@@ -1151,7 +1151,7 @@ export default {
   watch:{
     livePlayerList() {
       this.connectMessageInfo.forEach((item,index)=>{
-        var arr = this.livePlayerList.filter(info=>info.streamID.includes(item.userInfo.userId)&&item.connectStatus)
+        var arr = this.livePlayerList.filter(info=>info.streamID.includes(item.userInfo.userId)&&item.connectStatus&&!item.getReplyConnectLoading)
         if(!arr.length){
           this.connectMessageInfo.splice(index,1)
         }
