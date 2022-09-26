@@ -579,6 +579,180 @@
         </div>
     </el-dialog>
     <el-dialog
+      title="设备检测"
+      :visible.sync="deviceDialogVisible_first"
+      :show-close="false"
+      :close-on-press-escape="false"
+      :close-on-click-modal="false"
+      top="50px"
+      width="440px">
+        <div class="dialog_content">
+          <div class="device_step">
+            <div>
+              <img src="../../assets/img/check_camera_yes.png" alt="">
+              <img v-if="cameraError" class="camera_error" src="../../assets/img/check_error.png" alt="">
+              <span>摄像头检测</span>
+            </div>
+            <img class="step_line" src="../../assets/img/check_step_line.png" alt="">
+            <div>
+              <img v-if="checkStep>=2" src="../../assets/img/check_mike_active.png" alt="">
+              <img v-else src="../../assets/img/check_mike.png" alt="">
+              <img v-if="micError&&checkStep>=2" class="camera_error" src="../../assets/img/check_error.png" alt="">
+              <span>麦克风检测</span>
+            </div>
+            <img class="step_line" src="../../assets/img/check_step_line.png" alt="">
+            <div>
+              <img v-if="checkStep===3" src="../../assets/img/check_over_active.png" alt="">
+              <img v-else src="../../assets/img/check_over.png" alt="">
+              <img v-if="checkStep===3&&cameraError || checkStep===3&&micError" class="camera_error" src="../../assets/img/check_error.png" alt="">
+              <span>检测结果</span>
+            </div>
+          </div>
+          <div class="check_camera" v-show="checkStep===1">
+            <div class="camera_device">
+              <span>摄像头</span>
+              <el-select size="mini" v-model="cameraId" @change="selectCamera" placeholder="请选择摄像头">
+                <el-option
+                  v-for="item in camerasList"
+                  :key="item.deviceID"
+                  :label="item.deviceName"
+                  :value="item.deviceID">
+                </el-option>
+              </el-select>
+            </div>
+            <div class="preview">
+              <span>预览</span>
+              <video
+                autoplay
+                muted
+                class="check_camera_video"
+                :src-object.prop="checkStream"
+              ></video>
+            </div>
+            <div class="tip">
+              <span></span>
+              <el-tooltip placement="top-end">
+                <div slot="content">
+                  1.在浏览器“允许”使用摄像头<br/>
+                  2.在系统“允许”使用摄像头<br/>
+                  3.请确认摄像头已正确连接并开启<br/>
+                  4.请确认摄像头没有被其他软件占用多行信息<br/>
+                </div>
+                <div class="tip_title">
+                  <img src="../../assets/img/check_question_icon.png" alt="">
+                  <span>问题排查</span>
+                </div>
+              </el-tooltip>
+            </div>
+            <p class="question">您是否可以看到摄像头的画面</p>
+          </div>
+          <div class="check_mike" v-show="checkStep===2">
+            <div class="mic_device">
+              <span>麦克风</span>
+               <el-select size="mini" v-model="microphoneId" @change="selectMic" placeholder="请选择麦克风">
+                <el-option
+                  v-for="item in microphonesList"
+                  :key="item.deviceID"
+                  :label="item.deviceName"
+                  :value="item.deviceID">
+                </el-option>
+              </el-select>
+            </div>
+            <div class="soundWaves_num">
+              <div class="under_div">
+                <span v-for="i in 26" :key="i"></span>
+              </div>
+              <div class="top_div">
+                <span v-for="k in soundWaves" :key="k"></span>
+              </div>
+            </div>
+            <div class="soundWaves_line">
+              <span>音量</span>
+              <el-slider disabled v-model="soundWaves"></el-slider>
+              <span>{{soundWaves}}</span>
+            </div>
+            <div class="tip">
+              <span></span>
+              <el-tooltip placement="top-end">
+                <div slot="content">
+                  1.在浏览器“允许”使用麦克风<br/>
+                  2.在系统“允许”使用麦克风<br/>
+                  3.请确认麦克风已正确连接并开启<br/>
+                  4.请确认麦克风没有被其他软件占用多行信息<br/>
+                </div>
+                <div class="tip_title">
+                  <img src="../../assets/img/check_question_icon.png" alt="">
+                  <span>问题排查</span>
+                </div>
+              </el-tooltip>
+            </div>
+            <p class="question">从1数到5，您是否可以看到音量条的波动？</p>
+          </div>
+          <div class="check_result" v-show="checkStep===3">
+            <div class="device_result">
+              <span>摄像头检测</span>
+              <p v-if="!cameraError" class="success">
+                正常
+                <i class="el-icon-success"></i>
+              </p>
+              <p v-else class="error">
+                异常
+                <i class="el-icon-error"></i>
+              </p>
+            </div>
+            <div class="tip" v-if="cameraError">
+              <span></span>
+              <el-tooltip placement="top-end">
+                <div slot="content">
+                  1.在浏览器“允许”使用摄像头<br/>
+                  2.在系统“允许”使用摄像头<br/>
+                  3.请确认摄像头已正确连接并开启<br/>
+                  4.请确认摄像头没有被其他软件占用多行信息<br/>
+                </div>
+                <div class="tip_title">
+                  <img src="../../assets/img/check_question_icon.png" alt="">
+                  <span>问题排查</span>
+                </div>
+              </el-tooltip>
+            </div>
+            <div class="device_result">
+              <span>麦克风检测</span>
+              <p v-if="!micError" class="success">
+                正常
+                <i class="el-icon-success"></i>
+              </p>
+              <p v-else class="error">
+                异常
+                <i class="el-icon-error"></i>
+              </p>
+            </div>
+            <div class="tip" v-if="micError">
+              <span></span>
+              <el-tooltip placement="top-end">
+                <div slot="content">
+                  1.在浏览器“允许”使用麦克风<br/>
+                  2.在系统“允许”使用麦克风<br/>
+                  3.请确认麦克风已正确连接并开启<br/>
+                  4.请确认麦克风没有被其他软件占用多行信息<br/>
+                </div>
+                <div class="tip_title">
+                  <img src="../../assets/img/check_question_icon.png" alt="">
+                  <span>问题排查</span>
+                </div>
+              </el-tooltip>
+            </div>
+          </div>
+          <div class="check_btn">
+              <div @click="checkError">
+                {{checkStep===3?'重新检测':checkStep===2?'无法听到':'无法看到'}}
+              </div>
+              <div @click="addStepFirst">
+                {{checkStep===3?'加入直播间':checkStep===2?'可以听到':'可以看到'}}
+              </div>  
+            </div>
+        </div>
+    </el-dialog>
+    <el-dialog
       :title="endLiveTitle"
       :visible.sync="endLiveDialogVisible"
       :close-on-click-modal="false"
@@ -879,6 +1053,7 @@ export default {
       camerasList:[],//摄像头列表
       microphonesList:[],//麦克风列表
       deviceDialogVisible:false,//切换设备弹窗
+      deviceDialogVisible_first:false,//首次进入页面选择设备
       cameraId:'',//摄像头设备
       microphoneId:'',//麦克风设备
       fileList:[],
@@ -1001,7 +1176,7 @@ export default {
 
     window.addEventListener('online', this.updateOnline);
     window.addEventListener('offline', this.updateOnline);
-    this.init()
+    // this.init()
 
     //获取摄像头列表
     this.zg.getCameras().then(res=>{
@@ -1014,6 +1189,9 @@ export default {
     })
     //开启麦克风音浪检测
     this.zg.setSoundLevelDelegate(true,1000)
+    
+    this.deviceDialogVisible_first = true
+    
     //屏幕共享中断
     this.zg.on("screenSharingEnded",(stream)=>{
       if(!stream.active){
@@ -1563,6 +1741,19 @@ export default {
         this.micError = false
       }
     },
+    async addStepFirst(){
+      if(this.checkStep<3){
+        this.checkStep++
+      }else{
+        if(!this.cameraError&&!this.micError){
+          this.deviceDialogVisible_first = false
+          this.checkStep = 1
+          this.init()
+        }else{
+          this.$message.warning('所选设备存在异常请重新检测')
+        }
+      }
+    },
     async addStep(){
       if(this.checkStep<3){
         this.checkStep++
@@ -1572,6 +1763,7 @@ export default {
           let resTwo = await this.zg.useAudioDevice(this.stream,this.microphoneId) //切换麦克风
           if(res&&resTwo){
             this.deviceDialogVisible = false
+            this.checkStep = 1
             this.$message.success('设备切换成功')
           }
         }else{
