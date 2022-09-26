@@ -277,9 +277,12 @@
                 <div class="online_info">
                   <p>FPS：{{videoFPS}}</p>
                   <p>丢包率：{{videoPacketsLostRate}}</p>
-                  <div>网络状态：
-                    <div >
-                      <span v-for="i in videoQualityNum" :key="i">1</span>
+                  <div class="online_info_status">
+                    <p>网络状态：
+                      <span :style="videoQualityStyle">{{videoQualityText}}</span>
+                    </p>
+                    <div>
+                      <span :style="videoQualityNumStyle" v-for="i in videoQualityNum" :key="i"></span>
                     </div>
                   </div>
                 </div>
@@ -392,7 +395,7 @@
                   </div>
                   <div
                     class="btn gua_btn"
-                    @click="hangup(item)"
+                    @click="hangupHandle(item)"
                     v-if="item.connectStatus"
                   >
                     挂断
@@ -783,7 +786,9 @@ export default {
       activeName: "first",
       userName: "",
       userID: "",
-      appID: 467572390,
+      appID: null,
+      server: "",
+      SDKAppID: null,
       zg: {},
       tim: null, //IM实例
       token: "",
@@ -907,7 +912,7 @@ export default {
    
   },
   computed: {
-     videoQualityNum(){
+    videoQualityNum(){
       switch(this.videoQuality){
         case 0:
         return 5;
@@ -920,6 +925,50 @@ export default {
         case 4:
         return 1;
       }
+    },
+    videoQualityText(){
+      switch(this.videoQuality){
+        case 0:
+        return '极好';
+        case 1:
+        return '好';
+        case 2:
+        return '中等';
+        case 3:
+        return '差';
+        case 4:
+        return '极差';
+      }
+    },
+    videoQualityStyle(){
+      let style = ''
+      switch(this.videoQuality){
+        case 0:
+        return style+='color:#00FF31;';
+        case 1:
+        return style+='color:#00FF31;';
+        case 2:
+        return style+='color:#FF8924;';
+        case 3:
+        return style+='color:#FE0013;';
+        case 4:
+        return style+='color:#FE0013;';
+      }
+    },
+    videoQualityNumStyle(){
+      let style = ''
+      switch(this.videoQuality){
+        case 0:
+        return style+='backgroudColor:#00FF31;';
+        case 1:
+        return style+='backgroudColor:#00FF31;';
+        case 2:
+        return style+='backgroudColor:#FF8924;';
+        case 3:
+        return style+='backgroudColor:#FE0013;';
+        case 4:
+        return style+='backgroudColor:#FE0013;';
+      }
     }
   },
   async mounted() {
@@ -931,10 +980,11 @@ export default {
     })
     this.liveTheme = this.$route.query.liveTheme;
     if(this.$route.query.trendsOpente != undefined) this.trends = this.$route.query.trendsOpente
+    this.appID = parseInt(window.SITE_CONFIG['appID'])
     // 初始化实例  Step1
     this.zg = new ZegoExpressEngine(
-      this.appID,
-      "wss://webliveroom467572390-api.imzego.com/ws"
+      parseInt(window.SITE_CONFIG['appID']),
+      window.SITE_CONFIG['server']
     );
     //检测设备能力
     let checkSystemRes = await this.zg.checkSystemRequirements()
@@ -1035,6 +1085,7 @@ export default {
               item.getReplyConnectLoading = false
             }
           });
+
           if (this.roomId != streamItem.streamID) {
             let extraInfo = streamItem.extraInfo;
             let extraInfoObj = null;
@@ -1097,6 +1148,18 @@ export default {
       this.soundWaves = Math.round(res)
     })
   },  
+  watch:{
+    //   let deleteArr = []
+    //   this.connectMessageInfo.forEach((item,index)=>{
+    //     var arr = this.livePlayerList.filter(info=>info.streamID.includes(item.userInfo.userId) && item.connectStatus && item.getReplyConnectLoading != null)
+    //     if(!arr.length && item.getReplyConnectLoading != null){
+    //       deleteArr.push(index)
+    //     }
+    //     console.error("arr", arr)
+    //   })
+    //   deleteArr.map(item => this.connectMessageInfo.splice(item, 1))
+    //   console.error("connectMessageInfo", this.connectMessageInfo)
+  },
   methods: {
     beforeunloadHandler(e) { //关闭页面提示
       e = e || window.event
@@ -1124,8 +1187,9 @@ export default {
         clipboard.destroy()// 释放内存
       })
     },
-    init(){
-      this.$http.get('/sys/mixedflow/getLiving').then(res=>{//进入直播间获取直播状态
+    async init(){
+      try {
+        let res = await this.$http.get('/sys/mixedflow/getLiving')
         if(!res.data.code==0) return this.$message.error(res.data.msg)
         if(res.data.data.liveId){
           this.$confirm("上次直播异常退出，重新进入", "提示", {
@@ -1141,21 +1205,30 @@ export default {
           }).catch(()=>{
             window.close()
           })
-        }else{
-          this.$http.get("/sys/sysConsultativeManagement/getKey/use_live_agreement").then(({data: res}) => {
-            this.liveStatus = false
-            this.livePactDialogVisible = true //未开播进入直播间阅读协议
-            this.doLoop(5)
-            if(res.code != 0) return this.$message.error(res.msg)
-            this.livePactInfo = res.data
-          }).catch(err => {
-            this.liveStatus = false
-            this.livePactDialogVisible = true //未开播进入直播间阅读协议
-            this.doLoop(5)
-            this.$message.error(JSON.stringify(err.message))
-          })
+        }else {
+          let res_pro = await this.$http.get('/sys/mixedflow/isFirstOpenLive')
+          if(res_pro.data.code != 0) return this.$message.error(res_pro.data.msg)
+          if(res_pro.data.data) { // 第一次
+            this.$http.get("/sys/sysConsultativeManagement/getKey/use_live_agreement").then(({data: res}) => {
+              this.liveStatus = false
+              this.livePactDialogVisible = true //未开播进入直播间阅读协议
+              this.doLoop(5)
+              if(res.code != 0) return this.$message.error(res.msg)
+              this.livePactInfo = res.data
+            }).catch(err => {
+              this.liveStatus = false
+              this.livePactDialogVisible = true //未开播进入直播间阅读协议
+              this.doLoop(5)
+              this.$message.error(JSON.stringify(err.message))
+            })
+          }else {
+            this.initLiveRoom()
+          }
         }
-      })
+      } catch (error) {
+        console.error(error)
+        this.$message.error(JSON.stringify(error))
+      }
     },
     updateOnline() {//网络状态
       if(!navigator.onLine){
@@ -1203,7 +1276,7 @@ export default {
       })
     },
     initLiveRoom(){ //初始化直播间
-      this.liveActionDialogVisible = false
+      if(this.liveActionDialogVisible) this.liveActionDialogVisible = false
       this.getTimUserSig();
     },
     load () {//在线用户列表加载
@@ -1467,12 +1540,12 @@ export default {
       // 创建流和渲染
       this.checkStream = await this.zg.createStream({ //摄像头
         camera: {
-          videoQuality: 2,
-          // width:1280,
-          // height:720,
-          // frameRate: 60,
-          // bitrate: 900,
-          // videoInput:this.cameraId,
+          videoQuality: 4,
+          width:1280,
+          height:720,
+          frameRate: 60,
+          bitrate: 900,
+          videoInput:this.cameraId,
         },
       });
     },
@@ -1498,6 +1571,7 @@ export default {
           let res = await this.zg.useVideoDevice(this.stream,this.cameraId) //切换摄像头
           let resTwo = await this.zg.useAudioDevice(this.stream,this.microphoneId) //切换麦克风
           if(res&&resTwo){
+            this.deviceDialogVisible = false
             this.$message.success('设备切换成功')
           }
         }else{
@@ -1506,7 +1580,7 @@ export default {
       }
     },
     // 获取token的方法
-    getTokenFun(appID, userID) {
+    getTokenFun(userID) {
       let apiUrl = window.SITE_CONFIG['apiURL']
       return new Promise((resolve, reject) => {
         const xmlhttp = new XMLHttpRequest();
@@ -1536,7 +1610,7 @@ export default {
             text: "直播预览开启中...",
           });
         }
-        let res = await this.getTokenFun(this.appID, this.userID);
+        let res = await this.getTokenFun(this.userID);
         if(res) {
           res = JSON.parse(res)
         }
@@ -1571,7 +1645,7 @@ export default {
           height:720,
           frameRate: 60,
           bitrate: 900,
-          videoInput:this.cameraId,
+          // videoInput:this.cameraId,
         },
         // custom: {
         //   source:document.getElementById('video_custom'),
@@ -1620,6 +1694,22 @@ export default {
                   clearTimeout(timer)
                 }).catch((err) => {
                   clearTimeout(timer)
+                  if(this.livePlayerList.length){
+                    let arr = JSON.stringify(this.livePlayerList)
+                    arr = JSON.parse(arr)
+                    arr.forEach(item=>{
+                      item.extraInfo = JSON.parse(item.extraInfo)
+                      //挂断
+                      let messageInfo = {
+                        type: 5, //消息类型(1:普通信息、2:关注信息、3:提问信息、4:礼物信息、5:语音连麦信息：{1、同意，2、拒绝}、6:视频连麦信息：{1、同意，2、拒绝}、)
+                        connectType: item.extraInfo.connectType,
+                        replyUserId: item.user.userID,
+                        replyType: -3, // 连麦后挂断
+                        isHigh:true,
+                      };
+                      this.sendMessage(messageInfo);
+                    })
+                  }
                   this.$message({ message: "刷新失败,请刷新重试", type: "error" });
                 });
           },500)
@@ -1710,7 +1800,7 @@ export default {
               this.getEndLiveInfo()
             } else {
               this.$nextTick(() => {
-                
+
                 // 以服务的方式调用的 Loading 需要异步关闭
                 this.$loading().close();
               });
@@ -1825,45 +1915,53 @@ export default {
       this.tim.on(TIM.EVENT.MESSAGE_RECEIVED, this.$onMessageReceived, this);
     },
     async getTimUserSig() {
-      let res = await this.$http.get(
-        "/sys/manage/tencentCloudIm/getTxCloudUserSig"
-      );
-      //获取腾讯IM签名
-      let userId = res.data.data.liveUserId && res.data.data.liveUserId;
-      let userSig = res.data.data.userSig && res.data.data.userSig;
-      let userInfo = res.data.data.userInfo;
-      this.groupID = "LIVE@" + userInfo.id;
-      this.roomId = userInfo.id;
-      this.userID = userInfo.id;
-      this.userName = userInfo.username;
-      this.userInfo = userInfo;
-      this.userInfo.nickName = userInfo.username;
-      if(this.isOpenDesktopSharing){ //关闭屏幕共享
-        this.$http.post('/sys/mixedflow/closeDesktopSharing',{RoomId:this.roomId}).then(res=>{
-          if(res.data.code==0){
-            this.zg.stopPublishingStream('shareDesk'+this.roomId)
-            this.zg.destroyStream(this.screenStream);
-            this.isOpenDesktopSharing = false
-            localStorage.setItem('isOpenDesktopSharing',JSON.stringify(false))
-          }
-        })
-      }
-      let options = {
-        SDKAppID: 1400341701, // 接入时需要将0替换为您的即时通信 IM 应用的 SDKAppID
-      };
-      // 创建 SDK 实例，TIM.create() 方法对于同一个 SDKAppID 只会返回同一份实例
-      this.tim = TIM.create(options); // SDK 实例通常用 tim 表示
-      if (!this.liveStatus) {
-        this.tim.login({ userID: userId, userSig: userSig }); //登录腾讯IM
-      } else {
-        this.tim.login({ userID: userId, userSig: userSig }).then((imResponse) => {
-            //登录腾讯IM
-            if (imResponse.data) {
-              this.waitSdkReady();
+      try{
+        this.$loading({ background: "rgba(0,0,0,.5)", text: "获取消息配置" })
+        let res = await this.$http.get(
+          "/sys/manage/tencentCloudIm/getTxCloudUserSig"
+        );
+        //获取腾讯IM签名
+        let userId = res.data.data.liveUserId && res.data.data.liveUserId;
+        let userSig = res.data.data.userSig && res.data.data.userSig;
+        let userInfo = res.data.data.userInfo;
+        this.groupID = "LIVE@" + userInfo.id;
+        this.roomId = userInfo.id;
+        this.userID = userInfo.id;
+        this.userName = userInfo.username;
+        this.userInfo = userInfo;
+        this.userInfo.nickName = userInfo.username;
+        if(this.isOpenDesktopSharing){ //关闭屏幕共享
+          this.$http.post('/sys/mixedflow/closeDesktopSharing',{RoomId:this.roomId}).then(res=>{
+            if(res.data.code==0){
+              this.zg.stopPublishingStream('shareDesk'+this.roomId)
+              this.zg.destroyStream(this.screenStream);
+              this.isOpenDesktopSharing = false
+              localStorage.setItem('isOpenDesktopSharing',JSON.stringify(false))
             }
-          });
+          })
+        }
+        let options = {
+          SDKAppID: parseInt(window.SITE_CONFIG['SDKAppID']), // 接入时需要将0替换为您的即时通信 IM 应用的 SDKAppID
+        };
+        // 创建 SDK 实例，TIM.create() 方法对于同一个 SDKAppID 只会返回同一份实例
+        this.tim = TIM.create(options); // SDK 实例通常用 tim 表示
+        if (!this.liveStatus) {
+          this.tim.login({ userID: userId, userSig: userSig }); //登录腾讯IM
+        } else {
+          this.tim.login({ userID: userId, userSig: userSig }).then((imResponse) => {
+              //登录腾讯IM
+              if (imResponse.data) {
+                this.waitSdkReady();
+              }
+            });
+        }
+        this.$loading().close()
+        this.startLive();
+      }catch(err) {
+        this.$message.error(JSON.stringify(err))
+        this.$loading().close()
       }
-      this.startLive();
+      
     },
     onSdkReady(event) {
       //监听IM sdk状态
@@ -1925,6 +2023,7 @@ export default {
                 applyInfo.message.replyType === 0
               ) {
                 applyInfo.connectStatus = false; //定义连麦状态
+                applyInfo.getReplyConnectLoading = null; //定义连接中状态
                 applyInfo.stream = {}; //连麦流
                 let arr = [];
                 this.connectMessageInfo.forEach((item) =>
@@ -2213,6 +2312,21 @@ export default {
         }
       }
     },
+    hangupHandle(item) {
+      this.$confirm(`确认挂断用户[${item.userInfo.nickName || ""}]`, "提示", {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.hangup(item)
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消挂断'
+        });
+      })
+    },
+    // 挂断方法
     hangup(info) {
       if(this.connectTimer[info.userInfo.userId]){
         clearTimeout(this.connectTimer[info.userInfo.userId])
@@ -2920,6 +3034,7 @@ p {
           }
         }
       }
+
       .el-main {
         padding: 0 0 0 20px;
         .live_content {
@@ -2958,6 +3073,41 @@ p {
                 > p {
                   margin-right: 10px;
                 }
+                .online_info_status{
+                  display: flex;
+                  >div{
+                    display: flex;
+                    align-items: flex-end;
+                    justify-content: flex-start;
+                    margin-bottom: 6px;
+                    margin-left: 4px;
+                    width: 26px;
+                    >span{
+                      display: inline-block;
+                      width:4px;
+                      background: #00FF31;
+                    }
+                    >span:nth-child(1){
+                      height:8px;
+                      margin-right: 2px;
+                    }
+                    >span:nth-child(2){
+                      height:10px;
+                      margin-right: 2px;
+                    }
+                    >span:nth-child(3){
+                      height:12px;
+                      margin-right: 2px;
+                    }
+                    >span:nth-child(4){
+                      height:14px;
+                      margin-right: 2px;
+                    }
+                    >span:nth-child(5){
+                      height:16px;
+                    }
+                  }
+                }
               }
             }
 
@@ -2993,7 +3143,7 @@ p {
             }
             .device_set{
               position: absolute;
-              bottom: 10px;
+              bottom: 20px;
               right: 10px;
               z-index: 2;
               display: flex;

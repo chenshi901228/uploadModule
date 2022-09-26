@@ -320,6 +320,14 @@
               </template>
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              show-overflow-tooltip v-else-if="prop === 'activeStatus'">
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.activeStatus ? "已自用" : "未自用" }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
               show-overflow-tooltip v-else-if="prop === 'useStatus'">
               <template slot-scope="scope">
                 <div>
@@ -542,6 +550,7 @@ export default {
             consumptionSource: "消费来源",
             productId: "关联产品编号",
             payDate: "下单时间",
+            activeStatus: "自用状态",
             statusStr: "订单状态",
             useStatus: "使用状态",
           };
