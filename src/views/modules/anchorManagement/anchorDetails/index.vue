@@ -378,8 +378,9 @@
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
               v-else-if="prop === 'receivedAmount'">
-              <template slot-scope="{ row }">
-                <span>{{ numberConvert(row.receivedAmount) }}</span>
+              <template slot-scope="scope">
+                <span v-if="scope.row.withdrawStatus=='4'">{{ numberConvert(row.receivedAmount) }}</span>
+                <span v-else>-</span>
               </template>
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
