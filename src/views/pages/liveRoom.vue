@@ -1645,7 +1645,7 @@ export default {
           height:720,
           frameRate: 60,
           bitrate: 900,
-          videoInput:this.cameraId,
+          // videoInput:this.cameraId,
         },
         // custom: {
         //   source:document.getElementById('video_custom'),
