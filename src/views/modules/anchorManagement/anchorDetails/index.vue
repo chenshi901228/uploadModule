@@ -301,20 +301,25 @@
                 </el-select>
             </el-form-item> -->
           <el-form-item>
-            <el-button size="mini" v-if="diaTbas === 5 && dataListSelections.length !== 0" type="danger" plain
-              @click="deleteSelect()">批量下架</el-button>
-            <el-button size="mini" v-if="diaTbas === 5" @click="updateProduct" type="primary" plain icon="el-icon-plus">
-              上架商品</el-button>
-            <el-button size="mini" icon="el-icon-user" v-if="diaTbas === 4" plain @click="fansGroup" type="primary">群组
-            </el-button>
-            <el-button size="mini" v-if="diaTbas === 6 && dataListSelections.length !== 0" @click="deleteRecommend()"
-              type="danger" plain icon="el-icon-delete">批量取消</el-button>
-            <el-button size="mini" v-if="diaTbas === 6" @click="addRecommendShow" type="primary" plain
-              icon="el-icon-plus">新增主播</el-button>
             <el-button size="mini" icon="el-icon-search" type="primary" @click="queryPost_dia()">{{ $t("query") }}
             </el-button>
             <el-button size="mini" icon="el-icon-refresh" @click="mainReset">重置</el-button>
           </el-form-item>
+
+          <div>
+            <el-button size="mini" v-if="diaTbas === 5 && dataListSelections.length !== 0" type="danger" plain
+              @click="deleteSelect()">批量下架</el-button>
+            <el-button size="mini" v-if="diaTbas === 5" @click="updateProduct" type="primary" plain icon="el-icon-plus">
+              上架商品</el-button>
+            
+            <el-button size="mini" v-if="diaTbas === 6 && dataListSelections.length !== 0" @click="deleteRecommend()"
+              type="danger" plain icon="el-icon-delete">批量取消</el-button>
+            <el-button size="mini" v-if="diaTbas === 6" @click="addRecommendShow" type="primary" plain
+              icon="el-icon-plus">新增主播</el-button>
+
+            <el-button size="mini" icon="el-icon-user" v-if="diaTbas === 4" plain @click="fansGroup" type="primary">群组
+            </el-button>
+          </div>
 
           <!-- 操作按钮 -->
           <div class="headerTool-handle-btns">
