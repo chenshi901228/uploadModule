@@ -45,6 +45,8 @@
     "svgaplayerweb": "^2.3.2",
     "tim-js-sdk": "^2.18.0",
     "tim-upload-plugin": "^1.0.4",
+    "video.js": "^7.20.3",
+    "videojs-contrib-hls": "^5.15.0",
     "vue": "^2.6.11",
     "vue-aliplayer": "^1.0.0",
     "vue-cron": "^1.0.9",
