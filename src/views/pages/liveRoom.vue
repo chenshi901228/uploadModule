@@ -1638,20 +1638,24 @@ export default {
     },
     // 创建流和渲染
     async createStr() {
-      this.stream = await this.zg.createStream({ //摄像头
-        camera: {
-          videoQuality: 4,
-          width:1280,
-          height:720,
-          frameRate: 60,
-          bitrate: 900,
-          // videoInput:this.cameraId,
-        },
-        // custom: {
-        //   source:document.getElementById('video_custom'),
-        //   bitrate: 2000,
-        // },
-      });
+      try{
+        this.stream = await this.zg.createStream({ //摄像头
+          camera: {
+            videoQuality: 4,
+            width:1280,
+            height:720,
+            frameRate: 60,
+            bitrate: 900,
+            videoInput:this.cameraId,
+          },
+          // custom: {
+          //   source:document.getElementById('video_custom'),
+          //   bitrate: 2000,
+          // },
+        });
+      }catch(error){
+        console.error(error,3333333333)
+      }
       //设置关闭视频流时静态图片
       let res = await this.zg.setDummyCaptureImagePath(require('@/assets/img/web_live_wait.png'),this.stream)
       console.log(res,'设置关闭视频流时静态图片')
@@ -1660,7 +1664,12 @@ export default {
     },
     // 开始推流、开始直播
     async startPublishingStream() {
-      let res = await this.zg.startPublishingStream(this.roomId, this.stream);
+      try {
+        console.log('本地预览流',this.stream)
+        var res = await this.zg.startPublishingStream(this.roomId, this.stream);
+      } catch (error) {
+        console.error(error)
+      }
       if (res) {
         this.$loading().close();
         if (!this.liveStatus) {
