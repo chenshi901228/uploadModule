@@ -277,7 +277,7 @@
               show-overflow-tooltip v-else-if="prop === 'payType' && diaTbas != 3 && diaTbas != 6">
               <template slot-scope="scope">
                 <div>
-                  {{ scope.row.payType === 1 ? "微信" : "支付宝" }}
+                  {{ scope.row.payType === 1 ? "种子" : "支付宝" }}
                 </div>
               </template>
             </el-table-column>

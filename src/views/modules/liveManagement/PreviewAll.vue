@@ -485,11 +485,11 @@
             <span>{{ scope.row.livingRoomId || "--" }}</span>
           </template>
         </el-table-column>
-        <el-table-column width="100%" label="备注" prop="remark" align="center" show-overflow-tooltip>
+        <!-- <el-table-column width="100%" label="备注" prop="remark" align="center" show-overflow-tooltip>
           <template slot-scope="scope">
             <span>{{ scope.row.remark || "--" }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           width="160"
           label="创建时间"

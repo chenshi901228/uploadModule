@@ -286,12 +286,14 @@
               @click="deleteSelect()"
               >批量下架</el-button
             > -->
-            <el-button size="mini" v-if="diaTbas === 4" @click="fansGroup" type="primary" icon="el-icon-user">群组
-            </el-button>
             <el-button icon="el-icon-search" type="primary" size="mini" @click="queryPost_dia()">{{ $t("query") }}
             </el-button>
             <el-button icon="el-icon-refresh" size="mini" @click="mainReset">重置</el-button>
           </el-form-item>
+          <div>
+            <el-button size="mini" v-if="diaTbas === 4" @click="fansGroup" type="primary" icon="el-icon-user">群组
+            </el-button>
+          </div>
           <!-- 操作按钮 -->
           <div class="headerTool-handle-btns">
             <div class="headerTool--handle-btns-left">
