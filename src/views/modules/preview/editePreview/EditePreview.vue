@@ -165,25 +165,47 @@
           >
         </el-form-item>
         <el-form-item label="添加商品" prop="products">
-          <el-input
+          <!-- <el-input
             style="width: 400px"
             placeholder="请输入"
             @click.native="chooseProduct"
             v-model="ruleForm.products"
             readonly
             clearable
-          ></el-input>
+          ></el-input> -->
+          <el-button @click.native="chooseProduct" type="primary">添加</el-button>
+              <div class="product-box" v-if="!!ruleForm.products.length">
+                  <el-tag
+                      v-for="(item, index) in ruleForm.products"
+                      :key="index"
+                      closable
+                      @close="closeProductId(index)"
+                      type="info">
+                      {{item}}
+                  </el-tag>
+              </div>
         </el-form-item>
 
         <el-form-item label="添加主播" prop="recommendedAnchors">
-          <el-input
+          <!-- <el-input
             style="width: 400px"
             placeholder="请输入"
             @click.native="chooseAnchor"
             v-model="ruleForm.recommendedAnchors"
             readonly
             clearable
-          ></el-input>
+          ></el-input> -->
+          <el-button @click.native="chooseAnchor" type="primary">添加</el-button>
+          <div class="product-box" v-if="!!ruleForm.recommendedAnchors.length">
+              <el-tag
+                  v-for="(item, index) in ruleForm.recommendedAnchors"
+                  :key="index"
+                  closable
+                  @close="closeAnchor(index)"
+                  type="info">
+                  {{item}}
+              </el-tag>
+          </div>
         </el-form-item>
 
         <el-form-item label="直播背景">
@@ -432,20 +454,20 @@ export default {
               this.ruleForm.assistant = ""
             }
             if(res.data.products){
-              this.ruleForm.products = res.data.products;
-              let productsData = this.ruleForm.products.split(",");
-              this.ruleForm.products = productsData.length
-                ? `已选择${productsData.length}个商品`
-                : "";
+              this.ruleForm.products = res.data.products.split(",");
+              // let productsData = this.ruleForm.products.split(",");
+              // this.ruleForm.products = productsData.length
+              //   ? `已选择${productsData.length}个商品`
+              //   : "";
             }else {
               this.ruleForm.products = ""
             }
             if(res.data.recommendedAnchors){
-              this.ruleForm.recommendedAnchors = res.data.recommendedAnchors;
-              let anchorData = this.ruleForm.recommendedAnchors.split(",");
-              this.ruleForm.recommendedAnchors = anchorData.length
-                ? `已选择${anchorData.length}个主播`
-                : "";
+              this.ruleForm.recommendedAnchors = res.data.recommendedAnchors.split(",");
+              // let anchorData = this.ruleForm.recommendedAnchors.split(",");
+              // this.ruleForm.recommendedAnchors = anchorData.length
+              //   ? `已选择${anchorData.length}个主播`
+              //   : "";
             }else {
               this.ruleForm.recommendedAnchors = ""
             }
@@ -531,6 +553,12 @@ export default {
           type: 2,
         },
       });
+    },
+    closeAnchor(index) {
+      this.ruleForm.recommendedAnchors.splice(index, 1)
+    },
+    closeProductId(index) {
+      this.ruleForm.products.splice(index, 1)
     },
     //提交表单
     submitForm(formName) {
@@ -735,5 +763,21 @@ export default {
 }
 /deep/.quill-editor {
   position: relative;
+}
+/deep/.product-box {
+    width: 400px;
+    border-radius: 5px;
+    border: 1px solid #D7DAE2;
+    padding: 12px;
+    margin-top: 10px;
+
+    .el-tag {
+        margin-right: 10px;
+        margin-bottom: 5px;
+    }
+
+    .el-tag:last-child {
+        margin-right: 0
+    }
 }
 </style>
