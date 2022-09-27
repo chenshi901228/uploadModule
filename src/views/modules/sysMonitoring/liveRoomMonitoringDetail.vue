@@ -199,12 +199,17 @@ export default {
     getLiveTrends(){ //直播趋势
       this.$http.get(`/sys/liveListSupervisory/getLiveOnlineNumTrend/${this.$route.query.id}`).then(({data:res})=>{
         if(!res.code==0) return this.$message.error(res.msg)
-        if(!res.data || (res.data && !res.data.length)) return
-        res.data.forEach(item=>{
-          this.liveTrendsX.push(item.createDate)
-          this.liveTrendsY.push(Number(item.onlineNum))
-        })
-        this.cumulativeNum = res.data[res.data.length-1].cumulativeNum
+        if(!res.data || (res.data && !res.data.length)) {
+          this.liveTrendsX = []
+          this.liveTrendsY = []
+          this.cumulativeNum = 0
+        }else {
+          res.data.forEach(item=>{
+            this.liveTrendsX.push(item.createDate)
+            this.liveTrendsY.push(Number(item.onlineNum))
+          })
+          this.cumulativeNum = res.data[res.data.length-1].cumulativeNum
+        }
         // console.log(this.liveTrendsX,this.liveTrendsY,'/直播趋势')
         this.initEcharts()
       })
@@ -212,24 +217,34 @@ export default {
     getCommerceIncome(){ //带货分析
       this.$http.get(`/sys/liveListSupervisory/getCommerceIncome/${this.$route.query.id}`).then(({data:res})=>{
         if(!res.code==0) return this.$message.error(res.msg)
-        if(!res.data || (res.data && !res.data.length)) return
-        res.data.forEach(item=>{
-          this.commerceName.push(item.productName)
-          this.commerceNum.push(item.totalNum)
-          this.commercePrice.push(item.totalPrice)
-        })
+        if(!res.data || (res.data && !res.data.length)) {
+          this.commerceName = []
+          this.commerceNum = []
+          this.commercePrice = []
+        }else {
+          res.data.forEach(item=>{
+            this.commerceName.push(item.productName)
+            this.commerceNum.push(item.totalNum)
+            this.commercePrice.push(item.totalPrice)
+          })
+        }
         this.initEchartsTwo()
       })
     },
     getGetReward(){ //打赏分析
       this.$http.get(`/sys/liveListSupervisory/getGetReward/${this.$route.query.id}`).then(({data:res})=>{
         if(!res.code==0) return this.$message.error(res.msg)
-        if(!res.data || (res.data && !res.data.length)) return
-        res.data.forEach(item=>{
-          this.rewardGiftName.push(item.name)
-          this.giftNum.push(item.totalGiftNum)
-          this.giftPrice.push(item.totalPrice)
-        })
+        if(!res.data || (res.data && !res.data.length)) {
+          this.rewardGiftName = []
+          this.giftNum = []
+          this.giftPrice = []
+        }else {
+          res.data.forEach(item=>{
+            this.rewardGiftName.push(item.name)
+            this.giftNum.push(item.totalGiftNum)
+            this.giftPrice.push(item.totalPrice)
+          })
+        }
         this.initEchartsThree()
       })
     },
@@ -245,7 +260,7 @@ export default {
           return this.$message.warning("暂时未获取到正在直播的信息")
         }
         this.liveDetail = res.data
-        this.videoUrl = res.data.liveStream.Data.PlayInfo[0].HLS
+        this.videoUrl = res.data.liveStream.Data.PlayInfo[0].HLS.replace("http", "https")
         this.getVideo(this.videoUrl)
       }).catch(err => {
         this.loadingLive = false
