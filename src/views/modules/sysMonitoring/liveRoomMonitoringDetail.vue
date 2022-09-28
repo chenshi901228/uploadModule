@@ -14,11 +14,16 @@
       </div>
       <div class="live_content">
         <div class="live_content_top">
-          <div class="live_video">
+          <div class="live_video" 
+            v-loading="loadingLive"
+            element-loading-text="直播加载中"
+            element-loading-spinner="el-icon-loading">
             <div class="live_info">
               直播间ID：{{liveDetail.liveStream&&liveDetail.liveStream.Data.RoomId}}
             </div>
-            <video-flv-component :url="videoUrl" class="live_video_flv"></video-flv-component>
+            <!-- <video-flv-component :url="videoUrl" class="live_video_flv"></video-flv-component> -->
+            <video controls id="myVideo" autoplay class="live_video_flv"></video>
+            <video src=""></video>
             <div class="banned" @click="bannedFun" v-if="liveDetail.liveState && bannedDisble=='1'">
               <img src="../../../assets/img/banned.png" alt="">
               <span>禁播</span>
@@ -60,14 +65,16 @@
 </template>
 
 <script>
-import VideoFlvComponent from "@/components/common/videoFlvComponent.vue"
+import videojs from 'video.js'
+import 'videojs-contrib-hls'
+// import VideoFlvComponent from "@/components/common/videoFlvComponent.vue"
 import RemarkModal from "@/components/common/remarkDialog";
 
 // import echarts from "echarts"
 import * as echarts from 'echarts';
 export default {
   components:{
-    VideoFlvComponent,
+    // VideoFlvComponent,
     RemarkModal
   },
   data(){
@@ -116,7 +123,8 @@ export default {
       liveTrendsX:[],
       liveTrendsY:[],
       cumulativeNum:0,
-      videoUrl:"",
+      player: null,
+      videoUrl: "",
       isLive:true,
       rewardGiftName:[],//打赏礼物
       giftNum:[],//礼物数量
@@ -125,7 +133,8 @@ export default {
       commerceNum:[],//礼物数量
       commercePrice:[],//礼物价格
 
-      bannedDisble:'1'//禁播按钮自定义状态显示，1为启用，0为禁止
+      bannedDisble:'1',//禁播按钮自定义状态显示，1为启用，0为禁止
+      loadingLive: false, //直播加载loading
     }
   },
   created(){
@@ -140,7 +149,24 @@ export default {
     this.getGetReward()
     this.bannedDisble='1'
   },
+  beforeDestroy() {
+    if(this.player) this.player.dispose()
+  },
   methods:{
+    // 更新直播地址
+    getVideo(url) {
+      if(!this.player) {
+        this.player = videojs("myVideo", {
+          children: []
+        })
+      }
+      this.player.src({
+        src: url,
+        type: 'application/x-mpegURL'
+      })
+      this.player.play()
+      this.loadingLive = false
+    },
     numberChange(num, unit = "W") {
       if(num == null) num = 0
       num = Number(num)
@@ -173,44 +199,72 @@ export default {
     getLiveTrends(){ //直播趋势
       this.$http.get(`/sys/liveListSupervisory/getLiveOnlineNumTrend/${this.$route.query.id}`).then(({data:res})=>{
         if(!res.code==0) return this.$message.error(res.msg)
-        res.data.forEach(item=>{
-          this.liveTrendsX.push(item.createDate)
-          this.liveTrendsY.push(Number(item.onlineNum))
-        })
-        this.cumulativeNum = res.data[res.data.length-1].cumulativeNum
-        console.log(this.liveTrendsX,this.liveTrendsY,'/直播趋势')
+        if(!res.data || (res.data && !res.data.length)) {
+          this.liveTrendsX = []
+          this.liveTrendsY = []
+          this.cumulativeNum = 0
+        }else {
+          res.data.forEach(item=>{
+            this.liveTrendsX.push(item.createDate)
+            this.liveTrendsY.push(Number(item.onlineNum))
+          })
+          this.cumulativeNum = res.data[res.data.length-1].cumulativeNum
+        }
+        // console.log(this.liveTrendsX,this.liveTrendsY,'/直播趋势')
         this.initEcharts()
       })
     },
     getCommerceIncome(){ //带货分析
       this.$http.get(`/sys/liveListSupervisory/getCommerceIncome/${this.$route.query.id}`).then(({data:res})=>{
         if(!res.code==0) return this.$message.error(res.msg)
-        console.log(res.data,'带货分析')
-        res.data.forEach(item=>{
-          this.commerceName.push(item.productName)
-          this.commerceNum.push(item.totalNum)
-          this.commercePrice.push(item.totalPrice)
-        })
+        if(!res.data || (res.data && !res.data.length)) {
+          this.commerceName = []
+          this.commerceNum = []
+          this.commercePrice = []
+        }else {
+          res.data.forEach(item=>{
+            this.commerceName.push(item.productName)
+            this.commerceNum.push(item.totalNum)
+            this.commercePrice.push(item.totalPrice)
+          })
+        }
         this.initEchartsTwo()
       })
     },
     getGetReward(){ //打赏分析
       this.$http.get(`/sys/liveListSupervisory/getGetReward/${this.$route.query.id}`).then(({data:res})=>{
         if(!res.code==0) return this.$message.error(res.msg)
-        console.log(res.data,'打赏分析')
-        res.data.forEach(item=>{
-          this.rewardGiftName.push(item.name)
-          this.giftNum.push(item.totalGiftNum)
-          this.giftPrice.push(item.totalPrice)
-        })
+        if(!res.data || (res.data && !res.data.length)) {
+          this.rewardGiftName = []
+          this.giftNum = []
+          this.giftPrice = []
+        }else {
+          res.data.forEach(item=>{
+            this.rewardGiftName.push(item.name)
+            this.giftNum.push(item.totalGiftNum)
+            this.giftPrice.push(item.totalPrice)
+          })
+        }
         this.initEchartsThree()
       })
     },
     getliveDetail(){
+      this.loadingLive = true
       this.$http.get(`/sys/liveListSupervisory/getDetailed/${this.$route.query.id}`).then(({data:res})=>{
-        if(!res.code==0) return this.$message.error(res.msg)
+        if(!res.code==0) {
+          this.loadingLive = false
+          return this.$message.error(res.msg)
+        }
+        if(!res.data.liveStream) {
+          this.loadingLive = false
+          return this.$message.warning("暂时未获取到正在直播的信息")
+        }
         this.liveDetail = res.data
-        this.videoUrl = res.data.liveStream.Data.PlayInfo[0].FLV.replace('http','https')
+        this.videoUrl = res.data.liveStream.Data.PlayInfo[0].HLS.replace("http", "https")
+        this.getVideo(this.videoUrl)
+      }).catch(err => {
+        this.loadingLive = false
+        this.$message.error(JSON.stringify(err))
       })
     },
     initEchartsThree(){
@@ -410,8 +464,6 @@ export default {
       option && myChart.setOption(option);
     },
   },
-  mounted(){
-  },
 }
 </script>
 
@@ -592,9 +644,15 @@ export default {
   }
 
   .live_video_flv {
-    text-align: center;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     video {
-      max-height: 395px;
+      max-width: 100%;
+      max-height: 100%;
     }
   }
   
