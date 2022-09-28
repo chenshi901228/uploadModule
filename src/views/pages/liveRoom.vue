@@ -1080,6 +1080,7 @@ export default {
       isMuteLive:false,
       livePlayerList:[],//流列表
       connectTimer:{},//超时定时器
+      connectStatusTimer: null, //连麦之后定时监听连麦用户连接状态
       isOpenDesktopSharing:false,//是否开启屏幕共享
     };
   },
@@ -1327,6 +1328,15 @@ export default {
     })
   },  
   watch:{
+    livePlayerList(n) {
+      // 拉流变化定时监听连麦用户实时状态
+				if(n.length > 0) {
+					this.onGetConnectStatus()
+				}
+				if(n.length == 0) {
+					this.offGetConnectStatus()
+				}
+    }
     //   let deleteArr = []
     //   this.connectMessageInfo.forEach((item,index)=>{
     //     var arr = this.livePlayerList.filter(info=>info.streamID.includes(item.userInfo.userId) && item.connectStatus && item.getReplyConnectLoading != null)
@@ -2265,6 +2275,15 @@ export default {
                 }
               });
             }
+            // 连麦之后接收连麦用户定时发送的正在连麦中消息
+            if(applyInfo.message && applyInfo.message.type && applyInfo.message.type === 6) {
+              console.error(applyInfo)
+              this.connectMessageInfo.forEach(connect => {
+                if(connect.connectStatus && connect.userInfo && applyInfo.userInfo && connect.userInfo.id == applyInfo.userInfo.id) {
+                  connect['lastGetConnectIng'] = applyInfo.message.text
+                }
+              })
+            }
           }
         }
       });
@@ -2549,11 +2568,50 @@ export default {
         this.connectMessageInfo.splice(ind, 1); //移除挂断的一条连麦信息
       }
     },
+    // 定时监听连麦用户实时状态
+    onGetConnectStatus() {
+      if(!this.connectStatusTimer) {
+        this.connectStatusTimer = setInterval(() => {
+          this.connectMessageInfo.map(item => {
+            // console.error(item)
+            if(item.connectStatus && item.getReplyConnectLoading == false && item.lastGetConnectIng) {
+              let time = new Date().getTime() - item.lastGetConnectIng
+              // 超过8s未发送正在连麦消息挂断
+              if(time > 8 * 1000) {
+                this.livePlayerList.forEach((data)=>{ 
+                  if(data.streamID.includes(item.userInfo.userId)){
+                    this.$http.post(`/sys/mixedflow/deleteStream`, {
+                      RoomId: this.roomId, //房间ID；
+                      joinRoomId: data.streamID
+                    }).then(({data: res}) => {
+                      if(res.code != 0) return this.$message.error(res.msg)
+                      // 挂断
+                      this.hangup(item)
+                    }).catch(err => {
+                      console.warn(err)
+                      this.$message.error(JSON.stringify(err))
+                    })
+                  }
+                })
+              }
+            }
+          })
+        }, 3 * 1000)
+      }
+    },
+    // 取消监听连麦用户实时状态
+    offGetConnectStatus() {
+      if(this.connectStatusTimer) {
+        clearInterval(this.connectStatusTimer)
+        this.connectStatusTimer = null
+      }
+    },
     confirmQuit(){//退出直播间，关闭页面
       window.close()
     }
   },
   destroyed() {
+    this.offGetConnectStatus()
     // this.stopPublishingStream
     let arr = JSON.stringify(this.connectMessageInfo)
     arr = JSON.parse(arr)
