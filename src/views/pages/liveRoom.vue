@@ -177,13 +177,13 @@
               >
                 <div class="question_list">
                   <div class="user-info">
-                    <img :src="item.userInfo.avatarUrl" mode="" />
-                    <span>{{ item.userInfo.nickName }}</span>
+                    <img :src="item.avatarUrl || item.userInfo.avatarUrl" mode="" />
+                    <span>{{item.nickName || item.userInfo.nickName}}</span>
                   </div>
                   <div class="question_content_info">
                     <div class="tag">问</div>
                     <div class="text">
-                      {{ item.message.questionText }}
+                      {{item.content || item.message.questionText}}
                     </div>
                   </div>
                 </div>
@@ -823,6 +823,7 @@
           <div class="beautify_set">
             <video
               autoplay
+              muted
               :src-object.prop="stream"
               class="beautify_video"
               v-if="beautifyDialog"
@@ -1166,12 +1167,24 @@ export default {
     let checkSystemRes = await this.zg.checkSystemRequirements()
     if(!checkSystemRes.camera){
       this.cameraStatus = checkSystemRes.camera
-      this.$message.warning('请先打开摄像头权限')
+      this.$confirm("请先打开摄像头权限后刷新重试", "提示", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+      }).catch(()=>{
+      })
       return
     }
     if(!checkSystemRes.microphone){
       this.microphoneStatus = checkSystemRes.microphone
-      this.$message.warning('请先打开麦克风权限')
+      this.$confirm("请先打开麦克风权限后刷新重试", "提示", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
+      }).catch(()=>{
+      })
       return
     }
 
@@ -1658,6 +1671,9 @@ export default {
     handleClick(tab, event) {
       this.params.page=1
       switch(this.activeName){
+        case 'second':
+          this.questionMessageInfo = []
+          this.getliveQuestionList()
         case 'third' :
           this.studentList = []
           this.getOnlineUsers()
@@ -1929,9 +1945,9 @@ export default {
     },
     async startPlayLive() {
       if(!this.microphoneStatus){
-        return this.$message.warning('请先打开麦克风权限')
+        return this.$message.warning('请先打开麦克风权限后刷新重试')
       }else if(!this.cameraStatus){
-        return this.$message.warning('请先打开摄像头权限')
+        return this.$message.warning('请先打开摄像头权限后刷新重试')
       }
       let obj = {};
       if (
@@ -2221,7 +2237,7 @@ export default {
             list.push(item);
             let applyInfo = item.payload.data;
             if (applyInfo.message.type === 3) {
-              this.questionMessageInfo.push(applyInfo);
+              this.questionMessageInfo.unshift(applyInfo);
             }
             //连麦信息
             if (
@@ -2310,85 +2326,107 @@ export default {
       }
     },
     sendMessage(messageInfo, cb) {
-      if (!this.liveStatus) {
-        this.$message({ message: "直播暂未开启", type: "warning" });
-        return;
-      }
-      if (messageInfo.type === 1 && this.barrage.trim().length == 0) {
-        this.$message({ message: "聊天内容不能为空", type: "warning" });
-        return;
-      }
-      // 将自己发送的消息写进消息列表里面
-      const text = this.barrage;
-      let data = {
-        userInfo: this.userInfo, //用户信息
-        fansInfo:{},//用户是否为粉丝相关信息
-        message: {
-          /**
-           * 消息类型:
-           * 1:普通信息、
-           * 2:关注信息、
-           * 3:提问信息、
-           * 4:礼物信息、
-           * 5:语音连麦信息：{1、同意，2、拒绝}、
-           * 6:视频连麦信息：{1、同意，2、拒绝}、)
-           * 7:直播预告推送
-           * 8:商品推送
-           * **/
-          type: messageInfo.type,
-          text: text,
-          pushData: messageInfo.pushData, //推送信息（商品，直播预告）
-          connectType: messageInfo.connectType,
-          replyType: messageInfo.replyType ? messageInfo.replyType : null,
-          replyUserId: messageInfo.replyUserId,
-          isTalk: messageInfo.isTalk, //禁言
-          allMute: messageInfo.allMute, //全员禁言
-        },
-      };
-      for (let k in data.message) {
-        //将空信息移除
-        if (data.message[k] === null || data.message[k] === "") {
-          delete data.message[k];
+      try {
+        if (!this.liveStatus) {
+          this.$message({ message: "直播暂未开启", type: "warning" });
+          return;
         }
-      }
-      // 发送自定义消息
-      const message = this.tim.createCustomMessage({
-        to: this.getToAccount(),
-        conversationType: this.conversation.type,
-        priority: messageInfo && messageInfo.isHigh ? TIM.TYPES.MSG_PRIORITY_HIGH : TIM.TYPES.MSG_PRIORITY_NORMAL,
-        payload: {
-          data: JSON.stringify(data),
-        },
-      });
-      const messageTwo = JSON.parse(JSON.stringify(message));
-      messageTwo.payload.data = JSON.parse(messageTwo.payload.data);
-      // 直播预告/商品推送消息
-      if (message.payload) {
-        let applyInfo = JSON.parse(message.payload.data);
-        let messageInfo = applyInfo.message;
-        if (
-          messageInfo &&
-          messageInfo.type &&
-          ((messageInfo && messageInfo.type === 7) ||
-            (messageInfo && messageInfo.type === 8))
-        ) {
-        } else {
-          this.barrageData = [...this.barrageData, messageTwo];
-          this.$nextTick(() => {
-            let div = document.getElementById("barrage");
-            div.scrollTop = div.scrollHeight;
-          });
+        if (messageInfo.type === 1 && this.barrage.trim().length == 0) {
+          this.$message({ message: "聊天内容不能为空", type: "warning" });
+          return;
         }
+        // 将自己发送的消息写进消息列表里面
+        const text = this.barrage;
+        let data = {
+          userInfo: this.userInfo, //用户信息
+          fansInfo:{},//用户是否为粉丝相关信息
+          message: {
+            /**
+             * 消息类型:
+             * 1:普通信息、
+             * 2:关注信息、
+             * 3:提问信息、
+             * 4:礼物信息、
+             * 5:语音连麦信息：{1、同意，2、拒绝}、
+             * 6:视频连麦信息：{1、同意，2、拒绝}、)
+             * 7:直播预告推送
+             * 8:商品推送
+             * **/
+            type: messageInfo.type,
+            text: text,
+            pushData: messageInfo.pushData, //推送信息（商品，直播预告）
+            connectType: messageInfo.connectType,
+            replyType: messageInfo.replyType ? messageInfo.replyType : null,
+            replyUserId: messageInfo.replyUserId,
+            isTalk: messageInfo.isTalk, //禁言
+            allMute: messageInfo.allMute, //全员禁言
+          },
+        };
+        for (let k in data.message) {
+          //将空信息移除
+          if (data.message[k] === null || data.message[k] === "") {
+            delete data.message[k];
+          }
+        }
+        // 发送自定义消息
+        const message = this.tim.createCustomMessage({
+          to: this.getToAccount(),
+          conversationType: this.conversation.type,
+          priority: messageInfo && messageInfo.isHigh ? TIM.TYPES.MSG_PRIORITY_HIGH : TIM.TYPES.MSG_PRIORITY_NORMAL,
+          payload: {
+            data: JSON.stringify(data),
+          },
+        });
+        const messageTwo = JSON.parse(JSON.stringify(message));
+        messageTwo.payload.data = JSON.parse(messageTwo.payload.data);
+        // 直播预告/商品推送消息
+        if (message.payload) {
+          let applyInfo = JSON.parse(message.payload.data);
+          let messageInfo = applyInfo.message;
+          if (
+            messageInfo &&
+            messageInfo.type &&
+            ((messageInfo && messageInfo.type === 7) ||
+              (messageInfo && messageInfo.type === 8))
+          ) {
+          } else {
+            this.barrageData = [...this.barrageData, messageTwo];
+            this.$nextTick(() => {
+              let div = document.getElementById("barrage");
+              div.scrollTop = div.scrollHeight;
+            });
+          }
+        }
+        this.tim.sendMessage(message);
+        // 发送消息之后清空输入框内容
+        this.barrage = "";
+        if (cb) cb();
+      } catch (error) {
+        window.removeEventListener('beforeunload',this.beforeunloadHandler)
+        this.$confirm("腾讯IM登录失败，请检查当前页面无重复打开后刷新重试", "提示", {
+          confirmButtonText: "确认",
+          cancelButtonText: "取消",
+          type: "error"
+        }).then(() => {
+          window.close()
+        }).catch(()=>{
+          window.close()
+        })
       }
-      this.tim.sendMessage(message);
-      // 发送消息之后清空输入框内容
-      this.barrage = "";
-      if (cb) cb();
     },
     searchUserFun(){
       this.params.page=1
       this.studentList = []
       this.getOnlineUsers()
+    },
+    //获取提问列表
+    getliveQuestionList(){
+      this.$http.get('/sys/liveAsk/getLiveAskInRoom').then(({data:res})=>{
+        if(!res.code==0) return this.$message.error(res.msg)
+        this.questionMessageInfo = res.data
+      }).catch(err=>{
+        console.error(err)
+      })
     },
     // 获取在线学生
     getOnlineUsers() {
@@ -2403,7 +2441,9 @@ export default {
           let data = res.data.list;
           this.studentList = this.studentList.concat(data)
           this.total = res.data.total
-        });
+        }).catch(err=>{
+          console.error(err)
+        })
     },
     // 获取主播推荐商品
     getAnchorProduct() {
@@ -2429,7 +2469,7 @@ export default {
           this.goodsList = data
           resolve(this.goodsList)
         }).catch((err)=>{
-          
+          console.error(err)
         })
       })
     },
@@ -2447,7 +2487,9 @@ export default {
           if(!res.data.code==0) return this.$message.error(res.data.msg)
           this.livePreviewList = res.data.data.list
           resolve(this.livePreviewList)
-        });
+        }).catch((err)=>{
+          console.error(err)
+        })
       })
     },
     //获取主播推荐主播
@@ -2464,7 +2506,9 @@ export default {
           if(!res.data.code==0) return this.$message.error(res.data.msg)
           this.recommendList = res.data.data.list
           resolve(this.recommendList)
-        });
+        }).catch((err)=>{
+          console.error(err)
+        })
       })
     },
     //推送商品、直播预告
