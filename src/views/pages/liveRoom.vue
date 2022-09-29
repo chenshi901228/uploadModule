@@ -2293,10 +2293,10 @@ export default {
             }
             // 连麦之后接收连麦用户定时发送的正在连麦中消息
             if(applyInfo.message && applyInfo.message.type && applyInfo.message.type === 6) {
-              console.error(applyInfo)
+              // console.error(applyInfo)
               this.connectMessageInfo.forEach(connect => {
                 if(connect.connectStatus && connect.userInfo && applyInfo.userInfo && connect.userInfo.id == applyInfo.userInfo.id) {
-                  connect['lastGetConnectIng'] = applyInfo.message.text
+                  connect['lastGetConnectIng'] = new Date().getTime()
                 }
               })
             }
@@ -2615,6 +2615,7 @@ export default {
     // 定时监听连麦用户实时状态
     onGetConnectStatus() {
       if(!this.connectStatusTimer) {
+        console.log("开始监听连麦用户定时发送的消息")
         this.connectStatusTimer = setInterval(() => {
           this.connectMessageInfo.map(item => {
             // console.error(item)
@@ -2646,6 +2647,7 @@ export default {
     // 取消监听连麦用户实时状态
     offGetConnectStatus() {
       if(this.connectStatusTimer) {
+        console.log("取消监听连麦用户定时发送的消息")
         clearInterval(this.connectStatusTimer)
         this.connectStatusTimer = null
       }
