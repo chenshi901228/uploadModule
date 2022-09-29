@@ -23,7 +23,6 @@
             </div>
             <!-- <video-flv-component :url="videoUrl" class="live_video_flv"></video-flv-component> -->
             <video controls id="myVideo" autoplay class="live_video_flv"></video>
-            <video src=""></video>
             <div class="banned" @click="bannedFun" v-if="liveDetail.liveState && bannedDisble=='1'">
               <img src="../../../assets/img/banned.png" alt="">
               <span>禁播</span>
@@ -157,6 +156,7 @@ export default {
     getVideo(url) {
       if(!this.player) {
         this.player = videojs("myVideo", {
+          restoreEl: true,
           children: []
         })
       }
@@ -251,12 +251,16 @@ export default {
     getliveDetail(){
       this.loadingLive = true
       this.$http.get(`/sys/liveListSupervisory/getDetailed/${this.$route.query.id}`).then(({data:res})=>{
-        if(!res.code==0) {
+        if(res.code != 0) {
           this.loadingLive = false
           return this.$message.error(res.msg)
         }
         if(!res.data.liveStream) {
           this.loadingLive = false
+          this.liveDetail = {}
+          if(this.player) this.player.dispose()
+          this.player = null
+          this.videoUrl = ""
           return this.$message.warning("暂时未获取到正在直播的信息")
         }
         this.liveDetail = res.data
@@ -264,7 +268,7 @@ export default {
         this.getVideo(this.videoUrl)
       }).catch(err => {
         this.loadingLive = false
-        this.$message.error(JSON.stringify(err))
+        if(JSON.stringify(err) != "{}") return this.$message.error(JSON.stringify(err))
       })
     },
     initEchartsThree(){
