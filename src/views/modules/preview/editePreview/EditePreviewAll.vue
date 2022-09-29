@@ -192,7 +192,7 @@
             >{{ TiLength }}/2000</span
           >
         </el-form-item>
-        <el-form-item label="添加商品" prop="products">
+        <!-- <el-form-item label="添加商品" prop="products">
           <el-input
             style="width: 400px"
             placeholder="请输入"
@@ -212,6 +212,49 @@
             readonly
             clearable
           ></el-input>
+        </el-form-item> -->
+        <el-form-item label="添加商品" prop="products">
+          <!-- <el-input
+            style="width: 400px"
+            placeholder="请输入"
+            @click.native="chooseProduct"
+            v-model="ruleForm.products"
+            readonly
+            clearable
+          ></el-input> -->
+          <el-button @click.native="chooseProduct" type="primary">添加</el-button>
+              <div class="product-box" v-if="!!productLiveId.length">
+                  <el-tag
+                      v-for="(item, index) in productLiveId"
+                      :key="index"
+                      closable
+                      @close="closeProductId(index,item)"
+                      type="info">
+                      {{item.productName}}
+                  </el-tag>
+              </div>
+        </el-form-item>
+
+        <el-form-item label="添加主播" prop="recommendedAnchors">
+          <!-- <el-input
+            style="width: 400px"
+            placeholder="请输入"
+            @click.native="chooseAnchor"
+            v-model="ruleForm.recommendedAnchors"
+            readonly
+            clearable
+          ></el-input> -->
+          <el-button @click.native="chooseAnchor" type="primary">添加</el-button>
+          <div class="product-box" v-if="!!recommendedAnchorOwnIds.length">
+              <el-tag
+                  v-for="(item, index) in recommendedAnchorOwnIds"
+                  :key="index"
+                  closable
+                  @close="closeAnchor(index,item)"
+                  type="info">
+                  {{item.name}}
+              </el-tag>
+          </div>
         </el-form-item>
 
         <el-form-item label="直播背景">
@@ -375,6 +418,9 @@ export default {
       frontCoverListDefault: "",
       info: {},
       options: [],
+
+      productLiveId:[],
+      recommendedAnchorOwnIds:[],
     };
   },
   watch: {
@@ -412,6 +458,9 @@ export default {
     this.showDefaultImg = false;
     this.defaultImg = [];
     this.fileList = [];
+
+    this.productIds=[]
+    this.recommendedAnchorOwnIds=[]
 
     this.uploadUrl = `${
       window.SITE_CONFIG["apiURL"]
@@ -468,20 +517,26 @@ export default {
               this.ruleForm.assistant = ""
             }
             if (res.data.products) {
-              this.ruleForm.products = res.data.products;
-              let productsData = this.ruleForm.products.split(",");
-              this.ruleForm.products = productsData.length
-                ? `已选择${productsData.length}个商品`
-                : "";
+              this.ruleForm.productLiveId=res.data.productLiveId
+              this.ruleForm.products = res.data.products.split(",");
+              this.productLiveId  = this.ruleForm.productLiveId.map((productLiveId, i) => ({ productLiveId, productName: this.ruleForm.products[i] }))
+              // this.ruleForm.products = res.data.products;
+              // let productsData = this.ruleForm.products.split(",");
+              // this.ruleForm.products = productsData.length
+              //   ? `已选择${productsData.length}个商品`
+              //   : "";
             }else {
               this.ruleForm.products = ""
             }
             if (res.data.recommendedAnchors) {
-              this.ruleForm.recommendedAnchors = res.data.recommendedAnchors;
-              let anchorData = this.ruleForm.recommendedAnchors.split(",");
-              this.ruleForm.recommendedAnchors = anchorData.length
-                ? `已选择${anchorData.length}个主播`
-                : "";
+              this.ruleForm.recommendedAnchorOwnIds=res.data.recommendedAnchorOwnIds
+              this.ruleForm.recommendedAnchors = res.data.recommendedAnchors.split(",");
+              this.recommendedAnchorOwnIds  = this.ruleForm.recommendedAnchorOwnIds.map((id, i) => ({ id, name: this.ruleForm.recommendedAnchors[i] }))
+              // this.ruleForm.recommendedAnchors = res.data.recommendedAnchors;
+              // let anchorData = this.ruleForm.recommendedAnchors.split(",");
+              // this.ruleForm.recommendedAnchors = anchorData.length
+              //   ? `已选择${anchorData.length}个主播`
+              //   : "";
             }else {
               this.ruleForm.recommendedAnchors
             }
@@ -556,6 +611,7 @@ export default {
         },
       });
     },
+    
     // 推荐商品
     chooseProduct() {
       this.$router.push({
@@ -566,6 +622,55 @@ export default {
           type: 2,
         },
       });
+    },
+    closeAnchor(index,item) {
+      this.recommendedAnchorOwnIds.splice(index, 1)
+      this.closeAnchorDelete(item)
+    },
+    //删除主播
+    closeAnchorDelete(item) {
+      this.$http
+        .delete(`/sys/sysRecommendedAnchor`, {
+          data: [item.id],
+        })
+        .then(({ data: res }) => {
+      
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          } else {
+            // this.$message.success("删除成功！");
+            // this.query();
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
+    //删除商品
+    confirmDelete(item) {
+      this.$http
+        .delete(`/sys/anchorProduct/live/deleteWithLive`, {
+          data: {
+            ids: [item.productLiveId],
+            liveId: this.info.id,
+            type: 2,
+          },
+        })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          } else {
+            // this.$message.success("删除成功！");
+            // this.query();
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
+    closeProductId(index,item) {
+      this.productLiveId.splice(index,1)
+      this.confirmDelete(item)
     },
     //提交表单
     submitForm(formName) {
@@ -789,5 +894,22 @@ export default {
 }
 /deep/.quill-editor {
   position: relative;
+}
+
+/deep/.product-box {
+    width: 400px;
+    border-radius: 5px;
+    border: 1px solid #D7DAE2;
+    padding: 12px;
+    margin-top: 10px;
+
+    .el-tag {
+        margin-right: 10px;
+        margin-bottom: 5px;
+    }
+
+    .el-tag:last-child {
+        margin-right: 0
+    }
 }
 </style>

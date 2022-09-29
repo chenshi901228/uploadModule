@@ -125,14 +125,45 @@
             >{{ TiLength }}/2000</span
           > -->
         </el-form-item>
-        <el-form-item label="添加商品" prop="goods">
+        <!-- <el-form-item label="添加商品" prop="goods">
           <el-input style="width: 400px" placeholder="请选择" @click.native="chooseProduct" v-model="ruleForm.goods"
             readonly clearable></el-input>
+        </el-form-item> -->
+        <el-form-item label="添加商品" prop="goods">
+          <!-- <el-input style="width: 400px" placeholder="请选择" @click.native="chooseProduct" v-model="ruleForm.goods"
+            readonly clearable></el-input> -->
+            <el-button @click.native="chooseProduct" type="primary">添加</el-button>
+              <div class="product-box" v-if="!!ruleForm.productIds.length">
+                  <el-tag
+                      v-for="(item, index) in ruleForm.productIds"
+                      :key="index"
+                      closable
+                      @close="closeProductId(index)"
+                      type="info">
+                      {{item.productName}}
+                  </el-tag>
+              </div>
         </el-form-item>
 
-        <el-form-item label="添加主播" prop="anchors">
+        <!-- <el-form-item label="添加主播" prop="anchors">
           <el-input style="width: 400px" placeholder="请选择" @click.native="chooseAnchor" v-model="ruleForm.anchors"
             readonly clearable></el-input>
+        </el-form-item> -->
+
+        <el-form-item label="添加主播" prop="anchors">
+          <!-- <el-input style="width: 400px" placeholder="请选择" @click.native="chooseAnchor" v-model="ruleForm.anchors"
+            readonly clearable></el-input> -->
+          <el-button @click.native="chooseAnchor" type="primary">添加</el-button>
+          <div class="product-box" v-if="!!ruleForm.recommendedAnchorList.length">
+              <el-tag
+                  v-for="(item, index) in ruleForm.recommendedAnchorList"
+                  :key="index"
+                  closable
+                  @close="closeAnchor(index)"
+                  type="info">
+                  {{item.username}}
+              </el-tag>
+          </div>
         </el-form-item>
 
         <el-form-item label="直播背景">
@@ -232,6 +263,8 @@ export default {
         dynamicGroupIds: [],
         liveIntroduce: "",
         anchorId: null,
+        productIds: [],
+        recommendedAnchorList: [],
       },
       dialogImageUrl: "",
       // dialogVisible: false,
@@ -330,6 +363,12 @@ export default {
     this.getCoverPictureList();
   },
   methods: {
+    closeProductId(index) {
+      this.ruleForm.productIds.splice(index, 1)
+    },
+    closeAnchor(index) {
+      this.ruleForm.recommendedAnchorList.splice(index, 1)
+    },
     // 封面图上传
     frontCoverUploadSuccess(file) {
       this.frontCoverList.push(file);
@@ -420,12 +459,17 @@ export default {
       }
     },
     // 推荐商品弹框
+    // chooseProduct() {
+    //   if (!this.ruleForm.anchorId) return this.$message.warning("请选择主播");
+    //   this.$refs.chooseProduct.init(
+    //     this.ruleForm.productIds,
+    //     this.ruleForm.anchorId
+    //   );
+    // },
+    // 推荐商品弹框
     chooseProduct() {
       if (!this.ruleForm.anchorId) return this.$message.warning("请选择主播");
-      this.$refs.chooseProduct.init(
-        this.ruleForm.productIds,
-        this.ruleForm.anchorId
-      );
+      this.$refs.chooseProduct.init(this.ruleForm.productIds,this.ruleForm.anchorId);
     },
 
     // 确认添加推荐商品
@@ -704,5 +748,22 @@ export default {
   -ms-flex-align: center;
   align-items: center;
   border-radius: 2px;
+}
+/deep/.product-box {
+    width: 400px;
+    border-radius: 5px;
+    border: 1px solid #D7DAE2;
+    padding: 12px;
+    margin-top: 10px;
+
+    .el-tag {
+        margin-right: 10px;
+        margin-bottom:5px
+    }
+
+    .el-tag:last-child {
+        margin-right: 0
+       
+    }
 }
 </style>

@@ -408,6 +408,7 @@ export default {
     this.defaultImg = [];
     this.fileList = [];
     this.productIds=[]
+    this.recommendedAnchorOwnIds=[]
 
     this.uploadUrl = `${
       window.SITE_CONFIG["apiURL"]
