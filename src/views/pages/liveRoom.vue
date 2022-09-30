@@ -1163,6 +1163,7 @@ export default {
       parseInt(window.SITE_CONFIG['appID']),
       window.SITE_CONFIG['server']
     );
+    this.zg.setLogConfig({ logLevel: 'disable' })
     //检测设备能力
     let checkSystemRes = await this.zg.checkSystemRequirements()
     if(!checkSystemRes.camera){
@@ -2272,9 +2273,9 @@ export default {
                 applyInfo.message.replyType === -1
                   ? this.$message("用户已取消连麦申请")
                   : this.$message("用户已断开连麦");
-                if(this.connectTimer[userId]){
-                  clearTimeout(this.connectTimer[userId])
-                  delete this.connectTimer[userId]
+                if(this.connectTimer[applyInfo.userInfo.userId]){
+                  clearTimeout(this.connectTimer[applyInfo.userInfo.userId])
+                  delete this.connectTimer[applyInfo.userInfo.userId]
                 }
                 this.$loading().close();
               }
