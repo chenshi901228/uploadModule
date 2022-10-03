@@ -631,6 +631,7 @@ export default {
 
     .el-tag {
         margin-right: 10px;
+        margin-bottom: 5px;
     }
 
     .el-tag:last-child {

@@ -221,6 +221,9 @@ export default {
     };
   },
   activated() {
+    if(this.$route.query.liveState==0){
+      this.dataForm.isAdd=1
+    }
     if(this.$route.query.authEdit != undefined) { //有表示来自直播列表
       this.authEdit = this.$route.query.authEdit
     }

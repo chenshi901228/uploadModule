@@ -661,7 +661,8 @@ export default {
           liveId: row.id,
           type: 1,
           anchorId: row.anchorUserId,
-          authEdit: this.isHandleAuth(row, "2") ? 1 : 0 
+          authEdit: this.isHandleAuth(row, "2") ? 1 : 0 ,
+          liveState:row.liveState
         }
       });
     },

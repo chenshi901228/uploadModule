@@ -1165,6 +1165,7 @@ export default {
       parseInt(window.SITE_CONFIG['appID']),
       window.SITE_CONFIG['server']
     );
+    this.zg.setLogConfig({ logLevel: 'disable' })
     //检测设备能力
     let checkSystemRes = await this.zg.checkSystemRequirements()
     if(!checkSystemRes.camera){
@@ -2274,9 +2275,9 @@ export default {
                 applyInfo.message.replyType === -1
                   ? this.$message("用户已取消连麦申请")
                   : this.$message("用户已断开连麦");
-                if(this.connectTimer[userId]){
-                  clearTimeout(this.connectTimer[userId])
-                  delete this.connectTimer[userId]
+                if(this.connectTimer[applyInfo.userInfo.userId]){
+                  clearTimeout(this.connectTimer[applyInfo.userInfo.userId])
+                  delete this.connectTimer[applyInfo.userInfo.userId]
                 }
                 this.$loading().close();
               }
@@ -2295,10 +2296,10 @@ export default {
             }
             // 连麦之后接收连麦用户定时发送的正在连麦中消息
             if(applyInfo.message && applyInfo.message.type && applyInfo.message.type === 6) {
-              console.error(applyInfo)
+              // console.error(applyInfo)
               this.connectMessageInfo.forEach(connect => {
                 if(connect.connectStatus && connect.userInfo && applyInfo.userInfo && connect.userInfo.id == applyInfo.userInfo.id) {
-                  connect['lastGetConnectIng'] = applyInfo.message.text
+                  connect['lastGetConnectIng'] = new Date().getTime()
                 }
               })
             }
@@ -2617,6 +2618,7 @@ export default {
     // 定时监听连麦用户实时状态
     onGetConnectStatus() {
       if(!this.connectStatusTimer) {
+        console.log("开始监听连麦用户定时发送的消息")
         this.connectStatusTimer = setInterval(() => {
           this.connectMessageInfo.map(item => {
             // console.error(item)
@@ -2648,6 +2650,7 @@ export default {
     // 取消监听连麦用户实时状态
     offGetConnectStatus() {
       if(this.connectStatusTimer) {
+        console.log("取消监听连麦用户定时发送的消息")
         clearInterval(this.connectStatusTimer)
         this.connectStatusTimer = null
       }

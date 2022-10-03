@@ -174,14 +174,14 @@
             clearable
           ></el-input> -->
           <el-button @click.native="chooseProduct" type="primary">添加</el-button>
-              <div class="product-box" v-if="!!ruleForm.products.length">
+              <div class="product-box" v-if="!!productLiveId.length">
                   <el-tag
-                      v-for="(item, index) in ruleForm.products"
+                      v-for="(item, index) in productLiveId"
                       :key="index"
                       closable
-                      @close="closeProductId(index)"
+                      @close="closeProductId(index,item)"
                       type="info">
-                      {{item}}
+                      {{item.productName}}
                   </el-tag>
               </div>
         </el-form-item>
@@ -196,14 +196,14 @@
             clearable
           ></el-input> -->
           <el-button @click.native="chooseAnchor" type="primary">添加</el-button>
-          <div class="product-box" v-if="!!ruleForm.recommendedAnchors.length">
+          <div class="product-box" v-if="!!recommendedAnchorOwnIds.length">
               <el-tag
-                  v-for="(item, index) in ruleForm.recommendedAnchors"
+                  v-for="(item, index) in recommendedAnchorOwnIds"
                   :key="index"
                   closable
-                  @close="closeAnchor(index)"
+                  @close="closeAnchor(index,item)"
                   type="info">
-                  {{item}}
+                  {{item.name}}
               </el-tag>
           </div>
         </el-form-item>
@@ -369,6 +369,9 @@ export default {
       frontCoverList: [],
       frontCoverListDefault: "",
       info: {},
+
+      productLiveId:[],
+      recommendedAnchorOwnIds:[],
     };
   },
   watch: {
@@ -404,6 +407,8 @@ export default {
     this.showDefaultImg = false;
     this.defaultImg = [];
     this.fileList = [];
+    this.productIds=[]
+    this.recommendedAnchorOwnIds=[]
 
     this.uploadUrl = `${
       window.SITE_CONFIG["apiURL"]
@@ -454,7 +459,10 @@ export default {
               this.ruleForm.assistant = ""
             }
             if(res.data.products){
+              this.ruleForm.productLiveId=res.data.productLiveId
               this.ruleForm.products = res.data.products.split(",");
+              this.productLiveId  = this.ruleForm.productLiveId.map((productLiveId, i) => ({ productLiveId, productName: this.ruleForm.products[i] }))
+              
               // let productsData = this.ruleForm.products.split(",");
               // this.ruleForm.products = productsData.length
               //   ? `已选择${productsData.length}个商品`
@@ -463,7 +471,10 @@ export default {
               this.ruleForm.products = ""
             }
             if(res.data.recommendedAnchors){
+              this.ruleForm.recommendedAnchorOwnIds=res.data.recommendedAnchorOwnIds
               this.ruleForm.recommendedAnchors = res.data.recommendedAnchors.split(",");
+              this.recommendedAnchorOwnIds  = this.ruleForm.recommendedAnchorOwnIds.map((id, i) => ({ id, name: this.ruleForm.recommendedAnchors[i] }))
+
               // let anchorData = this.ruleForm.recommendedAnchors.split(",");
               // this.ruleForm.recommendedAnchors = anchorData.length
               //   ? `已选择${anchorData.length}个主播`
@@ -554,11 +565,54 @@ export default {
         },
       });
     },
-    closeAnchor(index) {
-      this.ruleForm.recommendedAnchors.splice(index, 1)
+    closeAnchor(index,item) {
+      this.recommendedAnchorOwnIds.splice(index, 1)
+      this.closeAnchorDelete(item)
     },
-    closeProductId(index) {
-      this.ruleForm.products.splice(index, 1)
+    //删除主播
+    closeAnchorDelete(item) {
+      this.$http
+        .delete(`/sys/sysRecommendedAnchor`, {
+          data: [item.id],
+        })
+        .then(({ data: res }) => {
+      
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          } else {
+            // this.$message.success("删除成功！");
+            // this.query();
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
+    closeProductId(index,item) {
+      this.productLiveId.splice(index,1)
+      this.confirmDelete(item)
+    },
+    //删除商品
+    confirmDelete(item) {
+      this.$http
+        .delete(`/sys/anchorProduct/live/deleteWithLive`, {
+          data: {
+            ids: [item.productLiveId],
+            liveId: this.info.id,
+            type: 2,
+          },
+        })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          } else {
+            // this.$message.success("删除成功！");
+            // this.query();
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
     },
     //提交表单
     submitForm(formName) {

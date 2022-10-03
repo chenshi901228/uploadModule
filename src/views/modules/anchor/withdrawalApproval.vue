@@ -303,7 +303,7 @@
         >
           <template slot-scope="scope">
             
-            <span v-if="scope.row.taxSum!=0">{{ numberConvert(scope.row.taxSum) }}</span> 
+            <span v-if="scope.row.confirmStatus === 1 && scope.row.payStatus === 1">{{ numberConvert(scope.row.taxSum) }}</span> 
             <span v-else>-</span>
           </template>
         </el-table-column>
@@ -316,7 +316,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span v-if="scope.row.addedValueTax!=0">{{ numberConvert(scope.row.addedValueTax) }}</span> 
+            <span v-if="scope.row.confirmStatus === 1 && scope.row.payStatus === 1">{{ numberConvert(scope.row.addedValueTax) }}</span> 
             <span v-else>-</span>
           </template>
         </el-table-column>
@@ -330,7 +330,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span v-if="scope.row.additionalTax!=0">{{ numberConvert(scope.row.additionalTax) }}</span> 
+            <span v-if="scope.row.confirmStatus === 1 && scope.row.payStatus === 1">{{ numberConvert(scope.row.additionalTax) }}</span> 
             <span v-else>-</span>
 
           </template>
@@ -344,7 +344,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            <span v-if="scope.row.personalIncomeTax!=0">{{ numberConvert(scope.row.personalIncomeTax) }}</span> 
+            <span v-if="scope.row.confirmStatus === 1 && scope.row.payStatus === 1">{{ numberConvert(scope.row.personalIncomeTax) }}</span> 
             <span v-else>-</span>
           </template>
         </el-table-column>

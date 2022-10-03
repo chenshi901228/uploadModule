@@ -355,31 +355,35 @@
                 </el-tooltip>
               </template>
               <template slot-scope="{ row }">
-                <span>{{ numberConvert(row.sumTax) }}</span>
+                <span v-if="row.withdrawStatus=='4'">{{ numberConvert(row.sumTax) }}</span>
+                <span v-else>-</span>
               </template>
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center" width="150px"
               v-else-if="prop === 'addedValueTax'">
               <template slot-scope="{ row }">
-                <span>{{ numberConvert(row.addedValueTax) }}</span>
+                <span v-if="row.withdrawStatus=='4'">{{ numberConvert(row.addedValueTax) }}</span>
+                <span v-else>-</span>
               </template>
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center" width="150px"
               v-else-if="prop === 'additionalTax'">
               <template slot-scope="{ row }">
-                <span>{{ numberConvert(row.additionalTax) }}</span>
+                <span v-if="row.withdrawStatus=='4'">{{ numberConvert(row.additionalTax) }}</span>
+                <span v-else>-</span>
               </template>
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center" width="150px"
               v-else-if="prop === 'personalIncomeTax'">
               <template slot-scope="{ row }">
-                <span>{{ numberConvert(row.personalIncomeTax) }}</span>
+                <span v-if="row.withdrawStatus=='4'">{{ numberConvert(row.personalIncomeTax) }}</span>
+                <span v-else>-</span>
               </template>
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
               v-else-if="prop === 'receivedAmount'">
-              <template slot-scope="scope">
-                <span v-if="scope.row.withdrawStatus=='4'">{{ numberConvert(row.receivedAmount) }}</span>
+              <template slot-scope="{ row }">
+                <span v-if="row.withdrawStatus=='4'">{{ numberConvert(row.receivedAmount) }}</span>
                 <span v-else>-</span>
               </template>
             </el-table-column>
