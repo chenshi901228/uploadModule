@@ -860,7 +860,9 @@
       top="200px"
       width="440px">
         <div class="dialog_content">
-          <div class="streamAddress_content">{{streamUrl}}</div>
+          <el-tooltip :content="streamUrl" placement="top">
+            <div class="streamAddress_content">{{streamUrl}}</div>
+          </el-tooltip>
           <div class="copy_btn" :data-clipboard-text="streamUrl" @click="copyFun">复制</div>
         </div>
     </el-dialog>
@@ -950,7 +952,7 @@ export default {
       livePreviewDialogVisible:false,//直播预告弹窗
       recommendedAnchorDialogVisible:false,//推荐主播弹窗
       beautifyDialog:false,//美化弹窗
-      streamAddressDialog:false,//推流地址弹窗
+      streamAddressDialog:false,//拉流地址弹窗
       livePactInfo: {}, //直播协议内容
       liveActionInfo: {}, //直播行为规范内容
       btnDisabled:true,
@@ -1900,7 +1902,7 @@ export default {
             this.$http.post("/sys/mixedflow/startEvenWheat", { //重新进入直播间发起混流任务
                   RoomId: this.roomId, //房间ID；
                 }).then((res) => {
-                  this.streamUrl = res.data.data.Data.PlayInfo[0].FLV
+                  this.streamUrl = res.data.data.Data.PlayInfo[0].HLS
                   this.$message({ message: "刷新成功", type: "success" });
                   if(this.livePlayerList.length){
                     let arr = JSON.stringify(this.livePlayerList)
@@ -1974,7 +1976,7 @@ export default {
         .post("/sys/mixedflow/anchorBroadcast", {...obj, TaskId: this.$route.query.TaskId,trends:this.trends})
         .then((res) => {
           if (res.data.data && res.data.data.Data) {
-            this.streamUrl = res.data.data.Data.PlayInfo[0].FLV
+            this.streamUrl = res.data.data.Data.PlayInfo[0].HLS
             this.liveStatus = true;
             this.joinGroup();
             this.$nextTick(() => {
