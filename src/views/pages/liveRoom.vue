@@ -257,14 +257,18 @@
             <div
               v-for="(item, index) in toolNav"
               :key="index"
-              :class="item.type=='setUp'?'tool_nav set_up':'tool_nav'"
+              :class="['tool_nav_' + item.type, 'tool_nav']"
               @click="toolClick(item.type)"
             >
               <img :src="item.img" alt=""/>
               <span>{{item.text}}</span>
-              <div class="tool_nav_son" v-show="item.type=='setUp'&&showBtn">
+              <div class="tool_nav_son" v-show="toolNavSelected == 'setUp' && item.type == toolNavSelected">
                 <p @click.stop="beautifyDialog = true">美化</p>
                 <p @click.stop="streamAddress">拉流地址</p>
+              </div>
+              <div class="tool_nav_son" v-show="toolNavSelected == 'superboard' && item.type == toolNavSelected">
+                <p @click.stop="createSuperBoard(1)">超级白板</p>
+                <p @click.stop="createSuperBoard(2)">文件白板</p>
               </div>
             </div>
           </div>
@@ -292,9 +296,10 @@
                   :userInfo="{
                     token,
                     roomId,
-                    userId:userID,
-                    appID,
+                    userId: userID,
                   }"
+                  ref="superboardRef"
+                  @initSuperboardSuccess="initSuperboardSuccess"
                 />
                 <div class="quit_board" @click="quitBoard">退出白板</div>
               </div>
@@ -1003,6 +1008,7 @@ export default {
           status: true,
         },
       ],
+      toolNavSelected: "", //选中的工具选项
       toolNav: [
         
         {
@@ -1070,7 +1076,6 @@ export default {
       endLiveTitle:'直播结束',
       isRecord:false,//录制状态
       pauseRecord:false,//录制暂停状态
-      showBtn:false,
       streamUrl:'',
       checkStep:1,
       cameraError:false,
@@ -1085,6 +1090,7 @@ export default {
       connectTimer:{},//超时定时器
       connectStatusTimer: null, //连麦之后定时监听连麦用户连接状态
       isOpenDesktopSharing:false,//是否开启屏幕共享
+      superBoardType: null, //白板类型：1-普通白板，2-文件白板
     };
   },
   created() {
@@ -1153,8 +1159,8 @@ export default {
   async mounted() {
     window.addEventListener('beforeunload',this.beforeunloadHandler)
     document.addEventListener("click",(e)=>{
-      if(e.target.className&&e.target.className.indexOf('set_up') == -1){
-        this.showBtn = false
+      if(e.target.className && (e.target.className.indexOf('tool_nav_setUp') == -1 || e.target.className.indexOf('tool_nav_superboard') == -1)){
+        this.toolNavSelected = ""
       }
     })
     this.liveTheme = this.$route.query.liveTheme;
@@ -1558,6 +1564,7 @@ export default {
       }
     },
     async toolClick(type) {
+      this.toolNavSelected = type
       switch(type){
         case "goods":
           this.getAnchorProduct().then(res=>{
@@ -1582,7 +1589,6 @@ export default {
           })
           break
         case "setUp":
-          this.showBtn = true
           break
         case "device":
           this.deviceDialogVisible = true
@@ -1595,11 +1601,46 @@ export default {
           }
           break
         case "superboard":
+          break
+
+      }
+    },
+    //创建白板： 1-普通白板，2-文件白板
+    createSuperBoard(type) {
+      this.superBoardType = type
+      this.toolNavSelected = "" 
+      if(type == 1) { //普通白板直接创建
+        if(this.superboardShow) { //已打开白板-创建新的普通白板
+          if(this.$refs.superboardRef) this.$refs.superboardRef.createWhiteboardView()
+        }else { //未打开白板-打开白板-创建新的普通白板
           this.superboardShow = true
           document.querySelector('#videoEle').style.width = '350px'
           document.querySelector('#videoEle').style.height = '196px'
-          break
-
+        }
+      }else { //文件白板选择文件
+        if(this.superboardShow) { //已打开白板-创建新的文件白板
+          if(this.$refs.superboardRef) this.$refs.superboardRef.confirmSelectFileSuperBoard()
+        }else { //未打开白板-打开白板-创建新的文件白板
+          this.superboardShow = true
+          document.querySelector('#videoEle').style.width = '350px'
+          document.querySelector('#videoEle').style.height = '196px'
+        }
+      }
+    },
+    // 白板初始化成功-创建白板
+    initSuperboardSuccess() {
+      try {
+        if(this.superBoardType == 1) { //创建普通白板
+          if(this.$refs.superboardRef) this.$refs.superboardRef.createWhiteboardView()
+        }
+  
+        if(this.superBoardType == 2) { //创建文件白板
+          if(this.$refs.superboardRef) this.$refs.superboardRef.confirmSelectFileSuperBoard()
+        }
+        this.superBoardType = null
+      }catch(err) {
+        console.warn(err)
+        this.superBoardType = null
       }
     },
     recordMethod(){
