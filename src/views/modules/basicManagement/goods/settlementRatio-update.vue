@@ -86,6 +86,7 @@ export default {
   methods: {
     init(data) {
       if (data) this.dataForm = JSON.parse(JSON.stringify(data));
+      this.dataForm.proportion = this.dataForm.delFlg === 1 ? 0 : this.dataForm.proportion
       this.visible = true;
     },
     // 取消添加
