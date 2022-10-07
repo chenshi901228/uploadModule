@@ -320,6 +320,7 @@
 </template>
 
 <script>
+import debounce from "lodash/debounce"
 import mixinTableModule from "@/mixins/table-module";
 import { sizeTostr, downloadFileUrl, secondToDate } from "@/utils/index";
 export default {
@@ -398,7 +399,7 @@ export default {
       this.ids = row.id;
     },
     //删除
-    confirm(formName) {
+    confirm: debounce(function(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let deleteURL = "";
@@ -427,7 +428,7 @@ export default {
           return false;
         }
       });
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
     // 视频大小转换
     sizeTostr(size) {
       return sizeTostr(size);
@@ -439,8 +440,7 @@ export default {
     actionHandle(action, data) {
       switch (action) {
         case "1": // 下载视频
-          if (data.relationLiveUrl)
-            window.open(downloadFileUrl(data.relationLiveUrl));
+          if (data.relationLiveUrl) window.open(downloadFileUrl(data.relationLiveUrl))
           break;
         case "2": // 查看评论详情
           if (data.id)

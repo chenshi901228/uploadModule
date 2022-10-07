@@ -77,6 +77,7 @@
     </el-card>
 </template>
 <script>
+import debounce from "lodash/debounce"
 import CustomUpload from "@/components/common/custom-upload"
 import ComModule from "@/mixins/common-module"
 import ChooseAnchor from "@/components/chooseDialog/chooseAnchor"
@@ -251,7 +252,7 @@ export default {
 
         },
         // 表单提交
-        onSubmit() {
+        onSubmit: debounce(function() {
             this.$refs.dataForm.validate(async (valid) => {
                 if (valid) {
 
@@ -312,7 +313,7 @@ export default {
                     }
                 }
             })
-        }
+        }, 1500, { 'leading': true, 'trailing': false })
     }
 }
 </script>

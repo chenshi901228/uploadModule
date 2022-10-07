@@ -101,6 +101,7 @@
 </template>
 
 <script>
+import debounce from "lodash/debounce"
 import mixinTableModule from "@/mixins/table-module";
 import CustomUpload from "@/components/common/custom-upload";
 import { getVideoDuration } from "@/utils/index";
@@ -268,7 +269,7 @@ export default {
       this.closeCurrentTab();
     },
     // 表单提交
-    submit() {
+    submit: debounce(function() {
       this.$refs.dataForm.validate(async (valid) => {
         if (valid) {
           if (
@@ -321,7 +322,7 @@ export default {
             });
         }
       });
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
   },
 };
 </script>
