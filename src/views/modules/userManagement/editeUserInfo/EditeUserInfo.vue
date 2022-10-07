@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce'
 import Upload from "@/components/common/custom-upload";
 import mixinTableModule from "@/mixins/table-module";
 export default {
@@ -133,7 +134,7 @@ export default {
     uploadQRcodeRemove(file) {
       this.fileListQRcode = []
     },
-    submitForm(formName) {
+    submitForm: debounce(function(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // this.$confirm('确认信息已填写无误，提交审批','提示',{
@@ -183,7 +184,7 @@ export default {
           return false;
         }
       });
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },
