@@ -91,6 +91,7 @@
         </div>
       </div>
     </el-form>
+    <!-- :row-key="getRowKey"-->
     <el-table
       v-loading="dataListLoading"
       :data="dataList"
@@ -107,6 +108,15 @@
         fixed="left"
       >
       </el-table-column>
+      <!-- <el-table-column
+        type="selection"
+        header-align="center"
+        reserve-selection="true"
+        align="center"
+        width="50"
+        fixed="left"
+      >
+      </el-table-column> -->
 
       <el-table-column
         header-align="center"
@@ -194,6 +204,11 @@
       @current-change="pageCurrentChangeHandle"
     >
     </el-pagination>
+
+    <!-- <span slot="footer" class="dialog-footer">
+        <el-button size="small"  @click="dialogVisible = false;">取 消</el-button>
+        <el-button size="small" plain :disabled="!dataListSelections.length" type="primary" @click="add()">确 认</el-button>
+    </span> -->
   </el-dialog>
 </template>
 <script>
@@ -455,6 +470,10 @@ export default {
     dataListSelectionChangeHandle (val) {
       this.dataListSelections = val
     },
+    //多选触发
+    getRowKey(row) {
+      return row.id
+    },
     // 分页, 每页条数
     pageSizeChangeHandle(val) {
       this.page = 1;
@@ -521,4 +540,9 @@ export default {
   height: 60px;
   object-fit: cover;
 }
+// /deep/.el-table__header{
+//   .el-checkbox__inner{
+//     display: none;
+//   }
+// }
 </style>
