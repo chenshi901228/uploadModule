@@ -31,7 +31,7 @@
                     <!-- <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.product"
                         @click.native="chooseProduct"></el-input> -->
                     <el-button @click.native="chooseProduct" type="primary">添加</el-button>
-                    <div class="product-box" v-if="!!productIds.length">
+                    <div class="product-box" v-if="productIds && !!productIds.length">
                         <el-tag
                             v-for="(item, index) in productIds"
                             :key="index"
@@ -46,7 +46,7 @@
                     <!-- <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.anchor"
                         @click.native="chooseAnchor"></el-input> -->
                     <el-button @click.native="chooseAnchor" type="primary">添加</el-button>
-                    <div class="product-box" v-if="!!recommendedAnchorList.length">
+                    <div class="product-box" v-if="recommendedAnchorList && !!recommendedAnchorList.length">
                         <el-tag
                             v-for="(item, index) in recommendedAnchorList"
                             :key="index"
@@ -128,10 +128,10 @@ export default {
 
                 this.dataForm.liveTheme = res.data.liveTheme || ""
                 this.dataForm.frontCoverUrl = res.data.frontCoverUrl || ""
-                this.dataForm.product = res.data.productIds && res.data.productIds.length ? `已选择${res.data.productIds.length}个商品` : ""
-                this.dataForm.anchor = res.data.recommendedAnchorList && res.data.recommendedAnchorList.length ? `已选择${res.data.recommendedAnchorList.length}个主播` : ""
+                // this.dataForm.product = res.data.productIds && res.data.productIds.length ? `已选择${res.data.productIds.length}个商品` : ""
+                // this.dataForm.anchor = res.data.recommendedAnchorList && res.data.recommendedAnchorList.length ? `已选择${res.data.recommendedAnchorList.length}个主播` : ""
                 this.dataForm.frontCover = res.data.frontCover || ""
-                this.dataForm.assistantIds = res.data.assistantIds || ""
+                this.dataForm.assistantIds = res.data.assistantIds || []
 
                 if(res.data.frontCoverUrl) {
                     this.frontCoverList = [{

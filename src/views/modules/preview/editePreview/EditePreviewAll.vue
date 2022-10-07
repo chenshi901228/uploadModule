@@ -223,7 +223,7 @@
             clearable
           ></el-input> -->
           <el-button @click.native="chooseProduct" type="primary">添加</el-button>
-              <div class="product-box" v-if="!!productLiveId.length">
+              <div class="product-box" v-if="productLiveId && !!productLiveId.length">
                   <el-tag
                       v-for="(item, index) in productLiveId"
                       :key="index"
@@ -245,7 +245,7 @@
             clearable
           ></el-input> -->
           <el-button @click.native="chooseAnchor" type="primary">添加</el-button>
-          <div class="product-box" v-if="!!recommendedAnchorOwnIds.length">
+          <div class="product-box" v-if="recommendedAnchorOwnIds && !!recommendedAnchorOwnIds.length">
               <el-tag
                   v-for="(item, index) in recommendedAnchorOwnIds"
                   :key="index"

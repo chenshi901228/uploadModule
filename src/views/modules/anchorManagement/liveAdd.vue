@@ -32,7 +32,7 @@
                     <!-- <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.product"
                         @click.native="chooseProduct"></el-input> -->
                     <el-button @click.native="chooseProduct" type="primary">添加</el-button>
-                    <div class="product-box" v-if="!!productIds.length">
+                    <div class="product-box" v-if="productIds && !!productIds.length">
                         <el-tag
                             v-for="(item, index) in productIds"
                             :key="index"
@@ -47,7 +47,7 @@
                     <!-- <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.anchor"
                         @click.native="chooseAnchor"></el-input> -->
                     <el-button @click.native="chooseAnchor" type="primary">添加</el-button>
-                    <div class="product-box" v-if="!!recommendedAnchorList.length">
+                    <div class="product-box" v-if="recommendedAnchorList && !!recommendedAnchorList.length">
                         <el-tag
                             v-for="(item, index) in recommendedAnchorList"
                             :key="index"
