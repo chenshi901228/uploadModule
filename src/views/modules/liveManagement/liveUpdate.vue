@@ -28,12 +28,34 @@
                     <p class="tips">格式限制：jpg/jpeg/png,建议图片尺寸不小于630px×347px，大小不得超过2M</p>
                 </el-form-item>
                 <el-form-item label="添加商品" prop="product">
-                    <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.product"
-                        @click.native="chooseProduct"></el-input>
+                    <!-- <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.product"
+                        @click.native="chooseProduct"></el-input> -->
+                    <el-button @click.native="chooseProduct" type="primary">添加</el-button>
+                    <div class="product-box" v-if="!!productIds.length">
+                        <el-tag
+                            v-for="(item, index) in productIds"
+                            :key="index"
+                            closable
+                            @close="closeProductId(index)"
+                            type="info">
+                            {{item.productName}}
+                        </el-tag>
+                    </div>
                 </el-form-item>
                 <el-form-item label="添加主播" prop="anchor">
-                    <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.anchor"
-                        @click.native="chooseAnchor"></el-input>
+                    <!-- <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.anchor"
+                        @click.native="chooseAnchor"></el-input> -->
+                    <el-button @click.native="chooseAnchor" type="primary">添加</el-button>
+                    <div class="product-box" v-if="!!recommendedAnchorList.length">
+                        <el-tag
+                            v-for="(item, index) in recommendedAnchorList"
+                            :key="index"
+                            closable
+                            @close="closeAnchor(index)"
+                            type="info">
+                            {{item.username}}
+                        </el-tag>
+                    </div>
                 </el-form-item>
                 <el-form-item label="直播背景">
                     <custom-upload ref="bgLiveUpload" :fileMaxSize="2" :fileType="['png', 'jpg', 'jpeg']"
@@ -125,8 +147,11 @@ export default {
                     }]
                 }
 
-                this.recommendedAnchorList = res.data.recommendedAnchorList && res.data.recommendedAnchorList.map(item => { return { anchorId: item } })
-                this.productIds = res.data.productIds && res.data.productIds.map(item => { return { id: item } })
+                // this.recommendedAnchorList = res.data.recommendedAnchorList && res.data.recommendedAnchorList.map(item => { return { anchorId: item } })
+                // this.productIds = res.data.productIds && res.data.productIds.map(item => { return { id: item } })
+                this.recommendedAnchorList  = res.data.recommendedAnchorList && res.data.recommendedAnchorList.map((id, i) => ({ anchorId: id, username: res.data.recommendedAnchors.split(',')[i] }))
+                this.productIds  = res.data.productIds && res.data.productIds.map((id, i) => ({ id: id, productName: res.data.products.split(',')[i] }))
+                console.log(this.productIds, 'productIds')
 
             }).catch(err => this.$message.error(JSON.stringify(err.message)))
         },
@@ -166,6 +191,14 @@ export default {
         // 推荐主播弹框
         chooseAnchor() {
             this.$refs.chooseAnchor.init(this.recommendedAnchorList, this.userId)
+        },
+
+        closeProductId(index) {
+            this.productIds.splice(index, 1)
+        },
+
+        closeAnchor(index) {
+            this.recommendedAnchorList.splice(index, 1)
         },
 
         // 确认添加推荐主播
@@ -284,5 +317,21 @@ export default {
 }
 /deep/ .el-card__body {
     padding: 0 20px 20px;
+}
+/deep/.product-box {
+    width: 400px;
+    border-radius: 5px;
+    border: 1px solid #D7DAE2;
+    padding: 12px;
+    margin-top: 10px;
+
+    .el-tag {
+        margin-right: 10px;
+        margin-bottom: 5px;
+    }
+
+    .el-tag:last-child {
+        margin-right: 0
+    }
 }
 </style>
