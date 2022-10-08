@@ -131,7 +131,7 @@ export default {
                 this.dataForm.frontCoverUrl = res.data.frontCoverUrl || ""
                 // this.dataForm.product = res.data.productIds && res.data.productIds.length ? `已选择${res.data.productIds.length}个商品` : ""
                 // this.dataForm.anchor = res.data.recommendedAnchorList && res.data.recommendedAnchorList.length ? `已选择${res.data.recommendedAnchorList.length}个主播` : ""
-                this.dataForm.frontCover = res.data.frontCover || ""
+                this.dataForm.frontCover = res.data.frontCover || []
                 this.dataForm.assistantIds = res.data.assistantIds || []
 
                 if(res.data.frontCoverUrl) {

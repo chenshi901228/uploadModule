@@ -467,26 +467,26 @@ export default {
     }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
     this.userId = this.$store.state.user.id;
     this.getCoverPictureList();
-    this.ruleForm.id = this.$route.query.detailInfo.id;
-    this.ruleForm.liveTheme = this.$route.query.detailInfo.liveTheme;
-    this.ruleForm.anchorId = this.$route.query.detailInfo.anchorUser;
-    this.getDynamicGroupList();
-    if(this.$route.query.detailInfo.dynamicGroupIdsString){
-      this.ruleForm.dynamicGroupIds = this.$route.query.detailInfo.dynamicGroupIdsString.split(",");
-    }
-    this.ruleForm.startDate = this.$route.query.detailInfo.startDate;
-    this.ruleForm.estimateLiveTime =
-      this.$route.query.detailInfo.estimateLiveTime;
-    this.ruleForm.frontCoverUrl = this.$route.query.detailInfo.frontCoverUrl;
-    this.fileList.push(this.$route.query.detailInfo.frontCoverUrl);
-    this.ruleForm.liveIntroduce = this.$route.query.detailInfo.liveIntroduce;
-    this.ruleForm.frontCover = this.$route.query.detailInfo.frontCover
-      ? this.$route.query.detailInfo.frontCover
-      : "";
-    this.frontCoverListDefault = this.$route.query.detailInfo.frontCover
-      ? this.$route.query.detailInfo.frontCover
-      : "";
-    this.ruleForm.trendsOpen = this.$route.query.detailInfo.trendsOpen;
+    // this.ruleForm.id = this.$route.query.detailInfo.id;
+    // this.ruleForm.liveTheme = this.$route.query.detailInfo.liveTheme;
+    // this.ruleForm.anchorId = this.$route.query.detailInfo.anchorUser;
+    
+    // if(this.$route.query.detailInfo.dynamicGroupIdsString){
+    //   this.ruleForm.dynamicGroupIds = this.$route.query.detailInfo.dynamicGroupIdsString.split(",");
+    // }
+    // this.ruleForm.startDate = this.$route.query.detailInfo.startDate;
+    // this.ruleForm.estimateLiveTime =
+    //   this.$route.query.detailInfo.estimateLiveTime;
+    // this.ruleForm.frontCoverUrl = this.$route.query.detailInfo.frontCoverUrl;
+    // this.fileList.push(this.$route.query.detailInfo.frontCoverUrl);
+    // this.ruleForm.liveIntroduce = this.$route.query.detailInfo.liveIntroduce;
+    // this.ruleForm.frontCover = this.$route.query.detailInfo.frontCover
+    //   ? this.$route.query.detailInfo.frontCover
+    //   : "";
+    // this.frontCoverListDefault = this.$route.query.detailInfo.frontCover
+    //   ? this.$route.query.detailInfo.frontCover
+    //   : "";
+    // this.ruleForm.trendsOpen = this.$route.query.detailInfo.trendsOpen;
   },
   methods: {
     //获取数据
@@ -539,6 +539,17 @@ export default {
               //   : "";
             }else {
               this.ruleForm.recommendedAnchors
+            }
+            this.ruleForm=res.data
+            this.ruleForm.id = res.data.id;
+            this.getDynamicGroupList(res.data);
+            this.fileList=[]
+            
+            this.fileList.push(res.data.frontCoverUrl);
+            this.frontCoverListDefault = res.data.frontCover ? res.data.frontCover : "";
+            this.ruleForm.anchorId = res.data.anchorUser;
+            if(res.data.dynamicGroupIdsString){
+              this.ruleForm.dynamicGroupIds = res.data.dynamicGroupIdsString.split(",");
             }
             this.info = res.data;
           }
@@ -805,8 +816,8 @@ export default {
       return time < 10 ? "0" + time : time;
     },
     //获取投放人群
-    getDynamicGroupList() {
-      if (this.$route.query.detailInfo.anchorUserId && this.$route.query.detailInfo.anchorUserId.length !== 0) {
+    getDynamicGroupList(info) {
+      if (info.anchorUserId && info.anchorUserId.length !== 0) {
         this.$http
           .get(
             `/sys/dynamicGroup/getAllDynamicGroupList?anchorId=${this.$route.query.detailInfo.anchorUserId}`
