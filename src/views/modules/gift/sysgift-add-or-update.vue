@@ -196,7 +196,7 @@ export default {
         });
       },
       1000,
-      { leading: true, trailing: false }
+      { "leading": true, "trailing": false }
     ),
     //礼物图标上传、删除
     uploadSuccess(file) {

@@ -496,7 +496,7 @@
         <el-button size="small" @click="dialogVisible = false"
           >取 消</el-button
         >
-        <el-button size="small" type="primary" @click="confirm"
+        <el-button size="small" :loading="confirmLoading" :disabled="confirmLoading" type="primary" @click="confirm"
           >确 认</el-button
         >
       </div>
@@ -506,6 +506,7 @@
 </template>
 
 <script>
+import debounce from "lodash/debounce"
 import mixinViewModule from "@/mixins/view-module";
 import Template from "../devtools/template.vue";
 import { getUUID, numberConvert } from "@/utils";
@@ -535,7 +536,8 @@ export default {
       },
       uuid: "",
       selectData:{},
-      dialogVisible:false
+      dialogVisible:false,
+      confirmLoading: false,
     };
   },
   components: { Template },
@@ -598,13 +600,15 @@ export default {
         .catch(() => {});
     },
     //确认
-    confirm() {
+    confirm: debounce(function() {
+      this.confirmLoading = true
       this.$http["put"]("/sys/finance/anchorWithdraw/updateApproveStatus", {
             id: this.selectData.id,
             approveStatus: 1,
             uuid: this.uuid,
           })
             .then(({ data: res }) => {
+              this.confirmLoading = false
               if (res.code !== 0) {
                 return this.$message.error(res.msg);
               }
@@ -612,8 +616,11 @@ export default {
               this.$message.success("操作成功");
               this.dialogVisible = false;
             })
-            .catch(() => {});
-    },
+            .catch((err) => {
+              console.warn(err)
+              this.confirmLoading = false
+            });
+    }, 1500, { 'leading': true, 'trailing': false }),
         // 当金额大于10000时，在作展示的时候，需要加千分位逗号，就是每隔1000要用逗号分隔；
     format (n) {
       let num = n.toString()

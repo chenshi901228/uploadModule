@@ -202,6 +202,7 @@
 </template>
 
 <script>
+import debounce from "lodash/debounce"
 import mixinTableModule from "@/mixins/table-module";
 import { getImageWH } from "@/utils"
 import Cookies from "js-cookie";
@@ -320,7 +321,7 @@ export default {
       }
     },
     //编辑图片
-    editeImgMethod() {
+    editeImgMethod: debounce(function() {
       if (this.editeImgForm.img === "") {
         this.$message.warning("上传图片不能为空！");
       } else if (this.editeImgForm.name === "") {
@@ -347,7 +348,7 @@ export default {
             throw err;
           });
       }
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
     remove() {
       this.$confirm("确认删除图片", "提示", {
         confirmButtonText: '确定',
@@ -437,7 +438,7 @@ export default {
       this.upImgDialog = true;
     },
     //上传图片
-    upImgMethod() {
+    upImgMethod: debounce(function() {
       if (this.imgForm.img === "") {
         this.$message.warning("上传图片不能为空！");
       } else if (this.imgForm.name === "") {
@@ -462,7 +463,7 @@ export default {
             throw err;
           });
       }
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
     //显示与隐藏
     showThis(index, row) {
       this.dialogVisible = true;

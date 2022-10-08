@@ -86,6 +86,7 @@
     </el-dialog>
 </template>
 <script>
+import debounce from "lodash/debounce"
 import { treeDataTranslate } from "@/utils";
 export default {
     data() {
@@ -157,7 +158,7 @@ export default {
                 this.isUpdateAddress = 0
             }
         },
-        submit() {
+        submit: debounce(function() {
             this.$refs['form'].validate((valid) => { 
                 if(valid) {
 
@@ -210,7 +211,7 @@ export default {
 
                 }
             })
-        },
+        }, 1500, { 'leading': true, 'trailing': false }),
         close() {
             this.$refs.form.resetFields()
             this.info = {}

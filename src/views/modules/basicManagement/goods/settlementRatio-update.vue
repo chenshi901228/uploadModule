@@ -50,6 +50,7 @@
   </el-dialog>
 </template>
 <script>
+import debounce from "lodash/debounce"
 export default {
   data() {
     var check = (rule, value, callback) => {
@@ -95,7 +96,7 @@ export default {
       this.dataForm = {};
     },
     // 表单提交
-    submit() {
+    submit: debounce(function() {
       this.$refs.dataForm.validate((valid) => {
         if (valid) {
           let params = {};
@@ -127,7 +128,7 @@ export default {
             });
         }
       });
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
   },
 };
 </script>

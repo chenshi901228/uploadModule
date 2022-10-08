@@ -52,6 +52,7 @@
     </el-dialog>
 </template>
 <script>
+import debounce from "lodash/debounce"
 import Upload from "@/components/common/custom-upload";
 export default {
     components: {
@@ -116,7 +117,7 @@ export default {
             this.picFileList = []
             this.videoFileList = []
         },
-        submit(formName) {
+        submit: debounce(function(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
 
@@ -148,7 +149,7 @@ export default {
                     return false;
                 }
             })
-        }
+        }, 1500, { 'leading': true, 'trailing': false })
     }
 }
 </script>

@@ -44,6 +44,7 @@
     </el-dialog>
 </template>
 <script>
+import debounce from "lodash/debounce"
 export default {
     data() {
         return {
@@ -61,7 +62,7 @@ export default {
     },
     methods: {
         init(data) {
-            console.log(data)
+            // console.log(data)
             this.info = data
             this.show = true
             this.getCompany()
@@ -91,7 +92,7 @@ export default {
                         this.$message.error(JSON.stringify(err.message))
                     });
         },
-        submit() {
+        submit: debounce(function() {
             this.$refs['form'].validate((valid) => {
                 if(valid) {
                     this.submitLoading = true
@@ -119,7 +120,7 @@ export default {
                     })
                 }
             })
-        },
+        }, 1500, { 'leading': true, 'trailing': false }),
         close() {
             this.$refs.form.resetFields()
             this.info = {}

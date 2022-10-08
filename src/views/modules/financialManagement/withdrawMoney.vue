@@ -563,6 +563,7 @@
 </template>
 
 <script>
+import debounce from "lodash/debounce"
 import mixinViewModule from "@/mixins/view-module";
 import Template from "../devtools/template.vue";
 import { getUUID, numberConvert } from "@/utils";
@@ -686,7 +687,7 @@ export default {
       return numberConvert(m)
     },
     //确认修改税费
-    confirmEdite() {
+    confirmEdite: debounce(function() {
       this.$refs.form_host.validate((valid) => {
         if (valid) {
           this.$http["put"]("/sys/finance/anchorWithdraw/updateTax", {
@@ -706,7 +707,7 @@ export default {
             .catch(() => {});
         }
       });
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
     //修改税费
     edite(row) {
       this.form = {
@@ -727,7 +728,7 @@ export default {
       this.dialogVisible = true;
     },
     //确认打款
-    confirmShowState() {
+    confirmShowState: debounce(function() {
       this.$refs.confirmForm_host.validate((valid) => {
         if (valid) {
           this.$http["put"]("/sys/finance/anchorWithdraw/updateConfirmStatus", {
@@ -746,7 +747,7 @@ export default {
             .catch(() => {});
         }
       });
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
 
     // 重置搜索条件
     resetDataForm() {
