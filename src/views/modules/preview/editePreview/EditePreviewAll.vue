@@ -604,7 +604,7 @@ export default {
     // 推荐主播
     chooseAnchor() {
       this.$router.push({
-        path: "/preview-recommendAnchor-RecommendAnchor",
+        path: "/liveManagement-recommendAnchor-RecommendAnchor",
         query: {
           liveId: this.info.id,
           anchorId: this.info.anchorUserId,
@@ -614,7 +614,7 @@ export default {
     //编辑助手
     chooseAssistants() {
       this.$router.push({
-        path: "/preview-assistant-Assistant",
+        path: "/liveManagement-assistant-Assistant",
         query: {
           liveId: this.info.id,
           anchorId: this.info.anchorUserId,
@@ -626,7 +626,7 @@ export default {
     // 推荐商品
     chooseProduct() {
       this.$router.push({
-        path: "/preview-cargoGoods-CargoGoods",
+        path: "/liveManagement-cargoGoods-CargoGoods",
         query: {
           liveId: this.info.id,
           anchorId: this.info.anchorUserId,
