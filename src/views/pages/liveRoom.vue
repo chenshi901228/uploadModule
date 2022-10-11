@@ -1511,10 +1511,11 @@ export default {
       this.screenStream = await this.zg.createStream({ //屏幕共享流
         screen: {
           videoQuality: 4,
-          width:1280,
-          height:720,
+          width:1920,
+          height:1080,
           frameRate: 30,
-          bitrate: 1500,
+          bitrate: 3000,
+          audio: true
         },
       });
       let res = await this.zg.startPublishingStream('shareDesk'+this.roomId, this.screenStream); //共享桌面流
@@ -1794,10 +1795,10 @@ export default {
       this.checkStream = await this.zg.createStream({ //摄像头
         camera: {
           videoQuality: 4,
-          width:1280,
-          height:720,
+          width:1920,
+          height:1080,
           frameRate: 30,
-          bitrate: 1500,
+          bitrate: 3000,
           videoInput:this.cameraId,
         },
       });
@@ -1909,10 +1910,10 @@ export default {
         this.stream = await this.zg.createStream({ //摄像头
           camera: {
             videoQuality: 4,
-            width:1280,
-            height:720,
+            width:1920,
+            height:1080,
             frameRate: 30,
-            bitrate: 1500,
+            bitrate: 3000,
             videoInput:this.cameraId,
           },
           // custom: {
