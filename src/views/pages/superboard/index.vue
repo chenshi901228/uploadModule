@@ -261,11 +261,11 @@ export default {
                     name: "drag",
                     des: "拖拽"
                 },
-                {
-                    type: "destroy", //销毁当前白板
-                    name: "destroy",
-                    des: "销毁"
-                },
+                // {
+                //     type: "destroy", //销毁当前白板
+                //     name: "destroy",
+                //     des: "销毁"
+                // },
                 {
                     type: "clear", //清空当前白板
                     name: "clear",
