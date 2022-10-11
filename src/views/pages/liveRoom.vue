@@ -1570,6 +1570,10 @@ export default {
       }
     }, 1000, { 'leading': true, 'trailing': false }),
     async toolClick(type) {
+      let needOpenLiveArr = ["goods", "livePreview", "recommendedAnchor", "desktopShare", "superboard"]
+      if(needOpenLiveArr.includes(type) && !this.liveStatus) {
+        return this.$message.warning("直播暂未开启，请先开启直播")
+      }
       this.toolNavSelected = type
       switch(type){
         case "goods":
@@ -1600,11 +1604,7 @@ export default {
           this.deviceDialogVisible = true
           break
         case "desktopShare":
-          if(this.liveStatus){
-            this.shareDesk()
-          }else{
-            this.$message.warning("直播暂未开启，请先开启直播")
-          }
+          this.shareDesk()
           break
         case "superboard":
           break
