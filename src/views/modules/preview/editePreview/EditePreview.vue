@@ -375,16 +375,16 @@ export default {
     };
   },
   watch: {
-    "ruleForm.liveTheme"(nv, ov) {
-      if (nv.length > 60) {
-        this.$message.warning("直播主题字数不得超过60字！");
-      }
-    },
-    "ruleForm.liveIntroduce"(nv, ov) {
-      if (nv.length > 2007) {
-        this.$message.warning("直播介绍字数不得超过2000字！");
-      }
-    },
+    // "ruleForm.liveTheme"(nv, ov) {
+    //   if (nv.length > 60) {
+    //     this.$message.warning("直播主题字数不得超过60字！");
+    //   }
+    // },
+    // "ruleForm.liveIntroduce"(nv, ov) {
+    //   if (nv.length > 2007) {
+    //     this.$message.warning("直播介绍字数不得超过2000字！");
+    //   }
+    // },
   },
   activated() {
     this.getPreviewDetail();
