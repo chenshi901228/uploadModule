@@ -334,7 +334,7 @@
             <div class="connect_list">
               <div
                 class="connet_video"
-                v-for="(item, index) in connectMessageInfo"
+                v-for="(item, index) in connectMessageInfoToSort"
                 :key="index"
               >
                 <div
@@ -940,6 +940,7 @@
 </template>
 
 <script>
+import debounce from "lodash/debounce"
 import Clipboard from 'clipboard'
 import { ZegoExpressEngine } from "zego-express-engine-webrtc";
 import TIM from "tim-js-sdk";
@@ -1097,6 +1098,11 @@ export default {
    
   },
   computed: {
+    // 连麦列表排序
+    connectMessageInfoToSort() {
+      let arr = this.connectMessageInfo.sort((a, b) => b.connectStatus - a.connectStatus)
+      return arr || []
+    },
     videoQualityNum(){
       switch(this.videoQuality){
         case 0:
@@ -1541,7 +1547,7 @@ export default {
       document.querySelector('#videoEle').style.width = '100%'
       document.querySelector('#videoEle').style.height = 'calc(100% - 60px)'
     },
-    async changeDevice(data){
+    changeDevice: debounce(async function(data){
       if (data.type === "mike") {
         //麦克风
         let result = await this.zg.muteMicrophone(data.status);
@@ -1562,8 +1568,12 @@ export default {
           this.deviceNav[1].status = !data.status;
         }
       }
-    },
+    }, 1000, { 'leading': true, 'trailing': false }),
     async toolClick(type) {
+      let needOpenLiveArr = ["goods", "livePreview", "recommendedAnchor", "desktopShare", "superboard"]
+      if(needOpenLiveArr.includes(type) && !this.liveStatus) {
+        return this.$message.warning("直播暂未开启，请先开启直播")
+      }
       this.toolNavSelected = type
       switch(type){
         case "goods":
@@ -1594,11 +1604,7 @@ export default {
           this.deviceDialogVisible = true
           break
         case "desktopShare":
-          if(this.liveStatus){
-            this.shareDesk()
-          }else{
-            this.$message.warning("直播暂未开启，请先开启直播")
-          }
+          this.shareDesk()
           break
         case "superboard":
           break
@@ -2369,7 +2375,7 @@ export default {
           return this.conversation.conversationID;
       }
     },
-    sendMessage(messageInfo, cb) {
+    sendMessage: debounce(function(messageInfo, cb) {
       try {
         if (!this.liveStatus) {
           this.$message({ message: "直播暂未开启", type: "warning" });
@@ -2457,7 +2463,7 @@ export default {
           window.close()
         })
       }
-    },
+    }, 1000, { 'leading': true, 'trailing': false }),
     searchUserFun(){
       this.params.page=1
       this.studentList = []
@@ -2568,7 +2574,7 @@ export default {
         );
       }
     },
-    replyConnect(status, type, connectType, userId,nickName) {
+    replyConnect: debounce(function(status, type, connectType, userId,nickName) {
       //同意申请连麦
       let messageInfo = {
         type,
@@ -2619,7 +2625,7 @@ export default {
           this.connectMessageInfo.splice(ind, 1);
         }
       }
-    },
+    }, 1000, { 'leading': true, 'trailing': false }),
     hangupHandle(item) {
       this.$confirm(`确认挂断用户[${item.userInfo.nickName || ""}]`, "提示", {
         confirmButtonText: '确定',
@@ -3511,6 +3517,8 @@ p {
           }
           .connect_list {
             width: 230px;
+            height: 100%;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -3520,7 +3528,9 @@ p {
             .connet_video {
               width: 100%;
               height: 142px;
-              margin-bottom: 10px;
+              &:not(:first-child) {
+                margin-top: 10px;
+              }
               .video_div {
                 width: 100%;
                 height: 112px;
