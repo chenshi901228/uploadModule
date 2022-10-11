@@ -334,7 +334,7 @@
             <div class="connect_list">
               <div
                 class="connet_video"
-                v-for="(item, index) in connectMessageInfoToSort"
+                v-for="(item, index) in connectMessageInfo"
                 :key="index"
               >
                 <div
@@ -1022,11 +1022,11 @@ export default {
           text: "桌面共享",
           type: "desktopShare",
         },
-        {
-          img: require("@/assets/img/superboard_icon.png"),
-          text: "白板",
-          type: "superboard",
-        },
+        // {
+        //   img: require("@/assets/img/superboard_icon.png"),
+        //   text: "白板",
+        //   type: "superboard",
+        // },
         {
           img: require("@/assets/img/setUp_icon.png"),
           text: "设置",
@@ -1098,11 +1098,6 @@ export default {
    
   },
   computed: {
-    // 连麦列表排序
-    connectMessageInfoToSort() {
-      let arr = this.connectMessageInfo.sort((a, b) => b.connectStatus - a.connectStatus)
-      return arr || []
-    },
     videoQualityNum(){
       switch(this.videoQuality){
         case 0:
@@ -1180,6 +1175,7 @@ export default {
     this.zg.setLogConfig({ logLevel: 'disable' })
     //检测设备能力
     let checkSystemRes = await this.zg.checkSystemRequirements()
+    console.log("checkSystemRes", checkSystemRes)
     if(!checkSystemRes.camera){
       this.cameraStatus = checkSystemRes.camera
       this.$confirm("请先打开摄像头权限后刷新重试", "提示", {
@@ -1293,6 +1289,9 @@ export default {
             }
           });
 
+          // 连麦列表排序
+          this.connectMessageInfo = this.connectMessageInfo.sort((a, b) => b.connectStatus - a.connectStatus)
+
           if (this.roomId != streamItem.streamID) {
             let extraInfo = streamItem.extraInfo;
             let extraInfoObj = null;
@@ -1364,7 +1363,7 @@ export default {
 				if(n.length == 0) {
 					this.offGetConnectStatus()
 				}
-    }
+    },
     //   let deleteArr = []
     //   this.connectMessageInfo.forEach((item,index)=>{
     //     var arr = this.livePlayerList.filter(info=>info.streamID.includes(item.userInfo.userId) && item.connectStatus && item.getReplyConnectLoading != null)
@@ -1514,8 +1513,8 @@ export default {
           videoQuality: 4,
           width:1280,
           height:720,
-          frameRate: 60,
-          bitrate: 900,
+          frameRate: 30,
+          bitrate: 1500,
         },
       });
       let res = await this.zg.startPublishingStream('shareDesk'+this.roomId, this.screenStream); //共享桌面流
@@ -1570,7 +1569,7 @@ export default {
       }
     }, 1000, { 'leading': true, 'trailing': false }),
     async toolClick(type) {
-      let needOpenLiveArr = ["goods", "livePreview", "recommendedAnchor", "desktopShare", "superboard"]
+      let needOpenLiveArr = ["desktopShare"]
       if(needOpenLiveArr.includes(type) && !this.liveStatus) {
         return this.$message.warning("直播暂未开启，请先开启直播")
       }
@@ -1718,7 +1717,7 @@ export default {
         }
       }
     },
-    handleClick(tab, event) {
+    handleClick: debounce(function(tab, event) {
       this.params.page=1
       switch(this.activeName){
         case 'second':
@@ -1731,7 +1730,7 @@ export default {
         default:
           break
       }
-    },
+    }, 1000, { 'leading': true, 'trailing': false }),
     muteMthod(data) {
       //禁言
       this.studentList.forEach((item) => {
@@ -1797,8 +1796,8 @@ export default {
           videoQuality: 4,
           width:1280,
           height:720,
-          frameRate: 60,
-          bitrate: 900,
+          frameRate: 30,
+          bitrate: 1500,
           videoInput:this.cameraId,
         },
       });
@@ -1912,8 +1911,8 @@ export default {
             videoQuality: 4,
             width:1280,
             height:720,
-            frameRate: 60,
-            bitrate: 900,
+            frameRate: 30,
+            bitrate: 1500,
             videoInput:this.cameraId,
           },
           // custom: {
