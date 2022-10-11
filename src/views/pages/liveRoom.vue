@@ -1022,11 +1022,11 @@ export default {
           text: "桌面共享",
           type: "desktopShare",
         },
-        {
-          img: require("@/assets/img/superboard_icon.png"),
-          text: "白板",
-          type: "superboard",
-        },
+        // {
+        //   img: require("@/assets/img/superboard_icon.png"),
+        //   text: "白板",
+        //   type: "superboard",
+        // },
         {
           img: require("@/assets/img/setUp_icon.png"),
           text: "设置",
