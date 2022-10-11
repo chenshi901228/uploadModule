@@ -1513,8 +1513,8 @@ export default {
           videoQuality: 4,
           width:1920,
           height:1080,
-          frameRate: 30,
-          bitrate: 3000,
+          frameRate: 15,
+          bitrate: 2080,
           audio: true
         },
       });
@@ -1797,8 +1797,8 @@ export default {
           videoQuality: 4,
           width:1920,
           height:1080,
-          frameRate: 30,
-          bitrate: 3000,
+          frameRate: 15,
+          bitrate: 2080,
           videoInput:this.cameraId,
         },
       });
@@ -1912,8 +1912,8 @@ export default {
             videoQuality: 4,
             width:1920,
             height:1080,
-            frameRate: 30,
-            bitrate: 3000,
+            frameRate: 15,
+            bitrate: 2080,
             videoInput:this.cameraId,
           },
           // custom: {
