@@ -1511,10 +1511,10 @@ export default {
       this.screenStream = await this.zg.createStream({ //屏幕共享流
         screen: {
           videoQuality: 4,
-          width:1920,
-          height:1080,
-          frameRate: 15,
-          bitrate: 2080,
+          width:1280,
+          height:720,
+          frameRate: 30,
+          bitrate: 2250,
           audio: true
         },
       });
@@ -1795,10 +1795,10 @@ export default {
       this.checkStream = await this.zg.createStream({ //摄像头
         camera: {
           videoQuality: 4,
-          width:1920,
-          height:1080,
-          frameRate: 15,
-          bitrate: 2080,
+          width:1280,
+          height:720,
+          frameRate: 30,
+          bitrate: 2250,
           videoInput:this.cameraId,
         },
       });
@@ -1910,10 +1910,10 @@ export default {
         this.stream = await this.zg.createStream({ //摄像头
           camera: {
             videoQuality: 4,
-            width:1920,
-            height:1080,
-            frameRate: 15,
-            bitrate: 2080,
+            width:1280,
+            height:720,
+            frameRate: 30,
+            bitrate: 2250,
             videoInput:this.cameraId,
           },
           // custom: {
