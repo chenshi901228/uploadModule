@@ -118,7 +118,9 @@ export default {
       previewVisible: false,
       previewInfo: null,
       imgTypes: ["png", "jpg", "jpeg", "webp", "gif"], //一般图片格式
-      cropShow: false
+      cropShow: false,
+
+      videoWHInfo:{},
     };
   },
   computed: {
@@ -298,6 +300,17 @@ export default {
     },
     // 上传前
     async beforeUpload(file) {
+      
+      var videoUrl = URL.createObjectURL(file);
+      var videoObj = document.createElement("video");
+      videoObj.src = videoUrl;
+      videoObj.onloadedmetadata = () => {
+        URL.revokeObjectURL(videoUrl);
+        console.log(videoObj.videoWidth,'-视频宽' ,videoObj.videoHeight,'-视频高');
+        this.videoWHInfo=videoObj
+      };
+      
+
       let type = file.type ? file.type.split("/") : file.name.split(".");
       type = type[type.length - 1];
       let fileType = this.fileType.includes(type.toLocaleLowerCase());
@@ -351,6 +364,7 @@ export default {
           uid: file.uid,
           type: file.type,
           name: file.name,
+          videoWHInfo:this.videoWHInfo
         };
         // 上传成功uploading = false
         this.uploadList = this.uploadList.map((item) => {

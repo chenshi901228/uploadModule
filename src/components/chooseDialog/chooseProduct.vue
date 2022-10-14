@@ -77,7 +77,7 @@
       </el-form-item>
 
       <!-- 操作按钮 -->
-      <div class="headerTool-handle-btns">
+      <!-- <div class="headerTool-handle-btns">
         <div class="headerTool--handle-btns-left">
           <el-form-item>
             <el-button
@@ -89,34 +89,35 @@
                 @click="add()">批量添加</el-button>
           </el-form-item>
         </div>
-      </div>
+      </div> -->
     </el-form>
     <!-- :row-key="getRowKey"-->
     <el-table
       v-loading="dataListLoading"
       :data="dataList"
       ref="table"
+      :row-key="getRowKey"
       @selection-change="dataListSelectionChangeHandle"
       height="360px"
       style="width: 100%"
     >
-      <el-table-column
-        type="selection"
-        header-align="center"
-        align="center"
-        width="50"
-        fixed="left"
-      >
-      </el-table-column>
       <!-- <el-table-column
         type="selection"
         header-align="center"
-        reserve-selection="true"
         align="center"
         width="50"
         fixed="left"
       >
       </el-table-column> -->
+      <el-table-column
+        type="selection"
+        header-align="center"
+        :reserve-selection="true"
+        align="center"
+        width="50"
+        fixed="left"
+      >
+      </el-table-column>
 
       <el-table-column
         header-align="center"
@@ -182,14 +183,14 @@
             @click="setTop(row)"
             >置顶</el-button
           >
-          <el-button
+          <!-- <el-button
             icon="el-icon-plus"
             type="text"
             size="small"
             v-if="!row._isSelected"
             @click="add(row)"
             >添加</el-button
-          >
+          > -->
         </template>
       </el-table-column>
     </el-table>
@@ -205,10 +206,10 @@
     >
     </el-pagination>
 
-    <!-- <span slot="footer" class="dialog-footer">
+    <span slot="footer" class="dialog-footer">
         <el-button size="small"  @click="dialogVisible = false;">取 消</el-button>
         <el-button size="small" plain :disabled="!dataListSelections.length" type="primary" @click="add()">确 认</el-button>
-    </span> -->
+    </span>
   </el-dialog>
 </template>
 <script>
@@ -339,7 +340,6 @@ export default {
 
     // 获取数据列表
     query() {
-
       this.dataListLoading = true;
       
       this.initDataSort()
@@ -379,6 +379,18 @@ export default {
         allData.unshift(...data)
 
         this.allDataList = allData
+
+        if(this.defaultSelected){
+          this.$refs.table.clearSelection();
+
+          this.$nextTick(()=>{
+            // console.log(this.$refs,33);
+            // this.$refs.table.clearSelection()
+            this.defaultSelected.forEach(item => {
+              this.$refs.table.toggleRowSelection(item);
+            });
+          })
+        }
       })
     },
 
@@ -414,8 +426,8 @@ export default {
       }else { //批量添加
 
         // 多选如果有已经选中的给出提示
-        let haveSelected = this.dataListSelections.some(item => item._isSelected)
-        if(haveSelected) return this.$message.warning("选项中包含有已被添加的选项")
+        // let haveSelected = this.dataListSelections.some(item => item._isSelected)
+        // if(haveSelected) return this.$message.warning("选项中包含有已被添加的选项")
 
         // 创建临时变量
         let arr = JSON.parse(JSON.stringify([...this.defaultSelected, ...this.dataListSelections]));
@@ -458,9 +470,17 @@ export default {
           this.defaultSelected = this.defaultSelected.filter(
             (item) => item.id != data.id
           );
+          this.$refs.table.clearSelection();
+
+          this.$nextTick(()=>{
+            // console.log(this.$refs,33);
+            // this.$refs.table.clearSelection()
+            this.defaultSelected.forEach(item => {
+              this.$refs.table.toggleRowSelection(item);
+            });
+          })
 
           this.$message.success("删除成功")
-
 
           this.query()
         })

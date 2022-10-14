@@ -295,6 +295,10 @@ export default {
           params.frontCoverUrl = this.frontCoverList[0].url;
           params.relationLiveUrl = this.relationLiveList[0].url;
           params.videoSize = this.relationLiveList[0].size; //视频大小
+
+          //视频原始长宽
+          params.width=this.relationLiveList[0].videoWHInfo.videoWidth
+          params.height=this.relationLiveList[0].videoWHInfo.videoHeight
           // 视频时长
           let liveDuration = await getVideoDuration(
             this.relationLiveList[0].url
