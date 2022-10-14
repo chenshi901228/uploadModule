@@ -168,20 +168,20 @@
       >
         <template slot-scope="{ row }">
           <el-button
-            icon="el-icon-delete"
-            type="text"
-            size="small"
-            v-if="row._isSelected"
-            @click="deleteSelect(row)"
-            >移除</el-button
-          >
-          <el-button
             icon="el-icon-upload2"
             type="text"
             size="small"
             v-if="row._isSelected"
             @click="setTop(row)"
             >置顶</el-button
+          >
+          <el-button
+            icon="el-icon-delete"
+            type="text"
+            size="small"
+            v-if="row._isSelected"
+            @click="deleteSelect(row)"
+            >移除</el-button
           >
           <!-- <el-button
             icon="el-icon-plus"
