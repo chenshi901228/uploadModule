@@ -336,7 +336,13 @@ export default {
 
     // 选择添加
     add(row) {
-      if(row) { //单个添加
+      this.$confirm("确认添加推荐主播", "提示", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          if(row) { //单个添加
         this.allDataList.forEach(item => {
           if(item.anchorId == row.anchorId) {
             item["_isSelected"] = true
@@ -369,8 +375,8 @@ export default {
       this.$message.success("添加成功")
       
       this.query()
+      }).catch(() => this.$message.info("取消操作"));
 
-      
     },
     // 点击删除
     deleteSelect(data) {

@@ -415,40 +415,46 @@ export default {
     },
     // 选择添加
     add(row) {
-      if(row) { //单个添加
-        this.allDataList.forEach(item => {
-          if(item.id == row.id) {
-            item["_isSelected"] = true
-            this.defaultSelected.push(item)
-          }
-        })
+      this.$confirm("确认添加推荐商品", "提示", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          if(row) { //单个添加
+          this.allDataList.forEach(item => {
+            if(item.id == row.id) {
+              item["_isSelected"] = true
+              this.defaultSelected.push(item)
+            }
+          })
 
-      }else { //批量添加
+        }else { //批量添加
 
-        // 多选如果有已经选中的给出提示
-        // let haveSelected = this.dataListSelections.some(item => item._isSelected)
-        // if(haveSelected) return this.$message.warning("选项中包含有已被添加的选项")
+          // 多选如果有已经选中的给出提示
+          // let haveSelected = this.dataListSelections.some(item => item._isSelected)
+          // if(haveSelected) return this.$message.warning("选项中包含有已被添加的选项")
 
-        // 创建临时变量
-        let arr = JSON.parse(JSON.stringify([...this.defaultSelected, ...this.dataListSelections]));
+          // 创建临时变量
+          let arr = JSON.parse(JSON.stringify([...this.defaultSelected, ...this.dataListSelections]));
 
-        // 全选时，合并数据去重
-        for (let i = 0; i < arr.length; i++) {
-          for (let j = i + 1; j < arr.length; j++) {
-            if (arr[i].id == arr[j].id) {
-              arr.splice(i, 1);
-              j--;
+          // 全选时，合并数据去重
+          for (let i = 0; i < arr.length; i++) {
+            for (let j = i + 1; j < arr.length; j++) {
+              if (arr[i].id == arr[j].id) {
+                arr.splice(i, 1);
+                j--;
+              }
             }
           }
+
+          this.defaultSelected = arr
+          
         }
-
-        this.defaultSelected = arr
+        this.$message.success("添加成功")
         
-      }
-      this.$message.success("添加成功")
-      
-      this.query()
-
+        this.query()
+      }).catch(() => this.$message.info("取消操作"));
       
     },
     // 点击删除
