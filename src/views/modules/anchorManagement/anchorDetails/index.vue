@@ -616,16 +616,16 @@
                 @click="deleteSelect()">批量删除</el-button>
             </el-form-item>
 
-            <el-form-item>
+            <!-- <el-form-item>
               <el-button type="primary" plain icon="el-icon-plus" size="mini" v-if="dataListSelectionUsers.length !== 0"
                 @click="upSelect()">批量上架</el-button>
-            </el-form-item>
+            </el-form-item> -->
           </div>
         </div>
       </el-form>
-      <el-table v-loading="dataUserListLoading" :data="dataUserList" fit
+      <el-table :row-key="getRowKey" v-loading="dataUserListLoading" :data="dataUserList" fit
         @selection-change="userListSelectionChangeHandle" style="width: 100%" max-height="500">
-        <el-table-column type="selection" header-align="center" align="center" width="50" fixed="left">
+        <el-table-column type="selection" :reserve-selection="true" header-align="center" align="center" width="50" fixed="left">
         </el-table-column>
         <el-table-column width="100" label="商品图片" prop="productImage" align="center">
           <template slot-scope="{ row }">
@@ -671,13 +671,18 @@
             <span> {{ scope.row.isAdd === 1 ? "上架" : "下架" }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" header-align="center" align="center">
+        <!-- <el-table-column label="操作" fixed="right" header-align="center" align="center">
           <template slot-scope="scope">
             <el-button icon="el-icon-goods" size="mini" type="text" @click="handleDeleteUser(scope.$index, scope.row)">
               上架</el-button>
           </template>
-        </el-table-column>
+        </el-table-column> -->
       </el-table>
+
+      <span slot="footer" class="dialog-footer">
+          <el-button size="small"  @click="dialogUserFormVisible = false;">取 消</el-button>
+          <el-button type="primary" plain  size="mini" :disabled="!dataListSelectionUsers.length" @click="upSelect()">确认</el-button>
+      </span>
     </el-dialog>
     <!-- 推荐主播列表弹框 -->
     <el-dialog title="推荐主播" :visible.sync="dialogRecommendVisible" width="70%" top="20px">
@@ -1479,6 +1484,10 @@ export default {
     pageCurrentChangeHandle_dia(val) {
       this.page_dia = val;
       this.queryPost_dia();
+    },
+    //多选触发
+    getRowKey(row) {
+      return row.id
     },
     //下架商品
     downProduct(id) {

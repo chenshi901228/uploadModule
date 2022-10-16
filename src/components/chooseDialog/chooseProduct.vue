@@ -77,7 +77,7 @@
       </el-form-item>
 
       <!-- 操作按钮 -->
-      <div class="headerTool-handle-btns">
+      <!-- <div class="headerTool-handle-btns">
         <div class="headerTool--handle-btns-left">
           <el-form-item>
             <el-button
@@ -89,19 +89,30 @@
                 @click="add()">批量添加</el-button>
           </el-form-item>
         </div>
-      </div>
+      </div> -->
     </el-form>
+    <!-- :row-key="getRowKey"-->
     <el-table
       v-loading="dataListLoading"
       :data="dataList"
       ref="table"
+      :row-key="getRowKey"
       @selection-change="dataListSelectionChangeHandle"
       height="360px"
       style="width: 100%"
     >
+      <!-- <el-table-column
+        type="selection"
+        header-align="center"
+        align="center"
+        width="50"
+        fixed="left"
+      >
+      </el-table-column> -->
       <el-table-column
         type="selection"
         header-align="center"
+        :reserve-selection="true"
         align="center"
         width="50"
         fixed="left"
@@ -157,14 +168,6 @@
       >
         <template slot-scope="{ row }">
           <el-button
-            icon="el-icon-delete"
-            type="text"
-            size="small"
-            v-if="row._isSelected"
-            @click="deleteSelect(row)"
-            >移除</el-button
-          >
-          <el-button
             icon="el-icon-upload2"
             type="text"
             size="small"
@@ -173,13 +176,21 @@
             >置顶</el-button
           >
           <el-button
+            icon="el-icon-delete"
+            type="text"
+            size="small"
+            v-if="row._isSelected"
+            @click="deleteSelect(row)"
+            >移除</el-button
+          >
+          <!-- <el-button
             icon="el-icon-plus"
             type="text"
             size="small"
             v-if="!row._isSelected"
             @click="add(row)"
             >添加</el-button
-          >
+          > -->
         </template>
       </el-table-column>
     </el-table>
@@ -194,6 +205,11 @@
       @current-change="pageCurrentChangeHandle"
     >
     </el-pagination>
+
+    <span slot="footer" class="dialog-footer">
+        <el-button size="small"  @click="dialogVisible = false;">取 消</el-button>
+        <el-button size="small" plain :disabled="!dataListSelections.length" type="primary" @click="add()">确 认</el-button>
+    </span>
   </el-dialog>
 </template>
 <script>
@@ -324,7 +340,6 @@ export default {
 
     // 获取数据列表
     query() {
-
       this.dataListLoading = true;
       
       this.initDataSort()
@@ -364,6 +379,18 @@ export default {
         allData.unshift(...data)
 
         this.allDataList = allData
+
+        if(this.defaultSelected){
+          this.$refs.table.clearSelection();
+
+          this.$nextTick(()=>{
+            // console.log(this.$refs,33);
+            // this.$refs.table.clearSelection()
+            this.defaultSelected.forEach(item => {
+              this.$refs.table.toggleRowSelection(item);
+            });
+          })
+        }
       })
     },
 
@@ -388,40 +415,46 @@ export default {
     },
     // 选择添加
     add(row) {
-      if(row) { //单个添加
-        this.allDataList.forEach(item => {
-          if(item.id == row.id) {
-            item["_isSelected"] = true
-            this.defaultSelected.push(item)
-          }
-        })
+      this.$confirm("确认添加推荐商品", "提示", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          if(row) { //单个添加
+          this.allDataList.forEach(item => {
+            if(item.id == row.id) {
+              item["_isSelected"] = true
+              this.defaultSelected.push(item)
+            }
+          })
 
-      }else { //批量添加
+        }else { //批量添加
 
-        // 多选如果有已经选中的给出提示
-        let haveSelected = this.dataListSelections.some(item => item._isSelected)
-        if(haveSelected) return this.$message.warning("选项中包含有已被添加的选项")
+          // 多选如果有已经选中的给出提示
+          // let haveSelected = this.dataListSelections.some(item => item._isSelected)
+          // if(haveSelected) return this.$message.warning("选项中包含有已被添加的选项")
 
-        // 创建临时变量
-        let arr = JSON.parse(JSON.stringify([...this.defaultSelected, ...this.dataListSelections]));
+          // 创建临时变量
+          let arr = JSON.parse(JSON.stringify([...this.defaultSelected, ...this.dataListSelections]));
 
-        // 全选时，合并数据去重
-        for (let i = 0; i < arr.length; i++) {
-          for (let j = i + 1; j < arr.length; j++) {
-            if (arr[i].id == arr[j].id) {
-              arr.splice(i, 1);
-              j--;
+          // 全选时，合并数据去重
+          for (let i = 0; i < arr.length; i++) {
+            for (let j = i + 1; j < arr.length; j++) {
+              if (arr[i].id == arr[j].id) {
+                arr.splice(i, 1);
+                j--;
+              }
             }
           }
+
+          this.defaultSelected = arr
+          
         }
-
-        this.defaultSelected = arr
+        this.$message.success("添加成功")
         
-      }
-      this.$message.success("添加成功")
-      
-      this.query()
-
+        this.query()
+      }).catch(() => this.$message.info("取消操作"));
       
     },
     // 点击删除
@@ -443,9 +476,17 @@ export default {
           this.defaultSelected = this.defaultSelected.filter(
             (item) => item.id != data.id
           );
+          this.$refs.table.clearSelection();
+
+          this.$nextTick(()=>{
+            // console.log(this.$refs,33);
+            // this.$refs.table.clearSelection()
+            this.defaultSelected.forEach(item => {
+              this.$refs.table.toggleRowSelection(item);
+            });
+          })
 
           this.$message.success("删除成功")
-
 
           this.query()
         })
@@ -454,6 +495,10 @@ export default {
     // 多选
     dataListSelectionChangeHandle (val) {
       this.dataListSelections = val
+    },
+    //多选触发
+    getRowKey(row) {
+      return row.id
     },
     // 分页, 每页条数
     pageSizeChangeHandle(val) {
@@ -521,4 +566,9 @@ export default {
   height: 60px;
   object-fit: cover;
 }
+// /deep/.el-table__header{
+//   .el-checkbox__inner{
+//     display: none;
+//   }
+// }
 </style>

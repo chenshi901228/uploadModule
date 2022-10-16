@@ -35,17 +35,36 @@
       :show-file-list="false"
       :file-list="uploadList"
       :limit="limit"
-      :disabled="disabled"
+      :disabled="disabled || isCropImage"
       :on-success="uploadSuccess"
       :on-progress="uploadProgress"
       :on-error="uploadError"
       :on-exceed="uploadExceed"
       :before-upload="beforeUpload"
     >
-      <div class="custom-style">
+      <div class="custom-style" @click="isCropImage ? cropShow = true : () => {}">
         <i class="el-icon-plus"></i>
       </div>
     </el-upload>
+
+    <!-- 裁剪框 -->
+    <crop-upload 
+      ref="cropRef"
+      field="file"
+      @crop-success="cropSuccess"
+      @crop-upload-success="cropUploadSuccess"
+      @crop-upload-fail="cropUploadFail"
+      @input="cropDialogHandle"
+      v-model="cropShow"
+		  :width="cropWidth"
+		  :height="cropHeight"
+		  :url="uploadUrl"
+      :langExt="{preview: '图片预览'}"
+      :maxSize="fileMaxSize * 1024"
+		  :params="cropUploadParams"
+		  :headers="cropUploadHeaders"></crop-upload>
+
+    <!-- 预览弹框 -->
     <el-dialog
       width="60%"
       append-to-body
@@ -82,12 +101,14 @@
 <script>
 import VideoFlvComponent from "@/components/common/videoFlvComponent";
 import SvgaDialog from "@/components/common/svgaDialog.vue"
-import { getImageWH } from "@/utils"
+import CropUpload from "vue-image-crop-upload/upload-2.vue"
+import { getImageWH, getUUID } from "@/utils"
 import Cookies from "js-cookie";
 export default {
   components: {
     VideoFlvComponent,
-    SvgaDialog
+    SvgaDialog,
+    CropUpload
   },
   data() {
     return {
@@ -97,6 +118,9 @@ export default {
       previewVisible: false,
       previewInfo: null,
       imgTypes: ["png", "jpg", "jpeg", "webp", "gif"], //一般图片格式
+      cropShow: false,
+
+      videoWHInfo:{},
     };
   },
   computed: {
@@ -119,6 +143,31 @@ export default {
       type: Boolean,
       default: false,
     },
+    // 是否开启裁剪功能
+    isCropImage: {
+      type: Boolean,
+      default: false,
+    },
+    // 裁剪宽度
+    cropWidth: {
+      type: Number,
+      default: 300
+    },
+    // 裁剪高度
+    cropHeight: {
+      type: Number,
+      default: 300
+    },
+    // 裁剪上传参数
+    cropUploadParams: {
+			type: Object,
+			'default': null
+		},
+    // 裁剪上传请求头
+    cropUploadHeaders: {
+			type: Object,
+			'default': null
+		},
     // 数量限制
     limit: {
       type: Number,
@@ -182,6 +231,67 @@ export default {
     },
   },
   methods: {
+    // 关闭裁剪框后返回上传成功的对象
+    cropDialogHandle(type) {
+      // 裁剪在第二步关闭之后跳到第一步
+      if(this.$refs.cropRef && this.$refs.cropRef.step == 2) {
+        this.$refs.cropRef.setStep(1)
+      }
+      // 裁剪上传成功之后关闭-返回上传的对象
+      if(this.cropUploadSuccessObj && !type) {
+        let res = JSON.parse(JSON.stringify(this.cropUploadSuccessObj))
+        this.cropUploadSuccessObj = null
+
+        this.uploadList.push(res);
+        this.$emit("uploadSuccess", res);  //返回obj
+      }
+    },
+    /**
+     * crop success
+     *
+     * [param] imgDataUrl
+     * [param] field
+     */
+    cropSuccess(imgDataUrl, field){
+      console.log('-------- crop success --------');
+      // console.log(imgDataUrl, field)
+      // this.imgDataUrl = imgDataUrl;
+    },
+    /**
+     * upload success
+     *
+     * [param] jsonData  server api return data, already json encode
+     * [param] field
+     */
+    cropUploadSuccess(jsonData, field){
+      console.log('-------- upload success --------');
+      // console.log(jsonData);
+      if(jsonData.code == 0) {
+        let type = this.getFileType(jsonData.data.url)
+        let uuid = getUUID()
+        let t = {
+          url: jsonData.data.url,
+          size: jsonData.data.size,
+          uid: uuid,
+          type: type,
+          name: uuid,
+        }
+        this.cropUploadSuccessObj = t
+      }else {
+        this.$message.error(jsonData.msg)
+      }
+    },
+    /**
+     * upload fail
+     *
+     * [param] status    server api return error status, like 500
+     * [param] field
+     */
+    cropUploadFail(status, field){
+      console.log('-------- upload fail --------');
+      // console.log(status);
+      this.$message.error(status)
+    },
     // 返回附件type
     getFileType(url) {
       let type = url.split(".")
@@ -190,6 +300,17 @@ export default {
     },
     // 上传前
     async beforeUpload(file) {
+      
+      var videoUrl = URL.createObjectURL(file);
+      var videoObj = document.createElement("video");
+      videoObj.src = videoUrl;
+      videoObj.onloadedmetadata = () => {
+        URL.revokeObjectURL(videoUrl);
+        console.log(videoObj.videoWidth,'-视频宽' ,videoObj.videoHeight,'-视频高');
+        this.videoWHInfo=videoObj
+      };
+      
+
       let type = file.type ? file.type.split("/") : file.name.split(".");
       type = type[type.length - 1];
       let fileType = this.fileType.includes(type.toLocaleLowerCase());
@@ -243,6 +364,7 @@ export default {
           uid: file.uid,
           type: file.type,
           name: file.name,
+          videoWHInfo:this.videoWHInfo
         };
         // 上传成功uploading = false
         this.uploadList = this.uploadList.map((item) => {

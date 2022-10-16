@@ -26,6 +26,7 @@
           :fileList="fileList"
           :limit="1"
           :fileMaxSize="2"
+          :isCropImage="true"
           :fileType="['png', 'jpg', 'jpeg']"
           ref="uploadFile"
           @uploadSuccess="uploadSuccess"
@@ -38,6 +39,7 @@
           :fileList="fileListQRcode"
           :limit="1"
           :fileMaxSize="2"
+          :isCropImage="true"
           :fileType="['png', 'jpg', 'jpeg']"
           ref="uploadQRcodeFile"
           @uploadSuccess="uploadQRcodeSuccess"
@@ -59,6 +61,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce'
 import Upload from "@/components/common/custom-upload";
 import mixinTableModule from "@/mixins/table-module";
 export default {
@@ -80,7 +83,7 @@ export default {
       rules: {
         username: [
           { required: true, message: "请输入主播昵称", trigger: "blur" },
-          { min: 3, max: 6, message: "长度在 3 到 6 个字符", trigger: "blur" },
+          { min: 1, max: 6, message: "长度在 1 到 6 个字符", trigger: "blur" },
         ],
         introduce: [{ required: true, message: "请输入主播简介", trigger: "blur" }],
       },
@@ -131,7 +134,7 @@ export default {
     uploadQRcodeRemove(file) {
       this.fileListQRcode = []
     },
-    submitForm(formName) {
+    submitForm: debounce(function(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           // this.$confirm('确认信息已填写无误，提交审批','提示',{
@@ -181,7 +184,7 @@ export default {
           return false;
         }
       });
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
     resetForm(formName) {
       this.$refs[formName].resetFields();
     },

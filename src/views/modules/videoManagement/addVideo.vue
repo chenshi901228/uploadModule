@@ -101,6 +101,7 @@
 </template>
 
 <script>
+import debounce from "lodash/debounce"
 import mixinTableModule from "@/mixins/table-module";
 import CustomUpload from "@/components/common/custom-upload";
 import { getVideoDuration } from "@/utils/index";
@@ -268,7 +269,7 @@ export default {
       this.closeCurrentTab();
     },
     // 表单提交
-    submit() {
+    submit: debounce(function() {
       this.$refs.dataForm.validate(async (valid) => {
         if (valid) {
           if (
@@ -294,6 +295,10 @@ export default {
           params.frontCoverUrl = this.frontCoverList[0].url;
           params.relationLiveUrl = this.relationLiveList[0].url;
           params.videoSize = this.relationLiveList[0].size; //视频大小
+
+          //视频原始长宽
+          params.width=this.relationLiveList[0].videoWHInfo.videoWidth
+          params.height=this.relationLiveList[0].videoWHInfo.videoHeight
           // 视频时长
           let liveDuration = await getVideoDuration(
             this.relationLiveList[0].url
@@ -321,7 +326,7 @@ export default {
             });
         }
       });
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
   },
 };
 </script>

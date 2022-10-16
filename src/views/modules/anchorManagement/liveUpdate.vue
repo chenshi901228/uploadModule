@@ -31,7 +31,7 @@
                     <!-- <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.product"
                         @click.native="chooseProduct"></el-input> -->
                     <el-button @click.native="chooseProduct" type="primary">添加</el-button>
-                    <div class="product-box" v-if="!!productIds.length">
+                    <div class="product-box" v-if="productIds && !!productIds.length">
                         <el-tag
                             v-for="(item, index) in productIds"
                             :key="index"
@@ -46,7 +46,7 @@
                     <!-- <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.anchor"
                         @click.native="chooseAnchor"></el-input> -->
                     <el-button @click.native="chooseAnchor" type="primary">添加</el-button>
-                    <div class="product-box" v-if="!!recommendedAnchorList.length">
+                    <div class="product-box" v-if="recommendedAnchorList && !!recommendedAnchorList.length">
                         <el-tag
                             v-for="(item, index) in recommendedAnchorList"
                             :key="index"
@@ -77,6 +77,7 @@
     </el-card>
 </template>
 <script>
+import debounce from "lodash/debounce"
 import CustomUpload from "@/components/common/custom-upload"
 import ComModule from "@/mixins/common-module"
 import ChooseAnchor from "@/components/chooseDialog/chooseAnchor"
@@ -149,26 +150,8 @@ export default {
 
                 // this.recommendedAnchorList = res.data.recommendedAnchorList && res.data.recommendedAnchorList.map(item => { return { anchorId: item } })
                 // this.productIds = res.data.productIds && res.data.productIds.map(item => { return { id: item } })
-                let productNames = res.data.products && res.data.products.split(',') || []
-                if(!!productNames.length && res.data.productIds && !!res.data.productIds.length) {
-                    for(let i = 0; i < productNames.length - 1; i++) {
-                        this.productIds[i] = {
-                            id: res.data.productIds[i],
-                            productName: productNames[i],
-                        }
-                    }
-                }
-
-                let anchorNames = res.data.recommendedAnchors && res.data.recommendedAnchors.split(',') || []
-                if(!!anchorNames.length && res.data.recommendedAnchorList && !!res.data.recommendedAnchorList.length) {
-                    for(let i = 0; i < anchorNames.length - 1; i++) {
-                        this.recommendedAnchorList[i] = {
-                            id: res.data.recommendedAnchorList[i],
-                            username: anchorNames[i],
-                        }
-                    }
-                }
-
+                this.recommendedAnchorList  = res.data.recommendedAnchorList && res.data.recommendedAnchorList.map((id, i) => ({ anchorId: id, username: res.data.recommendedAnchors.split(',')[i] }))
+                this.productIds  = res.data.productIds && res.data.productIds.map((id, i) => ({ id: id, productName: res.data.products.split(',')[i] }))
             }).catch(err => this.$message.error(JSON.stringify(err.message)))
         },
         // 直播宣传图上传
@@ -251,7 +234,7 @@ export default {
 
         },
         // 表单提交
-        onSubmit() {
+        onSubmit: debounce(function() {
             this.$refs.dataForm.validate(async (valid) => {
                 if (valid) {
 
@@ -312,7 +295,7 @@ export default {
                     }
                 }
             })
-        }
+        }, 1500, { 'leading': true, 'trailing': false })
     }
 }
 </script>

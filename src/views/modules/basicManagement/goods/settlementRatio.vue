@@ -247,6 +247,7 @@
 </template>
 
 <script>
+import debounce from "lodash/debounce"
 import mixinTableModule from '@/mixins/table-module'
 import SettlementRatioUpdate from "./settlementRatio-update.vue";
 export default {
@@ -364,7 +365,7 @@ export default {
         .catch(() => this.$message.info("取消删除"));
     },
     // 表单提交
-    submit(setText) {
+    submit: debounce(function(setText) {
       this.$refs.editeForm.validate((valid) => {
         if (valid) {
           if (setText === "全部主播结算比例") {
@@ -425,7 +426,7 @@ export default {
           }
         }
       });
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
     // 取消
     cancel() {
       this.visible = false;

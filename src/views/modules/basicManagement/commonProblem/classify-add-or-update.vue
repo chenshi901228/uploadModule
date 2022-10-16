@@ -37,6 +37,7 @@
     </el-dialog>
 </template>
 <script>
+import debounce from "lodash/debounce"
 import Upload from "@/components/common/custom-upload";
 export default {
     components: {
@@ -78,7 +79,7 @@ export default {
             this.$refs.form.resetFields()
             this.fileList = []
         },
-        submit(formName) {
+        submit: debounce(function(formName) {
             this.$refs[formName].validate((valid) => {
                 if (valid) {
                     if (!this.fileList.length) return this.$message.error("请上传分类图标");
@@ -112,7 +113,7 @@ export default {
                     return false;
                 }
             })
-        }
+        }, 1500, { 'leading': true, 'trailing': false })
     }
 }
 </script>

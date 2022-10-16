@@ -28,12 +28,34 @@
                     <p class="tips">格式限制：jpg/jpeg/png,建议图片尺寸不小于630px×347px，大小不得超过2M</p>
                 </el-form-item>
                 <el-form-item label="添加商品" prop="product">
-                    <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.product"
-                        @click.native="chooseProduct"></el-input>
+                    <!-- <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.product"
+                        @click.native="chooseProduct"></el-input> -->
+                    <el-button @click.native="chooseProduct" type="primary">添加</el-button>
+                    <div class="product-box" v-if="productIds && !!productIds.length">
+                        <el-tag
+                            v-for="(item, index) in productIds"
+                            :key="index"
+                            closable
+                            @close="closeProductId(index)"
+                            type="info">
+                            {{item.productName}}
+                        </el-tag>
+                    </div>
                 </el-form-item>
                 <el-form-item label="添加主播" prop="anchor">
-                    <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.anchor"
-                        @click.native="chooseAnchor"></el-input>
+                    <!-- <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.anchor"
+                        @click.native="chooseAnchor"></el-input> -->
+                    <el-button @click.native="chooseAnchor" type="primary">添加</el-button>
+                    <div class="product-box" v-if="recommendedAnchorList && !!recommendedAnchorList.length">
+                        <el-tag
+                            v-for="(item, index) in recommendedAnchorList"
+                            :key="index"
+                            closable
+                            @close="closeAnchor(index)"
+                            type="info">
+                            {{item.username}}
+                        </el-tag>
+                    </div>
                 </el-form-item>
                 <el-form-item label="直播背景">
                     <custom-upload ref="bgLiveUpload" :fileMaxSize="2" :fileType="['png', 'jpg', 'jpeg']"
@@ -55,6 +77,7 @@
     </el-card>
 </template>
 <script>
+import debounce from "lodash/debounce"
 import CustomUpload from "@/components/common/custom-upload"
 import ComModule from "@/mixins/common-module"
 import ChooseAnchor from "@/components/chooseDialog/chooseAnchor"
@@ -106,10 +129,10 @@ export default {
 
                 this.dataForm.liveTheme = res.data.liveTheme || ""
                 this.dataForm.frontCoverUrl = res.data.frontCoverUrl || ""
-                this.dataForm.product = res.data.productIds && res.data.productIds.length ? `已选择${res.data.productIds.length}个商品` : ""
-                this.dataForm.anchor = res.data.recommendedAnchorList && res.data.recommendedAnchorList.length ? `已选择${res.data.recommendedAnchorList.length}个主播` : ""
-                this.dataForm.frontCover = res.data.frontCover || ""
-                this.dataForm.assistantIds = res.data.assistantIds || ""
+                // this.dataForm.product = res.data.productIds && res.data.productIds.length ? `已选择${res.data.productIds.length}个商品` : ""
+                // this.dataForm.anchor = res.data.recommendedAnchorList && res.data.recommendedAnchorList.length ? `已选择${res.data.recommendedAnchorList.length}个主播` : ""
+                this.dataForm.frontCover = res.data.frontCover || []
+                this.dataForm.assistantIds = res.data.assistantIds || []
 
                 if(res.data.frontCoverUrl) {
                     this.frontCoverList = [{
@@ -125,8 +148,11 @@ export default {
                     }]
                 }
 
-                this.recommendedAnchorList = res.data.recommendedAnchorList && res.data.recommendedAnchorList.map(item => { return { anchorId: item } })
-                this.productIds = res.data.productIds && res.data.productIds.map(item => { return { id: item } })
+                // this.recommendedAnchorList = res.data.recommendedAnchorList && res.data.recommendedAnchorList.map(item => { return { anchorId: item } })
+                // this.productIds = res.data.productIds && res.data.productIds.map(item => { return { id: item } })
+                this.recommendedAnchorList  = res.data.recommendedAnchorList && res.data.recommendedAnchorList.map((id, i) => ({ anchorId: id, username: res.data.recommendedAnchors.split(',')[i] }))
+                this.productIds  = res.data.productIds && res.data.productIds.map((id, i) => ({ id: id, productName: res.data.products.split(',')[i] }))
+                console.log(this.productIds, 'productIds')
 
             }).catch(err => this.$message.error(JSON.stringify(err.message)))
         },
@@ -168,6 +194,14 @@ export default {
             this.$refs.chooseAnchor.init(this.recommendedAnchorList, this.userId)
         },
 
+        closeProductId(index) {
+            this.productIds.splice(index, 1)
+        },
+
+        closeAnchor(index) {
+            this.recommendedAnchorList.splice(index, 1)
+        },
+
         // 确认添加推荐主播
         addAnchorConfirm(data) {
 
@@ -202,7 +236,7 @@ export default {
 
         },
         // 表单提交
-        onSubmit() {
+        onSubmit: debounce(function() {
             this.$refs.dataForm.validate(async (valid) => {
                 if (valid) {
 
@@ -228,9 +262,13 @@ export default {
 
 
                         // 商品ids
-                        params.productIds = this.productIds.map(item => item.id)
+                        if(this.productIds)(
+                            params.productIds = this.productIds.map(item => item.id)
+                        )
                         // 主播ids
-                        params.recommendedAnchorList = this.recommendedAnchorList.map(item => item.anchorId)
+                        if(this.recommendedAnchorList){
+                            params.recommendedAnchorList = this.recommendedAnchorList.map(item => item.anchorId)
+                        }
 
                         // 当前主播id
                         params.anchorUserId = this.userId
@@ -253,7 +291,7 @@ export default {
                     }
                 }
             })
-        }
+        }, 1500, { 'leading': true, 'trailing': false })
     }
 }
 </script>
@@ -284,5 +322,21 @@ export default {
 }
 /deep/ .el-card__body {
     padding: 0 20px 20px;
+}
+/deep/.product-box {
+    width: 400px;
+    border-radius: 5px;
+    border: 1px solid #D7DAE2;
+    padding: 12px;
+    margin-top: 10px;
+
+    .el-tag {
+        margin-right: 10px;
+        margin-bottom: 5px;
+    }
+
+    .el-tag:last-child {
+        margin-right: 0
+    }
 }
 </style>

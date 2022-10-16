@@ -257,14 +257,18 @@
             <div
               v-for="(item, index) in toolNav"
               :key="index"
-              :class="item.type=='setUp'?'tool_nav set_up':'tool_nav'"
+              :class="['tool_nav_' + item.type, 'tool_nav']"
               @click="toolClick(item.type)"
             >
               <img :src="item.img" alt=""/>
               <span>{{item.text}}</span>
-              <div class="tool_nav_son" v-show="item.type=='setUp'&&showBtn">
+              <div class="tool_nav_son" v-show="toolNavSelected == 'setUp' && item.type == toolNavSelected">
                 <p @click.stop="beautifyDialog = true">美化</p>
                 <p @click.stop="streamAddress">拉流地址</p>
+              </div>
+              <div class="tool_nav_son" v-show="toolNavSelected == 'superboard' && item.type == toolNavSelected">
+                <p @click.stop="createSuperBoard(1)">超级白板</p>
+                <p @click.stop="createSuperBoard(2)">文件白板</p>
               </div>
             </div>
           </div>
@@ -292,9 +296,10 @@
                   :userInfo="{
                     token,
                     roomId,
-                    userId:userID,
-                    appID,
+                    userId: userID,
                   }"
+                  ref="superboardRef"
+                  @initSuperboardSuccess="initSuperboardSuccess"
                 />
                 <div class="quit_board" @click="quitBoard">退出白板</div>
               </div>
@@ -935,6 +940,7 @@
 </template>
 
 <script>
+import debounce from "lodash/debounce"
 import Clipboard from 'clipboard'
 import { ZegoExpressEngine } from "zego-express-engine-webrtc";
 import TIM from "tim-js-sdk";
@@ -1003,6 +1009,7 @@ export default {
           status: true,
         },
       ],
+      toolNavSelected: "", //选中的工具选项
       toolNav: [
         
         {
@@ -1015,11 +1022,11 @@ export default {
           text: "桌面共享",
           type: "desktopShare",
         },
-        {
-          img: require("@/assets/img/superboard_icon.png"),
-          text: "白板",
-          type: "superboard",
-        },
+        // {
+        //   img: require("@/assets/img/superboard_icon.png"),
+        //   text: "白板",
+        //   type: "superboard",
+        // },
         {
           img: require("@/assets/img/setUp_icon.png"),
           text: "设置",
@@ -1070,7 +1077,6 @@ export default {
       endLiveTitle:'直播结束',
       isRecord:false,//录制状态
       pauseRecord:false,//录制暂停状态
-      showBtn:false,
       streamUrl:'',
       checkStep:1,
       cameraError:false,
@@ -1085,6 +1091,7 @@ export default {
       connectTimer:{},//超时定时器
       connectStatusTimer: null, //连麦之后定时监听连麦用户连接状态
       isOpenDesktopSharing:false,//是否开启屏幕共享
+      superBoardType: null, //白板类型：1-普通白板，2-文件白板
     };
   },
   created() {
@@ -1153,8 +1160,8 @@ export default {
   async mounted() {
     window.addEventListener('beforeunload',this.beforeunloadHandler)
     document.addEventListener("click",(e)=>{
-      if(e.target.className&&e.target.className.indexOf('set_up') == -1){
-        this.showBtn = false
+      if(e.target.className && (e.target.className.indexOf('tool_nav_setUp') == -1 || e.target.className.indexOf('tool_nav_superboard') == -1)){
+        this.toolNavSelected = ""
       }
     })
     this.liveTheme = this.$route.query.liveTheme;
@@ -1168,6 +1175,7 @@ export default {
     this.zg.setLogConfig({ logLevel: 'disable' })
     //检测设备能力
     let checkSystemRes = await this.zg.checkSystemRequirements()
+    console.log("checkSystemRes", checkSystemRes)
     if(!checkSystemRes.camera){
       this.cameraStatus = checkSystemRes.camera
       this.$confirm("请先打开摄像头权限后刷新重试", "提示", {
@@ -1281,6 +1289,9 @@ export default {
             }
           });
 
+          // 连麦列表排序
+          this.connectMessageInfo = this.connectMessageInfo.sort((a, b) => b.connectStatus - a.connectStatus)
+
           if (this.roomId != streamItem.streamID) {
             let extraInfo = streamItem.extraInfo;
             let extraInfoObj = null;
@@ -1352,7 +1363,7 @@ export default {
 				if(n.length == 0) {
 					this.offGetConnectStatus()
 				}
-    }
+    },
     //   let deleteArr = []
     //   this.connectMessageInfo.forEach((item,index)=>{
     //     var arr = this.livePlayerList.filter(info=>info.streamID.includes(item.userInfo.userId) && item.connectStatus && item.getReplyConnectLoading != null)
@@ -1502,8 +1513,9 @@ export default {
           videoQuality: 4,
           width:1280,
           height:720,
-          frameRate: 60,
-          bitrate: 900,
+          frameRate: 30,
+          bitrate: 2250,
+          audio: true
         },
       });
       let res = await this.zg.startPublishingStream('shareDesk'+this.roomId, this.screenStream); //共享桌面流
@@ -1535,7 +1547,7 @@ export default {
       document.querySelector('#videoEle').style.width = '100%'
       document.querySelector('#videoEle').style.height = 'calc(100% - 60px)'
     },
-    async changeDevice(data){
+    changeDevice: debounce(async function(data){
       if (data.type === "mike") {
         //麦克风
         let result = await this.zg.muteMicrophone(data.status);
@@ -1556,8 +1568,13 @@ export default {
           this.deviceNav[1].status = !data.status;
         }
       }
-    },
+    }, 1000, { 'leading': true, 'trailing': false }),
     async toolClick(type) {
+      let needOpenLiveArr = ["desktopShare"]
+      if(needOpenLiveArr.includes(type) && !this.liveStatus) {
+        return this.$message.warning("直播暂未开启，请先开启直播")
+      }
+      this.toolNavSelected = type
       switch(type){
         case "goods":
           this.getAnchorProduct().then(res=>{
@@ -1582,24 +1599,54 @@ export default {
           })
           break
         case "setUp":
-          this.showBtn = true
           break
         case "device":
           this.deviceDialogVisible = true
           break
         case "desktopShare":
-          if(this.liveStatus){
-            this.shareDesk()
-          }else{
-            this.$message.warning("直播暂未开启，请先开启直播")
-          }
+          this.shareDesk()
           break
         case "superboard":
+          break
+
+      }
+    },
+    //创建白板： 1-普通白板，2-文件白板
+    createSuperBoard(type) {
+      this.superBoardType = type
+      this.toolNavSelected = "" 
+      if(type == 1) { //普通白板直接创建
+        if(this.superboardShow) { //已打开白板-创建新的普通白板
+          if(this.$refs.superboardRef) this.$refs.superboardRef.createWhiteboardView()
+        }else { //未打开白板-打开白板-创建新的普通白板
           this.superboardShow = true
           document.querySelector('#videoEle').style.width = '350px'
           document.querySelector('#videoEle').style.height = '196px'
-          break
-
+        }
+      }else { //文件白板选择文件
+        if(this.superboardShow) { //已打开白板-创建新的文件白板
+          if(this.$refs.superboardRef) this.$refs.superboardRef.confirmSelectFileSuperBoard()
+        }else { //未打开白板-打开白板-创建新的文件白板
+          this.superboardShow = true
+          document.querySelector('#videoEle').style.width = '350px'
+          document.querySelector('#videoEle').style.height = '196px'
+        }
+      }
+    },
+    // 白板初始化成功-创建白板
+    initSuperboardSuccess() {
+      try {
+        if(this.superBoardType == 1) { //创建普通白板
+          if(this.$refs.superboardRef) this.$refs.superboardRef.createWhiteboardView()
+        }
+  
+        if(this.superBoardType == 2) { //创建文件白板
+          if(this.$refs.superboardRef) this.$refs.superboardRef.confirmSelectFileSuperBoard()
+        }
+        this.superBoardType = null
+      }catch(err) {
+        console.warn(err)
+        this.superBoardType = null
       }
     },
     recordMethod(){
@@ -1671,7 +1718,7 @@ export default {
         }
       }
     },
-    handleClick(tab, event) {
+    handleClick: debounce(function(tab, event) {
       this.params.page=1
       switch(this.activeName){
         case 'second':
@@ -1684,7 +1731,7 @@ export default {
         default:
           break
       }
-    },
+    }, 1000, { 'leading': true, 'trailing': false }),
     muteMthod(data) {
       //禁言
       this.studentList.forEach((item) => {
@@ -1750,8 +1797,8 @@ export default {
           videoQuality: 4,
           width:1280,
           height:720,
-          frameRate: 60,
-          bitrate: 900,
+          frameRate: 30,
+          bitrate: 2250,
           videoInput:this.cameraId,
         },
       });
@@ -1865,8 +1912,8 @@ export default {
             videoQuality: 4,
             width:1280,
             height:720,
-            frameRate: 60,
-            bitrate: 900,
+            frameRate: 30,
+            bitrate: 2250,
             videoInput:this.cameraId,
           },
           // custom: {
@@ -2328,7 +2375,7 @@ export default {
           return this.conversation.conversationID;
       }
     },
-    sendMessage(messageInfo, cb) {
+    sendMessage: debounce(function(messageInfo, cb) {
       try {
         if (!this.liveStatus) {
           this.$message({ message: "直播暂未开启", type: "warning" });
@@ -2416,7 +2463,7 @@ export default {
           window.close()
         })
       }
-    },
+    }, 1000, { 'leading': true, 'trailing': false }),
     searchUserFun(){
       this.params.page=1
       this.studentList = []
@@ -2527,7 +2574,7 @@ export default {
         );
       }
     },
-    replyConnect(status, type, connectType, userId,nickName) {
+    replyConnect: debounce(function(status, type, connectType, userId,nickName) {
       //同意申请连麦
       let messageInfo = {
         type,
@@ -2578,7 +2625,7 @@ export default {
           this.connectMessageInfo.splice(ind, 1);
         }
       }
-    },
+    }, 1000, { 'leading': true, 'trailing': false }),
     hangupHandle(item) {
       this.$confirm(`确认挂断用户[${item.userInfo.nickName || ""}]`, "提示", {
         confirmButtonText: '确定',
@@ -3470,6 +3517,8 @@ p {
           }
           .connect_list {
             width: 230px;
+            height: 100%;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
@@ -3479,7 +3528,9 @@ p {
             .connet_video {
               width: 100%;
               height: 142px;
-              margin-bottom: 10px;
+              &:not(:first-child) {
+                margin-top: 10px;
+              }
               .video_div {
                 width: 100%;
                 height: 112px;

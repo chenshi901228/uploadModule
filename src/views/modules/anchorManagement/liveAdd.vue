@@ -32,7 +32,7 @@
                     <!-- <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.product"
                         @click.native="chooseProduct"></el-input> -->
                     <el-button @click.native="chooseProduct" type="primary">添加</el-button>
-                    <div class="product-box" v-if="!!productIds.length">
+                    <div class="product-box" v-if="productIds && !!productIds.length">
                         <el-tag
                             v-for="(item, index) in productIds"
                             :key="index"
@@ -47,7 +47,7 @@
                     <!-- <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.anchor"
                         @click.native="chooseAnchor"></el-input> -->
                     <el-button @click.native="chooseAnchor" type="primary">添加</el-button>
-                    <div class="product-box" v-if="!!recommendedAnchorList.length">
+                    <div class="product-box" v-if="recommendedAnchorList && !!recommendedAnchorList.length">
                         <el-tag
                             v-for="(item, index) in recommendedAnchorList"
                             :key="index"
@@ -78,6 +78,7 @@
     </el-card>
 </template>
 <script>
+import debounce from "lodash/debounce"
 import CustomUpload from "@/components/common/custom-upload"
 import ComModule from "@/mixins/common-module"
 import ChooseAnchor from "@/components/chooseDialog/chooseAnchor"
@@ -203,7 +204,7 @@ export default {
 
         },
         // 表单提交
-        onSubmit() {
+        onSubmit: debounce(function() {
             this.$refs.dataForm.validate(async (valid) => {
                 if (valid) {
 
@@ -229,9 +230,14 @@ export default {
 
 
                         // 商品ids
-                        params.productIds = this.productIds.map(item => item.id)
+                        if(this.productIds){
+                            params.productIds = this.productIds.map(item => item.id)
+                        }
+                        
                         // 主播ids
-                        params.recommendedAnchorList = this.recommendedAnchorList.map(item => item.anchorId)
+                        if(this.recommendedAnchorList){
+                            params.recommendedAnchorList = this.recommendedAnchorList.map(item => item.anchorId)
+                        }
 
                         // 当前主播id
                         params.anchorUserId = this.userId
@@ -276,7 +282,7 @@ export default {
                     }
                 }
             })
-        }
+        }, 1500, { 'leading': true, 'trailing': false })
     }
 }
 </script>

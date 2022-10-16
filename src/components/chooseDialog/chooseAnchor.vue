@@ -45,7 +45,7 @@
       </el-form-item>
 
       <!-- 操作按钮 -->
-      <div class="headerTool-handle-btns">
+      <!-- <div class="headerTool-handle-btns">
         <div class="headerTool--handle-btns-left">
         <el-form-item>
           <el-button
@@ -57,12 +57,13 @@
             @click="add()">批量添加</el-button>
         </el-form-item>
         </div>
-      </div>
+      </div> -->
     </el-form>
     <el-table
       v-loading="dataListLoading"
       :data="dataList"
       ref="table"
+      :row-key="getRowKey"
       @selection-change="dataListSelectionChangeHandle"
       height="360px"
       style="width: 100%"
@@ -70,6 +71,7 @@
       <el-table-column
         type="selection"
         header-align="center"
+        :reserve-selection="true"
         align="center"
         width="50"
         fixed="left"
@@ -117,14 +119,14 @@
             @click="setTop(row)"
             >置顶</el-button
           >
-          <el-button
+          <!-- <el-button
             icon="el-icon-plus"
             type="text"
             size="small"
             v-if="!row._isSelected"
             @click="add(row)"
             >添加</el-button
-          >
+          > -->
           <el-button
             icon="el-icon-delete"
             type="text"
@@ -147,6 +149,11 @@
       @current-change="pageCurrentChangeHandle"
     >
     </el-pagination>
+
+    <span slot="footer" class="dialog-footer">
+        <el-button size="small"  @click="dialogVisible = false;">取 消</el-button>
+        <el-button size="small" plain :disabled="!dataListSelections.length" type="primary" @click="add()">确 认</el-button>
+    </span>
   </el-dialog>
 </template>
 <script>
@@ -312,12 +319,30 @@ export default {
         allData.unshift(...data)
 
         this.allDataList = allData
+
+        if(this.defaultSelected){
+          this.$refs.table.clearSelection();
+
+          this.$nextTick(()=>{
+            // console.log(this.$refs,33);
+            // this.$refs.table.clearSelection()
+            this.defaultSelected.forEach(item => {
+              this.$refs.table.toggleRowSelection(item);
+            });
+          })
+        }
       })
     },
 
     // 选择添加
     add(row) {
-      if(row) { //单个添加
+      this.$confirm("确认添加推荐主播", "提示", {
+        confirmButtonText: "确认",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          if(row) { //单个添加
         this.allDataList.forEach(item => {
           if(item.anchorId == row.anchorId) {
             item["_isSelected"] = true
@@ -328,8 +353,8 @@ export default {
       }else { //批量添加
 
         // 多选如果有已经选中的给出提示
-        let haveSelected = this.dataListSelections.some(item => item._isSelected)
-        if(haveSelected) return this.$message.warning("选项中包含有已被添加的选项")
+        // let haveSelected = this.dataListSelections.some(item => item._isSelected)
+        // if(haveSelected) return this.$message.warning("选项中包含有已被添加的选项")
 
         // 创建临时变量
         let arr = JSON.parse(JSON.stringify([...this.defaultSelected, ...this.dataListSelections]));
@@ -350,12 +375,12 @@ export default {
       this.$message.success("添加成功")
       
       this.query()
+      }).catch(() => this.$message.info("取消操作"));
 
-      
     },
     // 点击删除
     deleteSelect(data) {
-      this.$confirm("确认取消推荐商品", "提示", {
+      this.$confirm("确认取消推荐主播", "提示", {
         confirmButtonText: "确认",
         cancelButtonText: "取消",
         type: "warning",
@@ -373,6 +398,16 @@ export default {
             (item) => item.anchorId != data.anchorId
           );
 
+          this.$refs.table.clearSelection();
+
+          this.$nextTick(()=>{
+            // console.log(this.$refs,33);
+            // this.$refs.table.clearSelection()
+            this.defaultSelected.forEach(item => {
+              this.$refs.table.toggleRowSelection(item);
+            });
+          })
+
           this.$message.success("删除成功")
 
 
@@ -383,6 +418,10 @@ export default {
     // 多选
     dataListSelectionChangeHandle (val) {
       this.dataListSelections = val
+    },
+    //多选触发
+    getRowKey(row) {
+      return row.anchorId
     },
     // 分页, 每页条数
     pageSizeChangeHandle(val) {

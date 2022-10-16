@@ -10,6 +10,7 @@
       :model="dataForm"
       :rules="dataRule"
       ref="dataForm"
+      size="small"
       @keyup.enter.native="dataFormSubmitHandle()"
       :label-width="$i18n.locale === 'en-US' ? '120px' : '120px'"
     >
@@ -150,7 +151,7 @@ export default {
         .catch(() => {});
     },
     // 表单提交
-    dataFormSubmitHandle(formName) {
+    dataFormSubmitHandle: debounce(function(formName) {
       if(this.dataForm.intimacyNum.includes(".") || this.dataForm.level.includes(".")) return this.$message.error("输入的内容有误,等级或亲密度值为正整数")
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -178,7 +179,7 @@ export default {
           return false;
         }
       });
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
   },
 };
 </script>

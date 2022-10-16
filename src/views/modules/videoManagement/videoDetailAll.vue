@@ -126,6 +126,7 @@ border-radius: 5px 5px 5px 5px;position: relative;">
 </template>
 
 <script>
+import debounce from 'lodash/debounce';
 import mixinTableModule from "@/mixins/table-module";
 export default {
   mixins: [mixinTableModule],
@@ -304,7 +305,7 @@ export default {
       }
     },
     //驳回
-    resolve() {
+    resolve: debounce(function() {
       this.$http
         .put("/sys/livePlayback/approve", {
           id: this.id,
@@ -322,9 +323,9 @@ export default {
         .catch((err) => {
           console.log(err);
         });
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
     //通过
-    confirm() {
+    confirm: debounce(function() {
       this.$http
         .put("/sys/livePlayback/approve", {
           id: this.id,
@@ -342,7 +343,7 @@ export default {
         .catch((err) => {
           console.log(err);
         });
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
   },
 };
 </script>

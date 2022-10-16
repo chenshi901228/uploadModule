@@ -198,6 +198,7 @@
 </template>
 
 <script>
+import debounce from "lodash/debounce"
 import CustomUpload from "@/components/common/custom-upload";
 import Cookies from "js-cookie";
 import { Quill, quillEditor } from "vue-quill-editor";
@@ -480,7 +481,7 @@ export default {
     },
 
     //提交表单
-    submitForm(formName) {
+    submitForm: debounce(function(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let dataForm = {};
@@ -550,7 +551,7 @@ export default {
           return false;
         }
       });
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
     //上传后
     handleSuccess(response, file, fileList) {
       this.fileList.push(response.data.url);

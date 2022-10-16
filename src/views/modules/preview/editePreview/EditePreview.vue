@@ -211,7 +211,7 @@
         <el-form-item label="直播背景">
           <div
             class="frontCover-img-box"
-            v-if="frontCoverListDefault.length !== 0"
+            v-if="frontCoverListDefault && frontCoverListDefault.length !== 0"
           >
             <div class="frontCover-box">
               <img
@@ -375,16 +375,16 @@ export default {
     };
   },
   watch: {
-    "ruleForm.liveTheme"(nv, ov) {
-      if (nv.length > 60) {
-        this.$message.warning("直播主题字数不得超过60字！");
-      }
-    },
-    "ruleForm.liveIntroduce"(nv, ov) {
-      if (nv.length > 2007) {
-        this.$message.warning("直播介绍字数不得超过2000字！");
-      }
-    },
+    // "ruleForm.liveTheme"(nv, ov) {
+    //   if (nv.length > 60) {
+    //     this.$message.warning("直播主题字数不得超过60字！");
+    //   }
+    // },
+    // "ruleForm.liveIntroduce"(nv, ov) {
+    //   if (nv.length > 2007) {
+    //     this.$message.warning("直播介绍字数不得超过2000字！");
+    //   }
+    // },
   },
   activated() {
     this.getPreviewDetail();
@@ -415,21 +415,20 @@ export default {
     }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
     this.userId = this.$store.state.user.id;
     this.getCoverPictureList();
-    this.ruleForm.id = this.$route.query.detailInfo.id;
-    this.ruleForm.liveTheme = this.$route.query.detailInfo.liveTheme;
-    this.ruleForm.startDate = this.$route.query.detailInfo.startDate;
-    this.ruleForm.estimateLiveTime =
-      this.$route.query.detailInfo.estimateLiveTime;
-    this.ruleForm.frontCoverUrl = this.$route.query.detailInfo.frontCoverUrl;
-    this.fileList.push(this.$route.query.detailInfo.frontCoverUrl);
-    this.ruleForm.liveIntroduce = this.$route.query.detailInfo.liveIntroduce;
-    this.ruleForm.frontCover = this.$route.query.detailInfo.frontCover
-      ? this.$route.query.detailInfo.frontCover
-      : "";
-    this.frontCoverListDefault = this.$route.query.detailInfo.frontCover
-      ? this.$route.query.detailInfo.frontCover
-      : "";
-    this.ruleForm.trendsOpen = this.$route.query.detailInfo.trendsOpen;
+    // this.ruleForm.id = this.$route.query.detailInfo.id;
+    // this.ruleForm.liveTheme = this.$route.query.detailInfo.liveTheme;
+    // this.ruleForm.startDate = this.$route.query.detailInfo.startDate;
+    // this.ruleForm.estimateLiveTime = this.$route.query.detailInfo.estimateLiveTime;
+    // this.ruleForm.frontCoverUrl = this.$route.query.detailInfo.frontCoverUrl;
+    // this.fileList.push(this.$route.query.detailInfo.frontCoverUrl);
+    // this.ruleForm.liveIntroduce = this.$route.query.detailInfo.liveIntroduce;
+    // this.ruleForm.frontCover = this.$route.query.detailInfo.frontCover
+    //   ? this.$route.query.detailInfo.frontCover
+    //   : "";
+    // this.frontCoverListDefault = this.$route.query.detailInfo.frontCover
+    //   ? this.$route.query.detailInfo.frontCover
+    //   : "";
+    // this.ruleForm.trendsOpen = this.$route.query.detailInfo.trendsOpen;
   },
   methods: {
     //获取数据
@@ -482,7 +481,14 @@ export default {
             }else {
               this.ruleForm.recommendedAnchors = ""
             }
+            this.ruleForm=res.data
+            this.ruleForm.id = res.data.id;
+            this.fileList=[]
+            
+            this.fileList.push(res.data.frontCoverUrl);
+            this.frontCoverListDefault = res.data.frontCover ? res.data.frontCover : "";
 
+            
             this.info = res.data;
           }
         })

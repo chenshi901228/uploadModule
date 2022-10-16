@@ -50,6 +50,7 @@
   </el-dialog>
 </template>
 <script>
+import debounce from "lodash/debounce"
 export default {
   data() {
     var check = (rule, value, callback) => {
@@ -86,6 +87,7 @@ export default {
   methods: {
     init(data) {
       if (data) this.dataForm = JSON.parse(JSON.stringify(data));
+      this.dataForm.proportion = this.dataForm.delFlg === 1 ? 0 : this.dataForm.proportion
       this.visible = true;
     },
     // 取消添加
@@ -94,7 +96,7 @@ export default {
       this.dataForm = {};
     },
     // 表单提交
-    submit() {
+    submit: debounce(function() {
       this.$refs.dataForm.validate((valid) => {
         if (valid) {
           let params = {};
@@ -126,7 +128,7 @@ export default {
             });
         }
       });
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
   },
 };
 </script>

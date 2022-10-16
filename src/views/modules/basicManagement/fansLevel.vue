@@ -136,7 +136,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            {{ scope.row.delFlg ? "删除" : "正常" }}
+            {{ scope.row.delFlg ? "停用" : "启用" }}
           </template>
         </el-table-column>
         <el-table-column
@@ -159,6 +159,22 @@
               size="small"
               @click="addOrUpdateHandle(scope.row.id)"
               >编辑</el-button
+            >
+            <el-button
+              icon="el-icon-unlock"
+              type="text"
+              size="small"
+              v-if="scope.row.delFlg==1"
+              @click="enableHandle(scope.row)"
+              >启用</el-button
+            >
+            <el-button
+              icon="el-icon-lock"
+              type="text"
+              size="small"
+              v-if="scope.row.delFlg==0"
+              @click="deactivateHandle(scope.row)"
+              >停用</el-button
             >
           </template>
         </el-table-column>
@@ -228,6 +244,70 @@ export default {
         this.fansLevelsOptions = []
         this.$message.error(JSON.stringify(err))
       })
+    },
+
+    //启用
+    enableHandle(row){
+      this.$confirm("确认启用该粉丝等级?", {
+        title: '启用',
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+      })
+        .then(() => {
+          let dataForm={
+            id:row.id,
+            levelName:row.levelName,
+            intimacyNum:row.intimacyNum,
+            delFlg:0,
+          }
+          this.$http
+            .put("/sys/sysfanslevel/", dataForm)
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                return this.$message.error(res.msg);
+              }
+              this.$message.success("启用该粉丝等级成功");
+              this.query();
+            })
+            .catch((err) => {
+              throw err;
+            });
+        })
+        .catch(() => {
+          this.$message.info("已取消操作");
+        });
+    },
+
+    //停用
+    deactivateHandle(row){
+      this.$confirm("确认停用该粉丝等级?", {
+        title: '停用',
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+      })
+        .then(() => {
+          let dataForm={
+            id:row.id,
+            levelName:row.levelName,
+            intimacyNum:row.intimacyNum,
+            delFlg:1,
+          }
+          this.$http
+            .put("/sys/sysfanslevel/", dataForm)
+            .then(({ data: res }) => {
+              if (res.code !== 0) {
+                return this.$message.error(res.msg);
+              }
+              this.$message.success("停用该粉丝等级成功");
+              this.query();
+            })
+            .catch((err) => {
+              throw err;
+            });
+        })
+        .catch(() => {
+          this.$message.info("已取消操作");
+        });
     },
   },
 };

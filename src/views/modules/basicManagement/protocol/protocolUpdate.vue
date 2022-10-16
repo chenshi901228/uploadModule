@@ -91,6 +91,7 @@
     </el-card>
 </template>
 <script>
+import debounce from "lodash/debounce"
 import ComModule from "@/mixins/common-module"
 import CustomEdit from "@/components/common/customEdit"
 export default {
@@ -150,7 +151,7 @@ export default {
             this.dataForm.introduce = html
         },
         // 提交
-        onSubmit() {
+        onSubmit: debounce(function() {
             this.$refs.dataForm.validate((valid) => {
                 if(valid) {
                     if(!this.$refs.customEdit.getHTML()) return this.$message.error("请输入协议内容")
@@ -182,7 +183,7 @@ export default {
                     })
                 }
             })
-        },
+        }, 1500, { 'leading': true, 'trailing': false }),
     }
 }
 </script>

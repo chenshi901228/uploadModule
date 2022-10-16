@@ -105,7 +105,7 @@
         </div>
         <div class="superboard-pagination">
             <el-tooltip effect="dark" content="新建白板" placement="left">
-                <img @click="uploadDialogVisible = true" class="superboard-create" src="@/assets/icon/s_create.png" alt="">
+                <img @click="selectBoardDialogVisible = true" class="superboard-create" src="@/assets/icon/s_create.png" alt="">
             </el-tooltip>
             <!-- 白板列表 -->
             <el-select 
@@ -147,30 +147,52 @@
                 <i class="el-icon-plus" @click="setScaleFactor(true)"></i>
             </div>
         </div>
+
+        <!-- 画板选择 -->
         <el-dialog
             title="请选择画板"
-            :visible.sync="uploadDialogVisible"
-            top="200px"
+            :visible.sync="selectBoardDialogVisible"
+            custom-class="selectDialog"
+            @close="boardType = 1"
             width="30%">
                 <div class="createWrap">
-                    <div class="createWrap-btn" @click="createWhiteboardView" style="margin-right: 30px;">
+                    <div class="createWrap-btn" @click="selectBoardType(1)" style="margin-right: 30px;">
                         <img class="icon" src="@/assets/icon/s_normal.png" alt="">
                         <span>普通白板</span>
-                        <img class="actived" src="@/assets/icon/s_selected.png" alt="">
+                        <img v-if="boardType == 1" class="actived" src="@/assets/icon/s_selected.png" alt="">
+                        <div v-else class="noactived"></div>
                     </div>
-                    <el-upload
-                        action="customize"
-                        :limit="1"
-                        :file-list="fileList"
-                        :http-request="uploadFile"
-                        :show-file-list="false">
-                        <div class="createWrap-btn">
-                            <img class="icon" src="@/assets/icon/s_file.png" alt="">
-                            <span>文件白板</span>
-                            <img class="actived" src="@/assets/icon/s_selected.png" alt="">
-                        </div>
-                    </el-upload>
+                    <div class="createWrap-btn" @click="selectBoardType(2)">
+                        <img class="icon" src="@/assets/icon/s_file.png" alt="">
+                        <span>文件白板</span>
+                        <img v-if="boardType == 2" class="actived" src="@/assets/icon/s_selected.png" alt="">
+                        <div v-else class="noactived"></div>
+                    </div>
                 </div>
+                <div class="confirmBtn" @click="confirmSelect">确定</div>
+        </el-dialog>
+
+        <!-- 文件上传选择 -->
+        <el-dialog
+            title="提示"
+            :visible.sync="uploadFileDialogVisible"
+            custom-class="uploadFileDialog"
+            @close="uploadFileCloseHandle"
+            width="30%">
+            <el-upload
+                class="uploadFile"
+                action="custom"
+                :limit="1"
+                :before-remove="beforeRemove"
+                :http-request="uploadFile"
+                :file-list="fileList">
+                <el-button v-if="fileList.length == 0" size="small" type="primary" :disabled="uploadFileLoading">点击上传</el-button>
+            </el-upload>
+            <div class="uploadTips">{{loadingText}}</div>
+            <span slot="footer" class="dialog-footer">
+                <el-button size="small" @click="uploadFileDialogVisible = false">取 消</el-button>
+                <el-button size="small" type="primary" @click="confirmCreateSuperBoard">确 定</el-button>
+            </span>
         </el-dialog>
     </div>
 </template>
@@ -239,11 +261,11 @@ export default {
                     name: "drag",
                     des: "拖拽"
                 },
-                {
-                    type: "destroy", //销毁当前白板
-                    name: "destroy",
-                    des: "销毁"
-                },
+                // {
+                //     type: "destroy", //销毁当前白板
+                //     name: "destroy",
+                //     des: "销毁"
+                // },
                 {
                     type: "clear", //清空当前白板
                     name: "clear",
@@ -312,7 +334,12 @@ export default {
             pageCount: 1, //总页数
             currPage: 1,  //当前页
             currScale: 100, //缩放
-            uploadDialogVisible: false, //新建白板选择弹框
+            selectBoardDialogVisible: false, //新建白板选择弹框
+            uploadFileDialogVisible: false, //文件白板上传弹框
+            uploadFileLoading: false, //文件上传loading
+            fileID: null, //白板上传转换后的fileID
+            boardType: 1, //选择白板类型： 1-普通，2-文件
+
         };
     },
     methods: {
@@ -332,6 +359,10 @@ export default {
          * @description: 根据配置初始化 SuperBoard SDK
          */
         initSuperBoardSDKConfig() {
+            // 超级白板日志打印级别
+            this.zegoSuperBoard.setLogConfig({
+                logLevel: "disable"
+            })
             // 设置字体
             if (this.zegoConfig.fontFamily === "ZgFont") {
                 document.getElementById(this.parentDomID).style.fontFamily =
@@ -352,12 +383,15 @@ export default {
         },
         // 初始化SDK
         async init() {
-            this.zg = new ZegoExpressEngine(this.userInfo.appID, this.server);
+            this.zg = new ZegoExpressEngine(
+                parseInt(window.SITE_CONFIG['appID']),
+                window.SITE_CONFIG['server']
+            );
             // 获取 ZegoSuperBoard 实例
             this.zegoSuperBoard = ZegoSuperBoardManager.getInstance();
             this.zegoSuperBoard.init(this.zg, {
                 parentDomID: this.parentDomID, // 需要挂载的父容器 ID
-                appID: this.userInfo.appID, // 申请到的 AppID
+                appID: parseInt(window.SITE_CONFIG['appID']), // 申请到的 AppID
                 userID: this.userInfo.userId, // 用户自定义生成的用户 ID
                 token: this.token, // 登录房间需要用于验证身份的 Token
             });
@@ -367,7 +401,6 @@ export default {
         // 登陆房间
         async loginRoom() {
             if (!this.token) return;
-            console.log(this.token)
             try {
                 await this.init();
                 let result = await this.zg.loginRoom(
@@ -381,12 +414,16 @@ export default {
                 if (result) {
                     this.onSuperBoardEventHandle(); //注册监听事件
                     this.attachActiveView(); //挂载白板
+                    // 初始化成功后-可以开始创建白板
+                    this.$emit("initSuperboardSuccess")
                 }
             } catch (err) {
                 console.error(err);
                 this.$message.error(err);
             }
         },
+
+
         /**
          * 退出房间
          */
@@ -401,13 +438,63 @@ export default {
         },
 
 
+        /**
+         * @description: 选择白板类型
+         */
+         selectBoardType(type) {
+            this.boardType = type
+         },
+
+
+        /**
+         * @description: 确认选择
+         */
+         confirmSelect() {
+            try {
+                if(this.boardType == 1) { //普通白板
+                    this.loadingText = ""
+                    this.createWhiteboardView()
+                }
+                
+                if(this.boardType == 2) { //文件白板
+                    this.loadingText = "等待上传~~~"
+                    this.uploadFileDialogVisible = true
+                }
+            } catch (error) {
+                this.$message.error(JSON.stringify(error))
+            }
+         },
+
+         
+         /**
+         * @description: 直接确认选择文件白板
+         */
+         confirmSelectFileSuperBoard() {
+            try {
+                this.loadingText = "等待上传~~~"
+                this.uploadFileDialogVisible = true
+            } catch (error) {
+                this.$message.error(JSON.stringify(error))
+            }
+         },
+
+         /**
+          * @description: 确认创建文件白板
+          */
+        confirmCreateSuperBoard() {
+            if(!this.fileID) return this.$message.warning("文件等待上传中")
+            this.uploadFileDialogVisible = false
+            this.createFileView(this.fileID)
+        },
+         
+
 
         /**
          * @description: 创建普通白板
          */
         async createWhiteboardView() {
             if (!this.zegoSuperBoard) return this.$message.error("白板初始化失败，请刷新重试")
-            this.uploadDialogVisible = false
+            this.selectBoardDialogVisible = false
             try {
                 this.loadingText = "创建普通白板中"
                 this.loading = true
@@ -432,11 +519,15 @@ export default {
                 this.$message.error(errorData)
             }
         },
+
+
         /**
          * @description: 创建文件白板
          * @param {String} fileID 文件 ID
          */
         async createFileView(fileID) {
+            if (!this.zegoSuperBoard) return this.$message.error("白板初始化失败，请刷新重试")
+            this.selectBoardDialogVisible = false
             try {
                 this.loadingText = "创建文件白板中"
                 this.loading = true
@@ -455,6 +546,28 @@ export default {
                 this.$message.error(errorData)
             }
         },
+
+
+        /**
+         * @description: 关闭文件上传弹框
+         */
+        uploadFileCloseHandle() {
+            this.fileList = []
+            this.fileID = ""
+        },
+
+        /**
+         * @description: 移除上传的文件
+         */
+        beforeRemove(file, fileList) {
+            return this.$confirm(`确定移除 ${ file.name || "文件" }？`).then(() => {
+                this.fileList = []
+                this.fileID = null
+                this.loadingText = "等待上传~~~"
+            })
+        },
+
+
         /**
          * @description: 选择静态、动态文件进行上传
          * @param {Number} renderType 渲染模式
@@ -462,32 +575,28 @@ export default {
          */
         uploadFile({file}) {
             if (!this.zegoSuperBoard) return this.$message.error("白板初始化失败，请刷新重试")
-            this.uploadDialogVisible = false
-            console.log(file)
             let type = file.name.split(".")
             type = type[type.length-1].toLocaleLowerCase()
             let renderType = ( type == "ppt"||type == "pptx" ) ? 6 : 3
+            this.fileList.push(file)
             if (!file) return;
+            this.uploadFileLoading = true
             //上传文件后转码后渲染模式类型，如果用户涉及到 iOS、Web、Windows、Mac、小程序各端的业务，推荐使用 VectorAndIMG 模式。
             this.zegoSuperBoard
                 .uploadFile(file, renderType, (res) => {
-                    if(!this.loading) {
-                        this.loading = true
-                    }
                     this.loadingText = this.uploadFileTipsMap[res.status] + (res.uploadPercent ? res.uploadPercent + '%' : '')
                 })
                 .then((fileID) =>{
-
-                    this.loading = false
-
-                    //上传成功清空上传列表 
-                    this.fileList =[]
-                    // 这里上传完成立即创建文件白板，开发者根据实际情况处理
-                    this.createFileView(fileID);
+                    // 这里上传完成保存fileID
+                    this.fileID = fileID
+                    this.uploadFileLoading = false
                 })
                 .catch(err => {
-                    this.loading = false
                     console.log(err)
+                    this.fileID = null
+                    this.fileList = []
+                    this.uploadFileLoading = false
+                    this.$message.error(JSON.stringify(err))
                 });
         },
 
@@ -1340,11 +1449,28 @@ export default {
         }
     }
 
-    
+    .selectDialog {
+        border-radius: 10px;
+        padding-bottom: 20px;
+        margin-top: 0 !important;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    .uploadFileDialog {
+        margin-top: 0 !important;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .uploadFile {
+        margin: 20px 0;
+    }
+
     .createWrap {
         width: 100%;
         display: flex;
         justify-content: center;
+        margin-bottom: 20px;
         .createWrap-btn {
             width: 130px;
             padding: 36px;
@@ -1358,18 +1484,16 @@ export default {
             color: #151515;
             cursor: pointer;
             position: relative;
-            .actived{
+            .actived, .noactived{
                 position: absolute;
                 right: 10px;
                 top: 10px;
                 width: 16px;
                 height: 16px;
-                opacity: 0;
+                border-radius: 50%;
             } 
-            &:hover{
-                .actived {
-                    opacity: 1;
-                }
+            .noactived {
+                border: 1px solid #E0E0E0;
             }
             .icon{
                 width: 56px;
@@ -1377,6 +1501,19 @@ export default {
                 margin-bottom: 20px;
             }      
         }
+    }
+
+    .confirmBtn {
+        width: 90px;
+        line-height: 30px;
+        color: #FFFFFF;
+        margin: 0 auto;
+        border-radius: 20px;
+        text-align: center;
+        font-size: 14px;
+        background: linear-gradient(91deg, #FA3622 0%, #FE055B 100%);
+        box-shadow: 0px 2px 6px 1px rgba(249,46,29,0.4);
+        cursor: pointer;
     }
 }
 .el-popover {

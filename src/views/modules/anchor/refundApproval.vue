@@ -405,6 +405,7 @@
 </template>
 
 <script>
+import debounce from "lodash/debounce"
 import mixinViewModule from "@/mixins/view-module";
 import Template from "../devtools/template.vue";
 export default {
@@ -477,7 +478,7 @@ export default {
     },
 
     // 审核
-    updateApproveStatus(id, status) {
+    updateApproveStatus: debounce(function(id, status) {
       this.submitStatus = status
       this.submitLoading = true
       this.$http["put"]("/sys/userRefund/updateApproveStatus", {
@@ -498,7 +499,7 @@ export default {
           this.$message.error(JSON.stringify(err))
           this.submitLoading = false
         });
-    },
+    }, 1500, { 'leading': true, 'trailing': false }),
   },
 };
 </script>
