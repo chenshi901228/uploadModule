@@ -79,6 +79,17 @@
             <el-option :value="4" label="已退款"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item v-show="isOpen || formItemCount >= 8" label="是否注册大于众学" :label-width="140" prop="isAuth">
+          <el-select
+            style="width: 160px"
+            v-model="dataForm.isAuth"
+            clearable
+            placeholder="请选择"
+          >
+            <el-option value="0" label="否"></el-option>
+            <el-option value="1" label="是"></el-option>
+          </el-select>
+        </el-form-item>
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">
           <el-form-item>
@@ -242,6 +253,18 @@
           align="center"
           show-overflow-tooltip
         ></el-table-column>
+        <el-table-column
+          prop="isAuth"
+          label="是否注册大于众学"
+          min-width="160px"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        >
+          <template slot-scope="{ row }">
+            <span>{{ row.isAuth == 0 ? '否' : row.isAuth == 1 ? '是' : '-'}}</span>
+          </template>
+        </el-table-column>
       </el-table>
       <el-pagination
         background
