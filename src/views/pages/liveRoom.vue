@@ -886,8 +886,7 @@
             <div class="list_bottom">
               <div class="info">
                 <span>{{item.productType}}&nbsp;|</span>
-                <p>&nbsp;{{Number(item.buyers)+Number(item.salesNum)}}人已购买</p>
-                <!-- <p>&nbsp;本场带货销量 {{Number(item.buyers)+Number(item.salesNum)}}</p> -->
+                <p>&nbsp;本场带货销售{{Number(item.liveSalesNum)}}</p>
               </div>
               <div class="push_btn" @click="pushMethod('goods', item)">
                 推送
@@ -2508,7 +2507,7 @@ export default {
       }
       return new Promise((resolve,reject)=>{
         this.$http
-        .get(`/sys/anchorProduct/live/pageWithLive`,{params})
+        .get(`/sys/anchorProduct/live/pageWithLiveAnchor`,{params})
         .then((res) => {
           if(!res.data.code==0) return this.$message.error(res.data.msg)
           let data = res.data.data.list;
