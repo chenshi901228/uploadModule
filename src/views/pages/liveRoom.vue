@@ -886,7 +886,8 @@
             <div class="list_bottom">
               <div class="info">
                 <span>{{item.productType}}&nbsp;|</span>
-                <p>&nbsp;{{Number(item.buyers)+Number(item.salesNum)}}人已购买</p>
+                <!-- <p>&nbsp;{{Number(item.buyers)+Number(item.salesNum)}}人已购买</p> -->
+                <p>&nbsp;本场带货销量 {{Number(item.buyers)+Number(item.salesNum)}}</p>
               </div>
               <div class="push_btn" @click="pushMethod('goods', item)">
                 推送

@@ -249,7 +249,7 @@ export default {
     //启用
     enableHandle(row){
       this.$confirm("确认启用该粉丝等级?", {
-        title: '停用',
+        title: '启用',
         confirmButtonText: "确定",
         cancelButtonText: "取消",
       })
