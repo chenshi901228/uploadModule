@@ -354,7 +354,7 @@
               @click="closeLiveHandle(row.anchorUserId)"
               size="small"
               icon="el-icon-video-pause"
-              >下播</el-button
+              >下课</el-button
             >
             <el-button
               type="text"
