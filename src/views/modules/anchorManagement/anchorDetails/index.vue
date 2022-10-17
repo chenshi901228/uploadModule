@@ -624,7 +624,7 @@
         </div>
       </el-form>
       <el-table :row-key="getRowKey" v-loading="dataUserListLoading" :data="dataUserList" fit
-        @selection-change="userListSelectionChangeHandle" style="width: 100%" max-height="400">
+        @selection-change="userListSelectionChangeHandle" style="width: 100%" max-height="400" v-if="isShow">
         <el-table-column type="selection" :reserve-selection="true" header-align="center" align="center" width="50" fixed="left">
         </el-table-column>
         <el-table-column width="100" label="商品图片" prop="productImage" align="center">
@@ -901,6 +901,7 @@ export default {
       }
     };
     return {
+      isShow: true,
       userId: "",
       anchorDetails: {},
       diaTbas: 1,
@@ -1537,6 +1538,13 @@ export default {
       };
       this.dataUserList = [];
       this.dataListSelectionUsers=[],//因为上架后移除了，所以暂时不用多选框的回显
+      
+      this.$refs.dataTable.clearSelection();
+      this.isShow = false
+      this.$nextTick(()=>{
+        this.isShow = true
+      })
+      
       this.queryUserList();
     },
     //批量下架
@@ -1751,6 +1759,7 @@ export default {
                 return this.$message.error(res.msg);
               }
               this.$message.success("上架成功!");
+              this.$refs.multipleTable.clearSelection();
               this.queryUserList();
               this.dialogUserFormVisible = false;
               this.diaSearchForm = {
@@ -1808,6 +1817,10 @@ export default {
                 return this.$message.error(res.msg);
               }
               this.$message.success("上架成功!");
+              // this.dataListSelectionUsers=[]
+              // this.$nextTick(()=>{
+              //   this.$refs.dataTable.clearSelection();
+              // })
               this.queryUserList();
               this.dialogUserFormVisible = false;
               this.diaSearchForm = {
