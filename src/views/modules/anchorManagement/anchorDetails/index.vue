@@ -624,7 +624,7 @@
         </div>
       </el-form>
       <el-table :row-key="getRowKey" v-loading="dataUserListLoading" :data="dataUserList" fit
-        @selection-change="userListSelectionChangeHandle" style="width: 100%" max-height="500">
+        @selection-change="userListSelectionChangeHandle" style="width: 100%" max-height="400">
         <el-table-column type="selection" :reserve-selection="true" header-align="center" align="center" width="50" fixed="left">
         </el-table-column>
         <el-table-column width="100" label="商品图片" prop="productImage" align="center">
@@ -678,6 +678,18 @@
           </template>
         </el-table-column> -->
       </el-table>
+
+      <el-pagination
+          background
+          :current-page="pageGoods"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="limitGoods"
+          :total="totalGoods"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="pageSizeChangeHandleGoods"
+          @current-change="pageCurrentChangeHandleGoods"
+        >
+        </el-pagination>
 
       <span slot="footer" class="dialog-footer">
           <el-button size="small"  @click="dialogUserFormVisible = false;">取 消</el-button>
@@ -1011,6 +1023,10 @@ export default {
           { required: true, message: "请选择授权身份", trigger: "change" },
         ],
       },
+
+      pageGoods:1,//商品页
+      limitGoods:10,//当前条
+      totalGoods:0,//当前总数
     };
   },
   computed: {
@@ -1520,6 +1536,7 @@ export default {
         id: "",
       };
       this.dataUserList = [];
+      this.dataListSelectionUsers=[],//因为上架后移除了，所以暂时不用多选框的回显
       this.queryUserList();
     },
     //批量下架
@@ -1546,12 +1563,14 @@ export default {
     queryUserList() {
       this.dataUserListLoading = true;
       this.$http
-        .get("/sys/wxapp/anchorProduct/listBySearch", {
+        .get("/sys/wxapp/anchorProduct/listBySearchWithPage", {
           params: this.$httpParams({
             productName: this.productForm.productName,
             productType: this.productForm.productType,
             isFree: this.productForm.isFree,
             anchorId: this.userId,
+            limit: this.limitGoods,
+            page: this.pageGoods,
           }),
         })
         .then(({ data: res }) => {
@@ -1560,7 +1579,8 @@ export default {
             this.dataUserList = [];
             return this.$message.error(res.msg);
           }
-          this.dataUserList = res.data;
+          this.dataUserList = res.data.list;
+          this.totalGoods=res.data.total
         })
         .catch((err) => {
           this.dataUserListLoading = false;
@@ -1760,6 +1780,16 @@ export default {
           this.$message.info("已取消操作");
         });
     },
+    //商品弹窗页面切换
+    pageSizeChangeHandleGoods(val){
+      this.pageGoods = 1;
+      this.limitGoods = val;
+      this.queryUserList();
+    },
+    pageCurrentChangeHandleGoods(val){
+      this.pageGoods = val;
+      this.queryUserList();
+    },
     //批量上架
     upSelect() {
       this.$confirm("确认上架商品?", "上架", {
@@ -1795,7 +1825,7 @@ export default {
                 productType: "",
                 isFree: "",
               };
-              this.page_dia = 1; // 当前页码
+              this.pageGoods = 1; // 当前页码
               this.diaDataList = [];
               this.queryPost_dia();
             })

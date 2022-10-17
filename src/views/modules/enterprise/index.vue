@@ -78,12 +78,17 @@ export default {
                 return this.$message.error(res.msg);
             }else{
                 this.dataForm=res.data
-                this.fileList = [
-                    {
-                    name: new Date().getTime(),
-                    url: res.data.twoDimensionCodeUrl || "https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/default_avatar.png"
-                    }
-                ]
+                if(res.data.twoDimensionCodeUrl){
+                    this.fileList = [
+                        {
+                        name: new Date().getTime(),
+                        url: res.data.twoDimensionCodeUrl || "https://zego-live-video-back.oss-cn-beijing.aliyuncs.com/liveImages/default_avatar.png"
+                        }
+                    ]
+                }else{
+                    this.fileList=[]
+                }
+               
             }
             })
             .catch((err) => {
