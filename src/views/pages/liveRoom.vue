@@ -888,7 +888,11 @@
       top="50px"
       width="440px"
       >
-        <div class="dialog_content">
+        <div class="dialog_content" 
+            v-loading="goodsListLoading"
+            element-loading-text="加载中..."
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.5)">
           <div class="content_list" v-for="(item, index) in goodsList" :key="index">
             <div class="list_top">
               <span>{{item.sort}}</span>
@@ -997,6 +1001,7 @@ export default {
       barrageData: [], // 弹幕内容
       liveRoomUserinfo: {}, //用户在线信息
       goodsList: [], //获取主播推荐商品
+      goodsListLoading: false, //推荐商品刷新loading
       livePreviewList: [], //直播预告列表
       recommendList: [], //主播推荐主播列表
       barrage: "",
@@ -2521,9 +2526,11 @@ export default {
         page:1,
       }
       return new Promise((resolve,reject)=>{
+        this.goodsListLoading = true
         this.$http
         .get(`/sys/anchorProduct/live/pageWithLiveAnchor`,{params})
         .then((res) => {
+          this.goodsListLoading = false
           if(!res.data.code==0) return this.$message.error(res.data.msg)
           let data = res.data.data.list;
           data.forEach((item) => {
@@ -2534,6 +2541,7 @@ export default {
           this.goodsList = data
           resolve(this.goodsList)
         }).catch((err)=>{
+          this.goodsListLoading = false
           console.error(err)
         })
       })
@@ -2580,9 +2588,22 @@ export default {
     pushMethod(type, data) {
       if (type === "goods") {
         //推送商品
-        this.sendMessage({ type: 8, pushData: data,isHigh:true }, () =>
+        this.sendMessage({ type: 8, pushData: data,isHigh:true }, () => {
           this.$message({ message: "商品推送成功", type: "success" })
-        );
+          // 推送成功同时置顶该商品
+          if(data.productLiveId) {
+            this.$http.put("/sys/anchorProduct/live/setTop", { id: data.productLiveId }).then(({ data: res }) => {
+              if (res.code !== 0) {
+                console.warn(res.msg);
+              }else { //置顶成功刷新列表
+                this.getAnchorProduct()
+              }
+            }).catch((err) => {
+              console.warn(err)
+              // throw err;
+            })
+          }
+        });
       } else {
         this.sendMessage({ type: 7, pushData: data,isHigh:true }, () =>
           this.$message({ message: "预告推送成功", type: "success" })

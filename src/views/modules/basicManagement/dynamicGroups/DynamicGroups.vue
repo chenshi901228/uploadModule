@@ -738,7 +738,8 @@ export default {
     },
     dowloadXlx() {
       window.open(
-        "https://live-mini-oss-test-1257778766.cos.ap-beijing.myqcloud.com/liveImages/gruopUserImport.xlsx"
+        // "https://live-mini-oss-test-1257778766.cos.ap-beijing.myqcloud.com/liveImages/gruopUserImport.xlsx"
+        "https://live-mini-oss-test-1257778766.cos.ap-beijing.myqcloud.com/liveImages/动态组导入模板.xlsx"
       );
     },
     importXlx() {
