@@ -512,7 +512,7 @@ export default {
   }
 }
 
-/deep/.vicp-preview-item-circle{
-  display: none !important;
-}
+// /deep/.vicp-preview-item-circle{
+//   display: none !important;
+// }
 </style>
