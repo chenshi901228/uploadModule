@@ -45,6 +45,17 @@
                 v-for="(item, index) in barrageData"
                 :key="index"
               >
+                <!-- 订单系统消息 -->
+                <div
+                  class="sysMessage"
+                  v-if="
+                    item.type &&
+                    item.type === 'TIMGroupSystemNoticeElem' &&
+                    item.payload.userDefinedField
+                  "
+                >
+                  {{ item.payload.userDefinedField.userName }}下单了<span style="color:#FA3622;">《{{item.payload.userDefinedField.productName}}》</span>
+                </div>
                 <!-- 进入直播间消息 type:10 -->
                 <div
                   class="sysMessage"
@@ -2272,10 +2283,14 @@ export default {
             });
           }
           if (item.payload.userDefinedField) {
-            let tempObj = JSON.parse(item.payload.userDefinedField);
+            item.payload.userDefinedField = JSON.parse(item.payload.userDefinedField);
+            let tempObj = item.payload.userDefinedField
             for (var key in tempObj) {
               this.liveRoomUserinfo[key] = tempObj[key];
             }
+            if(tempObj.type=='purchaseInformation'){ //订单系统消息
+							list.push(Object.assign(item));
+						}
           }
         }
         if (
@@ -2284,7 +2299,7 @@ export default {
         ) {
           if (item.payload && item.payload.data) {
             item.payload.data = JSON.parse(item.payload.data)
-            list.push(item);
+            list.push(Object.assign(item));
             let applyInfo = item.payload.data;
             if (applyInfo.message.type === 3) {
               this.questionMessageInfo.unshift(applyInfo);
