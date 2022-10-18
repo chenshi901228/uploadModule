@@ -511,4 +511,8 @@ export default {
     border-radius: 2px;
   }
 }
+
+/deep/.vicp-preview-item-circle{
+  display: none !important;
+}
 </style>

@@ -161,4 +161,7 @@ export default {
         margin-top: 100px;
     }
 }
+/deep/.vicp-preview-item-circle{
+  display: none !important;
+}
 </style>
