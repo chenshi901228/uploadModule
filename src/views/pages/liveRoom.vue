@@ -51,10 +51,11 @@
                   v-if="
                     item.type &&
                     item.type === 'TIMGroupSystemNoticeElem' &&
-                    item.payload.userDefinedField
+                    item.payload.userDefinedField &&
+                    item.payload.userDefinedField.type == 'purchaseInformation'
                   "
                 >
-                  {{ item.payload.userDefinedField.userName }}下单了<span style="color:#FA3622;">《{{item.payload.userDefinedField.productName}}》</span>
+                  {{ item.payload.userDefinedField.userName }}下单了<span style="color:#FA3622;">{{item.payload.userDefinedField.productName}}</span>
                 </div>
                 <!-- 进入直播间消息 type:10 -->
                 <div
@@ -395,6 +396,15 @@
                     <span>{{ item.userInfo.nickName }}</span>
                   </div>
                   <div
+                    class="btn gua_btn"
+                    @click="
+                      replyConnect(2,item.message.type,item.message.connectType,item.userInfo.userId,item.userInfo.nickName)
+                    "
+                    v-if="!item.connectStatus"
+                  >
+                    拒绝
+                  </div>
+                  <div
                     class="btn"
                     @click="
                       replyConnect(
@@ -417,6 +427,10 @@
                     挂断
                   </div>
                 </div>
+              </div>
+              <div @click="openOrCloseConnect" :style="connectMessageInfo.length?'marginTop:22px;':'marginTop:100%;'" class="openConnect_btn">
+                <img src="../../assets/img/open_connect_icon.png" alt="">
+                <span>{{connectOpenStatus?'关闭连麦':'开启连麦'}}</span>
               </div>
             </div>
           </div>
@@ -1108,6 +1122,7 @@ export default {
       connectStatusTimer: null, //连麦之后定时监听连麦用户连接状态
       isOpenDesktopSharing:false,//是否开启屏幕共享
       superBoardType: null, //白板类型：1-普通白板，2-文件白板
+      connectOpenStatus:0,//是否开启连麦
     };
   },
   created() {
@@ -1431,6 +1446,7 @@ export default {
             this.liveStatus = true
             this.isRecord = res.data.data.startRecord==1
             this.pauseRecord = res.data.data.pauseRecord==1
+            this.connectOpenStatus = Number(res.data.data.openEvenWheat)
             this.isOpenDesktopSharing = JSON.parse(localStorage.getItem('isOpenDesktopSharing'))
             this.getTimUserSig()
           }).catch(()=>{
@@ -2170,6 +2186,31 @@ export default {
         this.openEffect()
       }
     },
+    //开启、关闭连麦
+    openOrCloseConnect(){
+      this.$confirm(`确认${this.connectOpenStatus?'关闭':'开启'}连麦`, "提示", {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.post('/sys/mixedflow/openOrClose',{type:1,openOrClose:this.connectOpenStatus?0:1}).then(res=>{
+          if(!res.code==0) return this.$message.error(res.msg)
+          this.connectOpenStatus = this.connectOpenStatus?0:1
+          if(this.connectOpenStatus){
+            this.sendMessage({ type: 11, isConnect: true, isHigh:true, }); //开启连麦
+          }else{
+            this.sendMessage({ type: 11, isConnect: false, isHigh:true, }); //关闭连麦
+            this.allHangUp(()=>{
+              this.replyConnectAll()
+            })
+          }
+          this.$message.success(this.connectOpenStatus?'您已开启连麦':'您已关闭连麦')
+        }).catch(err=>{
+          console.error(err)
+        })
+      }).catch(() => {
+      })
+    },
     joinGroup() {
       //加入直播群聊
       let promise = this.tim.joinGroup({ groupID: this.groupID });
@@ -2395,7 +2436,7 @@ export default {
           return this.conversation.conversationID;
       }
     },
-    sendMessage: debounce(function(messageInfo, cb) {
+    sendMessage(messageInfo, cb) {
       try {
         if (!this.liveStatus) {
           this.$message({ message: "直播暂未开启", type: "warning" });
@@ -2430,6 +2471,7 @@ export default {
             replyUserId: messageInfo.replyUserId,
             isTalk: messageInfo.isTalk, //禁言
             allMute: messageInfo.allMute, //全员禁言
+            isConnect: messageInfo.isConnect, //是否开启连麦
           },
         };
         for (let k in data.message) {
@@ -2483,7 +2525,7 @@ export default {
           window.close()
         })
       }
-    }, 1000, { 'leading': true, 'trailing': false }),
+    },
     searchUserFun(){
       this.params.page=1
       this.studentList = []
@@ -2740,18 +2782,43 @@ export default {
     },
     confirmQuit(){//退出直播间，关闭页面
       window.close()
-    }
+    },
+    allHangUp(cb){
+      let arr = JSON.stringify(this.connectMessageInfo)
+      arr = JSON.parse(arr)
+      let connectArr = arr.filter(item=>item.connectStatus)
+      connectArr.forEach(item=>{
+        this.hangup(item)
+      })
+      if(cb)cb()
+    },
+    //拒绝所有申请连麦的人
+    replyConnectAll(){
+      let arr = JSON.stringify(this.connectMessageInfo)
+      arr = JSON.parse(arr)
+      let noConnectArr = arr.filter(item=>!item.connectStatus)
+      console.log(noConnectArr,1111111111)
+      noConnectArr.forEach(item=>{
+        let messageInfo = {
+          type:item.message.type,
+          connectType:item.message.connectType,
+          replyType: -2,
+          replyUserId: item.userInfo.userId,
+          isHigh:true,
+        }
+        console.log(2222222222)
+        this.sendMessage(messageInfo)
+      })
+      this.connectMessageInfo = []
+    },
   },
   destroyed() {
     this.offGetConnectStatus()
     // this.stopPublishingStream
-    let arr = JSON.stringify(this.connectMessageInfo)
-    arr = JSON.parse(arr)
-    let connectArr = arr.filter(item=>item.connectStatus)
-    connectArr.forEach(item=>{
-      this.hangup(item)
+    this.allHangUp(()=>{
+      this.replyConnectAll()
     })
-  },
+  }
 };
 </script>
 
@@ -3624,6 +3691,23 @@ p {
                 > .gua_btn {
                   background: #f92c1b;
                 }
+              }
+            }
+            .openConnect_btn{
+              width: 210px;
+              height: 40px;
+              background: linear-gradient(89deg, #FA3622 0%, #FE055B 100%);
+              box-shadow: 0px 4px 10px 1px rgba(249,46,29,0.4);
+              border-radius: 5px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              color: #FFFFFF;
+              cursor: pointer;
+              >img{
+                width: 12px;
+                height: 16px;
+                margin-right: 10px;
               }
             }
           }
