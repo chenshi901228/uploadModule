@@ -286,6 +286,19 @@ export default {
             return this.$message.error("请上传视频");
           }
 
+          if(this.dataForm.showMode==0){
+            if(this.relationLiveList[0].videoWHInfo.videoWidth>720 || this.relationLiveList[0].videoWHInfo.videoHeight>1280){
+              return this.$message.error("竖屏视频尺寸最高为720px*1280px");
+            }
+          }else if(this.dataForm.showMode==1){
+            if(this.relationLiveList[0].videoWHInfo.videoWidth>1280 || this.relationLiveList[0].videoWHInfo.videoHeight>720){
+              return this.$message.error("横屏视频尺寸最高为1280px*720px");
+            }
+          }else{
+            return this.$message.error("请选择视频显示");
+          }
+          
+
           this.submitLoading = true;
           
           let params = {};
