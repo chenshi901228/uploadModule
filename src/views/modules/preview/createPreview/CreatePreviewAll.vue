@@ -4,7 +4,6 @@
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-live__liveList">
       <el-form :model="ruleForm" :rules="rules" ref="ruleForm" size="small" label-width="110px" class="demo-ruleForm">
-        <div style="display:flex">
           <el-form-item label="直播主题" prop="liveTheme">
             <el-input style="width: 400px" v-model.trim="ruleForm.liveTheme" maxlength="60" show-word-limit>
             </el-input>
@@ -18,8 +17,6 @@
               </el-option>
             </el-select>
           </el-form-item>
-        </div>
-        <div style="display:flex">
 
           <el-form-item label="预计开播时间" prop="startDate">
             <el-date-picker style="width: 400px" v-model="ruleForm.startDate" type="datetime" placeholder="请选择"
@@ -30,8 +27,6 @@
             <el-input style="width: 400px" placeholder="请输入" maxlength="4" v-model="ruleForm.estimateLiveTime">
             </el-input>
           </el-form-item>
-        </div>
-        <div style="display:flex">
 
 
           <el-form-item label="助手" prop="assistantIds">
@@ -49,7 +44,6 @@
               </el-option>
             </el-select>
           </el-form-item>
-        </div>
 
         <el-form-item label="直播宣传图" prop="frontCoverUrl" class="img-item">
           <div v-for="item in defaultImg" :key="item" class="img-box">
