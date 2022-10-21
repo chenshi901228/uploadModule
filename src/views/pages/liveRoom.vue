@@ -2031,29 +2031,25 @@ export default {
       }else if(!this.cameraStatus){
         return this.$message.warning('请先打开摄像头权限后刷新重试')
       }
-      let obj = {};
+      let obj = {
+        UserId: this.userID,
+        RoomId: this.roomId,
+        liveTheme: this.liveTheme,
+        TaskId: this.$route.query.TaskId,
+        trends: this.trends,
+        openEvenWheat: this.connectOpenStatus // 开启/关闭连麦
+      };
       if (
         this.$route.query.liveTheme &&
         this.$route.query.livePreviewId &&
         this.$route.query.liveTheme.length !== 0 &&
         this.$route.query.livePreviewId.length !== 0
       ) {
-        obj = {
-          UserId: this.userID,
-          RoomId: this.roomId,
-          liveTheme: this.$route.query.liveTheme,
-          livePreviewId: this.$route.query.livePreviewId,
-        };
-      } else {
-        obj = {
-          UserId: this.userID,
-          RoomId: this.roomId,
-          liveTheme: this.liveTheme,
-        };
+        obj.livePreviewId = this.$route.query.livePreviewId
       }
       this.$loading({ background: "rgba(0,0,0,.5)", text: "直播开启中..." });
       this.$http
-        .post("/sys/mixedflow/anchorBroadcast", {...obj, TaskId: this.$route.query.TaskId,trends:this.trends})
+        .post("/sys/mixedflow/anchorBroadcast", {...obj})
         .then((res) => {
           if (res.data.data && res.data.data.Data) {
             this.streamUrl = res.data.data.Data.PlayInfo[0].HLS
@@ -2196,13 +2192,15 @@ export default {
         this.$http.post('/sys/mixedflow/openOrClose',{type:1,openOrClose:this.connectOpenStatus?0:1}).then(res=>{
           if(!res.code==0) return this.$message.error(res.msg)
           this.connectOpenStatus = this.connectOpenStatus?0:1
-          if(this.connectOpenStatus){
-            this.sendMessage({ type: 11, isConnect: true, isHigh:true, }); //开启连麦
-          }else{
-            this.sendMessage({ type: 11, isConnect: false, isHigh:true, }); //关闭连麦
-            this.allHangUp(()=>{
-              this.replyConnectAll()
-            })
+          if(this.liveStatus){
+            if(this.connectOpenStatus){
+              this.sendMessage({ type: 11, isConnect: true, isHigh:true, }); //开启连麦
+            }else{
+              this.sendMessage({ type: 11, isConnect: false, isHigh:true, }); //关闭连麦
+              this.allHangUp(()=>{
+                this.replyConnectAll()
+              })
+            }
           }
           this.$message.success(this.connectOpenStatus?'您已开启连麦':'您已关闭连麦')
         }).catch(err=>{
