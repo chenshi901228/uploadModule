@@ -272,4 +272,10 @@ export function numberConvert(m, sign = "￥", n = 2) {
     return ""
   }
 }
+// 数量转换：超过1万，显示x.x万
+export function numberChange(num, unit = "万") {
+    if(num == null) num = 0
+    num = Number(num)
+    return (num / 10000) > 1 ? parseFloat((num / 10000)).toFixed(1) + unit :  num;
+}
 

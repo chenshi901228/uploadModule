@@ -26,14 +26,14 @@
             </div>
             <div class="online_info">
               <p>
-                ·&nbsp;<span>{{ numberChange(liveRoomUserinfo.cumulativeNum || 0, "万")}}</span
+                ·&nbsp;<span>{{ numberChange(liveRoomUserinfo.cumulativeNum || 0)}}</span
                 >人看过
               </p>
               <p>
-                ·&nbsp;<span>{{ numberChange(liveRoomUserinfo.onlineNum || 0 , "万")}}</span
+                ·&nbsp;<span>{{ numberChange(liveRoomUserinfo.onlineNum || 0)}}</span
                 >人在线
               </p>
-              <p>·&nbsp;<span>{{ numberChange(liveRoomUserinfo.liveHot || 0 , "万")}}</span>热度</p>
+              <p>·&nbsp;<span>{{ numberChange(liveRoomUserinfo.liveHot || 0)}}</span>热度</p>
             </div>
           </div>
         </div>
@@ -974,6 +974,7 @@ import Clipboard from 'clipboard'
 import { ZegoExpressEngine } from "zego-express-engine-webrtc";
 import TIM from "tim-js-sdk";
 import Superboard from "./superboard/index.vue"; //超级白板
+import { numberChange } from "@/utils";
 
 export default {
   components: {
@@ -1407,10 +1408,9 @@ export default {
     //   console.error("connectMessageInfo", this.connectMessageInfo)
   },
   methods: {
-    numberChange(num, unit = "万") {
-      if(num == null) num = 0
-      num = Number(num)
-      return (num / 10000) > 1 ? parseFloat((num / 10000)).toFixed(1) + unit :  num;
+    // 过万转换
+    numberChange(num) {
+      return numberChange(num)
     },
     beforeunloadHandler(e) { //关闭页面提示
       e = e || window.event
