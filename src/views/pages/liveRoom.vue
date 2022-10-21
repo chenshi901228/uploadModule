@@ -26,14 +26,14 @@
             </div>
             <div class="online_info">
               <p>
-                ·&nbsp;<span>{{ liveRoomUserinfo.cumulativeNum || 0 }}</span
+                ·&nbsp;<span>{{ numberChange(liveRoomUserinfo.cumulativeNum || 0, "万")}}</span
                 >人看过
               </p>
               <p>
-                ·&nbsp;<span>{{ liveRoomUserinfo.onlineNum || 0 }}</span
+                ·&nbsp;<span>{{ numberChange(liveRoomUserinfo.onlineNum || 0 , "万")}}</span
                 >人在线
               </p>
-              <p>·&nbsp;<span>{{ liveRoomUserinfo.liveHot || 0 }}</span>热度</p>
+              <p>·&nbsp;<span>{{ numberChange(liveRoomUserinfo.liveHot || 0 , "万")}}</span>热度</p>
             </div>
           </div>
         </div>
@@ -1407,6 +1407,11 @@ export default {
     //   console.error("connectMessageInfo", this.connectMessageInfo)
   },
   methods: {
+    numberChange(num, unit = "万") {
+      if(num == null) num = 0
+      num = Number(num)
+      return (num / 10000) > 1 ? parseFloat((num / 10000)).toFixed(1) + unit :  num;
+    },
     beforeunloadHandler(e) { //关闭页面提示
       e = e || window.event
       if (e) {
