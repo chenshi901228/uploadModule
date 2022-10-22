@@ -464,7 +464,7 @@ export default {
         confirmStatus:"",
         flowStatus:""
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
       userId: "",
       ruleForm: {
         desc: "",

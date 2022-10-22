@@ -147,7 +147,7 @@ export default {
         sendUserId:JSON.parse(this.$route.query.info).sendUserId,
         toUserId:JSON.parse(this.$route.query.info).toUserId,
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
       userId: "",
       info:{},
       dialogVisible:false,

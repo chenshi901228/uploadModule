@@ -256,7 +256,7 @@ export default {
         shareType: "",
         shareState: "",
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
       userId: "",
     };
   },

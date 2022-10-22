@@ -117,12 +117,12 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <!-- <el-button 
+              <el-button 
                 type="warning"
                 plain
                 icon="el-icon-download" 
                 size="mini"
-                @click="exportHandle">{{ $t("export") }}</el-button> -->
+                @click="exportHandle">{{ $t("export") }}</el-button>
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
@@ -321,7 +321,7 @@ export default {
         getDataListURL: "/sys/finance/user/product/userOrderBooksPage",
         getDataListIsPage: true,
         deleteIsBatch: true,
-        exportURL: "/sys/finance/user/product/userOrderExport",
+        exportURL: "/sys/finance/user/product/userOrderBooksExport",
       },
       dataForm: {
         userName: "",
@@ -333,7 +333,7 @@ export default {
         status: "",
         linkedProductId:"",
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
       userId: "",
     };
   },

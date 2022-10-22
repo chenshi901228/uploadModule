@@ -214,7 +214,7 @@ export default {
         idCard: "",
         gender: "",
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
     };
   },
   components: { Template },

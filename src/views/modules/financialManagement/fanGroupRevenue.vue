@@ -231,7 +231,7 @@ export default {
         anchorName: "",
         anchorPhone: "",
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
       userId: "",
     };
   },

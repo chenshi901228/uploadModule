@@ -614,7 +614,7 @@ export default {
         confirmDate: "", //打款时间
         code: "", //提现单号
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
       dialogVisible: false,
       uuid: "",
       dialogFormVisible: false,

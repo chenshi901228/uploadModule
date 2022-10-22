@@ -283,7 +283,7 @@ export default {
         consumptionSource: "",
         status: "",
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
       userId: "",
     };
   },

@@ -322,7 +322,7 @@ export default {
         type: "",
         tag: "",
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
       userId: "",
     };
   },

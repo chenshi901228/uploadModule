@@ -136,7 +136,7 @@ export default {
         phone: "",
         delFlg: "",
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
       userId: "",
       giftList: [],
     };

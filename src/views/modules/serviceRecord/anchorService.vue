@@ -182,7 +182,7 @@ export default {
         toUserName:"",
         toUserPhone:""
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
       userId: "",
     };
   },

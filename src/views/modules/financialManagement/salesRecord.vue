@@ -270,7 +270,7 @@ export default {
         payType: "",
         consumptionSource: "",
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
       userId: "",
     };
   },

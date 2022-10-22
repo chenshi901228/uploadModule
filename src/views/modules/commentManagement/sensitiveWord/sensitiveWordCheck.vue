@@ -219,7 +219,7 @@ export default {
         delFlg: "",
         checkStatus:""
       },
-      dataList: [{ createDate: 1 }],
+      dataList: [],
       userId: "",
     };
   },
