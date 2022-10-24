@@ -613,7 +613,7 @@ export default {
     getDynamicAssistantList() {
       if (this.ruleForm.anchorId && this.ruleForm.anchorId.length !== 0) {
         this.assistantOptions=[]
-        this.ruleForm.assistantIds=''
+        this.ruleForm.assistantIds=[]
         this.$http
           .get(
             `/sys/anchorAssistant/live/getAnchorAssistantWithLiveByAnchorId?anchorId=${this.ruleForm.anchorId}`
@@ -639,7 +639,7 @@ export default {
     getDynamicGroupList() {
       if (this.ruleForm.anchorId && this.ruleForm.anchorId.length !== 0) {
         this.options=[]
-        this.ruleForm.dynamicGroupIds=''
+        this.ruleForm.dynamicGroupIds=[]
         this.$http
           .get(
             `/sys/dynamicGroup/getAllDynamicGroupList?anchorId=${this.ruleForm.anchorId}`
