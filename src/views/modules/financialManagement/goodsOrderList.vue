@@ -79,7 +79,7 @@
             <el-option :value="4" label="已退款"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-show="isOpen || formItemCount >= 8" label="是否注册大于众学" :label-width="140" prop="isAuth">
+        <el-form-item v-show="isOpen || formItemCount >= 8" label="是否注册大于众学" label-width="140" prop="isAuth">
           <el-select
             style="width: 160px"
             v-model="dataForm.isAuth"
