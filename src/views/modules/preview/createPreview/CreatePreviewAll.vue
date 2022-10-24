@@ -335,8 +335,7 @@ export default {
     },
   },
   computed: {},
-  created() { },
-  activated() {
+  created() { 
     this.uploadUrl = `${window.SITE_CONFIG["apiURL"]
       }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
     this.ruleForm = {
@@ -356,6 +355,9 @@ export default {
     };
     this.anchorId = this.$route.query.anchorId;
     this.getCoverPictureList();
+  },
+  activated() {
+    
   },
   methods: {
     closeProductId(index) {
@@ -610,6 +612,8 @@ export default {
     //获取助手
     getDynamicAssistantList() {
       if (this.ruleForm.anchorId && this.ruleForm.anchorId.length !== 0) {
+        this.assistantOptions=[]
+        this.ruleForm.assistantIds=''
         this.$http
           .get(
             `/sys/anchorAssistant/live/getAnchorAssistantWithLiveByAnchorId?anchorId=${this.ruleForm.anchorId}`
@@ -634,6 +638,8 @@ export default {
     //获取投放人群
     getDynamicGroupList() {
       if (this.ruleForm.anchorId && this.ruleForm.anchorId.length !== 0) {
+        this.options=[]
+        this.ruleForm.dynamicGroupIds=''
         this.$http
           .get(
             `/sys/dynamicGroup/getAllDynamicGroupList?anchorId=${this.ruleForm.anchorId}`
