@@ -145,6 +145,22 @@
           align="center"
           show-overflow-tooltip
         ></el-table-column>
+         <el-table-column
+          prop="productType"
+          label="商品类型"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
+          prop="productName"
+          label="商品名称"
+          min-width="150px"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        ></el-table-column>
         <el-table-column
           prop="userName"
           label="用户昵称"
@@ -164,26 +180,18 @@
         >
         </el-table-column>
         <el-table-column
-          prop="productType"
-          label="商品类型"
+          prop="payType"
+          label="支付方式"
           header-align="center"
-          align="center"
           show-overflow-tooltip
+          align="center"
         >
         </el-table-column>
         <el-table-column
-          prop="productName"
-          label="商品名称"
-          min-width="150px"
-          header-align="center"
-          align="center"
-          show-overflow-tooltip
-        ></el-table-column>
-
-        <el-table-column
           prop="price"
-          label="销售价格"
+          label="应付金额"
           header-align="center"
+          min-width="100px"
           show-overflow-tooltip
           align="center"
         >
@@ -193,8 +201,9 @@
         </el-table-column>
         <el-table-column
           prop="payPrice"
-          label="支付金额"
+          label="实付金额"
           header-align="center"
+          min-width="100px"
           show-overflow-tooltip
           align="center"
         >
@@ -203,22 +212,29 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="payType"
-          label="支付方式"
+          prop="realPrice"
+          label="实收金额"
           header-align="center"
+          min-width="100px"
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="{ row }">
+            <span>{{ numberConvert(row.realPrice) }}</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="consumptionSource"
-          label="消费来源"
+          prop="settlementPrice"
+          label="结算价格"
           header-align="center"
+          min-width="100px"
           show-overflow-tooltip
           align="center"
         >
+          <template slot-scope="{ row }">
+            <span>{{ numberConvert(row.settlementPrice) }}</span>
+          </template>
         </el-table-column>
-
         <el-table-column
           prop="payDate"
           label="支付完成时间"
@@ -237,6 +253,36 @@
         >
         </el-table-column>
         <el-table-column
+          prop="activeStatus"
+          label="自用状态"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        >
+          <template slot-scope="{ row }">
+            <span>{{ row.activeStatus == 1 ? '已自用' : '未自用'}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="useStatus"
+          label="使用状态"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        >
+          <template slot-scope="{ row }">
+            <span>{{ row.useStatus == 1 ? '已使用' : '未使用'}}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="consumptionSource"
+          label="消费来源"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column>
+        <!-- <el-table-column
           prop="linkedProductId"
           label="关联产品编号"
           min-width="120px"
@@ -244,7 +290,7 @@
           show-overflow-tooltip
           align="center"
         >
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="createDate"
           label="下单时间"
