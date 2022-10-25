@@ -2105,8 +2105,15 @@ export default {
               this.$message({ message: "直播已关闭", type: "success" });
               this.liveStatus = false;
               window.removeEventListener('beforeunload',this.beforeunloadHandler)
+              // 取消监听并清空连麦列表
+              this.offGetConnectStatus()
+              this.connectMessageInfo = []
               this.tim.logout(); //退出IM
               this.tim.destroy();
+              setTimeout(() => {
+                // 停止推流
+                this.stopPublishingStream();
+              }, 1000)
               this.getEndLiveInfo()
             } else {
               this.$nextTick(() => {
@@ -2117,7 +2124,6 @@ export default {
               this.$message({ message: res.data.msg, type: "error" });
             }
           });
-        this.stopPublishingStream();
       }).catch(() => {
         this.$message.info("取消操作")
       })
