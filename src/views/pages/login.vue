@@ -127,6 +127,7 @@ import Cookies from 'js-cookie'
 import debounce from 'lodash/debounce'
 import { messages } from '@/i18n'
 import { getUUID } from '@/utils'
+import fansLevelAddOrUpdateVue from '../modules/basicManagement/fansLevel-add-or-update.vue'
 export default {
   data() {
     return {
@@ -311,6 +312,7 @@ export default {
       //手机号 为空的话
       this.$refs.dataFormPhone.validateField("phone", (errorMessage) => {
         if (!errorMessage) {
+          this.loading=true
           this.$http.post('/message/sms/sendCodeWithLogin', { mobile: this.dataFormPhone.phone }).then(res => {
             if (res) {
               if (res.data.code !== 0) {
@@ -330,6 +332,7 @@ export default {
               this.btnText = "请稍候...";
               setTimeout(() => {
                 this.doLoop(60);
+                this.loading=false
               }, 500);
             }
           })
