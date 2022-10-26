@@ -811,9 +811,12 @@
         <el-descriptions-item label="礼物收入" v-else>不结算</el-descriptions-item>
         <el-descriptions-item label="带货收入">待结算</el-descriptions-item>
         <el-descriptions-item label="粉丝团收入">￥{{liveInfo.unionProfit&&liveInfo.unionProfit.toFixed(2) || 0}}</el-descriptions-item>
+        <el-descriptions-item label="带货数量">{{liveInfo.commerceSaleNum || 0}}</el-descriptions-item>
+        <el-descriptions-item label="直播预约人数">{{liveInfo.appointmentNum || 0}}</el-descriptions-item>
       </el-descriptions>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" size="small" @click="confirmQuit">确 定</el-button>
+        <!-- <el-button type="primary" size="small" @click="confirmQuit">确 定</el-button> -->
+        <span>直播带货详情可在<span style="color:#409EFF;cursor:pointer;" @click="recordInfoBtn()">直播记录</span>中查看~</span>
       </span>
     </el-dialog>
     <el-dialog
@@ -1412,6 +1415,18 @@ export default {
     numberChange(num) {
       return numberChange(num)
     },
+    recordInfoBtn(){
+      let TaskId={
+          id:this.$route.query.TaskId
+      }
+      let routeUrl = this.$router.resolve({
+          path: 'anchorManagement-record-recordInfo',
+          query: TaskId
+      });
+      window.open(
+          routeUrl.href , "_blank"
+      );
+  },
     beforeunloadHandler(e) { //关闭页面提示
       e = e || window.event
       if (e) {
@@ -2827,7 +2842,9 @@ export default {
     this.allHangUp(()=>{
       this.replyConnectAll()
     })
-  }
+  },
+  
+
 };
 </script>
 

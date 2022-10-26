@@ -332,6 +332,14 @@
               @click="checkRemark(row)"
               >查看备注</el-button
             >
+            <el-button
+              type="text"
+              icon="el-icon-tickets"
+              size="small"
+              v-if="row.liveState == 0 || row.liveState == 2"
+              @click="recordInfo(row)"
+              >直播记录</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -589,7 +597,18 @@ export default {
         this.$refs.remarkModal.close()
         this.$message.error(JSON.stringify(err.message))
       })
-    }
+    },
+
+    //直播记录
+    recordInfo(data){
+      this.$router.push({
+        path: "/liveManagement-record-recordInfo",
+      });
+      window.localStorage.setItem(
+        "recordInfoDetailData",
+        JSON.stringify(data)
+      );
+    },
 
 
   },
