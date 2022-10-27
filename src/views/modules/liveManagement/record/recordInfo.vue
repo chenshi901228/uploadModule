@@ -37,6 +37,8 @@
                 <el-table-column prop="productType" align="center" label="商品类型" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productName" align="center" label="购买内容" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="price" align="center" label="应付金额" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="payPrice" align="center" label="实付金额" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="realPrice" align="center" label="实收金额" show-overflow-tooltip></el-table-column>
                 <el-table-column 
                     
                     align="center" 
