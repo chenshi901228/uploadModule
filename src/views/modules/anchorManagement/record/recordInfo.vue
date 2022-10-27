@@ -95,8 +95,8 @@ export default {
         let dataInfo={
             id:this.$route.query.id
         }
-        this.diaForm = dataInfo ? dataInfo : JSON.parse(window.localStorage.getItem("recordInfoDetailData"))
-        
+        this.diaForm = dataInfo.id ? dataInfo : JSON.parse(window.localStorage.getItem("recordInfoDetailData"))
+      
         this.getRecordInfo(this.diaForm.id)
         this.getRecordList(this.diaForm.id)
         this.type=''

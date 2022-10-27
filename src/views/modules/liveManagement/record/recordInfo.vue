@@ -91,8 +91,9 @@ export default {
         }
     },
     activated () {
-        this.diaForm = JSON.parse(window.localStorage.getItem("recordInfoDetailData"))
         this.type=''
+        this.list=[]
+        this.diaForm = JSON.parse(window.localStorage.getItem("recordInfoDetailData"))
         this.getRecordInfo(this.diaForm.id)
         this.getRecordList(this.diaForm.id)
     },
