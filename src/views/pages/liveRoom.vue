@@ -786,38 +786,120 @@
       :title="endLiveTitle"
       :visible.sync="endLiveDialogVisible"
       :close-on-click-modal="false"
-      :close-on-press-escape="false"
-      :show-close="false"
+      @close="confirmQuit"
+      width="40%"
       center
-      width="60%"
-    >
-      <el-descriptions title="直播" :column="2">
-        <el-descriptions-item label="直播主题">{{liveInfo.liveTheme}}</el-descriptions-item>
-        <el-descriptions-item label="开播时间">{{liveInfo.startDate}}</el-descriptions-item>
-        <el-descriptions-item label="下播时间">{{liveInfo.endDate}}</el-descriptions-item>
-        <el-descriptions-item label="直播时长">{{liveInfo.liveTime || 0}}分钟</el-descriptions-item>
-        <el-descriptions-item label="观看人数">{{liveInfo.audienceNum || 0}}</el-descriptions-item>
-        <el-descriptions-item label="最高在线人数">{{liveInfo.maxOnlineNum || 0}}</el-descriptions-item>
-        <el-descriptions-item label="累计点赞">{{liveInfo.giveLikeNum || 0}}</el-descriptions-item>
-        <el-descriptions-item label="累计分享">{{liveInfo.shareNum ||0}}次</el-descriptions-item>
-        <el-descriptions-item label="礼物收益">￥{{liveInfo.getReward&&liveInfo.getReward.toFixed(2) || 0}}</el-descriptions-item>
-        <el-descriptions-item label="粉丝团收益">￥{{liveInfo.unionIncome&&liveInfo.unionIncome.toFixed(2) || 0}}</el-descriptions-item>
-        <el-descriptions-item label="带货销售">￥{{liveInfo.commerceSale&&liveInfo.commerceSale.toFixed(2) || 0}}</el-descriptions-item>
-      </el-descriptions>
-      <el-descriptions title="主播" :column="2">
-        <el-descriptions-item label="新增用户">{{liveInfo.addUserNum || 0}}人</el-descriptions-item>
-        <el-descriptions-item label="增加粉丝">{{liveInfo.addFansNum || 0}}人</el-descriptions-item>
-        <el-descriptions-item label="礼物收入" v-if="!isMuteLive">￥{{liveInfo.rewardMoney&&liveInfo.rewardMoney.toFixed(2) || 0}}</el-descriptions-item>
-        <el-descriptions-item label="礼物收入" v-else>不结算</el-descriptions-item>
-        <el-descriptions-item label="带货收入">待结算</el-descriptions-item>
-        <el-descriptions-item label="粉丝团收入">￥{{liveInfo.unionProfit&&liveInfo.unionProfit.toFixed(2) || 0}}</el-descriptions-item>
-        <el-descriptions-item label="带货数量">{{liveInfo.commerceSaleNum || 0}}</el-descriptions-item>
-        <el-descriptions-item label="直播预约人数">{{liveInfo.appointmentNum || 0}}</el-descriptions-item>
-      </el-descriptions>
-      <span slot="footer" class="dialog-footer">
-        <!-- <el-button type="primary" size="small" @click="confirmQuit">确 定</el-button> -->
-        <span>直播带货详情可在<span style="color:#409EFF;cursor:pointer;" @click="recordInfoBtn()">直播记录</span>中查看~</span>
-      </span>
+    
+    >   
+        <div class="recoredInfo">
+          <div class="recoredInfo-title">{{liveInfo.liveTheme}}直播主题</div>
+          <div class="recoredInfo-time">{{liveInfo.subStarDate +' ~ ' + liveInfo.subEndDate}} 共<span style="color:#DF3623">{{liveInfo.liveTime || 0}}</span>分钟</div>
+          <div class="recoredInfo-item">
+            <div class="recoredInfo-item-box itemBox1">
+              <span class="recoredInfo-item-num">{{liveInfo.audienceNum || 0}}</span>
+              <span class="recoredInfo-item-text">观看人数</span>
+            </div>
+            <div class="recoredInfo-item-box itemBox2">
+              <span class="recoredInfo-item-num">{{liveInfo.maxOnlineNum || 0}}</span>
+              <span class="recoredInfo-item-text">最高在线人数</span>
+            </div>
+            <div class="recoredInfo-item-box itemBox3">
+              <span class="recoredInfo-item-num">{{liveInfo.addFansNum || 0}}</span>
+              <span class="recoredInfo-item-text">增加粉丝</span>
+            </div>
+            <div class="recoredInfo-item-box itemBox4">
+              <span class="recoredInfo-item-num">{{liveInfo.addUserNum || 0}}</span>
+              <span class="recoredInfo-item-text">新增用户</span>
+            </div>
+          </div>
+          <div class="recoredInfo-item">
+            <div class="recoredInfo-item-box itemBox5">
+              <span class="recoredInfo-item-num">{{liveInfo.giveLikeNum || 0}}</span>
+              <span class="recoredInfo-item-text">累计点赞</span>
+            </div>
+            <div class="recoredInfo-item-box itemBox6">
+              <span class="recoredInfo-item-num">{{liveInfo.shareNum ||0}}</span>
+              <span class="recoredInfo-item-text">累计分享</span>
+            </div>
+            <div class="recoredInfo-item-box itemBox7">
+              <span class="recoredInfo-item-num">{{liveInfo.appointmentNum || 0}}</span>
+              <span class="recoredInfo-item-text">预约人数</span>
+            </div>
+            <div class="recoredInfo-item-box itemBox8">
+              <span class="recoredInfo-item-num">{{liveInfo.commerceSaleNum || 0}}</span>
+              <span class="recoredInfo-item-text">带货数量</span>
+            </div>
+          </div>
+          <el-divider style="margin:20px 0"></el-divider>
+
+          <div class="recoredInfo-click">
+            <img src="../../assets/img/record_info.png" alt="" style="margin-right:5px">
+            <span>直播带货详情可在<span style="color:#DF3623;cursor:pointer;" @click="recordInfoBtn()">直播记录</span>中查看~</span>
+          </div>
+
+          <div class="recoredInfo-profit">
+            <div class="recoredInfo-profit-title">直播业绩</div>
+            <div class="recoredInfo-profit-item">
+              <div class="recoredInfo-profit-box">
+                <span class="profit-box-num">￥{{liveInfo.getReward&&liveInfo.getReward.toFixed(2) || 0}} <img v-if="liveInfo.getReward && liveInfo.getReward.toFixed(2)>0" src="../../assets/img/record_top.png" alt=""></span>
+                <span class="profit-box-text">礼物业绩</span>
+              </div>
+              <div class="recoredInfo-profit-box">
+                <span class="profit-box-num">￥{{liveInfo.unionIncome&&liveInfo.unionIncome.toFixed(2) || 0}} <img v-if="liveInfo.unionIncome && liveInfo.unionIncome.toFixed(2)>0" src="../../assets/img/record_top.png" alt=""></span>
+                <span class="profit-box-text">粉丝团业绩</span>
+              </div>
+              <div class="recoredInfo-profit-box">
+                <span class="profit-box-num">￥{{liveInfo.commerceSale&&liveInfo.commerceSale.toFixed(2) || 0}} <img v-if="liveInfo.commerceSale && liveInfo.commerceSale.toFixed(2)>0" src="../../assets/img/record_top.png" alt=""></span>
+                <span class="profit-box-text">带货业绩</span>
+              </div>
+            </div>
+          </div>
+          <div class="recoredInfo-profit recoredInfo-profit-bottom">
+            <div class="recoredInfo-profit-title">主播收益</div>
+            <div class="recoredInfo-profit-item">
+              <div class="recoredInfo-profit-box">
+                <span class="profit-box-num">￥{{liveInfo.rewardMoney&&liveInfo.rewardMoney.toFixed(2) || 0}} <img v-if="liveInfo.rewardMoney && liveInfo.rewardMoney.toFixed(2)>0" src="../../assets/img/record_top.png" alt=""></span>
+                <span class="profit-box-text">礼物业绩</span>
+              </div>
+              <div class="recoredInfo-profit-box">
+                <span class="profit-box-num">￥{{liveInfo.unionProfit&&liveInfo.unionProfit.toFixed(2) || 0}} <img v-if="liveInfo.unionProfit && liveInfo.unionProfit.toFixed(2)" src="../../assets/img/record_top.png" alt=""></span>
+                <span class="profit-box-text">粉丝团业绩</span>
+              </div>
+              <div class="recoredInfo-profit-box">
+                <span class="profit-box-num">待结算</span>
+                <span class="profit-box-text">带货业绩</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- <el-descriptions title="直播" :column="2" >
+          <el-descriptions-item label="直播主题">{{liveInfo.liveTheme}}</el-descriptions-item>
+          <el-descriptions-item label="开播时间">{{liveInfo.startDate}}</el-descriptions-item>
+          <el-descriptions-item label="下播时间">{{liveInfo.endDate}}</el-descriptions-item>
+          <el-descriptions-item label="直播时长">{{liveInfo.liveTime || 0}}分钟</el-descriptions-item>
+          <el-descriptions-item label="观看人数">{{liveInfo.audienceNum || 0}}</el-descriptions-item>
+          <el-descriptions-item label="最高在线人数">{{liveInfo.maxOnlineNum || 0}}</el-descriptions-item>
+          <el-descriptions-item label="累计点赞">{{liveInfo.giveLikeNum || 0}}</el-descriptions-item>
+          <el-descriptions-item label="累计分享">{{liveInfo.shareNum ||0}}次</el-descriptions-item>
+          <el-descriptions-item label="礼物收益">￥{{liveInfo.getReward&&liveInfo.getReward.toFixed(2) || 0}}</el-descriptions-item>
+          <el-descriptions-item label="粉丝团收益">￥{{liveInfo.unionIncome&&liveInfo.unionIncome.toFixed(2) || 0}}</el-descriptions-item>
+          <el-descriptions-item label="带货销售">￥{{liveInfo.commerceSale&&liveInfo.commerceSale.toFixed(2) || 0}}</el-descriptions-item>
+        </el-descriptions>
+        <el-descriptions title="主播" :column="2">
+          <el-descriptions-item label="新增用户">{{liveInfo.addUserNum || 0}}人</el-descriptions-item>
+          <el-descriptions-item label="增加粉丝">{{liveInfo.addFansNum || 0}}人</el-descriptions-item>
+          <el-descriptions-item label="礼物收入" v-if="!isMuteLive">￥{{liveInfo.rewardMoney&&liveInfo.rewardMoney.toFixed(2) || 0}}</el-descriptions-item>
+          <el-descriptions-item label="礼物收入" v-else>不结算</el-descriptions-item>
+          <el-descriptions-item label="带货收入">待结算</el-descriptions-item>
+          <el-descriptions-item label="粉丝团收入">￥{{liveInfo.unionProfit&&liveInfo.unionProfit.toFixed(2) || 0}}</el-descriptions-item>
+          <el-descriptions-item label="带货数量">{{liveInfo.commerceSaleNum || 0}}</el-descriptions-item>
+          <el-descriptions-item label="直播预约人数">{{liveInfo.appointmentNum || 0}}</el-descriptions-item>
+        </el-descriptions>
+        <span slot="footer" class="dialog-footer">
+          <span>直播带货详情可在<span style="color:#409EFF;cursor:pointer;" @click="recordInfoBtn()">直播记录</span>中查看~</span>
+        </span> -->
+          <!-- <el-button type="primary" size="small" @click="confirmQuit">确 定</el-button> -->
     </el-dialog>
     <el-dialog
       :title="livePactInfo.title || '直播功能使用协议'"
@@ -1108,7 +1190,8 @@ export default {
       total:0,
       trends: 1,//直播动态开启或关闭 1：开启 0：关闭
       endLiveDialogVisible:false,//结束直播详情弹窗
-      endLiveTitle:'直播结束',
+      // endLiveTitle:'直播结束',
+      endLiveTitle:'',
       isRecord:false,//录制状态
       pauseRecord:false,//录制暂停状态
       streamUrl:'',
@@ -2152,6 +2235,8 @@ export default {
         return
       }
       if(res.code==0){
+        res.data.subStarDate=res.data.startDate.substring(0,16)
+        res.data.subEndDate=res.data.endDate.substring(11,16)
         this.liveInfo = res.data
         this.endLiveDialogVisible = true
         this.$nextTick(() => {
@@ -2346,7 +2431,7 @@ export default {
             this.$alert(item.payload.userDefinedField, '系统提示', {
               confirmButtonText: '确定',
               callback: action => {
-                this.endLiveTitle = '您因违反规定已被禁播'
+                // this.endLiveTitle = '您因违反规定已被禁播'
                 this.isMuteLive = true
                 this.getEndLiveInfo()
               }
@@ -3778,6 +3863,10 @@ p {
         }      
     }
   }
+
+  .recoredDialog{
+    background: #00f;
+  }
   /deep/.el-dialog__body{
     padding: 0 20px!important;
   }
@@ -4254,6 +4343,129 @@ p {
   .dialog_content::-webkit-scrollbar {
     display: none;
   }
+
+  .recoredInfo{
+    padding: 10px;
+    .recoredInfo-title{
+      color:#030303;
+      font-size: 24px;
+      font-weight: bold;
+     
+    }
+    .recoredInfo-time{
+      color: #9F9F9F;
+      font-size: 14px;
+      margin-top: 10px;
+    }
+    .recoredInfo-item{
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      .recoredInfo-item-box{
+        width: 24%;
+        height: 77px;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        background: #eee;
+        .recoredInfo-item-num{
+          font-size: 24px;
+          font-weight: 400;
+        }
+        .recoredInfo-item-text{
+          font-size: 14px;
+        }
+      }
+
+      .itemBox1{
+        background: #F4F5FE;
+        color:#656CAA
+      }
+      .itemBox2{
+        background: #FEF4FD;
+        color:#985892
+      }
+      .itemBox3{
+        background: #FEF4FA;
+        color:#915366
+      }
+      .itemBox4{
+        background: #F4FBFE;
+        color:#2C6177
+      }
+      .itemBox5{
+        background: #F4FEFE;
+        color:#498787
+      }
+      .itemBox6{
+        background: #F4FEF8;
+        color:#2A7548
+      }
+      .itemBox7{
+        background: #FCFEF4;
+        color:#919B6B
+      }
+      .itemBox8{
+        background: #FEFAF4;
+        color:#976F4B
+      }
+    }
+    .recoredInfo-click{
+      width: 100%;
+      display: flex;
+      margin: 20px 0;
+      justify-content: center;
+      align-items: center;
+    }
+    .recoredInfo-profit{
+      width: 100%;
+      background: #FFFAF5;
+      border-radius: 10px;
+      .recoredInfo-profit-title{
+        background: #DF3623;
+        color: #fff;
+        width: 90px;
+        text-align: center;
+        font-size: 16px;
+        border-top-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+      }
+      .recoredInfo-profit-item{
+        display: flex;
+        justify-content: space-between;
+        .recoredInfo-profit-box{
+          width: 33%;
+          height: 77px;
+          border-radius: 5px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          text-align: center;
+          .profit-box-num{
+            font-size: 20px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            img{
+              margin-left: 5px;
+            }
+          }
+          .profit-box-text{
+            color:#C1A992;
+            font-size:14px
+          }
+        }
+      }
+    }
+    .recoredInfo-profit-bottom{
+      margin-bottom: 20px;
+      margin-top: 10px;
+    }
+  }
 }
 @keyframes live-icon-one {
   0% {
@@ -4295,5 +4507,9 @@ p {
   100% {
     height: 100%;
   }
+}
+
+/deep/.el-dialog.el-dialog--center {
+  border-radius: 20px;
 }
 </style>

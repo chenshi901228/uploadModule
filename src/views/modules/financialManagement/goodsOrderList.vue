@@ -201,7 +201,7 @@
         </el-table-column>
         <el-table-column
           prop="payPrice"
-          label="支付金额"
+          label="实付金额"
           header-align="center"
           min-width="100px"
           show-overflow-tooltip
