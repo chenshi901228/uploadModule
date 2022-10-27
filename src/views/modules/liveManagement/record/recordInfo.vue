@@ -36,7 +36,7 @@
                 <el-table-column prop="userName" align="center" label="购买人" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productType" align="center" label="商品类型" show-overflow-tooltip></el-table-column>
                 <el-table-column prop="productName" align="center" label="购买内容" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="price" align="center" label="支付金额" show-overflow-tooltip></el-table-column>
+                <el-table-column prop="price" align="center" label="应付金额" show-overflow-tooltip></el-table-column>
                 <el-table-column 
                     
                     align="center" 
