@@ -281,6 +281,10 @@ export default {
             page: 1,
             limit: 999,
             anchorId: this.userId, 
+            productName:this.dataForm.productName,
+            productType:this.dataForm.productType,
+            isFree:this.dataForm.isFree,
+            searchProductId:this.dataForm.linkedProductId,
           },
         })
         .then(({ data: res }) => {
