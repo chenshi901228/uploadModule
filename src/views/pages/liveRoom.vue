@@ -859,15 +859,15 @@
             <div class="recoredInfo-profit-item">
               <div class="recoredInfo-profit-box">
                 <span class="profit-box-num">￥{{liveInfo.rewardMoney&&liveInfo.rewardMoney.toFixed(2) || 0}} <img v-if="liveInfo.rewardMoney && liveInfo.rewardMoney.toFixed(2)>0" src="../../assets/img/record_top.png" alt=""></span>
-                <span class="profit-box-text">礼物业绩</span>
+                <span class="profit-box-text">礼物收益</span>
               </div>
               <div class="recoredInfo-profit-box">
                 <span class="profit-box-num">￥{{liveInfo.unionProfit&&liveInfo.unionProfit.toFixed(2) || 0}} <img v-if="liveInfo.unionProfit && liveInfo.unionProfit.toFixed(2)" src="../../assets/img/record_top.png" alt=""></span>
-                <span class="profit-box-text">粉丝团业绩</span>
+                <span class="profit-box-text">粉丝团收益</span>
               </div>
               <div class="recoredInfo-profit-box">
                 <span class="profit-box-num">待结算</span>
-                <span class="profit-box-text">带货业绩</span>
+                <span class="profit-box-text">带货收益</span>
               </div>
             </div>
           </div>
