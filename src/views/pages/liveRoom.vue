@@ -792,7 +792,7 @@
     
     >   
         <div class="recoredInfo">
-          <div class="recoredInfo-title">{{liveInfo.liveTheme}}直播主题</div>
+          <div class="recoredInfo-title">{{liveInfo.liveTheme}}</div>
           <div class="recoredInfo-time">{{liveInfo.subStarDate +' ~ ' + liveInfo.subEndDate}} 共<span style="color:#DF3623">{{liveInfo.liveTime || 0}}</span>分钟</div>
           <div class="recoredInfo-item">
             <div class="recoredInfo-item-box itemBox1">
