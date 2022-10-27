@@ -223,7 +223,7 @@
             <span>{{ numberConvert(row.realPrice) }}</span>
           </template>
         </el-table-column>
-        <el-table-column
+        <!-- <el-table-column
           prop="settlementPrice"
           label="结算价格"
           header-align="center"
@@ -234,7 +234,7 @@
           <template slot-scope="{ row }">
             <span>{{ numberConvert(row.settlementPrice) }}</span>
           </template>
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           prop="payDate"
           label="支付完成时间"
