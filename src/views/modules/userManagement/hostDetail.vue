@@ -275,7 +275,6 @@
             <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.useStatus" clearable>
               <el-option :value="0" label="未使用"></el-option>
               <el-option :value="1" label="已使用"></el-option>
-              <el-option :value="2" label="待收货"></el-option>
             </el-select>
           </el-form-item>
            <el-form-item label="下单入口" v-if="diaTbas === 0" prop="liveTheme">
@@ -420,8 +419,6 @@
                         ? "未使用"
                         : row.useStatus === 1
                         ? "已使用"
-                        : row.useStatus === 2
-                        ? "待收货"
                         : "-"
                   }}
                 </div>
