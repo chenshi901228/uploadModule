@@ -147,6 +147,11 @@
       </div>
       <div class="diaBoxRight">
         <div style="display: flex;border-bottom: 2px solid #E4E7ED">
+          <el-tooltip effect="dark" content="带货记录" placement="top">
+            <div class="diaBoxRight_tabBtns" @click="changeTbas(0)" :class="{ 'is-active': diaTbas === 0 }">
+              带货记录
+            </div>
+          </el-tooltip>
           <el-tooltip effect="dark" content="收益记录" placement="top">
             <div class="diaBoxRight_tabBtns" @click="changeTbas(1)" :class="{ 'is-active': diaTbas === 1 }">
               收益记录
@@ -238,12 +243,48 @@
           <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
             <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.anchorName" clearable></el-input>
           </el-form-item>
-          <el-form-item label="商品类型" v-if="diaTbas === 5" prop="productType">
+          <el-form-item label="商品类型" v-if="diaTbas === 0 || diaTbas === 5" prop="productType">
             <el-select @visible-change="getProductType" style="width: 180px" v-model="diaSearchForm.productType"
               placeholder="请输入" clearable>
               <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType"
                 :label="item.productType"></el-option>
             </el-select>
+          </el-form-item>
+          <el-form-item label="商品名称" v-if="diaTbas === 0" prop="productName">
+            <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.productName" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="用户昵称" v-if="diaTbas === 0" prop="userName">
+            <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.userName" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="订单状态" v-if="diaTbas === 0" prop="payStatus">
+            <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.payStatus" clearable>
+              <el-option :value="1" label="待支付"></el-option>
+              <el-option :value="2" label="已支付"></el-option>
+              <el-option :value="3" label="已完成"></el-option>
+              <el-option :value="4" label="退款中"></el-option>
+              <el-option :value="5" label="已退款"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="自用状态" v-if="diaTbas === 0" prop="activeStatus">
+            <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.activeStatus" clearable>
+              <el-option :value="0" label="未自用"></el-option>
+              <el-option :value="1" label="已自用"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="使用状态" v-if="diaTbas === 0" prop="useStatus">
+            <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.useStatus" clearable>
+              <el-option :value="0" label="未使用"></el-option>
+              <el-option :value="1" label="已使用"></el-option>
+              <el-option :value="2" label="待收货"></el-option>
+            </el-select>
+          </el-form-item>
+           <el-form-item label="下单入口" v-if="diaTbas === 0" prop="liveTheme">
+            <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.liveTheme" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="下单时间" v-if="diaTbas === 0" prop="date">
+            <el-date-picker placeholder="请选择" v-model="diaSearchForm.date" type="datetimerange" range-separator="至"
+              start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd HH:mm:ss">
+            </el-date-picker>
           </el-form-item>
           <el-form-item label="是否免费" v-if="diaTbas === 5" prop="isFree">
             <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.isFree" clearable>
@@ -324,6 +365,60 @@
               v-if="prop === 'amount'">
               <template slot-scope="{ row }">
                 <span>{{ numberConvert(row.amount) }}</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'payPrice'">
+              <template slot-scope="{ row }">
+                <span v-if="row.payStatus && row.payStatus != 2">{{ numberConvert(row.payPrice) }}</span>
+                <span v-else>-</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'realPrice'">
+              <template slot-scope="{ row }">
+                <span v-if="row.payStatus && row.payStatus != 2">{{ numberConvert(row.realPrice) }}</span>
+                <span v-else>-</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'payStatus'">
+              <template slot-scope="{ row }">
+                  <span v-if="row.payStatus == 2">待支付</span>
+                  <span v-if="row.payStatus == 1 && row.useStatus==0 && row.activeStatus==0 && (row.refundStatus==0 || row.refundStatus==-1)">已支付</span>
+                  <span v-if="row.payStatus == 1 && (row.useStatus!=0 || row.activeStatus!=0) && (row.refundStatus==0 || row.refundStatus==-1)">已完成</span>
+                  <span v-if="row.payStatus == 1 && row.useStatus==0 && row.activeStatus==0 && row.refundStatus==2">退款中</span>
+                  <span v-if="row.payStatus == 1 && (row.useStatus!=0 || row.activeStatus!=0) && row.refundStatus==1">已退款</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'activeStatus'">
+              <template slot-scope="{ row }">
+                <div>
+                  {{
+                      row.activeStatus === 0
+                        ? "未自用"
+                        : row.activeStatus === 1
+                        ? "已自用"
+                        : "-"
+                  }}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'useStatus'">
+              <template slot-scope="{ row }">
+                <div>
+                  {{
+                      row.useStatus === 0
+                        ? "未使用"
+                        : row.useStatus === 1
+                        ? "已使用"
+                        : row.useStatus === 2
+                        ? "待收货"
+                        : "-"
+                  }}
+                </div>
               </template>
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
@@ -613,7 +708,7 @@ export default {
     return {
       userId: "",
       diaForm: {},
-      diaTbas: 1,
+      diaTbas: 0,
       diaSearchForm: {
         payType: "",
         paySource: "",
@@ -782,6 +877,25 @@ export default {
       this.total_dia = 0;
       this.page_dia = 1;
       switch (n) {
+        case 0:
+          this.diaTableTitle = {
+            id: "订单编号",
+            productType: "商品类型",
+            productName: "商品名称",
+            userName: "用户昵称",
+            payType: "支付方式",
+            price: "应付金额",
+            payPrice: "实付金额",
+            realPrice: "实收金额",
+            payDate: "支付完成时间",
+            payStatus: "订单状态",
+            activeStatus: "自用状态",
+            useStatus: "使用状态",
+            consumptionSource: "消费来源",
+            liveTheme: "下单入口",
+            createDate: "下单时间",
+          };
+          break;
         case 1:
           this.diaTableTitle = {
             amount: "收益金额",
@@ -862,6 +976,23 @@ export default {
       let data, url;
 
       switch (this.diaTbas) {
+        case 0:
+          data = {
+            limit: this.limit_dia,
+            page: this.page_dia,
+            anchorId: this.userId,
+            productName: this.diaSearchForm.productName,
+            userName: this.diaSearchForm.userName,
+            payStatus: this.diaSearchForm.payStatus,
+            productType: this.diaSearchForm.productType,
+            activeStatus: this.diaSearchForm.activeStatus,
+            useStatus: this.diaSearchForm.useStatus,
+            liveTheme: this.diaSearchForm.liveTheme,
+            startDate: this.diaSearchForm.date && this.diaSearchForm.date[0] || '',
+            endDate: this.diaSearchForm.date && this.diaSearchForm.date[1] || '',
+          };
+          url = "/sys/management/user/product/anchorProductPage";
+          break;
         case 1:
           data = {
             limit: this.limit_dia,
