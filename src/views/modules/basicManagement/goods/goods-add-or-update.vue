@@ -112,6 +112,11 @@ export default {
         callback(new Error("请输入0或正整数"));
       }
     };
+     const blurText4 = async (rule, value, callback) => {
+      if (Number(value) != 0 && (!Number(value) || Number(value) < 0)) {
+        callback(new Error("请输入0或正数"));
+      }
+    };
     return {
       visible: false,
       dataForm: {},
@@ -131,7 +136,7 @@ export default {
         ],
         settlementPrice: [
           { required: true, message: "请输入APP结算价格", trigger: "change" },
-          { validator: blurText3, trigger: "change" },
+          { validator: blurText4, trigger: "change" },
         ],
       },
     };

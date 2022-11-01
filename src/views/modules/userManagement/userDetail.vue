@@ -397,14 +397,14 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+            <el-table-column width="120" :prop="prop" :label="label" :key="prop" header-align="center" align="center"
               v-else-if="prop === 'payPrice' && diaTbas===3">
               <template slot-scope="{ row }">
                 <span v-if="row.statusStr && row.statusStr != '待支付'">{{ row.payPrice }}</span>
                 <span v-else>-</span>
               </template>
             </el-table-column>
-            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+            <el-table-column width="120" :prop="prop" :label="label" :key="prop" header-align="center" align="center"
               v-else-if="prop === 'realPrice' && diaTbas===3">
               <template slot-scope="{ row }">
                 <span v-if="row.statusStr && row.statusStr != '待支付'">{{ row.realPrice }}</span>
@@ -452,19 +452,19 @@
               <template slot="label">
                   订单编号
               </template>
-              {{applyForm.id || "-" }}
+              {{applyForm.id}}
           </el-descriptions-item>
           <el-descriptions-item>
               <template slot="label">
                   商品名称
               </template>
-             {{applyForm.productName || "-" }}
+             {{applyForm.productName}}
           </el-descriptions-item>
           <el-descriptions-item>
               <template slot="label">
                   应付金额
               </template>
-              {{applyForm.price || "-" }}
+              {{applyForm.price}}
           </el-descriptions-item>
           <el-descriptions-item>
               <template slot="label">

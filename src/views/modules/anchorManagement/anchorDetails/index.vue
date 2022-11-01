@@ -428,20 +428,20 @@
                 <span v-else>-</span>
               </template>
             </el-table-column>
-            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+            <el-table-column width="120" :prop="prop" :label="label" :key="prop" header-align="center" align="center"
               v-else-if="prop === 'price'">
               <template slot-scope="{ row }">
                 <span>{{ numberConvert(row.price) }}</span>
               </template>
             </el-table-column>
-            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+            <el-table-column width="120" :prop="prop" :label="label" :key="prop" header-align="center" align="center"
               v-else-if="prop === 'payPrice'">
               <template slot-scope="{ row }">
                 <span v-if="row.payStatus && row.payStatus != 2">{{ numberConvert(row.payPrice) }}</span>
                 <span v-else>-</span>
               </template>
             </el-table-column>
-            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+            <el-table-column width="120" :prop="prop" :label="label" :key="prop" header-align="center" align="center"
               v-else-if="prop === 'realPrice'">
               <template slot-scope="{ row }">
                 <span v-if="row.payStatus && row.payStatus != 2">{{ numberConvert(row.realPrice) }}</span>
@@ -575,11 +575,11 @@
 
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
               v-else-if="prop === 'payType'">
-              <template slot-scope="scope">
+              <!-- <template slot-scope="scope">
                 <div>
                   {{ scope.row.paySource === 1 ? "微信" : "支付宝" }}
                 </div>
-              </template>
+              </template> -->
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
               v-else-if="prop === 'isFree'">
