@@ -454,8 +454,8 @@
                   <span v-if="row.payStatus == 2">待支付</span>
                   <span v-if="row.payStatus == 1 && row.useStatus==0 && row.activeStatus==0 && (row.refundStatus==0 || row.refundStatus==-1)">已支付</span>
                   <span v-if="row.payStatus == 1 && (row.useStatus!=0 || row.activeStatus!=0) && (row.refundStatus==0 || row.refundStatus==-1)">已完成</span>
-                  <span v-if="scope.row.payStatus == 1 && scope.row.refundStatus==2">退款中</span>
-                  <span v-if="scope.row.payStatus == 1 && scope.row.refundStatus==1">已退款</span>
+                  <span v-if="row.payStatus == 1 && row.refundStatus==2">退款中</span>
+                  <span v-if="row.payStatus == 1 && row.refundStatus==1">已退款</span>
               </template>
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
