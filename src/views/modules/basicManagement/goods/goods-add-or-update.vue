@@ -129,6 +129,10 @@ export default {
           { required: true, message: "请输入已购买人数", trigger: "change" },
           { validator: blurText3, trigger: "change" },
         ],
+        settlementPrice: [
+          { required: true, message: "请输入APP结算价格", trigger: "change" },
+          { validator: blurText3, trigger: "change" },
+        ],
       },
     };
   },
