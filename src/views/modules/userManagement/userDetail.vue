@@ -398,14 +398,31 @@
               </template>
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'payPrice' && diaTbas===3">
+              <template slot-scope="{ row }">
+                <span v-if="row.statusStr && row.statusStr != '待支付'">{{ row.payPrice }}</span>
+                <span v-else>-</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              v-else-if="prop === 'realPrice' && diaTbas===3">
+              <template slot-scope="{ row }">
+                <span v-if="row.statusStr && row.statusStr != '待支付'">{{ row.realPrice }}</span>
+                <span v-else>-</span>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
               min-width="120" show-overflow-tooltip v-else>
             </el-table-column>
+            
           </template>
-          <el-table-column v-if="diaTbas === 3 || diaTbas === 6" :label="$t('handle')" fixed="right" width="120px"
+          <el-table-column v-if="diaTbas === 3 || diaTbas === 6" :label="$t('handle')" fixed="right" width="180px"
             header-align="center" align="center">
             <template slot-scope="scope">
               <el-button v-if="scope.row.status == 1 || scope.row.status == 2" type="text" icon="el-icon-edit-outline"
                 size="small" @click="applyRefund(scope.row)">申请退款</el-button>
+              <el-button type="text" icon="el-icon-edit-outline"
+                size="small" @click="applyInfo(scope.row)">查看明细</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -428,6 +445,44 @@
           @click="confirmHandle">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog title="订单详情" :visible.sync="applyInfoVisible" :close-on-click-modal="false" :close-on-press-escape="false"
+      @close="closeApplyInfoialog" width="80%">
+      <el-descriptions style="margin:20px 0 30px 0;font-size:24px"  :column="2" size="small" border>
+          <el-descriptions-item>
+              <template slot="label">
+                  订单编号
+              </template>
+              {{applyForm.id || "-" }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+              <template slot="label">
+                  商品名称
+              </template>
+             {{applyForm.productName || "-" }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+              <template slot="label">
+                  应付金额
+              </template>
+              {{applyForm.price || "-" }}
+          </el-descriptions-item>
+          <el-descriptions-item>
+              <template slot="label">
+                  下单时间
+              </template>
+              {{applyForm.createDate || "-" }}
+          </el-descriptions-item>
+      </el-descriptions>
+
+      <el-descriptions :contentStyle="rowCenter" :labelStyle="rowCenter" title="" direction="vertical" :column="6" border>
+          <el-descriptions-item label="资金形式">现金</el-descriptions-item>
+          <el-descriptions-item label="支付渠道">{{applyForm.payType}}</el-descriptions-item>
+          <el-descriptions-item label="支付金额">{{applyForm.payPrice}}</el-descriptions-item>
+          <el-descriptions-item label="支付状态">{{applyForm.payStatus==1 ? '已支付' : '待支付'}}</el-descriptions-item>
+          <el-descriptions-item label="支付时间">{{applyForm.createDate}}</el-descriptions-item>
+          <el-descriptions-item label="第三方流水单号">{{applyForm.orderId}}</el-descriptions-item>
+      </el-descriptions>
+    </el-dialog>
   </div>
 </template>
 
@@ -438,6 +493,7 @@ export default {
   data() {
     return {
       dialogVisible: false,
+      applyInfoVisible:false,
       userId: "",
       diaForm: {},
       diaTbas: 1,
@@ -464,7 +520,10 @@ export default {
       productTypeOptions: [], //商品类型下拉选项
       refundReason: "",
       refundLoading: false,
-
+      applyForm:{},//商品记录-查看明细
+      rowCenter:{
+        "text-align":"center",
+      },
     };
   },
 
@@ -513,6 +572,7 @@ export default {
         logisticsStatus: "",
         linkedProductId: "",
       };
+      this.applyForm={}
       this.diaDataList = [];
       this.total_dia = 0;
       this.page_dia = 1;
@@ -544,15 +604,16 @@ export default {
             id: "订单编号",
             productType: "商品类型",
             productName: "商品名称",
-            price: "销售价格",
-            payPrice: "支付金额",
+            price: "应付金额",
+            payPrice: "实付金额",
+            realPrice: "实收金额",
             payType: "支付方式",
-            consumptionSource: "消费来源",
-            productId: "关联产品编号",
-            payDate: "下单时间",
-            activeStatus: "自用状态",
+            payDate: "支付完成时间",
             statusStr: "订单状态",
+            activeStatus: "自用状态",
             useStatus: "使用状态",
+            consumptionSource: "消费来源",
+            createDate: "下单时间",
           };
           break;
         case 4:
@@ -730,6 +791,22 @@ export default {
       if (this.diaTbas == 3) return this.$message.warning("暂不支持该功能")
       this.refundInfo = row
       this.dialogVisible = true
+    },
+    //商品记录-查看明细
+    applyInfo(data){
+      this.applyInfoVisible=true
+      this.$http.get("/sys/management/user/product/"+data.id, {
+      }).then(({ data: res }) => {
+        if (res.code != 0) return this.$message.error(res.msg)
+        this.applyForm=res.data
+      }).catch(err => {
+        this.applyInfoVisible = false
+        this.$message.error(JSON.stringify(err))
+      })
+    },
+    //商品记录-关闭弹窗
+    closeApplyInfoialog(){
+      this.applyInfoVisible=false
     },
     // 取消退款申请
     closeRefundDialog() {
