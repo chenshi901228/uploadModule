@@ -13,7 +13,7 @@
       :model="dataForm"
       ref="dataForm"
       :rules="dataRule"
-      label-width="110px"
+      label-width="130px"
     >
       <el-form-item label="商品名称：">
         <span>{{ dataForm.productName }}</span>
@@ -25,6 +25,18 @@
         ￥&nbsp;
         <el-input-number
           v-model="dataForm.price"
+          :controls="false"
+          :precision="2"
+          :min="0"
+          placeholder="请输入"
+          :max="9999999999"
+        >
+        </el-input-number>
+      </el-form-item>
+      <el-form-item label="APP结算价格：" prop="settlementPrice">
+        ￥&nbsp;
+        <el-input-number
+          v-model="dataForm.settlementPrice"
           :controls="false"
           :precision="2"
           :min="0"
@@ -151,6 +163,7 @@ export default {
               price: params.price,
               stock: params.stock,
               buyers: params.buyers,
+              settlementPrice:params.settlementPrice
             })
             .then(({ data: res }) => {
               if (res.code == 0) {

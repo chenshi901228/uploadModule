@@ -218,6 +218,8 @@
               </span>
               <!-- 商品价格 -->
               <span v-else-if="item.prop == 'price'"> ￥{{ row.price }} </span>
+              <!-- APP结算价格 -->
+              <span v-else-if="item.prop == 'settlementPrice'"> ￥{{ row.settlementPrice }} </span>
               <!-- 是否免费 -->
               <span v-else-if="item.prop == 'isFree'">
                 <el-tag size="small" :type="row.isFree ? 'success' : 'danger'">{{
@@ -327,6 +329,7 @@ export default {
         { prop: "productName", label: "商品名称",width: 300 },
         { prop: "oldPrice", label: "商品价格" },
         { prop: "price", label: "销售价格" },
+        { prop: "settlementPrice", label: "APP结算价格" },
         { prop: "productType", label: "商品类型" },
         { prop: "isFree", label: "是否免费" },
         { prop: "stock", label: "库存数量" },
