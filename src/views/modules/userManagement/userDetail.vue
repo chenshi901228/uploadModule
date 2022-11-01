@@ -368,7 +368,7 @@
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
               v-else-if="prop === 'logisticsStatus'" show-overflow-tooltip>
               <template slot-scope="scope">
-                <div>
+                <div v-if="scope.row.refundStatus!=1">
                   {{
                       scope.row.logisticsStatus === 0
                         ? "待发货"
@@ -379,6 +379,7 @@
                             : "-"
                   }}
                 </div>
+                <div v-else>-</div>
               </template>
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
