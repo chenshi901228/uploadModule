@@ -808,16 +808,16 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button type="primary" plain icon="el-icon-plus" size="mini" v-if="
+              <el-button style="margin-bottom:10px" type="primary" plain icon="el-icon-plus" size="mini" v-if="
                 recommendListSelections.length !== 0 && dialogRecommendVisible
               " @click="addRecommend()">批量添加</el-button>
             </el-form-item>
           </div>
         </div>
       </el-form>
-      <el-table v-loading="dataUserListLoading" :data="recommendList" fit
-        @selection-change="recommendSelectionChangeHandle" style="width: 100%" max-height="500">
-        <el-table-column type="selection" header-align="center" align="center" width="50" fixed="left">
+      <el-table :row-key="getRecommendRowKey" v-loading="dataUserListLoading" :data="recommendList" fit
+        @selection-change="recommendSelectionChangeHandle" style="width: 100%" max-height="450" v-if="isShow2">
+        <el-table-column :reserve-selection="true" type="selection" header-align="center" align="center" width="50" fixed="left">
         </el-table-column>
         <el-table-column width="100" label="主播头像" prop="avatarUrl" align="center">
           <template slot-scope="{ row }">
@@ -850,6 +850,17 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-pagination
+          background
+          :current-page="pageRecommend"
+          :page-sizes="[10, 20, 50, 100]"
+          :page-size="limitRecommend"
+          :total="totalRecommend"
+          layout="total, sizes, prev, pager, next, jumper"
+          @size-change="pageSizeChangeHandleRecommend"
+          @current-change="pageCurrentChangeHandleRecommend"
+        >
+      </el-pagination>
     </el-dialog>
     <!-- 修改银行信息 -->
     <el-dialog title="编辑银行卡信息" :visible.sync="dialogVisible_editBank" width="600px">
@@ -995,6 +1006,7 @@ export default {
     };
     return {
       isShow: true,
+      isShow2: true,
       userId: "",
       anchorDetails: {},
       diaTbas: 0,
@@ -1121,6 +1133,10 @@ export default {
       pageGoods:1,//商品页
       limitGoods:10,//当前条
       totalGoods:0,//当前总数
+
+      pageRecommend:1,//主播页
+      limitRecommend:10,//主播当前条
+      totalRecommend:0,//主播当前总数
     };
   },
   computed: {
@@ -1631,10 +1647,15 @@ export default {
       this.page_dia = val;
       this.queryPost_dia();
     },
-    //多选触发
+    //多选触发-商品
     getRowKey(row) {
       return row.id
     },
+    //多选触发-主播
+    getRecommendRowKey(row) {
+      return row.recommendAnchorId
+    },
+    
     //下架商品
     downProduct(id) {
       this.$confirm("确认下架该商品?", "下架", {
@@ -1667,7 +1688,8 @@ export default {
       };
       this.dataUserList = [];
       this.dataListSelectionUsers=[],//因为上架后移除了，所以暂时不用多选框的回显
-      
+      this.limitGoods=10
+      this.pageGoods=1
       this.$refs.dataTable.clearSelection();
       this.isShow = false
       this.$nextTick(()=>{
@@ -1739,6 +1761,8 @@ export default {
             anchorName: this.recommendForm.anchorName,
             anchorPhone: this.recommendForm.anchorPhone,
             anchorId: this.userId,
+            page:this.pageRecommend,
+            limit:this.limitRecommend,
           }),
         })
         .then(({ data: res }) => {
@@ -1747,12 +1771,23 @@ export default {
             this.recommendList = [];
             return this.$message.error(res.msg);
           }
-          this.recommendList = res.data;
+          this.recommendList = res.data.list;
+          this.totalRecommend=res.data.total
         })
         .catch((err) => {
           this.dataUserListLoading = false;
           throw err;
         });
+    },
+    //推荐主播弹窗页面切换
+    pageSizeChangeHandleRecommend(val){
+      this.pageRecommend = 1;
+      this.limitRecommend = val;
+      this.getRecommendList();
+    },
+    pageCurrentChangeHandleRecommend(val){
+      this.pageRecommend = val;
+      this.getRecommendList();
     },
     // 添加主播列表弹框
     addRecommendShow() {
@@ -1760,6 +1795,14 @@ export default {
       if (this.recommendListSelections.length)
         this.recommendListSelections = []; //清空多选
       this.dialogRecommendVisible = true;
+      this.recommendListSelections=[],//因为上架后移除了，所以暂时不用多选框的回显
+      this.$refs.dataTable.clearSelection();
+      this.isShow2 = false
+      this.$nextTick(()=>{
+        this.isShow2 = true
+      })
+      this.limitRecommend=10
+      this.pageRecommend=1
       this.getRecommendList();
     },
     // 添加推荐主播-handle
