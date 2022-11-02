@@ -43,7 +43,7 @@
                         <span v-else>{{scope.row.payPrice}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column v-if="scope.row.payStatus == 2" prop="realPrice" align="center" label="实收金额" show-overflow-tooltip>
+                <el-table-column prop="realPrice" align="center" label="实收金额" show-overflow-tooltip>
                     <template slot-scope="scope">
                         <span v-if="scope.row.payStatus && scope.row.payStatus == 2">-</span>
                         <span v-else>{{scope.row.realPrice}}</span>
