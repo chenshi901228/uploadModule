@@ -23,19 +23,20 @@
               {{ anchorDetails.realName || '-' }}
             </div>
           </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">身份证号</div>
-            <div>
-              {{ enCodeIdCard(anchorDetails.idCard) || '-' }}
+          <div style="display:flex">
+            <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+              <div style="    color:#A8AAB3;margin-bottom: 10px;">身份证号</div>
+              <div>
+                {{ enCodeIdCard(anchorDetails.idCard) || '-' }}
+              </div>
+            </div>
+            <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+              <div style="color:#A8AAB3;margin-bottom: 10px;">主播简介</div>
+              <div style="max-height:105px;overflow:auto;">
+                {{ anchorDetails.introduce || '-' }}
+              </div>
             </div>
           </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
-            <div style="color:#A8AAB3;margin-bottom: 10px;">主播简介</div>
-            <div style="max-height:105px;overflow:auto;">
-              {{ anchorDetails.introduce || '-' }}
-            </div>
-          </div>
-
         </div>
 
         <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:bank:info')">
