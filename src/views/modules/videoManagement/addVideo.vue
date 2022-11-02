@@ -40,7 +40,7 @@
           :fileMaxSize="2"
         ></custom-upload>
         <div>
-          格式限制：jpg/jpeg/png,建议图片尺寸不小于630px×347px，大小不得超过2M
+          格式限制：jpg/jpeg/png，建议图片尺寸不小于630px*347px，大小不得超过2M
         </div>
       </el-form-item>
       <el-form-item label="上传视频" required>
@@ -53,7 +53,7 @@
           :fileMaxSize="50"
         ></custom-upload>
         <div>
-          格式限制：MP4,竖屏尺寸为720px×1280px，横屏尺寸为：1280px*720px;大小不得超过50M
+          格式限制：MP4，竖屏尺寸为720px×1280px，横屏尺寸为：1280px*720px；大小不得超过50M
         </div>
       </el-form-item>
       <el-form-item label="添加商品" prop="goods">
