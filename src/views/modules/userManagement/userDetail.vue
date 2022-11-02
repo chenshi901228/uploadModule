@@ -446,7 +446,7 @@
           @click="confirmHandle">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="订单详情" :visible.sync="applyInfoVisible" :close-on-click-modal="false" :close-on-press-escape="false"
+    <el-dialog title="订单详情" class="applyInfo" :visible.sync="applyInfoVisible" :close-on-click-modal="false" :close-on-press-escape="false"
       @close="closeApplyInfoialog" width="80%">
       <el-descriptions style="margin:20px 0 30px 0;font-size:24px"  :column="2" size="small" border>
           <el-descriptions-item>
@@ -475,7 +475,7 @@
           </el-descriptions-item>
       </el-descriptions>
 
-      <el-descriptions :contentStyle="rowCenter" :labelStyle="rowCenter" title="" direction="vertical" :column="6" border>
+      <el-descriptions style="bordr:1px solid #f60" :contentStyle="rowCenter" :labelStyle="rowCenter" title="" direction="vertical" :column="6" border>
           <el-descriptions-item label="资金形式">现金</el-descriptions-item>
           <el-descriptions-item label="支付渠道">{{applyForm.payType}}</el-descriptions-item>
           <el-descriptions-item label="支付金额">{{applyForm.payPrice}}</el-descriptions-item>
@@ -967,4 +967,10 @@ export default {
       margin: 0;
     }
 }
+.applyInfo{
+  /deep/.el-descriptions{
+    box-shadow: 0 0 2px 2px #eee;
+  }
+}
+
 </style>
