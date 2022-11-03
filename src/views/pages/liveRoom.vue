@@ -832,7 +832,7 @@
           </div>
           <el-divider style="margin:20px 0"></el-divider>
 
-          <div class="recoredInfo-click">
+          <div class="recoredInfo-click" v-if="$hasPermission('sys:anchorManagement:record')">
             <img src="../../assets/img/record_info.png" alt="" style="margin-right:5px">
             <span>直播带货详情可在<span style="color:#DF3623;cursor:pointer;" @click="recordInfoBtn()">直播记录</span>中查看~</span>
           </div>
@@ -2212,6 +2212,7 @@ export default {
                 // 停止推流
                 this.stopPublishingStream();
               }, 1000)
+              this.getPermissions()
               this.getEndLiveInfo()
             } else {
               this.$nextTick(() => {
@@ -2415,6 +2416,15 @@ export default {
     },
     waitSdkReady() {
       this.tim.on(TIM.EVENT.SDK_READY, this.onSdkReady, this);
+    },
+    // 获取权限
+    getPermissions () {
+      return this.$http.get('/sys/menu/permissions').then(({ data: res }) => {
+        if (res.code !== 0) {
+          return this.$message.error(res.msg)
+        }
+        window.SITE_CONFIG['permissions'] = res.data
+      }).catch(() => {})
     },
     $onMessageReceived(value) {
       //接收到消息
