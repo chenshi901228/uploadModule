@@ -6,7 +6,7 @@
       <div class="diaBoxLeft">
         <div class="diaBoxLeft_title">
           <span style="font-size: 14px;font-weight: bold;color: #4057CB;">主播信息</span>
-          <el-button plain type="primary" size="mini" icon="el-icon-edit" @click="editeUserInfo">编辑</el-button>
+          <el-button plain type="primary" size="mini" icon="el-icon-edit" @click="editeUserInfo('haddin')">编辑</el-button>
         </div>
         <div class="diaBoxLeft_mes">
           <div class="avatar">
@@ -36,6 +36,13 @@
                 {{ anchorDetails.introduce || '-' }}
               </div>
             </div>
+          </div>
+          <div style="display: flex;justify-content: space-between;align-items: center;height:50px;margin-top:20px">
+            <span style="color:#A8AAB3;margin-bottom: 10px;">主播二维码</span>
+            <el-button plain type="primary" size="mini" icon="el-icon-edit" @click="editeUserInfo('show')">编辑</el-button>
+          </div>
+          <div style="width:100%;display: inline-block">
+            <img style="height:110px;width:110px" :src="anchorDetails.qrCode || require('@/assets/img/default_avatar.png')" alt="">
           </div>
         </div>
 
@@ -2035,8 +2042,8 @@ export default {
       this.queryUserList();
     },
     //编辑主播信息
-    editeUserInfo() {
-      this.$router.push({ path: "/anchorManagement-anchorDetails-EditeUserInfo", query: { id: this.anchorDetails.weixinUserId },
+    editeUserInfo(qcShow) {
+      this.$router.push({ path: "/anchorManagement-anchorDetails-EditeUserInfo", query: { id: this.anchorDetails.weixinUserId ,qcShow:qcShow},
       });
     },
     //编辑银行卡信息

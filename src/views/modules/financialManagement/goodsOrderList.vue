@@ -188,6 +188,18 @@
         >
         </el-table-column>
         <el-table-column
+          prop="settlementPrice"
+          label="APP结算价格"
+          header-align="center"
+          min-width="120px"
+          show-overflow-tooltip
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <span>{{ numberConvert(row.settlementPrice) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="price"
           label="应付金额"
           header-align="center"

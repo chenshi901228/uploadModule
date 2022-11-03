@@ -12,10 +12,10 @@
       label-width="100px"
       class="demo-ruleForm"
     >
-      <el-form-item label="主播昵称" prop="username">
+      <el-form-item label="主播昵称" prop="username" v-show="qcShow=='haddin'">
         <el-input v-model="ruleForm.username" style="width:600px"></el-input>
       </el-form-item>
-      <el-form-item label="主播简介" prop="introduce">
+      <el-form-item label="主播简介" prop="introduce" v-show="qcShow=='haddin'">
         <el-input
           type="textarea"
           :rows="5"
@@ -24,7 +24,7 @@
           :show-word-limit="true"
         ></el-input>
       </el-form-item>
-      <el-form-item label="主播头像" required>
+      <el-form-item label="主播头像" required v-show="qcShow=='haddin'">
         <upload
           :fileList="fileList"
           :limit="1"
@@ -38,7 +38,7 @@
         ></upload>
         <p class="tips">头像大小限制300px  *  300px</p>
       </el-form-item>
-      <el-form-item label="主播二维码" required>
+      <el-form-item label="主播二维码" required v-show="qcShow=='show'">
         <upload
           :fileList="fileListQRcode"
           :limit="1"
@@ -90,10 +90,13 @@ export default {
         ],
         introduce: [{ required: true, message: "请输入主播简介", trigger: "blur" }],
       },
+      qcShow:'haddin'
     };
   },
   activated() {
+    // console.log(this.qcShow);
     this.id = this.$route.query.id
+    this.qcShow = this.$route.query.qcShow
     this.$nextTick(() => {
       this.getAnchorInfo()
     })
@@ -140,12 +143,19 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-
-          if (!this.$refs.uploadFile.isUploadAll() || !this.$refs.uploadQRcodeFile.isUploadAll()) {
-            return this.$message.error("有附件正在上传中")
+          
+          if(this.qcShow=='haddin'){
+            if (!this.$refs.uploadFile.isUploadAll()) {
+              return this.$message.error("有附件正在上传中")
+            }
+            if(!this.fileList.length) return this.$message.error("请上传主播头像")
           }
-          if(!this.fileList.length) return this.$message.error("请上传主播头像")
-          if(!this.fileListQRcode.length) return this.$message.error("请上传主播二维码")
+          if(this.qcShow=='show'){
+            if (!this.$refs.uploadQRcodeFile.isUploadAll()) {
+              return this.$message.error("有附件正在上传中")
+            }
+            if(!this.fileListQRcode.length) return this.$message.error("请上传主播二维码")
+          }
 
           this.$confirm('确认信息已填写无误，提交审批','提示',{
             confirmButtonText:'确认',
@@ -157,28 +167,52 @@ export default {
               spinner: 'el-icon-loading',
               background: 'rgba(0, 0, 0, 0.7)'
             });
-
-            let params = {
-              id: this.id,
-              ...this.ruleForm,
-              avatarUrl: this.fileList[0].response ? this.fileList[0].response.data.url : this.fileList[0].url,
-              qrCode: this.fileListQRcode[0].response ? this.fileListQRcode[0].response.data.url : this.fileListQRcode[0].url
-            }
-            this.$http.post("sys/anchor/applyInfo/updateBaseInfo", params).then(({ data: res }) => {
-              if(res.code == 0) {
-                this.$message.success("修改主播信息成功,请等待后台审核")
-                this.resetForm(formName)
-                this.fileList = []
-                this.id = null
-                this.closeCurrentTab()
-              }else {
-                this.$message.error(res.msg)
+            
+            if(this.qcShow=='haddin'){
+              let params = {
+                id: this.id,
+                ...this.ruleForm,
+                avatarUrl: this.fileList[0].response ? this.fileList[0].response.data.url : this.fileList[0].url,
               }
-              loading.close();
-            }).catch(err => {
-              loading.close();
-              console.log(err)
-            })
+               this.$http.post("sys/anchor/applyInfo/updateBaseInfoWithName", params).then(({ data: res }) => {
+                if(res.code == 0) {
+                  this.$message.success("修改主播信息成功")
+                  this.resetForm(formName)
+                  this.fileList = []
+                  this.id = null
+                  this.closeCurrentTab()
+                }else {
+                  this.$message.error(res.msg)
+                }
+                loading.close();
+              }).catch(err => {
+                loading.close();
+                console.log(err)
+              })
+            }
+            if(this.qcShow=='show'){
+              let params = {
+                id: this.id,
+                ...this.ruleForm,
+                qrCode: this.fileListQRcode[0].response ? this.fileListQRcode[0].response.data.url : this.fileListQRcode[0].url
+              }
+              this.$http.post("sys/anchor/applyInfo/updateBaseInfoWithQrCode", params).then(({ data: res }) => {
+                if(res.code == 0) {
+                  this.$message.success("修改主播二维码成功,请等待后台审核")
+                  this.resetForm(formName)
+                  this.fileList = []
+                  this.id = null
+                  this.closeCurrentTab()
+                }else {
+                  this.$message.error(res.msg)
+                }
+                loading.close();
+              }).catch(err => {
+                loading.close();
+                console.log(err)
+              })
+            }
+           
           }).catch(()=>{
             this.$message.info('取消操作')
           })
