@@ -208,7 +208,8 @@
           align="center"
         >
           <template slot-scope="{ row }">
-            <span>{{ numberConvert(row.payPrice) }}</span>
+            <span v-if="row.payStatus==0">-</span>
+            <span v-else>{{ numberConvert(row.payPrice) }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -220,7 +221,8 @@
           align="center"
         >
           <template slot-scope="{ row }">
-            <span>{{ numberConvert(row.realPrice) }}</span>
+            <span v-if="row.payStatus==0">-</span>
+            <span v-else>{{ numberConvert(row.realPrice) }}</span>
           </template>
         </el-table-column>
         <el-table-column
