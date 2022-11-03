@@ -724,7 +724,7 @@
           </div>
         </div>
       </el-form>
-      <el-table :row-key="getRowKey" v-loading="dataUserListLoading" :data="dataUserList" fit
+      <el-table ref="dataGoodsTable" :row-key="getRowKey" v-loading="dataUserListLoading" :data="dataUserList" fit
         @selection-change="userListSelectionChangeHandle" style="width: 100%" max-height="400" v-if="isShow">
         <el-table-column type="selection" :reserve-selection="true" header-align="center" align="center" width="50" fixed="left">
         </el-table-column>
@@ -1695,13 +1695,14 @@ export default {
         id: "",
       };
       this.dataUserList = [];
-      this.dataListSelectionUsers=[],//因为上架后移除了，所以暂时不用多选框的回显
+      this.dataListSelectionUsers=[],
       this.limitGoods=10
       this.pageGoods=1
-      this.$refs.dataTable.clearSelection();
+      
       this.isShow = false
       this.$nextTick(()=>{
         this.isShow = true
+        // this.$refs.dataGoodsTable.clearSelection();
       })
       
       this.queryUserList();
@@ -1746,6 +1747,18 @@ export default {
             this.dataUserList = [];
             return this.$message.error(res.msg);
           }
+          let list=[]
+          res.data.list.forEach((item) => {
+            if(item.isAdd==1){
+              list.push(item)
+            }
+          })
+          if(list){
+            list.forEach(row => {
+              this.$refs.dataGoodsTable.toggleRowSelection(row);
+            });
+          }
+         
           this.dataUserList = res.data.list;
           this.totalGoods=res.data.total
         })
