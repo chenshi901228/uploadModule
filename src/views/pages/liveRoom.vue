@@ -2200,6 +2200,7 @@ export default {
           })
           .then((res) => {
             if (res.data.success && res.data.msg == "success") {
+              this.sendMessage({ type: 13, isHigh:true }) //下播
               this.$message({ message: "直播已关闭", type: "success" });
               this.liveStatus = false;
               window.removeEventListener('beforeunload',this.beforeunloadHandler)
