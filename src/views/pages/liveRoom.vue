@@ -2525,6 +2525,10 @@ export default {
         }
       });
       this.barrageData = this.barrageData.concat(list); //弹幕消息
+      // 如果大于50，则需要删除多余数据
+      if(this.barrageData.length > 50) {
+        this.barrageData.splice(0, this.barrageData.length - 50);
+      }
       this.$nextTick(() => {
         let barragediv = document.getElementById("barrage");
         barragediv.scrollTop = barragediv.scrollHeight;
