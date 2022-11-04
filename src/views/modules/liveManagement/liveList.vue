@@ -336,7 +336,7 @@
               type="text"
               icon="el-icon-tickets"
               size="small"
-              v-if="row.liveState == 0 || row.liveState == 2"
+              v-if="(row.liveState == 0 || row.liveState == 2) && $hasPermission('sys:liveManagement:record')"
               @click="recordInfo(row)"
               >直播记录</el-button
             >
