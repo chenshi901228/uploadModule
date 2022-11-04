@@ -157,7 +157,7 @@ export default {
             if(!this.fileListQRcode.length) return this.$message.error("请上传主播二维码")
           }
 
-          this.$confirm('确认信息已填写无误，提交审批','提示',{
+          this.$confirm(this.qcShow=='haddin' ? '确定修改主播信息' : '确认信息已填写无误，提交审批','提示',{
             confirmButtonText:'确认',
             cancelButtonText:'取消',
           }).then(()=>{
