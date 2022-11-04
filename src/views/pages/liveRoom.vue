@@ -1210,6 +1210,7 @@ export default {
       isOpenDesktopSharing:false,//是否开启屏幕共享
       superBoardType: null, //白板类型：1-普通白板，2-文件白板
       connectOpenStatus:0,//是否开启连麦
+      isPush:false,//是否推流
     };
   },
   created() {
@@ -1648,7 +1649,7 @@ export default {
           videoQuality: 4,
           width:1280,
           height:720,
-          frameRate: 30,
+          frameRate: 20,
           bitrate: 2250,
           audio: true
         },
@@ -1932,7 +1933,7 @@ export default {
           videoQuality: 4,
           width:1280,
           height:720,
-          frameRate: 30,
+          frameRate: 20,
           bitrate: 2250,
           videoInput:this.cameraId,
         },
@@ -2047,7 +2048,7 @@ export default {
             videoQuality: 4,
             width:1280,
             height:720,
-            frameRate: 30,
+            frameRate: 20,
             bitrate: 2250,
             videoInput:this.cameraId,
           },
@@ -2070,6 +2071,7 @@ export default {
       try {
         console.log('本地预览流',this.stream)
         var res = await this.zg.startPublishingStream(this.roomId, this.stream);
+        this.isPush = true
       } catch (error) {
         console.error(error)
       }
@@ -2133,6 +2135,9 @@ export default {
         return this.$message.warning('请先打开麦克风权限后刷新重试')
       }else if(!this.cameraStatus){
         return this.$message.warning('请先打开摄像头权限后刷新重试')
+      }
+      if(!this.isPush){
+        return this.$message.warning('请先推流')
       }
       let obj = {
         UserId: this.userID,
