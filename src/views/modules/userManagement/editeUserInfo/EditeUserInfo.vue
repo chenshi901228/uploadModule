@@ -9,10 +9,10 @@
       label-width="100px"
       class="demo-ruleForm"
     >
-      <el-form-item label="主播昵称" prop="username">
+      <el-form-item label-width="140px" label="主播昵称" prop="username">
         <el-input v-model="ruleForm.username" style="width:600px"></el-input>
       </el-form-item>
-      <el-form-item label="主播简介" prop="introduce">
+      <el-form-item label-width="140px" label="主播简介" prop="introduce">
         <el-input
           type="textarea"
           :rows="5"
@@ -21,7 +21,7 @@
           :show-word-limit="true"
         ></el-input>
       </el-form-item>
-      <el-form-item label="主播头像" required>
+      <el-form-item label-width="140px" label="主播头像" required>
         <upload
           :fileList="fileList"
           :limit="1"
@@ -34,7 +34,7 @@
         ></upload>
         <p class="tips">头像大小限制300px  *  300px</p>
       </el-form-item>
-      <el-form-item label="主播二维码" required>
+      <el-form-item label-width="140px" label="主播私信二维码" required>
         <upload
           :fileList="fileListQRcode"
           :limit="1"
@@ -44,6 +44,20 @@
           ref="uploadQRcodeFile"
           @uploadSuccess="uploadQRcodeSuccess"
           @uploadRemove="uploadQRcodeRemove"
+        ></upload>
+        <p class="tips">二维码大小限制300px  *  300px</p>
+      </el-form-item>
+      <el-form-item label-width="140px" label="主播服务二维码">
+        <upload
+          :fileList="fileListService"
+          :limit="1"
+          :fileMaxSize="2"
+          fileWH="300/300"
+          :isCropImage="true"
+          :fileType="['png', 'jpg', 'jpeg']"
+          ref="uploadServiceFile"
+          @uploadSuccess="uploadServiceSuccess"
+          @uploadRemove="uploadServiceRemove"
         ></upload>
         <p class="tips">二维码大小限制300px  *  300px</p>
       </el-form-item>
@@ -77,7 +91,9 @@ export default {
       },
       id: null, //主播id
       fileList: [],//主播头像
-      fileListQRcode:[],//主播二维码
+      fileListQRcode:[],//主播私信二维码
+      fileListService:[],//主播服务二维码
+      service:"",
       dialogImageUrl: "",
       dialogVisible: false,
       rules: {
@@ -117,6 +133,14 @@ export default {
               }
             ]
           }
+          if(res.data.serviceUrl){
+            this.fileListService = [
+              {
+                name: new Date().getTime(),
+                url: res.data.serviceUrl
+              }
+            ]
+          }
         }
       }).catch((err) => this.$message.error(JSON.stringify(err.message)));
     },
@@ -127,12 +151,19 @@ export default {
     uploadRemove(file) {
       this.fileList = []
     },
-    // 二维码上传、删除
+    // 主播私信二维码上传、删除
     uploadQRcodeSuccess(file) {
       this.fileListQRcode.push(file);
     },
     uploadQRcodeRemove(file) {
       this.fileListQRcode = []
+    },
+    // 主播服务二维码上传、删除
+    uploadServiceSuccess(file) {
+      this.fileListService.push(file);
+    },
+    uploadServiceRemove(file) {
+      this.fileListService = []
     },
     submitForm: debounce(function(formName) {
       this.$refs[formName].validate((valid) => {
@@ -153,12 +184,18 @@ export default {
               spinner: 'el-icon-loading',
               background: 'rgba(0, 0, 0, 0.7)'
             });
+            if(this.fileListService.length==0){
+              this.service=""
+            }else{
+              this.service=this.fileListService[0].response ? this.fileListService[0].response.data.url : this.fileListService[0].url
+            }
 
             let params = {
               id: this.id,
               ...this.ruleForm,
               avatarUrl: this.fileList[0].response ? this.fileList[0].response.data.url : this.fileList[0].url,
-              qrCode: this.fileListQRcode[0].response ? this.fileListQRcode[0].response.data.url : this.fileListQRcode[0].url
+              qrCode: this.fileListQRcode[0].response ? this.fileListQRcode[0].response.data.url : this.fileListQRcode[0].url,
+              serviceUrl: this.service
             }
             this.$http.post("sys/anchor/applyInfo/updateBaseInfoWithManage", params).then(({ data: res }) => {
               if(res.code == 0) {

@@ -23,7 +23,7 @@
         }}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:120px;text-align:right;margin:0 10px">更改：</span> {{ diaForm.updateType==1?'全部':diaForm.updateType==2?'修改名称':diaForm.updateType==3?'修改简介':diaForm.updateType==4?'修改头像':diaForm.updateType==5?'主播二维码':'-'}}
+       <span style="width:120px;text-align:right;margin:0 10px">更改：</span> {{ diaForm.updateType==1?'全部':diaForm.updateType==2?'修改名称':diaForm.updateType==3?'修改简介':diaForm.updateType==4?'修改头像':diaForm.updateType==5?'主播私信二维码':diaForm.updateType==7?'主播服务二维码':'-'}}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
        <span style="width:120px;text-align:right;margin:0 10px">主播昵称：</span> {{ diaForm.username || '-'  }}
