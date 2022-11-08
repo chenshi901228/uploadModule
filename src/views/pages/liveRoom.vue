@@ -1050,6 +1050,63 @@
           </div>
         </div>
     </el-dialog>
+    <el-dialog
+      title="销售记录"
+      :visible.sync="commodityDialogVisible"
+      top="50px"
+      class="commodityClss"
+      width="1200px">
+        <el-table max-height="500" v-loading="dataListLoading" element-loading-text="列表数据加载中" :data="commodityList" style="width: 100%" ref="filterTable">
+          <el-table-column width="160" prop="userName" align="center" label="购买人" show-overflow-tooltip></el-table-column>
+          <el-table-column width="120" prop="productType" align="center" label="商品类型" show-overflow-tooltip></el-table-column>
+          <el-table-column width="220" prop="productName" align="center" label="购买内容" show-overflow-tooltip></el-table-column>
+          <el-table-column width="120" prop="price" align="center" label="应付金额" show-overflow-tooltip>
+            <template slot-scope="scope">
+                <span>￥{{scope.row.price}}</span>
+            </template>
+          </el-table-column>
+          <el-table-column width="120" prop="payPrice" align="center" label="实付金额" show-overflow-tooltip>
+              <template slot-scope="scope">
+                  <span v-if="scope.row.payStatus && scope.row.payStatus == 2">-</span>
+                  <span v-else>￥{{scope.row.payPrice}}</span>
+              </template>
+          </el-table-column>
+          <el-table-column width="120" prop="realPrice" align="center" label="实收金额" show-overflow-tooltip>
+              <template slot-scope="scope">
+                  <span v-if="scope.row.payStatus && scope.row.payStatus == 2">-</span>
+                  <span v-else>￥{{scope.row.realPrice}}</span>
+              </template>
+          </el-table-column>
+          <el-table-column 
+              width="120"
+              align="center" 
+              label="支付状态" 
+              column-key="payStatus"
+              show-overflow-tooltip
+          >
+              <template slot-scope="scope">
+                  <span style="color:#FF7F00" v-if="scope.row.payStatus == 2">待支付</span>
+                  <span v-if="scope.row.payStatus == 1 && scope.row.useStatus==0 && scope.row.activeStatus==0 && (scope.row.refundStatus==0 || scope.row.refundStatus==-1)">已支付</span>
+                  <span style="color:#00C106" v-if="scope.row.payStatus == 1 && (scope.row.useStatus!=0 || scope.row.activeStatus!=0) && (scope.row.refundStatus==0 || scope.row.refundStatus==-1)">已完成</span>
+                  <span style="color:#FF0000" v-if="scope.row.payStatus == 1 && scope.row.refundStatus==2">退款中</span>
+                  <span v-if="scope.row.payStatus == 1 && scope.row.refundStatus==1">已退款</span>
+              </template>
+          </el-table-column>
+          <el-table-column width="180" prop="payDate" align="center" label="支付完成时间" show-overflow-tooltip></el-table-column>
+          <el-table-column width="180" prop="createDate" align="center" label="下单时间" show-overflow-tooltip></el-table-column>
+        </el-table>
+        <el-pagination
+            background
+            :current-page="commodityPage"
+            :page-sizes="[5, 10, 50, 100]"
+            :page-size="commodityLimit"
+            :total="commodityTotal"
+            layout="total, sizes, prev, pager, next, jumper"
+            @size-change="pageSizeChangeHandle"
+            @current-change="pageCurrentChangeHandle"
+          >
+        </el-pagination>
+    </el-dialog>
   </div>
 </template>
 
@@ -1072,6 +1129,8 @@ export default {
       goodsDialogVisible:false,//商品弹窗
       livePreviewDialogVisible:false,//直播预告弹窗
       recommendedAnchorDialogVisible:false,//推荐主播弹窗
+      commodityDialogVisible:false,//销售记录弹窗
+      dataListLoading:false,//销售记录列表加载
       beautifyDialog:false,//美化弹窗
       streamAddressDialog:false,//拉流地址弹窗
       livePactInfo: {}, //直播协议内容
@@ -1104,6 +1163,12 @@ export default {
       goodsListLoading: false, //推荐商品刷新loading
       livePreviewList: [], //直播预告列表
       recommendList: [], //主播推荐主播列表
+      commodityList: [], //销售列表
+      //销售记录分页
+      commodityTotal:0,
+      commodityPage:1,
+      commodityLimit:5,
+
       barrage: "",
       questionMessageInfo: [], //提问消息
       studentList: [],//在线用户列表
@@ -1162,6 +1227,11 @@ export default {
           img: require("@/assets/img/recommendedAnchor_icon.png"),
           text: "推荐主播",
           type: "recommendedAnchor",
+        },
+        {
+          img: require("@/assets/img/commodity_icon.png"),
+          text: "销售记录",
+          type: "commodity",
         },
       ],
       headerNavActive: "desktopShare", //顶部导航选中,
@@ -1732,6 +1802,16 @@ export default {
           this.getRecommendList().then(res=>{
             if(!res.length) return this.$message.info('暂无推荐主播')
             this.recommendedAnchorDialogVisible = true
+          })
+          break
+        case "commodity":
+          this.params.page=1
+          this.commodityPage=1
+          this.commodityLimit=5
+          this.commodityList = []
+          this.getCommodityList().then(res=>{
+            if(!res.length) return this.$message.info('暂无销售记录')
+            this.commodityDialogVisible = true
           })
           break
         case "setUp":
@@ -2754,6 +2834,38 @@ export default {
           console.error(err)
         })
       })
+    },
+    //获取销售记录
+    getCommodityList() {
+      let params = {
+        liveId:this.$route.query.TaskId,
+        // state:1,
+        // userId: this.userID,
+        limit:this.commodityLimit,
+        page:this.commodityPage,
+      }
+      this.dataListLoading=true
+      return new Promise((resolve,reject)=>{
+        this.$http.get(`/sys/management/user/product/livePage`,{params}).then((res) => {
+          if(!res.data.code==0) return this.$message.error(res.data.msg)
+          this.commodityList = res.data.data.list
+          this.commodityTotal=res.data.data.total
+          this.dataListLoading=false
+          resolve(this.commodityList)
+        }).catch((err)=>{
+          console.error(err)
+        })
+      })
+    },
+    //销售记录切换
+    pageSizeChangeHandle(val){
+        this.commodityPage = 1;
+        this.commodityLimit = val;
+        this.getCommodityList();
+    },
+    pageCurrentChangeHandle(val){
+        this.commodityPage = val;
+        this.getCommodityList();
     },
     //推送商品、直播预告
     pushMethod(type, data) {
@@ -4484,6 +4596,16 @@ p {
     .recoredInfo-profit-bottom{
       margin-bottom: 20px;
       margin-top: 10px;
+    }
+  }
+
+  .commodityClss{
+    /deep/.el-dialog__body{
+      padding-bottom: 20px !important;
+    }
+    /deep/.el-pagination{
+      text-align: right !important;
+      margin-top: 20px !important;
     }
   }
 }

@@ -9,30 +9,30 @@
               " style="width:60px;height:60px" alt="">
         </div> -->
       <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">真实姓名：</span> {{ diaForm.realName || '-' }}
+       <span style="width:120px;text-align:right;margin:0 10px">真实姓名：</span> {{ diaForm.realName || '-' }}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">手机号码：</span> {{ diaForm.phone || '-'  }}
+       <span style="width:120px;text-align:right;margin:0 10px">手机号码：</span> {{ diaForm.phone || '-'  }}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">身份证号：</span> {{ diaForm.idCard || '-' }}
+       <span style="width:120px;text-align:right;margin:0 10px">身份证号：</span> {{ diaForm.idCard || '-' }}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">性别：</span> {{
+       <span style="width:120px;text-align:right;margin:0 10px">性别：</span> {{
           diaForm.gender === 0 ? "男" : diaForm.gender === 1 ? "女" : "保密"
         }}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">更改：</span> {{ diaForm.updateType==1?'全部':diaForm.updateType==2?'修改名称':diaForm.updateType==3?'修改简介':diaForm.updateType==4?'修改头像':diaForm.updateType==5?'主播二维码':'-'}}
+       <span style="width:120px;text-align:right;margin:0 10px">更改：</span> {{ diaForm.updateType==1?'全部':diaForm.updateType==2?'修改名称':diaForm.updateType==3?'修改简介':diaForm.updateType==4?'修改头像':diaForm.updateType==5?'主播二维码':'-'}}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">主播昵称：</span> {{ diaForm.username || '-'  }}
+       <span style="width:120px;text-align:right;margin:0 10px">主播昵称：</span> {{ diaForm.username || '-'  }}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
-        <span style="width:100px;text-align:right;margin:0 10px">主播简介：</span> <span style="word-break: break-all;max-width:800px;">{{ diaForm.introduce  || '-' }}</span>
+        <span style="width:120px;text-align:right;margin:0 10px">主播简介：</span> <span style="word-break: break-all;max-width:800px;">{{ diaForm.introduce  || '-' }}</span>
       </div>
       <div style="display: flex; margin: 20px 0 10px; align-items: center;">
-       <span style="width:100px;text-align:right;margin:0 10px">主播头像：</span> 
+       <span style="width:120px;text-align:right;margin:0 10px">主播头像：</span> 
        <el-image 
           style="width: 60px; height: 60px"
           :src="diaForm.avatarUrl" 
@@ -44,13 +44,25 @@
         </el-image>
       </div>
       <div style="display: flex; margin: 20px 0 10px; align-items: center;">
-        <span style="width:100px;text-align:right;margin:0 10px">主播二维码：</span> 
+        <span style="width:120px;text-align:right;margin:0 10px">主播私信二维码：</span> 
         <el-image 
           style="width: 60px; height: 60px"
           :src="diaForm.qrCode" 
           :preview-src-list="[diaForm.qrCode]">
           <div slot="error" class="image-slot">
             <span v-if="diaForm.qrCode">加载失败</span>
+            <span v-else>暂无图片</span>
+          </div>
+        </el-image>
+      </div>
+      <div style="display: flex; margin: 20px 0 10px; align-items: center;">
+        <span style="width:120px;text-align:right;margin:0 10px">主播服务二维码：</span> 
+        <el-image 
+          style="width: 60px; height: 60px"
+          :src="diaForm.serviceUrl" 
+          :preview-src-list="[diaForm.serviceUrl]">
+          <div slot="error" class="image-slot">
+            <span v-if="diaForm.serviceUrl">加载失败</span>
             <span v-else>暂无图片</span>
           </div>
         </el-image>
@@ -64,10 +76,10 @@
        <span style="width:100px;text-align:right;margin:0 10px">是否是指导师：</span> {{ diaForm.tutorFlg === 1 ? "认证" : "未认证" }}
       </div> -->
       <div v-if="diaForm.status != 0" style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">备注：{{diaForm.remark}}</span>
+       <span style="width:120px;text-align:right;margin:0 10px">备注：{{diaForm.remark}}</span>
       </div>
       <div v-if="diaForm.status == 0" style="display: flex; margin: 20px 0 10px">
-       <span style="width:100px;text-align:right;margin:0 10px">备注：</span>
+       <span style="width:120px;text-align:right;margin:0 10px">备注：</span>
        <el-input show-word-limit type="textarea" maxlength="100" placeholder="请输入，可不填" v-model="diaForm.remark"/>
       </div>
     </div>
