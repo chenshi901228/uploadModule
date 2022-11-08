@@ -436,7 +436,7 @@
           align="center"
         >
           <template slot-scope="scope">
-            <!-- --------2022-11-8修改：2022_11_07直播预告原型修改-------- -->
+            <!-- --------2022-11-8修改(增加canOpen判断)：2022_11_07直播预告原型修改-------- -->
             <!-- <el-button
               v-if="
                 scope.row.delFlg !== 1 &&
@@ -455,7 +455,8 @@
                 scope.row.delFlg !== 1 &&
                 scope.row.liveState === 3 &&
                 timeFlag(scope.row.startDate) &&
-                scope.row.alreadyLive === 0
+                scope.row.alreadyLive === 0 && 
+                scope.row.canOpen === 1
               "
               type="text"
               size="small"
@@ -492,7 +493,7 @@
               @click="assistant(scope.row)"
               >助手</el-button
             >
-            <!-- --------2022-11-8修改：2022_11_07直播预告原型修改-------- -->
+            <!-- --------2022-11-8修改(去掉显示/隐藏按钮，编辑和删除去掉showState判断)：2022_11_07直播预告原型修改-------- -->
             <!-- <el-button
               icon="el-icon-sort"
               v-if="
@@ -505,9 +506,8 @@
               @click="showThis(scope.$index, scope.row)"
               >{{ scope.row.showState === 0 ? "显示" : "隐藏" }}</el-button
             > -->
-            <!-- --------2022-11-8修改：2022_11_07直播预告原型修改-------- -->
             <el-button
-              v-if="scope.row.appointmentState === 1 && scope.row.delFlg === 0  && scope.row.showState == 0"
+              v-if="scope.row.appointmentState === 1 && scope.row.delFlg === 0"
               type="text"
               icon="el-icon-edit"
               size="small"
@@ -515,13 +515,14 @@
               >编辑</el-button
             >
             <el-button
-              v-if="scope.row.appointmentState === 1 && scope.row.delFlg === 0  && scope.row.showState == 0"
+              v-if="scope.row.appointmentState === 1 && scope.row.delFlg === 0"
               type="text"
               icon="el-icon-delete"
               size="small"
               @click="handleDelete(scope.$index, scope.row)"
               >删除</el-button
             >
+            <!-- --------2022-11-8修改：2022_11_07直播预告原型修改-------- -->
             <el-button
               type="text"
               icon="el-icon-view"
