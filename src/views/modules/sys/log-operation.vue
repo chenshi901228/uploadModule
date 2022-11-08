@@ -13,6 +13,9 @@
         <el-form-item :label="$t('logOperation.module')" prop="module">
           <el-input v-model="dataForm.module" :placeholder="$t('logOperation.module')" clearable></el-input>            
         </el-form-item>
+        <el-form-item label="用户操作" prop="module">
+          <el-input v-model="dataForm.operation" placeholder="用户操作" clearable></el-input>            
+        </el-form-item>
         <el-form-item :label="$t('logOperation.status')" prop="status">
           <el-select v-model="dataForm.status" :placeholder="$t('logOperation.status')" clearable>
             <el-option :label="$t('logOperation.status0')" :value="0"></el-option>
@@ -113,7 +116,8 @@ export default {
       },
       dataForm: {
         module: '',
-        status: ''
+        status: '',
+        operation:'',
       }
     }
   }
