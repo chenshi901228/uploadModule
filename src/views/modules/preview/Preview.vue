@@ -436,6 +436,20 @@
           align="center"
         >
           <template slot-scope="scope">
+            <!-- --------2022-11-8修改：2022_11_07直播预告原型修改-------- -->
+            <!-- <el-button
+              v-if="
+                scope.row.delFlg !== 1 &&
+                scope.row.liveState === 3 &&
+                timeFlag(scope.row.startDate) &&
+                scope.row.alreadyLive === 0
+              "
+              type="text"
+              size="small"
+              icon="el-icon-plus"
+              @click="createRoom(scope.$index, scope.row)"
+              >创建直播</el-button
+            > -->
             <el-button
               v-if="
                 scope.row.delFlg !== 1 &&
@@ -449,6 +463,7 @@
               @click="createRoom(scope.$index, scope.row)"
               >创建直播</el-button
             >
+            <!-- --------2022-11-8修改：2022_11_07直播预告原型修改-------- -->
             <el-button
               v-if="scope.row.liveState === 3 && timeFlag(scope.row.startDate)"
               type="text"
@@ -477,7 +492,8 @@
               @click="assistant(scope.row)"
               >助手</el-button
             >
-            <el-button
+            <!-- --------2022-11-8修改：2022_11_07直播预告原型修改-------- -->
+            <!-- <el-button
               icon="el-icon-sort"
               v-if="
                 scope.row.delFlg !== 1 &&
@@ -488,7 +504,8 @@
               size="small"
               @click="showThis(scope.$index, scope.row)"
               >{{ scope.row.showState === 0 ? "显示" : "隐藏" }}</el-button
-            >
+            > -->
+            <!-- --------2022-11-8修改：2022_11_07直播预告原型修改-------- -->
             <el-button
               v-if="scope.row.appointmentState === 1 && scope.row.delFlg === 0  && scope.row.showState == 0"
               type="text"
