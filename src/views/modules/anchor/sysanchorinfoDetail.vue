@@ -572,4 +572,16 @@ export default {
   height: 50px;
   text-align: right;
 }
+/deep/.el-image{
+  .image-slot {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f7fa;
+    font-size: 12px;
+  }
+}
+
 </style>
