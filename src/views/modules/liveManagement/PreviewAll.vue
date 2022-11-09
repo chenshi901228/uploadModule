@@ -506,7 +506,8 @@
           align="center"
         >
           <template slot-scope="scope">
-            <el-button
+            <!-- --------2022-11-8修改（显示/隐藏按钮改为发布）：2022_11_07直播预告原型修改-------- -->
+            <!-- <el-button
               v-if="
                 scope.row.delFlg !== 1 &&
                 scope.row.liveState === 3 &&
@@ -517,7 +518,20 @@
               icon="el-icon-view"
               @click="showThis(scope.$index, scope.row)"
               >{{ scope.row.showState === 0 ? "显示" : "隐藏" }}</el-button
+            > -->
+            <el-button
+              v-if="
+                scope.row.delFlg !== 1 &&
+                scope.row.liveState === 3 &&
+                scope.row.showState === 0
+              "
+              type="text"
+              size="small"
+              icon="el-icon-position"
+              @click="showThis(scope.$index, scope.row)"
+              >发布</el-button
             >
+            <!-- --------2022-11-8修改：2022_11_07直播预告原型修改-------- -->
             <el-button
               type="text"
               size="small"
@@ -539,8 +553,9 @@
               @click="assistant(scope.row)"
               >助手</el-button
             >
+            <!-- --------2022-11-8修改（编辑和删除去掉showState判断）：2022_11_07直播预告原型修改-------- -->
             <el-button
-              v-if="scope.row.appointmentState === 1 && scope.row.liveState === 3 && scope.row.delFlg === 0 && scope.row.showState == 0"
+              v-if="scope.row.appointmentState === 1 && scope.row.liveState === 3 && scope.row.delFlg === 0"
               type="text"
               size="small"
               icon="el-icon-edit"
@@ -548,13 +563,14 @@
               >编辑</el-button
             >
             <el-button
-              v-if="scope.row.liveState === 3 && scope.row.delFlg === 0 && scope.row.showState == 0"
+              v-if="scope.row.liveState === 3 && scope.row.delFlg === 0"
               type="text"
               size="small"
               icon="el-icon-delete"
               @click="handleDelete(scope.$index, scope.row)"
               >删除</el-button
             >
+            <!-- --------2022-11-8修改：2022_11_07直播预告原型修改-------- -->
             <el-button
               type="text"
               icon="el-icon-view"
@@ -607,11 +623,14 @@
     </el-dialog>
 
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
-      <span>确认{{ showState === 0 ? "显示" : "隐藏" }}吗？</span>
+      <!-- --------2022-11-8修改（提示信息修改）：2022_11_07直播预告原型修改-------- -->
+      <!-- <span>确认{{ showState === 0 ? "显示" : "隐藏" }}吗？</span> -->
+      <!-- --------2022-11-8修改：2022_11_07直播预告原型修改-------- -->
+      <span>确认发布该场直播预告？</span>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
         <el-button size="small" type="primary" @click="confirmShowState"
-          >确 定</el-button
+          >发 布</el-button
         >
       </span>
     </el-dialog>
@@ -816,6 +835,12 @@ export default {
             return this.$message.error(res.msg);
           } else {
             this.dialogVisible = false;
+            /**
+             * 2022-11-8修改：2022_11_07直播预告原型修改
+             * 增加提示
+             */
+            this.$message.success("直播预告发布成功")
+            /** */
             this.query();
           }
         })
