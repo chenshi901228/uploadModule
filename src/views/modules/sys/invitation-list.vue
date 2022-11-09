@@ -201,7 +201,7 @@ export default {
   data() {
     return {
       mixinViewModuleOptions: {
-        getDataListURL: "/sys/liveShare/page",
+        getDataListURL: "/sys/liveShare/selectInvitationRelationshipPage",
         getDataListIsPage: true,
         deleteIsBatch: true,
         exportURL: "/sys/liveShare/export",
