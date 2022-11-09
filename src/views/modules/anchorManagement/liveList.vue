@@ -195,7 +195,8 @@
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
-            <el-form-item>
+            <!-- --------2022-11-9修改(隐藏创建直播按钮)：2022_11_07直播预告原型修改-------- -->
+            <!-- <el-form-item>
               <el-button
                 type="primary"
                 plain
@@ -204,7 +205,8 @@
                 @click="createLive"
                 >创建直播</el-button
               >
-            </el-form-item>
+            </el-form-item> -->
+            <!-- --------2022-11-9修改：2022_11_07直播预告原型修改-------- -->
             <!-- <el-form-item>
               <el-button
                 type="warning"
