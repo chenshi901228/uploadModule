@@ -575,10 +575,18 @@ export default {
     },
     // 进入直播间
     joinLiveHandle(row) {
-      let t = this.$router.resolve({
-        name: "liveRoom",
-        query: { liveTheme: row.liveTheme, TaskId: row.id, trendsOpen: row.trendsOpen },
-      });
+      let t;
+      if(row.anchorUserId==this.$store.state.user.weixinUserId){
+        t = this.$router.resolve({
+          name: "liveRoom",
+          query: { liveTheme: row.liveTheme, TaskId: row.id, trendsOpen: row.trendsOpen },
+        });
+      }else{
+        t = this.$router.resolve({ //助手进入直播间
+          name: "assistantLiveRoom",
+          query: { liveTheme: row.liveTheme, anchorUserId:row.anchorUserId },
+        });
+      }
       // 关闭窗口刷新父页面
       this.sonPage = window.open(t.href, "_blank");
       this.sonPageTimer = setInterval(() => {
@@ -588,6 +596,7 @@ export default {
           window.location.reload();
         }
       }, 1);
+     
     },
 
     // 判断是否能进入直播间开播

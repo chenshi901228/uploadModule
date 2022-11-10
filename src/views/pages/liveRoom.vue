@@ -1209,6 +1209,8 @@ export default {
       connectStatusTimer: null, //连麦之后定时监听连麦用户连接状态
       isOpenDesktopSharing:false,//是否开启屏幕共享
       superBoardType: null, //白板类型：1-普通白板，2-文件白板
+      giftStatus:1, //是否关闭送礼物 1:开启 0:关闭
+      likeStatus:1, //是否开启互动
       connectOpenStatus:0,//是否开启连麦
       isPush:false,//是否推流
     };
@@ -1551,6 +1553,8 @@ export default {
             this.isRecord = res.data.data.startRecord==1
             this.pauseRecord = res.data.data.pauseRecord==1
             this.connectOpenStatus = Number(res.data.data.openEvenWheat)
+            this.giftStatus = Number(res.data.data.openLiveReward)
+            this.likeStatus = Number(res.data.data.openGiveLike)
             this.isOpenDesktopSharing = JSON.parse(localStorage.getItem('isOpenDesktopSharing'))
             this.getTimUserSig()
           }).catch(()=>{
@@ -2474,6 +2478,42 @@ export default {
             let applyInfo = item.payload.data;
             if (applyInfo.message.type === 3) {
               this.questionMessageInfo.unshift(applyInfo);
+            }
+            if(applyInfo.userInfo&&applyInfo.userInfo.type&&applyInfo.userInfo.type=='assistant'){ //助手消息
+              if( applyInfo.message &&applyInfo.message.type && applyInfo.message.type === 9 ){ //助手控制赠送礼物
+                this.giftStatus = message.isGift
+                this.$http.post('/sys/mixedflow/openOrClose',{type:0,openOrClose:this.giftStatus?0:1}).then(res=>{
+                  if(!res.code==0) return this.$message.error(res.msg)
+                  this.$message.success(this.giftStatus?'助手已开启礼物':'助手已关闭礼物')
+                }).catch(err=>{
+                  console.error(err)
+                })
+              }
+              if( applyInfo.message &&applyInfo.message.type && applyInfo.message.type === 11 ){ //助手控制连麦
+                this.connectOpenStatus = message.isConnect
+                this.$http.post('/sys/mixedflow/openOrClose',{type:1,openOrClose:this.connectOpenStatus?0:1}).then(res=>{
+                  if(!res.code==0) return this.$message.error(res.msg)
+                  if(this.connectOpenStatus){
+                    this.$message.success('助手已开启连麦')
+                  }else{
+                    this.allHangUp(()=>{
+                      this.replyConnectAll()
+                    })
+                    this.$message.success('助手已关闭连麦')
+                  }
+                }).catch(err=>{
+                  console.error(err)
+                })
+              }
+              if( applyInfo.message &&applyInfo.message.type && applyInfo.message.type === 12 ){ //助手控制互动
+                this.likeStatus = message.isLike
+                this.$http.post('/sys/mixedflow/openOrClose',{type:2,openOrClose:this.likeStatus?0:1}).then(res=>{
+                  if(!res.code==0) return this.$message.error(res.msg)
+                  this.$message.success(this.likeStatus?'助手已开启互动':'助手已关闭互动')
+                }).catch(err=>{
+                  console.error(err)
+                })
+              }
             }
             //连麦信息
             if (
