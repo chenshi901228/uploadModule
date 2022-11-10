@@ -1087,6 +1087,7 @@ export default {
           this.sendMessage({type:14,pauseRecord:true,isHigh:true})
         } else if (this.isRecord && this.pauseRecord) {
           this.pauseRecord = false; //恢复录制状态
+          console.log(111111111)
           this.sendMessage({type:14,pauseRecord:false,isHigh:true})
         }
       } else {

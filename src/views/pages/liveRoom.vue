@@ -2651,35 +2651,34 @@ export default {
               }
               if(applyInfo.message.pauseRecord){ //暂停、恢复录制
                 this.pauseRecord = applyInfo.message.pauseRecord
-                if(this.pauseRecord){
-                  this.$http.post("/sys/mixedflow/pauseRecord", {}).then(res=>{
-                    if(res.data.code===0){
-                      this.$message({
-                        message: "助手已暂停录制",
-                        type: "success",
-                      });
-                    }else{
-                      this.$message({
-                        message: res.data.msg,
-                        type: "error",
-                      });
-                    }
-                  })
-                }else{
-                  this.$http.post("/sys/mixedflow/resumeRecord", {}).then(res=>{
-                    if(res.data.code===0){
-                      this.$message({
-                        message: "助手已恢复录制",
-                        type: "success",
-                      });
-                    }else{
-                      this.$message({
-                        message: res.data.msg,
-                        type: "error",
-                      });
-                    }
-                  })
-                }
+                this.$http.post("/sys/mixedflow/pauseRecord", {}).then(res=>{
+                  if(res.data.code===0){
+                    this.$message({
+                      message: "助手已暂停录制",
+                      type: "success",
+                    });
+                  }else{
+                    this.$message({
+                      message: res.data.msg,
+                      type: "error",
+                    });
+                  }
+                })
+              }else if(!applyInfo.message.pauseRecord){
+                this.pauseRecord = applyInfo.message.pauseRecord
+                this.$http.post("/sys/mixedflow/resumeRecord", {}).then(res=>{
+                  if(res.data.code===0){
+                    this.$message({
+                      message: "助手已恢复录制",
+                      type: "success",
+                    });
+                  }else{
+                    this.$message({
+                      message: res.data.msg,
+                      type: "error",
+                    });
+                  }
+                })
               }
             }
             //连麦信息
