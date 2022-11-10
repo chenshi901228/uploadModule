@@ -1572,6 +1572,8 @@ export default {
             isConnect: messageInfo.isConnect, //是否开启连麦
             isGift: messageInfo.isGift, //是否开启礼物
             isLike: messageInfo.isLike, //是否开启互动
+            pauseRecord: messageInfo.pauseRecord, //暂停录制
+            isRecord: messageInfo.isRecord, //是否开启录制
           },
         };
         for (let k in data.message) {
