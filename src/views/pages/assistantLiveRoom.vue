@@ -355,7 +355,7 @@
             <div class="live_menu" id="screenWidth">
               <div class="live_menu_header">
                 <div class="live_theme">主题&nbsp;:&nbsp;{{ liveTheme }}</div>
-                <div class="online_info">
+                <!-- <div class="online_info">
                   <p>FPS：{{ videoFPS }}</p>
                   <p>丢包率：{{ videoPacketsLostRate }}</p>
                   <div class="online_info_status">
@@ -373,9 +373,9 @@
                       ></span>
                     </div>
                   </div>
-                </div>
+                </div> -->
               </div>
-              <video autoplay muted id="myVideo" class="push_video"></video>
+              <video autoplay :src-object.prop="stream" id="myVideo" class="push_video"></video>
             </div>
             <div class="connect_list">
               <div
@@ -1263,6 +1263,7 @@ export default {
         userID: this.userID,
         userName: this.userName,
       });
+      this.stream = await this.zg.startPlayingStream(this.roomId);
     },
     //开启、关闭连麦
     openOrCloseConnect() {
