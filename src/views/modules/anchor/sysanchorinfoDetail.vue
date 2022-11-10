@@ -119,14 +119,25 @@
             </el-image>
           </div>
           <div style="display:flex;width: 48%">
-            <!-- <span>主播二维码：</span> -->
-            <div style="text-align: right;margin-right:30px">主播二维码</div>
+            <div style="text-align: right;margin-right:30px">主播私信二维码</div>
             <el-image 
               style="width: 120px; height: 120px"
               :src="diaForm.qrCode" 
               :preview-src-list="[diaForm.qrCode]">
               <div slot="error" class="image-slot">
                 <span v-if="diaForm.qrCode">加载失败</span>
+                <span v-else>暂无图片</span>
+              </div>
+            </el-image>
+          </div>
+          <div>主播服务二维码</div>
+          <div style="display:flex;width: 100%;margin-left:66px">
+            <el-image 
+              style="width: 120px; height: 120px"
+              :src="diaForm.serviceUrl" 
+              :preview-src-list="[diaForm.serviceUrl]">
+              <div slot="error" class="image-slot">
+                <span v-if="diaForm.serviceUrl">加载失败</span>
                 <span v-else>暂无图片</span>
               </div>
             </el-image>
@@ -561,4 +572,16 @@ export default {
   height: 50px;
   text-align: right;
 }
+/deep/.el-image{
+  .image-slot {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f7fa;
+    font-size: 12px;
+  }
+}
+
 </style>

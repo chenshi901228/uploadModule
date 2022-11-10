@@ -38,7 +38,7 @@
         ></upload>
         <p class="tips">头像大小限制300px  *  300px</p>
       </el-form-item>
-      <el-form-item label="主播二维码" required v-show="qcShow=='show'">
+      <el-form-item label-width="140px" label="主播私信二维码：" required v-show="qcShow=='show'">
         <upload
           :fileList="fileListQRcode"
           :limit="1"
@@ -49,6 +49,20 @@
           ref="uploadQRcodeFile"
           @uploadSuccess="uploadQRcodeSuccess"
           @uploadRemove="uploadQRcodeRemove"
+        ></upload>
+        <p class="tips">二维码大小限制300px  *  300px</p>
+      </el-form-item>
+      <el-form-item label-width="140px" label="主播服务二维码：" v-show="qcShow=='showService'">
+        <upload
+          :fileList="fileListService"
+          :limit="1"
+          :fileMaxSize="2"
+          fileWH="300/300"
+          :isCropImage="true"
+          :fileType="['png', 'jpg', 'jpeg']"
+          ref="uploadServiceFile"
+          @uploadSuccess="uploadServiceSuccess"
+          @uploadRemove="uploadServiceRemove"
         ></upload>
         <p class="tips">二维码大小限制300px  *  300px</p>
       </el-form-item>
@@ -80,7 +94,8 @@ export default {
       },
       id: null, //主播id
       fileList: [],//主播头像
-      fileListQRcode:[],//主播二维码
+      fileListQRcode:[],//主播私信二维码
+      fileListService:[],//主播服务二维码
       dialogImageUrl: "",
       dialogVisible: false,
       rules: {
@@ -123,6 +138,14 @@ export default {
               }
             ]
           }
+          if(res.data.serviceUrl){
+            this.fileListService = [
+              {
+                name: new Date().getTime(),
+                url: res.data.serviceUrl
+              }
+            ]
+          }
         }
       }).catch((err) => this.$message.error(JSON.stringify(err.message)));
     },
@@ -133,12 +156,19 @@ export default {
     uploadRemove(file) {
       this.fileList = []
     },
-    // 二维码上传、删除
+    // 主播私信二维码上传、删除
     uploadQRcodeSuccess(file) {
       this.fileListQRcode.push(file);
     },
     uploadQRcodeRemove(file) {
       this.fileListQRcode = []
+    },
+    // 主播服务二维码上传、删除
+    uploadServiceSuccess(file) {
+      this.fileListService.push(file);
+    },
+    uploadServiceRemove(file) {
+      this.fileListService = []
     },
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
@@ -154,7 +184,13 @@ export default {
             if (!this.$refs.uploadQRcodeFile.isUploadAll()) {
               return this.$message.error("有附件正在上传中")
             }
-            if(!this.fileListQRcode.length) return this.$message.error("请上传主播二维码")
+            if(!this.fileListQRcode.length) return this.$message.error("请上传主播私信二维码")
+          }
+          if(this.qcShow=='showService'){
+            if (!this.$refs.uploadServiceFile.isUploadAll()) {
+              return this.$message.error("有附件正在上传中")
+            }
+            if(!this.fileListService.length) return this.$message.error("请上传主播服务二维码")
           }
 
           this.$confirm(this.qcShow=='haddin' ? '确定修改主播信息' : '确认信息已填写无误，提交审批','提示',{
@@ -198,9 +234,9 @@ export default {
               }
               this.$http.post("sys/anchor/applyInfo/updateBaseInfoWithQrCode", params).then(({ data: res }) => {
                 if(res.code == 0) {
-                  this.$message.success("修改主播二维码成功,请等待后台审核")
+                  this.$message.success("修改主播私信二维码成功,请等待后台审核")
                   this.resetForm(formName)
-                  this.fileList = []
+                  this.fileListQRcode = []
                   this.id = null
                   this.closeCurrentTab()
                 }else {
@@ -211,6 +247,28 @@ export default {
                 loading.close();
                 console.log(err)
               })
+            }
+            if(this.qcShow=='showService'){
+                let params = {
+                  id: this.id,
+                  ...this.ruleForm,
+                  serviceUrl: this.fileListService[0].response ? this.fileListService[0].response.data.url : this.fileListService[0].url
+                }
+                this.$http.post("sys/anchor/applyInfo/updateBaseInfoWithServiceUrl", params).then(({ data: res }) => {
+                  if(res.code == 0) {
+                    this.$message.success("修改主播服务二维码成功,请等待后台审核")
+                    this.resetForm(formName)
+                    this.fileListService = []
+                    this.id = null
+                    this.closeCurrentTab()
+                  }else {
+                    this.$message.error(res.msg)
+                  }
+                  loading.close();
+                }).catch(err => {
+                  loading.close();
+                  console.log(err)
+                })
             }
            
           }).catch(()=>{

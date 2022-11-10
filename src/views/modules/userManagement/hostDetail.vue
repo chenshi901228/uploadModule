@@ -20,19 +20,36 @@
               {{ diaForm.realName || '-' }}
             </div>
           </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">身份证号</div>
-            <div>
-              {{ enCodeIdCard(diaForm.idCard) || '-' }}
+          <div style="display:flex">
+            <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+              <div style="    color:#A8AAB3;margin-bottom: 10px;">身份证号</div>
+              <div>
+                {{ enCodeIdCard(diaForm.idCard) || '-' }}
+              </div>
+            </div>
+            <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+              <div style="color:#A8AAB3;margin-bottom: 10px;">主播简介</div>
+              <div style="max-height:120px;overflow:auto;">
+                {{ diaForm.introduce || '-' }}
+              </div>
             </div>
           </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
-            <div style="color:#A8AAB3;margin-bottom: 10px;">主播简介</div>
-            <div style="max-height:120px;overflow:auto;">
-              {{ diaForm.introduce || '-' }}
+          <div style="display: flex;justify-content: space-between;align-items: center;height:50px;margin-top:20px">
+            <span style="color:#A8AAB3;margin-bottom: 10px;">主播私信二维码</span>
+          </div>
+          <div style="width:100%;display: inline-block">
+            <img style="height:110px;width:110px" :src="diaForm.qrCode || require('@/assets/img/default_avatar.png')" alt="">
+          </div>
+          <div style="display: flex;justify-content: space-between;align-items: center;height:50px;margin-top:20px">
+            <span style="color:#A8AAB3;margin-bottom: 10px;">主播服务二维码</span>
+            <!-- <el-button plain type="primary" size="mini" icon="el-icon-edit" @click="editeUserInfo('showService')">编辑</el-button> -->
+          </div>
+          <div style="width:100%;display: inline-block">
+            <img v-if="diaForm.serviceUrl" style="height:110px;width:110px" :src="diaForm.serviceUrl || require('@/assets/img/default_avatar.png')" alt="">
+            <div v-else class="image-slot">
+              <span>暂无图片</span>
             </div>
           </div>
-
         </div>
 
         <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:bank:info')">
@@ -1473,6 +1490,15 @@ export default {
       margin-top: 10px;
     }
   }
+}
+.image-slot {
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f7fa;
+  font-size: 12px;
 }
 
 .previewInvoiceList {
