@@ -1595,25 +1595,32 @@ export default {
     // 开启或关闭礼物
     openOrCloseGift(){
       this.giftStatus = this.giftStatus?0:1
-      console.log(this.giftStatus)
-      if(this.giftStatus){
-      console.log('开启送礼物')
-        this.sendMessage({ type: 9, isGift: true, isHigh:true, }); //开启送礼物
-      }else{
-      console.log('关闭礼物')
-        this.sendMessage({ type: 9, isGift: false, isHigh:true, }); //关闭送礼物
-      }
-      this.$message.success( this.giftStatus ? "您已开启礼物" : "您已关闭礼物" );
+      this.$http.post('/sys/mixedflow/openOrClose',{type:0,openOrClose:this.giftStatus?1:0}).then(res=>{
+        if(!res.code==0) return this.$message.error(res.msg)
+        if(this.giftStatus){
+          this.sendMessage({ type: 9, isGift: true, isHigh:true, }); //开启送礼物
+        }else{
+          this.sendMessage({ type: 9, isGift: false, isHigh:true, }); //关闭送礼物
+        }
+        this.$message.success( this.giftStatus ? "您已开启礼物" : "您已关闭礼物" );
+      }).catch(err=>{
+        console.error(err)
+      })
     },
     // 开启或关闭互动
     openOrCloseLike(){
       this.likeStatus = this.likeStatus?0:1
-      if(this.likeStatus){
-        this.sendMessage({ type: 12, isLike: true, isHigh:true, }); //开启互动
-      }else{
-        this.sendMessage({ type: 12, isLike: false, isHigh:true, }); //关闭互动
-      }
-      this.$message.success( this.likeStatus ? "您已开启互动" : "您已关闭互动" );
+      this.$http.post('/sys/mixedflow/openOrClose',{type:2,openOrClose:this.likeStatus?1:0}).then(res=>{
+        if(!res.code==0) return this.$message.error(res.msg)
+        if(this.likeStatus){
+          this.sendMessage({ type: 12, isLike: true, isHigh:true, }); //开启互动
+        }else{
+          this.sendMessage({ type: 12, isLike: false, isHigh:true, }); //关闭互动
+        }
+        this.$message.success( this.likeStatus ? "您已开启互动" : "您已关闭互动" );
+      }).catch(err=>{
+        console.error(err)
+      })
     },
     // 拉流地址
     streamAddress(){
