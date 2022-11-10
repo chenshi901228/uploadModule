@@ -2554,46 +2554,46 @@ export default {
         ) {
           if (item.payload && item.payload.data) {
             item.payload.data = JSON.parse(item.payload.data)
-            list.push(Object.assign(item));
             let applyInfo = item.payload.data;
+            if( applyInfo.message.type === 1 || applyInfo.message.type === 4 ){
+              list.push(Object.assign(item));
+            }
             if (applyInfo.message.type === 3) {
               this.questionMessageInfo.unshift(applyInfo);
             }
-            if(applyInfo.userInfo&&applyInfo.userInfo.type&&applyInfo.userInfo.type=='assistant'){ //助手消息
-              if( applyInfo.message &&applyInfo.message.type && applyInfo.message.type === 9 ){ //助手控制赠送礼物
-                this.giftStatus = message.isGift
-                this.$http.post('/sys/mixedflow/openOrClose',{type:0,openOrClose:this.giftStatus?0:1}).then(res=>{
-                  if(!res.code==0) return this.$message.error(res.msg)
-                  this.$message.success(this.giftStatus?'助手已开启礼物':'助手已关闭礼物')
-                }).catch(err=>{
-                  console.error(err)
-                })
-              }
-              if( applyInfo.message &&applyInfo.message.type && applyInfo.message.type === 11 ){ //助手控制连麦
-                this.connectOpenStatus = message.isConnect
-                this.$http.post('/sys/mixedflow/openOrClose',{type:1,openOrClose:this.connectOpenStatus?0:1}).then(res=>{
-                  if(!res.code==0) return this.$message.error(res.msg)
-                  if(this.connectOpenStatus){
-                    this.$message.success('助手已开启连麦')
-                  }else{
-                    this.allHangUp(()=>{
-                      this.replyConnectAll()
-                    })
-                    this.$message.success('助手已关闭连麦')
-                  }
-                }).catch(err=>{
-                  console.error(err)
-                })
-              }
-              if( applyInfo.message &&applyInfo.message.type && applyInfo.message.type === 12 ){ //助手控制互动
-                this.likeStatus = message.isLike
-                this.$http.post('/sys/mixedflow/openOrClose',{type:2,openOrClose:this.likeStatus?0:1}).then(res=>{
-                  if(!res.code==0) return this.$message.error(res.msg)
-                  this.$message.success(this.likeStatus?'助手已开启互动':'助手已关闭互动')
-                }).catch(err=>{
-                  console.error(err)
-                })
-              }
+            if( applyInfo.message &&applyInfo.message.type && applyInfo.message.type === 9 ){ //助手控制赠送礼物
+              this.giftStatus = applyInfo.message.isGift
+              this.$http.post('/sys/mixedflow/openOrClose',{type:0,openOrClose:this.giftStatus?1:0}).then(res=>{
+                if(!res.code==0) return this.$message.error(res.msg)
+                this.$message.success(this.giftStatus?'助手已开启礼物':'助手已关闭礼物')
+              }).catch(err=>{
+                console.error(err)
+              })
+            }
+            if( applyInfo.message &&applyInfo.message.type && applyInfo.message.type === 11 ){ //助手控制连麦
+              this.connectOpenStatus = applyInfo.message.isConnect
+              this.$http.post('/sys/mixedflow/openOrClose',{type:1,openOrClose:this.connectOpenStatus?1:0}).then(res=>{
+                if(!res.code==0) return this.$message.error(res.msg)
+                if(this.connectOpenStatus){
+                  this.$message.success('助手已开启连麦')
+                }else{
+                  this.allHangUp(()=>{
+                    this.replyConnectAll()
+                  })
+                  this.$message.success('助手已关闭连麦')
+                }
+              }).catch(err=>{
+                console.error(err)
+              })
+            }
+            if( applyInfo.message &&applyInfo.message.type && applyInfo.message.type === 12 ){ //助手控制互动
+              this.likeStatus = applyInfo.message.isLike
+              this.$http.post('/sys/mixedflow/openOrClose',{type:2,openOrClose:this.likeStatus?1:0}).then(res=>{
+                if(!res.code==0) return this.$message.error(res.msg)
+                this.$message.success(this.likeStatus?'助手已开启互动':'助手已关闭互动')
+              }).catch(err=>{
+                console.error(err)
+              })
             }
             //连麦信息
             if (
