@@ -963,7 +963,7 @@ export default {
         this.streamUrl = res.data.Data.PlayInfo[0].HLS.replace("http", "https")
         if(this.streamUrl){
           this.liveStatus = true
-          this.getVideo(this.streamUrl)
+          // this.getVideo(this.streamUrl)
         }
       }).catch(err=>{
 
@@ -998,6 +998,7 @@ export default {
     },
     // 开启或关闭礼物
     openOrCloseGift(){
+      if(!this.liveStatus) return this.$message.warning('直播暂无开启')
       this.giftStatus = this.giftStatus?0:1
       if(this.giftStatus){
         this.sendMessage({ type: 9, isGift: true, isHigh:true, }); //开启送礼物
@@ -1008,6 +1009,7 @@ export default {
     },
     // 开启或关闭互动
     openOrCloseLike(){
+      if(!this.liveStatus) return this.$message.warning('直播暂无开启')
       this.likeStatus = this.likeStatus?0:1
       if(this.likeStatus){
         this.sendMessage({ type: 12, isLike: true, isHigh:true, }); //开启互动
@@ -1021,7 +1023,7 @@ export default {
       if (this.liveStatus) {
         this.streamAddressDialog = true;
       } else {
-        this.$message.warning("直播暂未开启，请先开启直播");
+        this.$message.warning("直播暂未开启");
       }
     },
     copyFun() {

@@ -352,7 +352,7 @@
             >
             <el-button
               type="text"
-              v-if="row.liveState == 1 && row.showMode == 1"
+              v-if="row.liveState == 1 && row.showMode == 1 && row.anchorUserId == $store.state.user.weixinUserId"
               @click="closeLiveHandle(row.anchorUserId)"
               size="small"
               icon="el-icon-video-pause"
@@ -584,6 +584,7 @@ export default {
           query: { liveTheme: row.liveTheme, TaskId: row.id, trendsOpen: row.trendsOpen },
         });
       }else{
+        if(row.liveState!=1) return this.$message.warning('直播暂未开启')
         t = this.$router.resolve({ //助手进入直播间
           name: "assistantLiveRoom",
           query: { liveTheme: row.liveTheme, TaskId: row.id, anchorUserId:row.anchorUserId },
