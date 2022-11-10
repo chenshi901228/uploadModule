@@ -1594,9 +1594,9 @@ export default {
     },
     // 开启或关闭礼物
     openOrCloseGift(){
-      this.giftStatus = this.giftStatus?0:1
       this.$http.post('/sys/mixedflow/openOrClose',{type:0,openOrClose:this.giftStatus?0:1}).then(res=>{
         if(!res.code==0) return this.$message.error(res.msg)
+        this.giftStatus = this.giftStatus?0:1
         if(this.giftStatus){
           this.sendMessage({ type: 9, isGift: true, isHigh:true, }); //开启送礼物
         }else{
@@ -1609,9 +1609,9 @@ export default {
     },
     // 开启或关闭互动
     openOrCloseLike(){
-      this.likeStatus = this.likeStatus?0:1
       this.$http.post('/sys/mixedflow/openOrClose',{type:2,openOrClose:this.likeStatus?0:1}).then(res=>{
         if(!res.code==0) return this.$message.error(res.msg)
+        this.likeStatus = this.likeStatus?0:1
         if(this.likeStatus){
           this.sendMessage({ type: 12, isLike: true, isHigh:true, }); //开启互动
         }else{
