@@ -954,6 +954,8 @@ export default {
         this.userInfo.userId = res.data.weixinUserDetailDTO.id
         this.userInfo.nickName = res.data.weixinUserDetailDTO.nickName
         this.userInfo.avatarUrl = res.data.weixinUserDetailDTO.avatarUrl
+        this.isRecord = res.data.startRecord==1
+        this.pauseRecord = res.data.pauseRecord==1
         this.connectOpenStatus = Number(res.data.openEvenWheat)
         this.giftStatus = Number(res.data.openLiveReward)
         this.likeStatus = Number(res.data.openGiveLike)
@@ -969,12 +971,9 @@ export default {
     // 开启或关闭礼物
     openOrCloseGift(){
       this.giftStatus = this.giftStatus?0:1
-      console.log(this.giftStatus)
       if(this.giftStatus){
-      console.log('开启送礼物')
         this.sendMessage({ type: 9, isGift: true, isHigh:true, }); //开启送礼物
       }else{
-      console.log('关闭礼物')
         this.sendMessage({ type: 9, isGift: false, isHigh:true, }); //关闭送礼物
       }
       this.$message.success( this.giftStatus ? "您已开启礼物" : "您已关闭礼物" );
@@ -1081,52 +1080,14 @@ export default {
       //录制
       if (this.liveStatus) {
         if (!this.isRecord && !this.pauseRecord) {
-          this.$http.post("/sys/mixedflow/startRecord", {}).then((res) => {
-            if (res.data.code === 0) {
-              this.isRecord = true; //开启录制状态
-              this.$message({
-                message: "录制已开启",
-                type: "success",
-              });
-            } else {
-              this.$message({
-                message: res.data.msg,
-                type: "error",
-              });
-            }
-          });
+          this.isRecord = true; //开启录制状态
+          this.sendMessage({type:14,isRecord:true,isHigh:true})
         } else if (this.isRecord && !this.pauseRecord) {
-          //暂停录制
-          this.$http.post("/sys/mixedflow/pauseRecord", {}).then((res) => {
-            if (res.data.code === 0) {
-              this.pauseRecord = true; //暂停录制状态
-              this.$message({
-                message: "录制已暂停",
-                type: "success",
-              });
-            } else {
-              this.$message({
-                message: res.data.msg,
-                type: "error",
-              });
-            }
-          });
+          this.pauseRecord = true; //暂停录制状态
+          this.sendMessage({type:14,pauseRecord:true,isHigh:true})
         } else if (this.isRecord && this.pauseRecord) {
-          //恢复录制
-          this.$http.post("/sys/mixedflow/resumeRecord", {}).then((res) => {
-            if (res.data.code === 0) {
-              this.pauseRecord = false; //恢复录制状态
-              this.$message({
-                message: "已重新开启录制",
-                type: "success",
-              });
-            } else {
-              this.$message({
-                message: res.data.msg,
-                type: "error",
-              });
-            }
-          });
+          this.pauseRecord = false; //恢复录制状态
+          this.sendMessage({type:14,pauseRecord:false,isHigh:true})
         }
       } else {
         this.$message({
@@ -1450,6 +1411,29 @@ export default {
             if( applyInfo.message &&applyInfo.message.type && applyInfo.message.type === 12 ){ //主播控制互动
               this.likeStatus = applyInfo.message.isLike
               this.$message.success(this.likeStatus?'主播已开启互动':'主播已关闭互动')
+            }
+            if( applyInfo.message &&applyInfo.message.type && applyInfo.message.type === 14 ){ //助手控制录制
+              if(applyInfo.message.isRecord){ //开启录制
+                this.isRecord = applyInfo.message.isRecord
+                this.$message({
+                  message: "主播已开启录制",
+                  type: "success",
+                });
+              }
+              if(applyInfo.message.pauseRecord){ //暂停、恢复录制
+                this.pauseRecord = applyInfo.message.pauseRecord
+                if(this.pauseRecord){
+                  this.$message({
+                    message: "主播已暂停录制",
+                    type: "success",
+                  });
+                }else{
+                  this.$message({
+                    message: "主播已恢复录制",
+                    type: "success",
+                  });
+                }
+              }
             }
             //连麦信息
             if (

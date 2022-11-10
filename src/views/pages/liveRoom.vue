@@ -1913,6 +1913,7 @@ export default {
                 message: "录制已开启",
                 type: "success",
               });
+              this.sendMessage({type:14,isRecord:true,isHigh:true})
             }else{
               this.$message({
                 message: res.data.msg,
@@ -1928,6 +1929,7 @@ export default {
                 message: "录制已暂停",
                 type: "success",
               });
+              this.sendMessage({type:14,pauseRecord:true,isHigh:true})
             }else{
               this.$message({
                 message: res.data.msg,
@@ -1943,6 +1945,7 @@ export default {
                 message: "已重新开启录制",
                 type: "success",
               });
+              this.sendMessage({type:14,pauseRecord:false,isHigh:true})
             }else{
               this.$message({
                 message: res.data.msg,
@@ -2627,6 +2630,57 @@ export default {
               }).catch(err=>{
                 console.error(err)
               })
+            }
+            if( applyInfo.message &&applyInfo.message.type && applyInfo.message.type === 14 ){ //助手控制录制
+              if(applyInfo.message.isRecord){ //开启录制
+                this.isRecord = applyInfo.message.isRecord
+                this.$http.post("/sys/mixedflow/startRecord", {}).then(res=>{
+                  if(res.data.code===0){
+                    this.isRecord = true //开启录制状态
+                    this.$message({
+                      message: "助手已开启录制",
+                      type: "success",
+                    });
+                  }else{
+                    this.$message({
+                      message: res.data.msg,
+                      type: "error",
+                    });
+                  }
+                })
+              }
+              if(applyInfo.message.pauseRecord){ //暂停、恢复录制
+                this.pauseRecord = applyInfo.message.pauseRecord
+                if(this.pauseRecord){
+                  this.$http.post("/sys/mixedflow/pauseRecord", {}).then(res=>{
+                    if(res.data.code===0){
+                      this.$message({
+                        message: "助手已暂停录制",
+                        type: "success",
+                      });
+                    }else{
+                      this.$message({
+                        message: res.data.msg,
+                        type: "error",
+                      });
+                    }
+                  })
+                }else{
+                  this.$http.post("/sys/mixedflow/resumeRecord", {}).then(res=>{
+                    if(res.data.code===0){
+                      this.$message({
+                        message: "助手已恢复录制",
+                        type: "success",
+                      });
+                    }else{
+                      this.$message({
+                        message: res.data.msg,
+                        type: "error",
+                      });
+                    }
+                  })
+                }
+              }
             }
             //连麦信息
             if (
@@ -3795,7 +3849,7 @@ p {
             }
             .tool_nav_son{
               position: absolute;
-              bottom: -60px;
+              bottom: -90px;
               background-color: #000000;
               width: 90px;
               font-size: 14px;
