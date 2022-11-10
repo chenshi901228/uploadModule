@@ -341,7 +341,8 @@
                   toolNavSelected == 'setUp' && item.type == toolNavSelected
                 "
               >
-                <p @click.stop="beautifyDialog = true">美化</p>
+                <p @click.stop="openOrCloseGift">{{ giftStatus ? "关闭礼物" : "开启礼物" }}</p>
+                <p @click.stop="openOrCloseLike">{{ likeStatus ? "关闭互动" : "开启互动" }}</p>
                 <p @click.stop="streamAddress">拉流地址</p>
               </div>
             </div>
@@ -471,7 +472,7 @@
                   </div>
                 </div>
               </div>
-              <div
+              <!-- <div
                 @click="openOrCloseConnect"
                 :style="
                   connectMessageInfo.length
@@ -482,7 +483,7 @@
               >
                 <img src="../../assets/img/open_connect_icon.png" alt="" />
                 <span>{{ connectOpenStatus ? "关闭连麦" : "开启连麦" }}</span>
-              </div>
+              </div> -->
             </div>
           </div>
         </el-main>
@@ -965,6 +966,30 @@ export default {
     numberChange(num) {
       return numberChange(num);
     },
+    // 开启或关闭礼物
+    openOrCloseGift(){
+      this.giftStatus = this.giftStatus?0:1
+      console.log(this.giftStatus)
+      if(this.giftStatus){
+      console.log('开启送礼物')
+        this.sendMessage({ type: 9, isGift: true, isHigh:true, }); //开启送礼物
+      }else{
+      console.log('关闭礼物')
+        this.sendMessage({ type: 9, isGift: false, isHigh:true, }); //关闭送礼物
+      }
+      this.$message.success( this.giftStatus ? "您已开启礼物" : "您已关闭礼物" );
+    },
+    // 开启或关闭互动
+    openOrCloseLike(){
+      this.likeStatus = this.likeStatus?0:1
+      if(this.likeStatus){
+        this.sendMessage({ type: 12, isLike: true, isHigh:true, }); //开启互动
+      }else{
+        this.sendMessage({ type: 12, isLike: false, isHigh:true, }); //关闭互动
+      }
+      this.$message.success( this.likeStatus ? "您已开启互动" : "您已关闭互动" );
+    },
+    // 拉流地址
     streamAddress() {
       if (this.liveStatus) {
         this.streamAddressDialog = true;
@@ -1247,35 +1272,22 @@ export default {
         }
       )
         .then(() => {
-          this.$http
-            .post("/sys/mixedflow/openOrClose", {
-              type: 1,
-              openOrClose: this.connectOpenStatus ? 0 : 1,
-            })
-            .then((res) => {
-              if (!res.code == 0) return this.$message.error(res.msg);
-              this.connectOpenStatus = this.connectOpenStatus ? 0 : 1;
-              if (this.liveStatus) {
-                if (this.connectOpenStatus) {
-                  this.sendMessage({ type: 11, isConnect: true, isHigh: true }); //开启连麦
-                } else {
-                  this.sendMessage({
-                    type: 11,
-                    isConnect: false,
-                    isHigh: true,
-                  }); //关闭连麦
-                  this.allHangUp(() => {
-                    this.replyConnectAll();
-                  });
-                }
-              }
-              this.$message.success(
-                this.connectOpenStatus ? "您已开启连麦" : "您已关闭连麦"
-              );
-            })
-            .catch((err) => {
-              console.error(err);
-            });
+          this.connectOpenStatus = this.connectOpenStatus ? 0 : 1;
+          if (this.liveStatus) {
+            if (this.connectOpenStatus) {
+              this.sendMessage({ type: 11, isConnect: true, isHigh: true }); //开启连麦
+            } else {
+              this.sendMessage({
+                type: 11,
+                isConnect: false,
+                isHigh: true,
+              }); //关闭连麦
+              this.connectMessageInfo = [];
+            }
+          }
+          this.$message.success(
+            this.connectOpenStatus ? "您已开启连麦" : "您已关闭连麦"
+          );
         })
         .catch(() => {});
     },
@@ -1555,6 +1567,8 @@ export default {
             isTalk: messageInfo.isTalk, //禁言
             allMute: messageInfo.allMute, //全员禁言
             isConnect: messageInfo.isConnect, //是否开启连麦
+            isGift: messageInfo.isGift, //是否开启礼物
+            isLike: messageInfo.isLike, //是否开启互动
           },
         };
         for (let k in data.message) {
@@ -1841,14 +1855,6 @@ export default {
         delete this.connectTimer[info.userInfo.userId];
       }
       //挂断
-      let messageInfo = {
-        type: info.message.type, //消息类型(1:普通信息、2:关注信息、3:提问信息、4:礼物信息、5:语音连麦信息：{1、同意，2、拒绝}、6:视频连麦信息：{1、同意，2、拒绝}、)
-        connectType: info.message.connectType,
-        replyUserId: info.userInfo.userId,
-        replyType: -3, // 连麦后挂断
-        isHigh: true,
-      };
-      this.sendMessage(messageInfo);
       const ind = this.connectMessageInfo.findIndex(
         (item) => item.userInfo.userId === info.userInfo.userId
       );
@@ -1902,33 +1908,6 @@ export default {
         clearInterval(this.connectStatusTimer);
         this.connectStatusTimer = null;
       }
-    },
-    allHangUp(cb) {
-      let arr = JSON.stringify(this.connectMessageInfo);
-      arr = JSON.parse(arr);
-      let connectArr = arr.filter((item) => item.connectStatus);
-      connectArr.forEach((item) => {
-        this.hangup(item);
-      });
-      if (cb) cb();
-    },
-    //拒绝所有申请连麦的人
-    replyConnectAll() {
-      let arr = JSON.stringify(this.connectMessageInfo);
-      arr = JSON.parse(arr);
-      let noConnectArr = arr.filter((item) => !item.connectStatus);
-      console.log(noConnectArr, 1111111111);
-      noConnectArr.forEach((item) => {
-        let messageInfo = {
-          type: item.message.type,
-          connectType: item.message.connectType,
-          replyType: -2,
-          replyUserId: item.userInfo.userId,
-          isHigh: true,
-        };
-        this.sendMessage(messageInfo);
-      });
-      this.connectMessageInfo = [];
     },
   },
   destroyed() {

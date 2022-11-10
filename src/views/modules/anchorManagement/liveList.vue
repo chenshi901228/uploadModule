@@ -586,7 +586,7 @@ export default {
       }else{
         t = this.$router.resolve({ //助手进入直播间
           name: "assistantLiveRoom",
-          query: { liveTheme: row.liveTheme, anchorUserId:row.anchorUserId },
+          query: { liveTheme: row.liveTheme, TaskId: row.id, anchorUserId:row.anchorUserId },
         });
       }
       // 关闭窗口刷新父页面

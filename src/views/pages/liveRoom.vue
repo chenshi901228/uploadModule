@@ -29,10 +29,10 @@
                 ·&nbsp;<span>{{ numberChange(liveRoomUserinfo.cumulativeNum || 0)}}</span
                 >人看过
               </p>
-              <p>
+              <!-- <p>
                 ·&nbsp;<span>{{ numberChange(liveRoomUserinfo.onlineNum || 0)}}</span
                 >人在线
-              </p>
+              </p> -->
               <p>·&nbsp;<span>{{ numberChange(liveRoomUserinfo.liveHot || 0)}}</span>热度</p>
             </div>
           </div>
