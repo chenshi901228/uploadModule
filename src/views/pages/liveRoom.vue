@@ -1597,10 +1597,12 @@ export default {
       this.$http.post('/sys/mixedflow/openOrClose',{type:0,openOrClose:this.giftStatus?0:1}).then(res=>{
         if(!res.code==0) return this.$message.error(res.msg)
         this.giftStatus = this.giftStatus?0:1
-        if(this.giftStatus){
-          this.sendMessage({ type: 9, isGift: true, isHigh:true, }); //开启送礼物
-        }else{
-          this.sendMessage({ type: 9, isGift: false, isHigh:true, }); //关闭送礼物
+        if(this.liveStatus){
+          if(this.giftStatus){
+            this.sendMessage({ type: 9, isGift: true, isHigh:true, }); //开启送礼物
+          }else{
+            this.sendMessage({ type: 9, isGift: false, isHigh:true, }); //关闭送礼物
+          }
         }
         this.$message.success( this.giftStatus ? "您已开启礼物" : "您已关闭礼物" );
       }).catch(err=>{
@@ -1612,10 +1614,12 @@ export default {
       this.$http.post('/sys/mixedflow/openOrClose',{type:2,openOrClose:this.likeStatus?0:1}).then(res=>{
         if(!res.code==0) return this.$message.error(res.msg)
         this.likeStatus = this.likeStatus?0:1
-        if(this.likeStatus){
-          this.sendMessage({ type: 12, isLike: true, isHigh:true, }); //开启互动
-        }else{
-          this.sendMessage({ type: 12, isLike: false, isHigh:true, }); //关闭互动
+        if(this.liveStatus){
+          if(this.likeStatus){
+            this.sendMessage({ type: 12, isLike: true, isHigh:true, }); //开启互动
+          }else{
+            this.sendMessage({ type: 12, isLike: false, isHigh:true, }); //关闭互动
+          }
         }
         this.$message.success( this.likeStatus ? "您已开启互动" : "您已关闭互动" );
       }).catch(err=>{
@@ -2265,7 +2269,9 @@ export default {
         liveTheme: this.liveTheme,
         TaskId: this.$route.query.TaskId,
         trends: this.trends,
-        openEvenWheat: this.connectOpenStatus // 开启/关闭连麦
+        openEvenWheat: this.connectOpenStatus, // 开启/关闭连麦
+        openLiveReward: this.giftStatus, // 开启/关闭礼物
+        openGiveLike: this.likeStatus, // 开启/关闭互动
       };
       if (
         this.$route.query.liveTheme &&
