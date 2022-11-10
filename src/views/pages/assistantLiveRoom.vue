@@ -1427,10 +1427,29 @@ export default {
         ) {
           if (item.payload && item.payload.data) {
             item.payload.data = JSON.parse(item.payload.data);
-            list.push(Object.assign(item));
             let applyInfo = item.payload.data;
+            if( applyInfo.message.type === 1 || applyInfo.message.type === 4 || applyInfo.message.type === 10){
+              list.push(Object.assign(item));
+            }
             if (applyInfo.message.type === 3) {
               this.questionMessageInfo.unshift(applyInfo);
+            }
+            if( applyInfo.message &&applyInfo.message.type && applyInfo.message.type === 9 ){ //主播控制赠送礼物
+              this.giftStatus = applyInfo.message.isGift
+              this.$message.success(this.giftStatus?'主播已开启礼物':'主播已关闭礼物')
+            }
+            if( applyInfo.message &&applyInfo.message.type && applyInfo.message.type === 11 ){ //主播控制连麦
+              this.connectOpenStatus = applyInfo.message.isConnect
+              if(this.connectOpenStatus){
+                this.$message.success('主播已开启连麦')
+              }else{
+                this.connectMessageInfo = []
+                this.$message.success('主播已关闭连麦')
+              }
+            }
+            if( applyInfo.message &&applyInfo.message.type && applyInfo.message.type === 12 ){ //主播控制互动
+              this.likeStatus = applyInfo.message.isLike
+              this.$message.success(this.likeStatus?'主播已开启互动':'主播已关闭互动')
             }
             //连麦信息
             if (

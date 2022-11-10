@@ -276,6 +276,8 @@
               <span>{{item.text}}</span>
               <div class="tool_nav_son" v-show="toolNavSelected == 'setUp' && item.type == toolNavSelected">
                 <p @click.stop="beautifyDialog = true">美化</p>
+                <p @click.stop="openOrCloseGift">{{ giftStatus ? "关闭礼物" : "开启礼物" }}</p>
+                <p @click.stop="openOrCloseLike">{{ likeStatus ? "关闭互动" : "开启互动" }}</p>
                 <p @click.stop="streamAddress">拉流地址</p>
               </div>
               <div class="tool_nav_son" v-show="toolNavSelected == 'superboard' && item.type == toolNavSelected">
@@ -1590,6 +1592,30 @@ export default {
       }
       return '关闭提示'
     },
+    // 开启或关闭礼物
+    openOrCloseGift(){
+      this.giftStatus = this.giftStatus?0:1
+      console.log(this.giftStatus)
+      if(this.giftStatus){
+      console.log('开启送礼物')
+        this.sendMessage({ type: 9, isGift: true, isHigh:true, }); //开启送礼物
+      }else{
+      console.log('关闭礼物')
+        this.sendMessage({ type: 9, isGift: false, isHigh:true, }); //关闭送礼物
+      }
+      this.$message.success( this.giftStatus ? "您已开启礼物" : "您已关闭礼物" );
+    },
+    // 开启或关闭互动
+    openOrCloseLike(){
+      this.likeStatus = this.likeStatus?0:1
+      if(this.likeStatus){
+        this.sendMessage({ type: 12, isLike: true, isHigh:true, }); //开启互动
+      }else{
+        this.sendMessage({ type: 12, isLike: false, isHigh:true, }); //关闭互动
+      }
+      this.$message.success( this.likeStatus ? "您已开启互动" : "您已关闭互动" );
+    },
+    // 拉流地址
     streamAddress(){
       if(this.liveStatus){
         this.streamAddressDialog = true
@@ -2555,7 +2581,7 @@ export default {
           if (item.payload && item.payload.data) {
             item.payload.data = JSON.parse(item.payload.data)
             let applyInfo = item.payload.data;
-            if( applyInfo.message.type === 1 || applyInfo.message.type === 4 ){
+            if( applyInfo.message.type === 1 || applyInfo.message.type === 4 || applyInfo.message.type === 10){
               list.push(Object.assign(item));
             }
             if (applyInfo.message.type === 3) {
