@@ -433,7 +433,7 @@
                     />
                     <span>{{ item.userInfo.nickName }}</span>
                   </div>
-                  <div
+                  <!-- <div
                     class="btn gua_btn"
                     @click="
                       replyConnect(
@@ -469,7 +469,7 @@
                     v-if="item.connectStatus"
                   >
                     挂断
-                  </div>
+                  </div> -->
                 </div>
               </div>
               <!-- <div
@@ -890,6 +890,7 @@ export default {
               item.stream = await this.zg.startPlayingStream(
                 streamItem.streamID
               );
+              item.connectStatus = true;
               item.getReplyConnectLoading = false;
             }
           });
@@ -898,38 +899,6 @@ export default {
           this.connectMessageInfo = this.connectMessageInfo.sort(
             (a, b) => b.connectStatus - a.connectStatus
           );
-
-          if (this.roomId != streamItem.streamID) {
-            let extraInfo = streamItem.extraInfo;
-            let extraInfoObj = null;
-            try {
-              extraInfoObj = JSON.parse(extraInfo);
-            } catch (e) {}
-            this.$http
-              .post("/sys/mixedflow/startEvenWheat", {
-                UserId: streamItem.user.userID, //用户ID；
-                RoomId: this.roomId, //房间ID；
-                joinRoomId: streamItem.streamID,
-                joinType:
-                  extraInfoObj && extraInfoObj.connectType == 1
-                    ? "voice"
-                    : "watch",
-              })
-              .then((res) => {
-                console.log(res);
-              })
-              .catch((err) => {
-                //混流失败挂断用户
-                let messageInfo = {
-                  type: 5, //消息类型(1:普通信息、2:关注信息、3:提问信息、4:礼物信息、5:语音连麦信息：{1、同意，2、拒绝}、6:视频连麦信息：{1、同意，2、拒绝}、)
-                  connectType: extraInfoObj.connectType,
-                  replyUserId: streamItem.user.userID,
-                  replyType: -3, // 连麦后挂断
-                  isHigh: true,
-                };
-                this.sendMessage(messageInfo);
-              });
-          }
         });
       } else if (updateType == "DELETE") {
         // 流删除，停止拉流
@@ -953,16 +922,6 @@ export default {
               }
             }
           });
-          this.$http
-            .post("/sys/mixedflow/finishEvenWheat", {
-              UserId: streamItem.user.userID, //用户ID；
-              RoomId: this.roomId, //房间ID；
-              joinRoomId: streamItem.streamID,
-            })
-            .then((res) => {
-              console.log(res);
-            })
-            .catch((err) => {});
         });
       }
     });
@@ -970,12 +929,12 @@ export default {
   watch: {
     livePlayerList(n) {
       // 拉流变化定时监听连麦用户实时状态
-      if (n.length > 0) {
-        this.onGetConnectStatus();
-      }
-      if (n.length == 0) {
-        this.offGetConnectStatus();
-      }
+      // if (n.length > 0) {
+      //   this.onGetConnectStatus();
+      // }
+      // if (n.length == 0) {
+      //   this.offGetConnectStatus();
+      // }
     },
   },
   methods: {
@@ -1252,7 +1211,7 @@ export default {
       }
     },
     async getMuteStatus(obj) {
-      let res = await this.$http.post("/sys/mixedflow/userMute", obj);
+      let res = await this.$http.post("/sys/mixedflow/userMute", {...obj,roomId:this.roomId});
     },
     // 获取token的方法
     getTokenFun(userID) {
@@ -1569,23 +1528,23 @@ export default {
               });
             }
             // 连麦之后接收连麦用户定时发送的正在连麦中消息
-            if (
-              applyInfo.message &&
-              applyInfo.message.type &&
-              applyInfo.message.type === 6
-            ) {
-              // console.error(applyInfo)
-              this.connectMessageInfo.forEach((connect) => {
-                if (
-                  connect.connectStatus &&
-                  connect.userInfo &&
-                  applyInfo.userInfo &&
-                  connect.userInfo.id == applyInfo.userInfo.id
-                ) {
-                  connect["lastGetConnectIng"] = new Date().getTime();
-                }
-              });
-            }
+            // if (
+            //   applyInfo.message &&
+            //   applyInfo.message.type &&
+            //   applyInfo.message.type === 6
+            // ) {
+            //   // console.error(applyInfo)
+            //   this.connectMessageInfo.forEach((connect) => {
+            //     if (
+            //       connect.connectStatus &&
+            //       connect.userInfo &&
+            //       applyInfo.userInfo &&
+            //       connect.userInfo.id == applyInfo.userInfo.id
+            //     ) {
+            //       connect["lastGetConnectIng"] = new Date().getTime();
+            //     }
+            //   });
+            // }
           }
         }
       });
@@ -1725,7 +1684,7 @@ export default {
     //获取提问列表
     getliveQuestionList() {
       this.$http
-        .get("/sys/liveAsk/getLiveAskInRoom")
+        .get("/sys/liveAsk/getLiveAskInRoom",{params:{roomId:this.roomId}})
         .then(({ data: res }) => {
           if (!res.code == 0) return this.$message.error(res.msg);
           this.questionMessageInfo = res.data;
@@ -1738,6 +1697,7 @@ export default {
     getOnlineUsers() {
       let obj = {
         nickName: this.searchUser,
+        roomId: this.roomId
       };
       let params = { ...this.params, ...obj };
       this.$http
