@@ -1283,7 +1283,7 @@ export default {
       superBoardType: null, //白板类型：1-普通白板，2-文件白板
       giftStatus:1, //是否关闭送礼物 1:开启 0:关闭
       likeStatus:1, //是否开启互动
-      connectOpenStatus:0,//是否开启连麦
+      connectOpenStatus:1,//是否开启连麦
       isPush:false,//是否推流
     };
   },
@@ -2754,6 +2754,8 @@ export default {
             isTalk: messageInfo.isTalk, //禁言
             allMute: messageInfo.allMute, //全员禁言
             isConnect: messageInfo.isConnect, //是否开启连麦
+            isGift: messageInfo.isGift, //是否开启礼物
+            isLike: messageInfo.isLike, //是否开启互动
           },
         };
         for (let k in data.message) {

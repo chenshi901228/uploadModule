@@ -676,9 +676,9 @@ export default {
       livePlayerList: [], //流列表
       connectTimer: {}, //超时定时器
       connectStatusTimer: null, //连麦之后定时监听连麦用户连接状态
-       giftStatus:1, //是否关闭送礼物 1:开启 0:关闭
+      giftStatus:1, //是否关闭送礼物 1:开启 0:关闭
       likeStatus:1, //是否开启互动
-      connectOpenStatus:0,//是否开启连麦
+      connectOpenStatus:1,//是否开启连麦
       player:null,
       loadingLive:false,
     };
