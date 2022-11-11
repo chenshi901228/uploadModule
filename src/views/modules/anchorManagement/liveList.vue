@@ -603,16 +603,29 @@ export default {
     },
 
     // 判断是否能进入直播间开播
-    canJoinLiveRoom({ livePreviewId, liveState, planStartDate, showMode }) {
+    canJoinLiveRoom({ livePreviewId, liveState, planStartDate, showMode, anchorUserId }) {
       if(livePreviewId) { //直播预告创建的直播
-        if(liveState == 3) { //未开播
-          let date = new Date().getTime() - new Date(planStartDate).getTime()
-          date = Math.ceil(date / 1000 / 60)
-          return date <= 120  //超过开播时间2小时无开播按钮
+        if(anchorUserId==this.$store.state.user.weixinUserId){
+          if(liveState == 3) { //未开播
+            let date = new Date().getTime() - new Date(planStartDate).getTime()
+            date = Math.ceil(date / 1000 / 60)
+            return date <= 120  //超过开播时间2小时无开播按钮
+          }
+          return liveState == 1 && showMode
+        }else{
+          if(liveState == 3) { //未开播
+            let date = new Date().getTime() - new Date(planStartDate).getTime()
+            date = Math.ceil(date / 1000 / 60)
+            return date <= 120  //超过开播时间2小时无开播按钮
+          }
+          return liveState == 1
         }
-        return liveState == 1 && showMode
       }else { //直播列表创建的直播
-        return (liveState == 1 || liveState == 3) && showMode
+        if(anchorUserId==this.$store.state.user.weixinUserId){
+          return (liveState == 1 || liveState == 3) && showMode
+        }else{
+          return (liveState == 1 || liveState == 3)
+        }
       }
     },
     
