@@ -34,7 +34,7 @@
         ></upload>
         <p class="tips">头像大小限制300px  *  300px</p>
       </el-form-item>
-      <el-form-item label-width="140px" label="主播私信二维码" required>
+      <el-form-item label-width="140px" label="企微客服二维码" required>
         <upload
           :fileList="fileListQRcode"
           :limit="1"
@@ -47,7 +47,7 @@
         ></upload>
         <p class="tips">二维码大小限制300px  *  300px</p>
       </el-form-item>
-      <el-form-item label-width="140px" label="主播服务二维码">
+      <el-form-item label-width="140px" label="企微售后二维码">
         <upload
           :fileList="fileListService"
           :limit="1"
@@ -91,8 +91,8 @@ export default {
       },
       id: null, //主播id
       fileList: [],//主播头像
-      fileListQRcode:[],//主播私信二维码
-      fileListService:[],//主播服务二维码
+      fileListQRcode:[],//企微客服二维码
+      fileListService:[],//企微售后二维码
       service:"",
       dialogImageUrl: "",
       dialogVisible: false,
@@ -151,14 +151,14 @@ export default {
     uploadRemove(file) {
       this.fileList = []
     },
-    // 主播私信二维码上传、删除
+    // 企微客服二维码上传、删除
     uploadQRcodeSuccess(file) {
       this.fileListQRcode.push(file);
     },
     uploadQRcodeRemove(file) {
       this.fileListQRcode = []
     },
-    // 主播服务二维码上传、删除
+    // 企微售后二维码上传、删除
     uploadServiceSuccess(file) {
       this.fileListService.push(file);
     },

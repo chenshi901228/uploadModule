@@ -38,14 +38,14 @@
             </div>
           </div>
           <div style="display: flex;justify-content: space-between;align-items: center;height:50px;margin-top:20px">
-            <span style="color:#A8AAB3;margin-bottom: 10px;">主播私信二维码</span>
+            <span style="color:#A8AAB3;margin-bottom: 10px;">企微客服二维码</span>
             <el-button plain type="primary" size="mini" icon="el-icon-edit" @click="editeUserInfo('show')">编辑</el-button>
           </div>
           <div style="width:100%;display: inline-block">
             <img style="height:110px;width:110px" :src="anchorDetails.qrCode || require('@/assets/img/default_avatar.png')" alt="">
           </div>
           <div style="display: flex;justify-content: space-between;align-items: center;height:50px;margin-top:20px">
-            <span style="color:#A8AAB3;margin-bottom: 10px;">主播服务二维码</span>
+            <span style="color:#A8AAB3;margin-bottom: 10px;">企微售后二维码</span>
             <el-button plain type="primary" size="mini" icon="el-icon-edit" @click="editeUserInfo('showService')">编辑</el-button>
           </div>
           <div style="width:100%;display: inline-block">

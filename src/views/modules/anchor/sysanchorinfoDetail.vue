@@ -119,7 +119,7 @@
             </el-image>
           </div>
           <div style="display:flex;width: 48%">
-            <div style="text-align: right;margin-right:30px">主播私信二维码</div>
+            <div style="text-align: right;margin-right:30px">企微客服二维码</div>
             <el-image 
               style="width: 120px; height: 120px"
               :src="diaForm.qrCode" 
@@ -130,7 +130,7 @@
               </div>
             </el-image>
           </div>
-          <div>主播服务二维码</div>
+          <div>企微售后二维码</div>
           <div style="display:flex;width: 100%;margin-left:66px">
             <el-image 
               style="width: 120px; height: 120px"

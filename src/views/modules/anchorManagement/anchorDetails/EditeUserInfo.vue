@@ -38,7 +38,7 @@
         ></upload>
         <p class="tips">头像大小限制300px  *  300px</p>
       </el-form-item>
-      <el-form-item label-width="140px" label="主播私信二维码：" required v-show="qcShow=='show'">
+      <el-form-item label-width="140px" label="企微客服二维码：" required v-show="qcShow=='show'">
         <upload
           :fileList="fileListQRcode"
           :limit="1"
@@ -52,7 +52,7 @@
         ></upload>
         <p class="tips">二维码大小限制300px  *  300px</p>
       </el-form-item>
-      <el-form-item label-width="140px" label="主播服务二维码：" v-show="qcShow=='showService'">
+      <el-form-item label-width="140px" label="企微售后二维码：" v-show="qcShow=='showService'">
         <upload
           :fileList="fileListService"
           :limit="1"
@@ -94,8 +94,8 @@ export default {
       },
       id: null, //主播id
       fileList: [],//主播头像
-      fileListQRcode:[],//主播私信二维码
-      fileListService:[],//主播服务二维码
+      fileListQRcode:[],//企微客服二维码
+      fileListService:[],//企微售后二维码
       dialogImageUrl: "",
       dialogVisible: false,
       rules: {
@@ -156,14 +156,14 @@ export default {
     uploadRemove(file) {
       this.fileList = []
     },
-    // 主播私信二维码上传、删除
+    // 企微客服二维码上传、删除
     uploadQRcodeSuccess(file) {
       this.fileListQRcode.push(file);
     },
     uploadQRcodeRemove(file) {
       this.fileListQRcode = []
     },
-    // 主播服务二维码上传、删除
+    // 企微售后二维码上传、删除
     uploadServiceSuccess(file) {
       this.fileListService.push(file);
     },
@@ -184,13 +184,13 @@ export default {
             if (!this.$refs.uploadQRcodeFile.isUploadAll()) {
               return this.$message.error("有附件正在上传中")
             }
-            if(!this.fileListQRcode.length) return this.$message.error("请上传主播私信二维码")
+            if(!this.fileListQRcode.length) return this.$message.error("请上传企微客服二维码")
           }
           if(this.qcShow=='showService'){
             if (!this.$refs.uploadServiceFile.isUploadAll()) {
               return this.$message.error("有附件正在上传中")
             }
-            if(!this.fileListService.length) return this.$message.error("请上传主播服务二维码")
+            if(!this.fileListService.length) return this.$message.error("请上传企微售后二维码")
           }
 
           this.$confirm(this.qcShow=='haddin' ? '确定修改主播信息' : '确认信息已填写无误，提交审批','提示',{
@@ -234,7 +234,7 @@ export default {
               }
               this.$http.post("sys/anchor/applyInfo/updateBaseInfoWithQrCode", params).then(({ data: res }) => {
                 if(res.code == 0) {
-                  this.$message.success("修改主播私信二维码成功,请等待后台审核")
+                  this.$message.success("修改企微客服二维码成功,请等待后台审核")
                   this.resetForm(formName)
                   this.fileListQRcode = []
                   this.id = null
@@ -256,7 +256,7 @@ export default {
                 }
                 this.$http.post("sys/anchor/applyInfo/updateBaseInfoWithServiceUrl", params).then(({ data: res }) => {
                   if(res.code == 0) {
-                    this.$message.success("修改主播服务二维码成功,请等待后台审核")
+                    this.$message.success("修改企微售后二维码成功,请等待后台审核")
                     this.resetForm(formName)
                     this.fileListService = []
                     this.id = null

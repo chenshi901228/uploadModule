@@ -23,7 +23,7 @@
         }}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
-       <span style="width:120px;text-align:right;margin:0 10px">更改：</span> {{ diaForm.updateType==1?'全部':diaForm.updateType==2?'修改名称':diaForm.updateType==3?'修改简介':diaForm.updateType==4?'修改头像':diaForm.updateType==5?'主播私信二维码':diaForm.updateType==7?'主播服务二维码':'-'}}
+       <span style="width:120px;text-align:right;margin:0 10px">更改：</span> {{ diaForm.updateType==1?'全部':diaForm.updateType==2?'修改名称':diaForm.updateType==3?'修改简介':diaForm.updateType==4?'修改头像':diaForm.updateType==5?'企微客服二维码':diaForm.updateType==7?'企微售后二维码':'-'}}
       </div>
       <div style="display: flex; margin: 20px 0 10px">
        <span style="width:120px;text-align:right;margin:0 10px">主播昵称：</span> {{ diaForm.username || '-'  }}
@@ -44,7 +44,7 @@
         </el-image>
       </div>
       <div style="display: flex; margin: 20px 0 10px; align-items: center;">
-        <span style="width:120px;text-align:right;margin:0 10px">主播私信二维码：</span> 
+        <span style="width:120px;text-align:right;margin:0 10px">企微客服二维码：</span> 
         <el-image 
           style="width: 60px; height: 60px"
           :src="diaForm.qrCode" 
@@ -56,7 +56,7 @@
         </el-image>
       </div>
       <div style="display: flex; margin: 20px 0 10px; align-items: center;">
-        <span style="width:120px;text-align:right;margin:0 10px">主播服务二维码：</span> 
+        <span style="width:120px;text-align:right;margin:0 10px">企微售后二维码：</span> 
         <el-image 
           style="width: 60px; height: 60px"
           :src="diaForm.serviceUrl" 
