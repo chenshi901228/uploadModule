@@ -644,6 +644,20 @@
           >
         </el-pagination>
     </el-dialog>
+    <el-dialog
+      title="主播已下播"
+      :visible.sync="endLiveDialogVisible"
+      :close-on-click-modal="false"
+      :close-on-press-escape="false"
+      :show-close="false"
+      width="25%"
+      top="200px"
+      center
+    >
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" type="primary" @click="confirmQuit">{{btnText}}</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -659,6 +673,8 @@ import 'videojs-contrib-hls'
 export default {
   data() {
     return {
+      endLiveDialogVisible:false,
+      btnText:'知道了（5s）',
       goodsDialogVisible: false, //商品弹窗
       livePreviewDialogVisible: false, //直播预告弹窗
       recommendedAnchorDialogVisible: false, //推荐主播弹窗
@@ -938,6 +954,23 @@ export default {
     },
   },
   methods: {
+    confirmQuit(){
+      window.close()
+    },
+    // 确认倒计时
+    doLoop: function (seconds) {
+      seconds = seconds ? seconds : 5;
+      this.btnText = `知道了（${seconds}s）`;
+      let countdown = setInterval(() => {
+        if (seconds > 0) {
+          this.btnText = `知道了（${seconds}s）`;
+          --seconds;
+        } else {
+          this.btnText = '知道了';
+          clearInterval(countdown);
+        }
+      }, 1000);
+    },
     // 更新直播地址
     getVideo(url) {
       if(!this.player) {
@@ -1424,6 +1457,18 @@ export default {
               //订单系统消息
               list.push(Object.assign(item));
             }
+            if (tempObj.stopFlag) {
+							if(this.liveStatus){ //避免和自定义消息重复
+                this.zg.stopPlayingStream(this.roomId)
+                this.endLiveDialogVisible = true
+                this.doLoop(5)
+                if(this.endLiveDialogVisible){
+                  setTimeout(()=>{
+                    window.close()
+                  },5000)
+                }
+							} 
+						}
           }
         }
         if (
@@ -1755,6 +1800,7 @@ export default {
         anchorUserId: this.roomId,
         limit: 999,
         page: 1,
+        showState:1,
       };
       return new Promise((resolve, reject) => {
         this.$http

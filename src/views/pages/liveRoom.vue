@@ -2941,6 +2941,7 @@ export default {
         anchorUserId: this.roomId,
         limit:999,
         page:1,
+        showState:1,
       }
       return new Promise((resolve,reject)=>{
         this.$http.get(`/sys/livePreview/pageOwn`,{params}).then((res) => {
