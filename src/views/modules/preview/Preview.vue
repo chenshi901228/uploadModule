@@ -987,4 +987,9 @@ export default {
 /deep/.el-dialog__wrapper {
   overflow: hidden; /*隐藏ie和edge中遮罩的滚动条*/
 }
+
+/deep/.el-table__fixed{
+  height: auto !important;
+  bottom: 17px !important;
+}
 </style>

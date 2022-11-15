@@ -754,4 +754,8 @@ export default {
     object-fit: cover;
   }
 }
+/deep/.el-table__fixed{
+  height: auto !important;
+  bottom: 17px !important;
+}
 </style>
