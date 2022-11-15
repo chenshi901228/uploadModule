@@ -284,8 +284,11 @@ export default {
     },
     //回车确认
     userSelect() {
+      if(!this.sortVal){
+        return this.$message.warning('序号不能为空或0');
+      }
       this.$http
-        .put("/sys/sysFrequentlyQuestions", {
+        .put("/sys/sysFrequentlyQuestions/numUpdate", {
           num: this.sortVal,
           id: this.sortId,
         })
