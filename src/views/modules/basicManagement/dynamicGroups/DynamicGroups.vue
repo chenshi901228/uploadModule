@@ -472,6 +472,7 @@
           align="center"
           width="50"
           fixed="left"
+          :selectable="selectable"
         ></el-table-column>
         <el-table-column label="用户昵称" prop="name" align="center">
           <template slot-scope="scope">
@@ -641,6 +642,10 @@ export default {
   },
   activated() {},
   methods: {
+    //禁止已加入的动态组勾选
+    selectable(row,index){
+      return row.joinFlag==0//为true的时候可以选，为false则不可选择
+    },
     //一键移除
     deleteAll() {
       this.dialogDeleteAllVisible = true;
