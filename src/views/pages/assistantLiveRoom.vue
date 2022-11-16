@@ -138,11 +138,16 @@
                         v-else-if="
                           item.payload.data.fansInfo &&
                           !item.payload.data.fansInfo.isFans &&
-                          !item.payload.data.fansInfo.isAttention
+                          !item.payload.data.fansInfo.isAttention &&
+                          item.payload.data.userInfo.userId!=roomID
                         "
                       >
                         <i class="el-icon-star-on" style="color: #fde7c8"></i>
                         游客&nbsp;{{ item.payload.data.fansInfo.grade }}
+                      </div>
+                      <div class="fansCard" style="background:#1F6BFA;" v-else-if="item.payload.data.userInfo&&item.payload.data.userInfo.userId==roomID">
+                        <i class="el-icon-star-on" style="color:#fde7c8;"></i>
+                        主播&nbsp;
                       </div>
                     </div>
                     <p class="normalMsg">
@@ -1006,7 +1011,7 @@ export default {
     getRoomMsg(){
       this.$http.post('/sys/mixedflow/getRoomMsgByRoomId',{RoomId: this.anchorUserId}).then(({data:res})=>{
         if(res.code!=0) return this.$message.error(res.msg);
-        this.userID = res.data.weixinUserDetailDTO.id
+        this.userID = res.data.weixinUserDetailDTO.id + 1234 //避免与小程序即构加入房间重复
         this.userName = res.data.weixinUserDetailDTO.nickName
         this.liveRoomUserinfo.cumulativeNum = res.data.countGiveLikeNum
         this.liveRoomUserinfo.liveHot = res.data.liveHot
