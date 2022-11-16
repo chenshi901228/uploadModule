@@ -2588,6 +2588,20 @@ export default {
             if(tempObj.type=='purchaseInformation'){ //订单系统消息
 							list.push(Object.assign(item));
 						}
+            if(tempObj.haveTouristJoin) { //未登录用户进入直播间的消息
+              list.push(Object.assign({
+                type: "TIMCustomElem",
+                payload: {
+                  data: {
+                    userInfo: {},
+                    message: {
+                      type: 10,
+                      text: "游客"
+                    }
+                  }
+                }
+              }))
+						}
           }
         }
         if (
