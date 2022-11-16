@@ -461,6 +461,7 @@
               type="text"
               size="small"
               icon="el-icon-plus"
+              :loading="loading"
               @click="createRoom(scope.$index, scope.row)"
               >创建直播</el-button
             >
@@ -600,6 +601,7 @@ export default {
       dialogVisible: false,
       showState: 0,
       id: "",
+      loading:false
     };
   },
   watch: {},
@@ -752,19 +754,23 @@ export default {
       //   },
       // });
       // window.open(routeData.href, "_blank");
+      this.loading=true
       this.$http
         .post("/sys/livePreview/createLiveInPreview", {
           id: row.id,
         })
         .then(({ data: res }) => {
           if (res.code !== 0) {
+            this.loading=false
             return this.$message.error(res.msg);
           } else {
             this.$message.success("创建直播成功！请在直播列表中查看");
+            this.loading=false
             this.getDataList();
           }
         })
         .catch((err) => {
+          this.loading=false
           throw err;
         });
       //   }
