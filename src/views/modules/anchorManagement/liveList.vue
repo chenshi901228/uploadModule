@@ -404,6 +404,14 @@
               @click="recordInfo(row)"
               >直播记录</el-button
             >
+            <!-- <el-button
+              type="text"
+              icon="el-icon-chat-line-square"
+              size="small"
+              v-if="row.liveState != 3 && $hasPermission('sys:anchorManagement:problem')"
+              @click="problemInfo(row)"
+              >查看提问</el-button
+            > -->
           </template>
         </el-table-column>
       </el-table>
@@ -738,6 +746,16 @@ export default {
       });
       window.localStorage.setItem(
         "recordInfoDetailData",
+        JSON.stringify(data)
+      );
+    },
+    //查看提问
+    problemInfo(data){
+      this.$router.push({
+        path: "/anchorManagement-problem-problemList",
+      });
+      window.localStorage.setItem(
+        "problemListDetailData",
         JSON.stringify(data)
       );
     },
