@@ -1759,16 +1759,32 @@ export default {
       if(this.isOpenDesktopSharing){
         return this.$message.warning('请先关闭当前屏幕共享')
       }
-      this.screenStream = await this.zg.createStream({ //屏幕共享流
-        screen: {
-          videoQuality: 4,
-          width:1280,
-          height:720,
-          frameRate: 20,
-          bitrate: 2250,
-          audio: true
-        },
-      });
+      const custom = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: { sampleSize: 96, echoCancellation: false, channelCount: 2 } });
+      this.screenStream = await this.zg.createStream({custom: {source: custom}});
+      this.screenStream.getVideoTracks()[0].onended = ()=> {
+        this.$http.post('/sys/mixedflow/closeDesktopSharing',{RoomId:this.roomId}).then(res=>{
+          if(res.data.code==0){
+            this.$message({
+              message:'屏幕共享已关闭',
+              type:'success'
+            })
+            this.zg.stopPublishingStream('shareDesk'+this.roomId)
+            this.zg.destroyStream(this.screenStream);
+            this.isOpenDesktopSharing = false
+            localStorage.setItem('isOpenDesktopSharing',false)
+          }
+        })
+      }
+      // this.screenStream = await this.zg.createStream({ //屏幕共享流
+      //   screen: {
+      //     videoQuality: 4,
+      //     width:1280,
+      //     height:720,
+      //     frameRate: 20,
+      //     bitrate: 2250,
+      //     audio: true
+      //   },
+      // });
       let res = await this.zg.startPublishingStream('shareDesk'+this.roomId, this.screenStream); //共享桌面流
       if(res){
         this.$http.post('/sys/mixedflow/openDesktopSharing',{RoomId:this.roomId,StreamId:'shareDesk'+this.roomId}).then(res=>{
