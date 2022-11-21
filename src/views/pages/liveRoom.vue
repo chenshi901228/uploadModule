@@ -19,10 +19,10 @@
                 <img src="../../assets/img/black_circle.png" alt="">
                 <span>未开播</span>
               </div>
-              <div class="record_btn" @click="recordMethod" v-if="liveStatus">
+              <!-- <div class="record_btn" @click="recordMethod" v-if="liveStatus">
                 <img :src="isRecord ? require('../../assets/img/record.png') : require('../../assets/img/start_record.png')" alt="">
                 <span>{{isRecord&&!pauseRecord?'暂停录制':isRecord&&pauseRecord?'恢复录制':'开始录制'}}</span>
-              </div>
+              </div> -->
             </div>
             <div class="online_info">
               <p>

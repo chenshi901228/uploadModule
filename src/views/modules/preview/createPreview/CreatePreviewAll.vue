@@ -61,6 +61,15 @@
           </el-upload>
         </el-form-item>
 
+        <!-- <el-form-item label="直播推广图">
+          <custom-upload ref="frontCoverUpload" @uploadSuccess="frontCoverUploadSuccess"
+            @uploadRemove="frontCoverUploadRemove" fileWH="460/368" :fileList="frontCoverList" :fileType="['png', 'jpg', 'jpeg']"
+            :fileMaxSize="2"></custom-upload>
+          <div>
+            格式限制：jpg/jpeg/png，图片尺寸为460px×368px，大小不得超过2M
+          </div>
+        </el-form-item> -->
+
 
         <el-form-item class="quill-editor" label="直播介绍" prop="liveIntroduce">
           <quill-editor v-model="ruleForm.liveIntroduce" ref="myQuillEditor" style="width: 800px; height: 380px"
@@ -165,7 +174,7 @@
             @uploadRemove="frontCoverUploadRemove" :fileList="frontCoverList" :fileType="['png', 'jpg', 'jpeg']"
             :fileMaxSize="2"></custom-upload>
           <div>
-            格式限制：jpg/jpeg/png,建议图片尺寸不小于630px×347px，大小不得超过2M
+            格式限制：jpg/jpeg/png，建议图片尺寸不小于630px×347px，大小不得超过2M
           </div>
         </el-form-item>
 
