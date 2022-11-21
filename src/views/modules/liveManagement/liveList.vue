@@ -340,14 +340,14 @@
               @click="recordInfo(row)"
               >直播记录</el-button
             >
-            <!-- <el-button
+            <el-button
               type="text"
               icon="el-icon-chat-line-square"
               size="small"
               v-if="row.liveState != 3 && $hasPermission('sys:liveManagement:problem')"
               @click="problemInfo(row)"
               >查看提问</el-button
-            > -->
+            >
           </template>
         </el-table-column>
       </el-table>

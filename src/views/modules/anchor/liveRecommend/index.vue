@@ -112,14 +112,33 @@
                 @selection-change="dataListSelectionChangeHandle"
                 :height="siteContentViewHeight + 47"
                 style="width: 100%"
+                @cell-dblclick="dblclick"
             >
                 <el-table-column
                     header-align="center"
                     align="center"
-                    width="80"
                     label="序号">
-                    <template slot-scope="{ $index }">
-                        <span>{{$index + 1}}</span>
+                    <template slot-scope="{ row }">
+                        <!-- <span>{{$index + 1}}</span> -->
+                        <!-- 序号 -->
+                        <div>
+                            <el-input-number 
+                                v-if="sortId === row.id && sortId !== ''"
+                                size="mini"
+                                v-model="sortVal"
+                                placeholder="请输入"
+                                @blur="sortId = ''"
+                                :min="0"
+                                :precision="0"
+                                :controls="false"
+                                :max="9999"
+                                :id="'input' + row.id"
+                                @keyup.enter.native="userSelect(row)"
+                            ></el-input-number>
+                            <span v-else>
+                                {{ row.num || "--" }}
+                            </span>
+                        </div>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -153,7 +172,7 @@
                             size="small"
                             icon="el-icon-delete"
                             @click="deleteCount(row, $index + 1)">移除</el-button>
-                        <el-button
+                        <!-- <el-button
                             type="text"
                             size="small"
                             icon="el-icon-sort-down"
@@ -163,7 +182,7 @@
                             size="small"
                             icon="el-icon-sort-up"
                             v-if="$index != 0"
-                            @click="upOrDownHandle(row, 1, $index + 1)">上移</el-button>
+                            @click="upOrDownHandle(row, 1, $index + 1)">上移</el-button> -->
                     </template>
                 </el-table-column>
             </el-table>
@@ -211,7 +230,9 @@ export default {
             typeList: [
                 { value: 0, label: "预告" },
                 { value: 1, label: "直播" },
-            ]
+            ],
+            sortVal: "",
+            sortId: "",
         };
     },
     created() {
@@ -259,14 +280,46 @@ export default {
                     this.$message.info("已取消操作");
                 });
         },
+        //排序
+        dblclick(row, column, cell, event) {
+            this.sortId = row.id;
+            this.sortVal = row.num;
+            this.$nextTick(() => {
+            let id = "#" + "input" + this.sortId;
+            document.querySelector(id).focus();
+            });
+        },
+        //回车确认
+        userSelect(row) {
+        if(!this.sortVal){
+            return this.$message.warning('序号不能为空或0');
+        }
+        this.$http
+            .put(`/sys/liveList/move?afterIndex=${row.num}&nowIndex=${this.sortVal}`).then(({ data: res }) => {
+            if (res.code !== 0) {
+                return this.$message.error(res.msg);
+            } else {
+                this.nowIndex = "";
+                this.query();
+            }
+            })
+            .catch((err) => {
+            throw err;
+            });
+        },
 
     },
 };
 </script>
 <style lang="scss" scoped>
-    .frontCoverImg {
-        max-width: 100%;
-        height: 60px;
-        object-fit: cover;
-    }
+.frontCoverImg {
+    max-width: 100%;
+    height: 60px;
+    object-fit: cover;
+}
+/deep/.el-input-number.is-without-controls {
+  .el-input {
+    width: 100px;
+  }
+}
 </style>
