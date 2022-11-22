@@ -348,7 +348,7 @@
             <el-button icon="el-icon-refresh" size="mini" @click="mainReset">重置</el-button>
           </el-form-item>
           <div>
-            <el-button size="mini" v-if="diaTbas === 4" @click="fansGroup" type="primary" icon="el-icon-user">群组
+            <el-button size="mini" v-if="diaTbas === 4" @click="fansGroup" type="primary" icon="el-icon-user">企微粉丝群
             </el-button>
           </div>
           <!-- 操作按钮 -->
@@ -605,7 +605,6 @@
       </div>
     </div>
 
-
     <el-dialog title="提示" :visible.sync="dialogVisible" width="30%">
       <span>确认删除吗？</span>
       <span slot="footer" class="dialog-footer">
@@ -720,49 +719,49 @@
 </template>
 
 <script>
-import { enCodeIdCard, numberConvert } from "@/utils";
+import { enCodeIdCard, numberConvert } from '@/utils'
 export default {
-  name: "LiveWebmanageUserdetail",
+  name: 'LiveWebmanageUserdetail',
 
-  data() {
+  data () {
     return {
-      userId: "",
+      userId: '',
       diaForm: {},
       diaTbas: 0,
       diaSearchForm: {
-        payType: "",
-        paySource: "",
-        name: "",
-        title: "",
-        anchorName: "",
-        userName: "",
-        phone: "",
-        level: "",
-        userType: "",
-        delFlg: "",
-        productName: "",
-        productType: "",
-        isFree: "",
-        type: "",
-        bankAccount: "",
-        approveStatus: "",
-        payStatus: "",
-        date: "",
+        payType: '',
+        paySource: '',
+        name: '',
+        title: '',
+        anchorName: '',
+        userName: '',
+        phone: '',
+        level: '',
+        userType: '',
+        delFlg: '',
+        productName: '',
+        productType: '',
+        isFree: '',
+        type: '',
+        bankAccount: '',
+        approveStatus: '',
+        payStatus: '',
+        date: ''
       },
       productForm: {
-        productName: "",
-        productType: "",
-        isFree: "",
-        id: "",
+        productName: '',
+        productType: '',
+        isFree: '',
+        id: ''
       },
       dataListSelections: [], // 数据列表，多选项
       diaDataList: [],
       dataListLoading: false,
       diaTableTitle: {
-        amount: "收益金额",
-        type: "收益类型",
-        detail: "收益描述",
-        createDate: "结算时间",
+        amount: '收益金额',
+        type: '收益类型',
+        detail: '收益描述',
+        createDate: '结算时间'
       },
       page_dia: 1, // 当前页码
       limit_dia: 10, // 每页数
@@ -776,224 +775,222 @@ export default {
       dataUserListTotal: 0,
       dataListSelectionUsers: [],
       dialogUserFormVisible: false,
-      productTypeOptions: [], //商品类型下拉选项
-      fansLevelsOptions: [], //粉丝等级options
-    };
+      productTypeOptions: [], // 商品类型下拉选项
+      fansLevelsOptions: [] // 粉丝等级options
+    }
   },
-  activated() {
-    this.userId = window.localStorage.getItem("hostDetailID");
+  activated () {
+    this.userId = window.localStorage.getItem('hostDetailID')
 
     this.$http
       .get(`/sys/anchor/info/getInfo/${this.userId}`)
       .then(({ data: res }) => {
         if (res.code !== 0) {
-          return this.$message.error(res.msg);
+          return this.$message.error(res.msg)
         }
-        this.diaForm = res.data;
-       
+        this.diaForm = res.data
       })
-      .catch(() => { });
-      setTimeout(() => {
-         this.$http
-          .get(
+      .catch(() => { })
+    setTimeout(() => {
+      this.$http
+        .get(
             `/sys/manage/userDetail/${this.userId}`
-          )
-          .then(({ data: r }) => {
-            if (r.code !== 0) {
-              return this.$message.error(r.msg);
-            }
-            this.$set(this.diaForm,'priceIncome',r.data.priceIncome)
-            this.$set(this.diaForm,'anchorWithdraw',r.data.anchorWithdraw)
-            this.$set(this.diaForm,'anchorBalance',r.data.anchorBalance)
+        )
+        .then(({ data: r }) => {
+          if (r.code !== 0) {
+            return this.$message.error(r.msg)
+          }
+          this.$set(this.diaForm, 'priceIncome', r.data.priceIncome)
+          this.$set(this.diaForm, 'anchorWithdraw', r.data.anchorWithdraw)
+          this.$set(this.diaForm, 'anchorBalance', r.data.anchorBalance)
+        })
+        .catch(() => { })
+    }, 100)
 
-          })
-          .catch(() => { });
-      }, 100);
-
-    this.changeTbas(this.diaTbas);
+    this.changeTbas(this.diaTbas)
   },
   methods: {
     // 添加金额符号
-    numberConvert(m) {
+    numberConvert (m) {
       return numberConvert(m)
     },
     // 身份证号码加密
-    enCodeIdCard(val) {
+    enCodeIdCard (val) {
       return enCodeIdCard(val)
     },
-    fansGroup() {
+    fansGroup () {
       this.$router.push({
-        path: "/userManagement-fansGroup-index",
-        query: { anchorId: this.userId },
-      });
+        path: '/userManagement-fansGroup-index',
+        query: { anchorId: this.userId }
+      })
     },
     // 多选
-    dataListSelectionChangeHandle(val) {
-      this.dataListSelections = val;
+    dataListSelectionChangeHandle (val) {
+      this.dataListSelections = val
     },
-    //确认下架
-    confirmDel() {
-      console.log(this.ids);
+    // 确认下架
+    confirmDel () {
+      console.log(this.ids)
       this.$http
-        .post("/sys/course/down", this.ids)
+        .post('/sys/course/down', this.ids)
         .then(({ data: res }) => {
           if (res.code !== 0) {
-            return this.$message.error(res.msg);
+            return this.$message.error(res.msg)
           } else {
-            this.dialogVisible = false;
+            this.dialogVisible = false
             this.diaSearchForm = {
-              payType: "",
-              paySource: "",
-              name: "",
-              title: "",
-              anchorName: "",
-              userName: "",
-              phone: "",
-              level: "",
-              userType: "",
-              delFlg: "",
-              productName: "",
-              productType: "",
-              isFree: "",
-              type: "",
-              bankAccount: "",
-              approveStatus: "",
-              payStatus: "",
-              date: "",
-            };
-            this.page_dia = 1; // 当前页码
-            this.diaDataList = [];
-            this.queryPost_dia();
-            this.ids = [];
+              payType: '',
+              paySource: '',
+              name: '',
+              title: '',
+              anchorName: '',
+              userName: '',
+              phone: '',
+              level: '',
+              userType: '',
+              delFlg: '',
+              productName: '',
+              productType: '',
+              isFree: '',
+              type: '',
+              bankAccount: '',
+              approveStatus: '',
+              payStatus: '',
+              date: ''
+            }
+            this.page_dia = 1 // 当前页码
+            this.diaDataList = []
+            this.queryPost_dia()
+            this.ids = []
           }
         })
         .catch((err) => {
-          throw err;
-        });
+          throw err
+        })
     },
-    changeTbas(n) {
-      this.diaTbas = n;
+    changeTbas (n) {
+      this.diaTbas = n
       this.diaSearchForm = {
-        payType: "",
-        paySource: "",
-        name: "",
-        title: "",
-        anchorName: "",
-        userName: "",
-        phone: "",
-        level: "",
-        userType: "",
-        delFlg: "",
-        productName: "",
-        productType: "",
-        isFree: "",
-        type: "",
-        bankAccount: "",
-        approveStatus: "",
-        payStatus: "",
-        date: "",
-      };
-      this.diaDataList = [];
-      this.total_dia = 0;
-      this.page_dia = 1;
+        payType: '',
+        paySource: '',
+        name: '',
+        title: '',
+        anchorName: '',
+        userName: '',
+        phone: '',
+        level: '',
+        userType: '',
+        delFlg: '',
+        productName: '',
+        productType: '',
+        isFree: '',
+        type: '',
+        bankAccount: '',
+        approveStatus: '',
+        payStatus: '',
+        date: ''
+      }
+      this.diaDataList = []
+      this.total_dia = 0
+      this.page_dia = 1
       switch (n) {
         case 0:
           this.diaTableTitle = {
-            id: "订单编号",
-            productType: "商品类型",
-            productName: "商品名称",
-            userName: "用户昵称",
-            payType: "支付方式",
-            price: "应付金额",
-            payPrice: "实付金额",
-            realPrice: "实收金额",
-            payDate: "支付完成时间",
-            payStatus: "订单状态",
-            activeStatus: "自用状态",
-            useStatus: "使用状态",
-            consumptionSource: "消费来源",
-            liveTheme: "下单入口",
-            createDate: "下单时间",
-          };
-          break;
+            id: '订单编号',
+            productType: '商品类型',
+            productName: '商品名称',
+            userName: '用户昵称',
+            payType: '支付方式',
+            price: '应付金额',
+            payPrice: '实付金额',
+            realPrice: '实收金额',
+            payDate: '支付完成时间',
+            payStatus: '订单状态',
+            activeStatus: '自用状态',
+            useStatus: '使用状态',
+            consumptionSource: '消费来源',
+            liveTheme: '下单入口',
+            createDate: '下单时间'
+          }
+          break
         case 1:
           this.diaTableTitle = {
-            amount: "收益金额",
-            type: "收益类型",
-            detail: "收益描述",
-            productType: "商品类型",
-            weixinUserName: "购买人",
-            createDate: "结算时间",
-          };
-          break;
+            amount: '收益金额',
+            type: '收益类型',
+            detail: '收益描述',
+            productType: '商品类型',
+            weixinUserName: '购买人',
+            createDate: '结算时间'
+          }
+          break
         case 2:
           this.diaTableTitle = {
-            amount: "提现金额",
-            accountName: "账户姓名",
-            bankAccount: "银行账户",
-            depositBankName: "开户银行",
-            branchName: "支行名称",
-            address: "开户行所在地",
-            createDate: "提现时间",
-            approveStatus: "审批状态",
-            confirmStatus: "提现状态",
-          };
-          break;
+            amount: '提现金额',
+            accountName: '账户姓名',
+            bankAccount: '银行账户',
+            depositBankName: '开户银行',
+            branchName: '支行名称',
+            address: '开户行所在地',
+            createDate: '提现时间',
+            approveStatus: '审批状态',
+            confirmStatus: '提现状态'
+          }
+          break
         case 3:
           this.diaTableTitle = {
-            avatarUrl: "用户头像",
-            userName: "用户昵称",
-            phone: "手机号码",
-            createDate: "关注时间",
-          };
-          break;
+            avatarUrl: '用户头像',
+            userName: '用户昵称',
+            phone: '手机号码',
+            createDate: '关注时间'
+          }
+          break
         case 4:
           this.diaTableTitle = {
-            avatarUrl: "用户头像",
-            userName: "用户昵称",
-            phone: "手机号码",
-            level: "用户等级",
-            userType: "粉丝团身份",
+            avatarUrl: '用户头像',
+            userName: '用户昵称',
+            phone: '手机号码',
+            level: '用户等级',
+            userType: '粉丝团身份',
             // groupName: "所在群组",
-            createDate: "入团时间",
-          };
-          break;
+            createDate: '入团时间'
+          }
+          break
         case 5:
           this.diaTableTitle = {
-            productImage: "商品图片",
-            productName: "商品名称",
-            oldPrice: "商品原价",
-            price: "带货价格",
-            productType: "商品类型",
-            isFree: "是否免费",
-            id: "关联产品编号",
-            updateDate: "上架时间",
-            delFlg: "上架状态",
-          };
-          break;
+            productImage: '商品图片',
+            productName: '商品名称',
+            oldPrice: '商品原价',
+            price: '带货价格',
+            productType: '商品类型',
+            isFree: '是否免费',
+            id: '关联产品编号',
+            updateDate: '上架时间',
+            delFlg: '上架状态'
+          }
+          break
         case 6:
           this.diaTableTitle = {
-            avatarUrl: "主播头像",
-            anchorName: "主播昵称",
-            phone: "手机号码",
-            createDate: "推荐时间",
-            delFlg: "推荐状态",
-          };
-          break;
+            avatarUrl: '主播头像',
+            anchorName: '主播昵称',
+            phone: '手机号码',
+            createDate: '推荐时间',
+            delFlg: '推荐状态'
+          }
+          break
 
         default:
-          break;
+          break
       }
-      this.queryPost_dia();
+      this.queryPost_dia()
     },
 
-    query(){
+    query () {
       this.queryPost_dia()
     },
 
     // 获取跟进记录列表数据
-    queryPost_dia() {
-      let data, url;
+    queryPost_dia () {
+      let data, url
 
       switch (this.diaTbas) {
         case 0:
@@ -1009,10 +1006,10 @@ export default {
             useStatus: this.diaSearchForm.useStatus,
             liveTheme: this.diaSearchForm.liveTheme,
             startDate: this.diaSearchForm.date && this.diaSearchForm.date[0] || '',
-            endDate: this.diaSearchForm.date && this.diaSearchForm.date[1] || '',
-          };
-          url = "/sys/management/user/product/anchorProductPage";
-          break;
+            endDate: this.diaSearchForm.date && this.diaSearchForm.date[1] || ''
+          }
+          url = '/sys/management/user/product/anchorProductPage'
+          break
         case 1:
           data = {
             limit: this.limit_dia,
@@ -1020,10 +1017,10 @@ export default {
             anchorId: this.userId,
             type: this.diaSearchForm.type,
             startDate: this.diaSearchForm.date && this.diaSearchForm.date[0] || '',
-            endDate: this.diaSearchForm.date && this.diaSearchForm.date[1] || '',
-          };
-          url = "/sys/anchorGain/page";
-          break;
+            endDate: this.diaSearchForm.date && this.diaSearchForm.date[1] || ''
+          }
+          url = '/sys/anchorGain/page'
+          break
         case 2:
           data = {
             limit: this.limit_dia,
@@ -1033,21 +1030,21 @@ export default {
             approveStatus: this.diaSearchForm.approveStatus,
             payStatus: this.diaSearchForm.payStatus,
             startDate: this.diaSearchForm.date && this.diaSearchForm.date[0] || '',
-            endDate: this.diaSearchForm.date && this.diaSearchForm.date[1] || '',
-          };
-          url = "/sys/anchorWithdraw/page";
-          break;
+            endDate: this.diaSearchForm.date && this.diaSearchForm.date[1] || ''
+          }
+          url = '/sys/anchorWithdraw/page'
+          break
         case 3:
           data = {
             limit: this.limit_dia,
             page: this.page_dia,
             anchorId: this.userId,
             phone: this.diaSearchForm.phone,
-            userName: this.diaSearchForm.userName,
-          };
+            userName: this.diaSearchForm.userName
+          }
           url =
-            "/sys/manage/weixinUser/anchor/attention/anchorAttentionWeixinUserInfoPage";
-          break;
+            '/sys/manage/weixinUser/anchor/attention/anchorAttentionWeixinUserInfoPage'
+          break
         case 4:
           data = {
             limit: this.limit_dia,
@@ -1056,11 +1053,11 @@ export default {
             phone: this.diaSearchForm.phone,
             level: this.diaSearchForm.level,
             userName: this.diaSearchForm.userName,
-            userType: this.diaSearchForm.userType,
-          };
+            userType: this.diaSearchForm.userType
+          }
           url =
-            "/sys/manage/weixinUser/anchor/fans/achorFansWeixinUserInfoPage";
-          break;
+            '/sys/manage/weixinUser/anchor/fans/achorFansWeixinUserInfoPage'
+          break
         case 5:
           data = {
             limit: this.limit_dia,
@@ -1068,49 +1065,49 @@ export default {
             anchorId: this.userId,
             productName: this.diaSearchForm.productName,
             productType: this.diaSearchForm.productType,
-            isFree: this.diaSearchForm.isFree,
+            isFree: this.diaSearchForm.isFree
             // delFlg: this.diaSearchForm.delFlg,
-          };
-          url = "/sys/wxapp/anchorProduct/listWithAnchorIdPage";
-          break;
+          }
+          url = '/sys/wxapp/anchorProduct/listWithAnchorIdPage'
+          break
         case 6:
           data = {
             limit: this.limit_dia,
             page: this.page_dia,
             anchorId: this.userId,
             phone: this.diaSearchForm.phone,
-            anchorName: this.diaSearchForm.anchorName,
+            anchorName: this.diaSearchForm.anchorName
             // delFlg: this.diaSearchForm.delFlg,
-          };
-          url = "/sys/manage/anchor/recommend/listWithAnchorId";
-          break;
+          }
+          url = '/sys/manage/anchor/recommend/listWithAnchorId'
+          break
 
         default:
-          break;
+          break
       }
       this.dataListLoading = true
       this.$http
         .get(url, {
-          params: this.$httpParams(data),
+          params: this.$httpParams(data)
         })
         .then(({ data: res }) => {
           this.dataListLoading = false
           if (res.code !== 0) {
-            this.diaDataList = [];
-            this.total_dia = 0;
-            return this.$message.error(res.msg);
+            this.diaDataList = []
+            this.total_dia = 0
+            return this.$message.error(res.msg)
           }
-          this.diaDataList = res.data.list;
-          this.total_dia = res.data.total;
+          this.diaDataList = res.data.list
+          this.total_dia = res.data.total
         })
-        .catch(() => { 
+        .catch(() => {
           this.dataListLoading = false
-        });
+        })
     },
     // 下拉获取商品类型
-    getProductType(type) {
+    getProductType (type) {
       if (!type) return
-      this.$http.get("/sys/course/searchProductType").then(({ data: res }) => {
+      this.$http.get('/sys/course/searchProductType').then(({ data: res }) => {
         if (res.code == 0) {
           this.productTypeOptions = res.data
         } else {
@@ -1124,175 +1121,175 @@ export default {
     },
 
     // 主页搜索重置
-    mainReset() {
-      this.$refs.searchForm.resetFields();
-      this.queryPost_dia();
+    mainReset () {
+      this.$refs.searchForm.resetFields()
+      this.queryPost_dia()
     },
     // 分页, 每页条数
-    pageSizeChangeHandle_dia(val) {
-      this.page_dia = 1;
-      this.limit_dia = val;
-      this.queryPost_dia();
+    pageSizeChangeHandle_dia (val) {
+      this.page_dia = 1
+      this.limit_dia = val
+      this.queryPost_dia()
     },
     // 分页, 当前页
-    pageCurrentChangeHandle_dia(val) {
-      this.page_dia = val;
-      this.queryPost_dia();
+    pageCurrentChangeHandle_dia (val) {
+      this.page_dia = val
+      this.queryPost_dia()
     },
-    //下架商品
-    downProduct(i, row) {
-      this.ids = [];
-      this.ids.push(row.id);
-      this.dialogVisible = true;
+    // 下架商品
+    downProduct (i, row) {
+      this.ids = []
+      this.ids.push(row.id)
+      this.dialogVisible = true
     },
-    //上架商品
-    updateProduct() {
-      this.dialogUserFormVisible = true;
+    // 上架商品
+    updateProduct () {
+      this.dialogUserFormVisible = true
       this.productForm = {
-        productName: "",
-        productType: "",
-        isFree: "",
-        id: "",
-      };
-      this.dataUserList = [];
-      this.queryUserList();
+        productName: '',
+        productType: '',
+        isFree: '',
+        id: ''
+      }
+      this.dataUserList = []
+      this.queryUserList()
     },
-    //批量下架
-    deleteSelect() {
-      this.dialogVisible = true;
+    // 批量下架
+    deleteSelect () {
+      this.dialogVisible = true
       this.dataListSelections.forEach((v) => {
-        this.ids.push(v.id);
-      });
+        this.ids.push(v.id)
+      })
     },
-    //批量选择
-    userListSelectionChangeHandle(val) {
-      this.dataListSelectionUsers = val;
+    // 批量选择
+    userListSelectionChangeHandle (val) {
+      this.dataListSelectionUsers = val
     },
-    //获取未上架商品
-    queryUserList() {
-      this.dataUserListLoading = true;
+    // 获取未上架商品
+    queryUserList () {
+      this.dataUserListLoading = true
       this.$http
-        .get("/sys/course/downPage", {
+        .get('/sys/course/downPage', {
           params: {
             page: this.userListPage,
             limit: this.userListLimit,
             productName: this.productForm.productName,
             productType: this.productForm.productType,
             isFree: this.productForm.isFree,
-            id: this.productForm.id,
-          },
+            id: this.productForm.id
+          }
         })
         .then(({ data: res }) => {
-          this.dataUserListLoading = false;
+          this.dataUserListLoading = false
           if (res.code !== 0) {
-            this.dataUserList = [];
-            this.dataUserListTotal = 0;
-            return this.$message.error(res.msg);
+            this.dataUserList = []
+            this.dataUserListTotal = 0
+            return this.$message.error(res.msg)
           }
-          this.dataUserList = res.data.list;
-          this.dataUserListTotal = res.data.total;
+          this.dataUserList = res.data.list
+          this.dataUserListTotal = res.data.total
         })
         .catch((err) => {
-          this.dataUserListLoading = false;
-          throw err;
-        });
+          this.dataUserListLoading = false
+          throw err
+        })
     },
-    //重置
-    reset() {
+    // 重置
+    reset () {
       this.productForm = {
-        productName: "",
-        productType: "",
-        isFree: "",
-        id: "",
-      };
-      this.queryUserList();
+        productName: '',
+        productType: '',
+        isFree: '',
+        id: ''
+      }
+      this.queryUserList()
     },
-    //上架商品
-    handleDeleteUser(index, row) {
-      let ids = [];
-      ids.push(row.id);
+    // 上架商品
+    handleDeleteUser (index, row) {
+      const ids = []
+      ids.push(row.id)
       this.$http
-        .post("/sys/course/up", ids)
+        .post('/sys/course/up', ids)
         .then(({ data: res }) => {
           if (res.code !== 0) {
-            return this.$message.error(res.msg);
+            return this.$message.error(res.msg)
           }
           if (this.total_dia >= 9) {
-            this.$message.warning("最多可上架9个商品，请删除后再重新上架!");
-            return;
+            this.$message.warning('最多可上架9个商品，请删除后再重新上架!')
+            return
           }
-          this.$message.success("上架成功!");
-          this.queryUserList();
-          this.dialogUserFormVisible = false;
+          this.$message.success('上架成功!')
+          this.queryUserList()
+          this.dialogUserFormVisible = false
           this.diaSearchForm = {
-            payType: "",
-            paySource: "",
-            name: "",
-            title: "",
-            anchorName: "",
-            userName: "",
-            phone: "",
-            level: "",
-            userType: "",
-            delFlg: "",
-            productName: "",
-            productType: "",
-            isFree: "",
-          };
-          this.page_dia = 1; // 当前页码
-          this.diaDataList = [];
-          this.queryPost_dia();
+            payType: '',
+            paySource: '',
+            name: '',
+            title: '',
+            anchorName: '',
+            userName: '',
+            phone: '',
+            level: '',
+            userType: '',
+            delFlg: '',
+            productName: '',
+            productType: '',
+            isFree: ''
+          }
+          this.page_dia = 1 // 当前页码
+          this.diaDataList = []
+          this.queryPost_dia()
         })
         .catch((err) => {
-          throw err;
-        });
+          throw err
+        })
     },
-    //批量上架
-    deleteUserSelect() {
-      let ids = [];
+    // 批量上架
+    deleteUserSelect () {
+      const ids = []
       this.dataListSelectionUsers.forEach((v) => {
-        ids.push(v.id);
-      });
+        ids.push(v.id)
+      })
       this.$http
-        .post("/sys/course/up", ids)
+        .post('/sys/course/up', ids)
         .then(({ data: res }) => {
           if (res.code !== 0) {
-            return this.$message.error(res.msg);
+            return this.$message.error(res.msg)
           }
           if (this.total_dia >= 9) {
-            this.$message.warning("最多可上架9个商品，请删除后再重新上架!");
-            return;
+            this.$message.warning('最多可上架9个商品，请删除后再重新上架!')
+            return
           }
-          this.$message.success("上架成功!");
-          this.queryUserList();
-          this.dialogUserFormVisible = false;
+          this.$message.success('上架成功!')
+          this.queryUserList()
+          this.dialogUserFormVisible = false
           this.diaSearchForm = {
-            payType: "",
-            paySource: "",
-            name: "",
-            title: "",
-            anchorName: "",
-            userName: "",
-            phone: "",
-            level: "",
-            userType: "",
-            delFlg: "",
-            productName: "",
-            productType: "",
-            isFree: "",
-          };
-          this.page_dia = 1; // 当前页码
-          this.diaDataList = [];
-          this.queryPost_dia();
+            payType: '',
+            paySource: '',
+            name: '',
+            title: '',
+            anchorName: '',
+            userName: '',
+            phone: '',
+            level: '',
+            userType: '',
+            delFlg: '',
+            productName: '',
+            productType: '',
+            isFree: ''
+          }
+          this.page_dia = 1 // 当前页码
+          this.diaDataList = []
+          this.queryPost_dia()
         })
         .catch((err) => {
-          throw err;
-        });
+          throw err
+        })
     },
     // 获取粉丝等级
-    getFansLevels(type) {
+    getFansLevels (type) {
       if (!type) return
-      this.$http.get("/sys/sysfanslevel/getLevelList").then(({ data: res }) => {
+      this.$http.get('/sys/sysfanslevel/getLevelList').then(({ data: res }) => {
         if (res.code == 0) {
           this.fansLevelsOptions = res.data
         } else {
@@ -1305,18 +1302,18 @@ export default {
       })
     },
     // 分页, 每页条数
-    pageSizeChangeUserHandle(val) {
-      this.userListPage = 1;
-      this.userListLimit = val;
-      this.queryUserList();
+    pageSizeChangeUserHandle (val) {
+      this.userListPage = 1
+      this.userListLimit = val
+      this.queryUserList()
     },
     // 分页, 当前页
-    pageCurrentChangeUserHandle(val) {
-      this.userListPage = val;
-      this.queryUserList();
-    },
-  },
-};
+    pageCurrentChangeUserHandle (val) {
+      this.userListPage = val
+      this.queryUserList()
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
