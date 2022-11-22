@@ -289,13 +289,18 @@ export default {
     setHadSelected() {
       if (this.defaultSelected.length) {
         this.allDataList.forEach((row, i) => {
-          this.defaultSelected.forEach((item) => {
+          this.defaultSelected.forEach((item, index) => {
             if (row.id == item.id) {
               // 数据列表是否选中设为true
               row["_isSelected"] = true
+              row["_sort"] = index + 1
             }
           });
         });
+        // 排序被选中的
+        this.allDataList = this.allDataList.sort((a, b) => a._sort - b._sort)
+        // 所有的重新赋值_sort
+        this.allDataList.map((item, index) => item._sort = index)
       } 
     },
 
