@@ -84,6 +84,41 @@
             <i slot="default" class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
+
+        <el-form-item label="直播推广图">
+          <div
+            class="frontCover-img-box"
+            v-if="extensionListDefault && extensionListDefault.length !== 0"
+          >
+            <div class="frontCover-box">
+              <img
+                :src="extensionListDefault"
+                style="width: 100px; height: 100px"
+                alt=""
+              />
+              <img
+                @click="extensionRemoveItem"
+                class="close-img"
+                src="@/assets/img/close.png"
+                alt=""
+              />
+            </div>
+          </div>
+          <custom-upload
+            v-if="extensionListDefault.length === 0"
+            ref="extensionUpload"
+            fileWH="460/368"
+            @uploadSuccess="extensionUploadSuccess"
+            @uploadRemove="extensionUploadRemove"
+            :fileList="extensionList"
+            :fileType="['png', 'jpg', 'jpeg']"
+            :fileMaxSize="2"
+          ></custom-upload>
+          <div>
+            格式限制：jpg/jpeg/png，图片尺寸为460px × 368px；大小不得超过2M
+          </div>
+        </el-form-item>
+
         <el-form-item label="助手" prop="assistant">
           <el-input
             style="width: 400px"
@@ -315,7 +350,8 @@ export default {
         products: "",
         recommendedAnchors: "",
         frontCover: "",
-        trendsOpen:1
+        trendsOpen:1,
+        spreadUrl:""
       },
       dialogImageUrl: "",
       showDefaultImg: false,
@@ -372,6 +408,8 @@ export default {
 
       productLiveId:[],
       recommendedAnchorOwnIds:[],
+      extensionList:[],
+      extensionListDefault:"",
     };
   },
   watch: {
@@ -401,7 +439,8 @@ export default {
       products: "",
       recommendedAnchors: "",
       frontCover: "",
-      trendsOpen:1
+      trendsOpen:1,
+      spreadUrl:"",
     };
     this.dialogImageUrl = "";
     this.showDefaultImg = false;
@@ -487,6 +526,7 @@ export default {
             
             this.fileList.push(res.data.frontCoverUrl);
             this.frontCoverListDefault = res.data.frontCover ? res.data.frontCover : "";
+            this.extensionListDefault = res.data.spreadUrl ? res.data.spreadUrl : "";
 
             
             this.info = res.data;
@@ -500,12 +540,25 @@ export default {
     handleRemoveItem() {
       this.frontCoverListDefault = "";
     },
+    //删除直播推广图
+    extensionRemoveItem() {
+      this.extensionListDefault = "";
+    },
     // 封面图上传
     frontCoverUploadSuccess(file) {
       this.frontCoverList.push(file);
     },
     frontCoverUploadRemove(file) {
       this.frontCoverList = this.frontCoverList.filter(
+        (item) => item.uid != file.uid
+      );
+    },
+    // 直播推广图上传
+    extensionUploadSuccess(file) {
+      this.extensionList.push(file);
+    },
+    extensionUploadRemove(file) {
+      this.extensionList = this.extensionList.filter(
         (item) => item.uid != file.uid
       );
     },
@@ -633,9 +686,11 @@ export default {
             startDate: this.ruleForm.startDate,
             estimateLiveTime: this.ruleForm.estimateLiveTime,
             frontCoverUrl: this.ruleForm.frontCoverUrl,
+            spreadUrl: this.ruleForm.spreadUrl,
             liveIntroduce: this.ruleForm.liveIntroduce,
             trendsOpen: this.ruleForm.trendsOpen
           };
+  
           if (
             this.frontCoverList.length !== 0 &&
             this.frontCoverList[0] &&
@@ -646,6 +701,18 @@ export default {
             dataForm.frontCover = this.frontCoverList[0].url;
           } else if (this.frontCoverList.length === 0) {
             dataForm.frontCover = this.frontCoverListDefault;
+          }
+        
+          if (
+            this.extensionList.length !== 0 &&
+            this.extensionList[0] &&
+            this.extensionList[0].url &&
+            this.extensionList[0].url !== 0 &&
+            this.extensionListDefault.length === 0
+          ) {
+            dataForm.spreadUrl = this.extensionList[0].url;
+          } else if (this.extensionList.length === 0) {
+            dataForm.spreadUrl = this.extensionListDefault;
           }
 
           this.submitLoading = true;
@@ -666,9 +733,11 @@ export default {
                 liveIntroduce: "",
                 goods: "",
                 anchors: "",
+                spreadUrl:"",
               };
               this.ruleForm.frontCoverUrl = this.defaultImg[0];
               this.frontCoverList = [];
+              this.extensionList = [];
 
               this.closeCurrentTab();
               this.$router.push({

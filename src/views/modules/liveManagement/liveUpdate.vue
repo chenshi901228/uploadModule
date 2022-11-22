@@ -27,6 +27,14 @@
                         :fileList="frontCoverList"></custom-upload>
                     <p class="tips">格式限制：jpg/jpeg/png,建议图片尺寸不小于630px×347px，大小不得超过2M</p>
                 </el-form-item>
+
+                <el-form-item label="直播推广图">
+                    <custom-upload ref="extensionUpload" fileWH="460/368" :fileMaxSize="2" :fileType="['png', 'jpg', 'jpeg']"
+                        @uploadSuccess="extensionUploadSuccess" @uploadRemove="extensionUploadRemove" :fileList="extensionList">
+                    </custom-upload>
+                    <p class="tips">格式限制：jpg/jpeg/png，图片尺寸为460px × 368px；大小不得超过2M</p>
+                </el-form-item>
+
                 <el-form-item label="添加商品" prop="product">
                     <!-- <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.product"
                         @click.native="chooseProduct"></el-input> -->
@@ -98,7 +106,8 @@ export default {
                 product: "", //推荐商品
                 anchor: "", //推荐主播
                 frontCover: "", //直播背景
-                assistantIds: "" //助手
+                assistantIds: "", //助手
+                spreadUrl:"",//直播推广图
             },
             frontCoverList: [], //直播宣传图
             bgLiveList: [], //直播背景图
@@ -106,6 +115,8 @@ export default {
             productIds: [], //推荐商品ids
             assistantOptions: [], //助手下拉选项
             submitLoading: false,
+
+            extensionList:[],//直播推广图
         }
     },
     computed: {
@@ -148,6 +159,13 @@ export default {
                     }]
                 }
 
+                if(res.data.spreadUrl) {
+                    this.extensionList = [{
+                        name: "extensionList",
+                        url: res.data.spreadUrl
+                    }]
+                }
+
                 // this.recommendedAnchorList = res.data.recommendedAnchorList && res.data.recommendedAnchorList.map(item => { return { anchorId: item } })
                 // this.productIds = res.data.productIds && res.data.productIds.map(item => { return { id: item } })
                 this.recommendedAnchorList  = res.data.recommendedAnchorList && res.data.recommendedAnchorList.map((id, i) => ({ anchorId: id, username: res.data.recommendedAnchors.split(',')[i] }))
@@ -169,6 +187,13 @@ export default {
         },
         bgLiveUploadRemove(file) {
             this.bgLiveList = this.bgLiveList.filter(item => item.uid != file.uid)
+        },
+        // 直播推广图上传
+        extensionUploadSuccess(file) {
+            this.extensionList.push(file);
+        },
+        extensionUploadRemove(file) {
+            this.extensionList = this.extensionList.filter(item => item.uid != file.uid);
         },
         // 点击助手下拉选择请求数据
         getAssistant() {
@@ -229,6 +254,7 @@ export default {
             this.dataForm.frontCover = ""
             this.frontCoverList = []
             this.bgLiveList = []
+            this.extensionList=[]
 
             this.closeCurrentTab()
             // 关闭当前页面跳回到直播列表
@@ -241,9 +267,13 @@ export default {
                 if (valid) {
 
                     try {
-                        if (!this.$refs.frontCoverUpload.isUploadAll() || !this.$refs.bgLiveUpload.isUploadAll()) {
+                        if (!this.$refs.frontCoverUpload.isUploadAll() || !this.$refs.bgLiveUpload.isUploadAll() || !this.$refs.frontCoverUpload.isUploadAll()) {
                             return this.$message.error("有附件正在上传中")
                         }
+
+                        // if (!this.extensionList.length) {
+                        //     return this.$message.error("请上传直播推广图")
+                        // }
 
                         if (!this.frontCoverList.length) {
                             return this.$message.error("请上传直播宣传图")
@@ -259,6 +289,7 @@ export default {
                         // 附件处理
                         params.frontCoverUrl = this.frontCoverList[0].url
                         params.frontCover = this.bgLiveList[0] ? this.bgLiveList[0].url : ""
+                        params.spreadUrl = this.extensionList[0] ? this.extensionList[0].url : ""
 
 
                         // 商品ids

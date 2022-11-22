@@ -18,15 +18,21 @@ border-radius: 5px 5px 5px 5px;position: relative;">
             style="width: 200px; height: 180px" fit="cover">
           </el-image>
         </el-col>
-        <el-col :span="10">视频：
-          <video ref="video" id="video" :src="info.relationLiveUrl" :autoplay="videolist.autoplay"
-            :controls="videolist.controls" :controlslist="videolist.controlslist"
-            :webkit-playsinline="webkitplaysinline" style="width: 200px; height: 180px"></video>
+        <el-col :span="10">视频推广图：
+          <el-image :preview-src-list="spreadUrlList" v-if="info && info.spreadUrl" :src="info && info.spreadUrl"
+            style="width: 200px; height: 180px" fit="cover">
+          </el-image>
         </el-col>
         <el-col :span="2">
           <img v-if="statusImg" class="statusImg" :src="statusImg" alt="">
 
         </el-col>
+        <el-col :span="10">视频：
+          <video ref="video" id="video" :src="info.relationLiveUrl" :autoplay="videolist.autoplay"
+            :controls="videolist.controls" :controlslist="videolist.controlslist"
+            :webkit-playsinline="webkitplaysinline" style="width: 200px; height: 180px"></video>
+        </el-col>
+        
         <el-col v-if="!(checkFlag && info.approveStatus === 0)" :span="24">备注：{{ info.remark }}</el-col>
       </el-row>
       <!-- 审核状态图片 -->
@@ -135,6 +141,7 @@ export default {
       dataListLoading: false,
       info: {},
       srcList: [],
+      spreadUrlList:[],
       videolist: {
         autoplay: false, // 自动播放
         controls: "controls", //操作
@@ -198,6 +205,9 @@ export default {
         if (this.info && this.info.frontCoverUrl) {
           this.srcList = [this.info.frontCoverUrl]
         }
+        if (this.info && this.info.spreadUrl) {
+          this.spreadUrlList = [this.info.spreadUrl]
+        }
       }
       this.querylist();
       this.getVideoProductList()
@@ -228,6 +238,9 @@ export default {
             this.info = res.data;
             if (this.info && this.info.frontCoverUrl) {
               this.srcList = [this.info.frontCoverUrl]
+            }
+            if (this.info && this.info.spreadUrl) {
+              this.spreadUrlList = [this.info.spreadUrl]
             }
           } else {
             this.$message.error(res.msg);
