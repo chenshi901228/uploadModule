@@ -36,6 +36,21 @@
           </el-upload>
         </el-form-item>
 
+        <el-form-item label="直播推广图">
+          <custom-upload
+            ref="extensionUpload"
+            @uploadSuccess="extensionUploadSuccess"
+            @uploadRemove="extensionUploadRemove"
+            :fileList="extensionList"
+            :fileType="['png', 'jpg', 'jpeg']"
+            fileWH="460/368"
+            :fileMaxSize="2"
+          ></custom-upload>
+          <div>
+            格式限制：jpg/jpeg/png，图片尺寸为460px × 368px；大小不得超过2M
+          </div>
+        </el-form-item>
+
         <el-form-item label="助手" prop="assistantIds">
             <el-select style="width: 400px" v-model="ruleForm.assistantIds" filterable multiple placeholder="请选择"
               :clearable="true">
@@ -139,7 +154,7 @@
             @uploadRemove="frontCoverUploadRemove" :fileList="frontCoverList" :fileType="['png', 'jpg', 'jpeg']"
             :fileMaxSize="2"></custom-upload>
           <div>
-            格式限制：jpg/jpeg/png,建议图片尺寸不小于630px×347px，大小不得超过2M
+            格式限制：jpg/jpeg/png，建议图片尺寸不小于630px × 347px，大小不得超过2M
           </div>
         </el-form-item>
         <el-form-item label="直播动态" prop="trendsOpen">
@@ -223,6 +238,7 @@ export default {
         frontCoverUrl: "",
         // dynamicGroupIds: [],
         liveIntroduce: "",
+        spreadUrl:""
       },
       dialogImageUrl: "",
       // dialogVisible: false,
@@ -280,6 +296,7 @@ export default {
       assistantOptions: [],
       submitLoading: false,
       frontCoverList: [],
+      extensionList:[],
     };
   },
   watch: {
@@ -311,6 +328,7 @@ export default {
       anchors: "",
       assistantIds: [],
       trendsOpen: 1,
+      spreadUrl:""
     };
     this.userId = this.$store.state.user.id;
     this.getDynamicAssistantList();
@@ -324,6 +342,15 @@ export default {
     },
     frontCoverUploadRemove(file) {
       this.frontCoverList = this.frontCoverList.filter(
+        (item) => item.uid != file.uid
+      );
+    },
+    // 直播推广图上传
+    extensionUploadSuccess(file) {
+      this.extensionList.push(file);
+    },
+    extensionUploadRemove(file) {
+      this.extensionList = this.extensionList.filter(
         (item) => item.uid != file.uid
       );
     },
@@ -413,6 +440,7 @@ export default {
             liveIntroduce: this.ruleForm.liveIntroduce,
             assistantIds: this.ruleForm.assistantIds,
             frontCover: this.frontCoverList.length ? this.frontCoverList[0].url : "",
+            spreadUrl: this.extensionList.length ? this.extensionList[0].url : "",
             anchorUserId: this.userId,
             trendsOpen: this.ruleForm.trendsOpen
           };
@@ -432,6 +460,7 @@ export default {
                 startDate: "",
                 estimateLiveTime: "",
                 frontCoverUrl: "",
+                spreadUrl: "",
                 // dynamicGroupIds: [],
                 liveIntroduce: "",
                 productIds: [],
@@ -443,6 +472,7 @@ export default {
               };
               this.ruleForm.frontCoverUrl = this.defaultImg[0];
               this.frontCoverList = []
+              this.extensionList=[]
 
               this.closeCurrentTab();
 

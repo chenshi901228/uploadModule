@@ -10,7 +10,7 @@
         label-width="100px"
         @keyup.enter.native="getDataList"
       >
-        <el-form-item v-show="isOpen || formItemCount >= 1" label="学员昵称" prop="nickName">
+        <el-form-item v-show="isOpen || formItemCount >= 1" label="用户" prop="nickName">
           <el-input
             style="width: 200px"
             placeholder="请输入"
@@ -23,6 +23,14 @@
             style="width: 200px"
             placeholder="请输入"
             v-model="dataForm.content"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-show="isOpen || formItemCount >= 2" label="主播" prop="content">
+          <el-input
+            style="width: 200px"
+            placeholder="请输入"
+            v-model="dataForm.anchorRealName"
             clearable
           ></el-input>
         </el-form-item>
@@ -56,12 +64,12 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <!-- <el-button 
+              <el-button 
                 type="warning"
                 plain
                 icon="el-icon-download" 
                 size="mini"
-                @click="exportHandle">{{ $t("export") }}</el-button> -->
+                @click="exportHandle">{{ $t("export") }}</el-button>
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
@@ -90,13 +98,32 @@
 
         <el-table-column
           prop="nickName"
-          label="学员昵称"
+          label="用户昵称"
           header-align="center"
           align="center"
+          width="150"
         ></el-table-column>
+        <el-table-column
+          prop="phone"
+          label="手机号码"
+          header-align="center"
+          align="center"
+          width="150"
+          show-overflow-tooltip
+        >
+        </el-table-column>
         <el-table-column
           prop="content"
           label="问题描述"
+          header-align="center"
+          align="center"
+          width="150"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
+          prop="createDate"
+          label="提问时间"
           header-align="center"
           align="center"
           width="150"
@@ -108,11 +135,20 @@
           label="主播昵称"
           header-align="center"
           align="center"
+          width="150"
           show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
-          prop="phone"
+          prop="anchorRealName"
+          label="主播姓名"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
+          prop="anchorPhone"
           label="手机号码"
           header-align="center"
           align="center"
@@ -129,15 +165,7 @@
           show-overflow-tooltip
         >
         </el-table-column>
-        <el-table-column
-          prop="createDate"
-          label="提问时间"
-          header-align="center"
-          align="center"
-          width="150"
-          show-overflow-tooltip
-        >
-        </el-table-column>
+        
         <el-table-column
           :label="$t('handle')"
           fixed="right"
@@ -178,12 +206,13 @@ export default {
         getDataListURL: "/sys/liveAsk/selectPage",
         getDataListIsPage: true,
         deleteIsBatch: true,
-        exportURL: "/sys/manage/complaint/export",
+        exportURL: "/sys/liveAsk/export",
       },
       dataForm: {
         nickName: "",
         liveTheme: "",
         content: "",
+        anchorRealName:"",
       },
       dataList: [],
     };

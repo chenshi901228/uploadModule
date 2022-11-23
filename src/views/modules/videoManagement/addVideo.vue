@@ -43,6 +43,20 @@
           格式限制：jpg/jpeg/png，建议图片尺寸不小于630px*347px；大小不得超过2M
         </div>
       </el-form-item>
+      <el-form-item label="视频推广图" required>
+        <custom-upload
+          ref="extensionUpload"
+          @uploadSuccess="extensionUploadSuccess"
+          @uploadRemove="extensionUploadRemove"
+          :fileList="extensionList"
+          :fileType="['png', 'jpg', 'jpeg']"
+          fileWH="460/368"
+          :fileMaxSize="2"
+        ></custom-upload>
+        <div>
+          格式限制：jpg/jpeg/png，图片尺寸为460px*368px；大小不得超过2M
+        </div>
+      </el-form-item>
       <el-form-item label="上传视频" required>
         <custom-upload
           ref="relationLiveUpload"
@@ -123,11 +137,13 @@ export default {
         goods: "",
         livePlaybackProductList: [],
         relationLiveUrl: "",
+        spreadUrl:""
       },
       frontCoverList: [], //封面列表
       loading: false, //输入主播选择loading
       anchorOptions: [], //主播选项
       relationLiveList: [], //视频列表
+      extensionList:[],//直播推广图
       rules: {
         liveTheme: [
           { required: true, message: "请输入视频主题", trigger: "blur" },
@@ -192,6 +208,15 @@ export default {
     },
     relationLiveUploadRemove(file) {
       this.relationLiveList = this.relationLiveList.filter(
+        (item) => item.uid != file.uid
+      );
+    },
+    // 视频推广图上传
+    extensionUploadSuccess(file) {
+      this.extensionList.push(file);
+    },
+    extensionUploadRemove(file) {
+      this.extensionList = this.extensionList.filter(
         (item) => item.uid != file.uid
       );
     },
@@ -282,9 +307,13 @@ export default {
           if (!this.frontCoverList.length) {
             return this.$message.error("请上传封面图");
           }
+          if (!this.extensionList.length) {
+            return this.$message.error("请上传视频推广图");
+          }
           if (!this.relationLiveList.length) {
             return this.$message.error("请上传视频");
           }
+          
 
           if(this.dataForm.showMode==0){
             if(this.relationLiveList[0].videoWHInfo.videoWidth>720 || this.relationLiveList[0].videoWHInfo.videoHeight>1280){
@@ -307,6 +336,7 @@ export default {
           // 附件处理
           params.frontCoverUrl = this.frontCoverList[0].url;
           params.relationLiveUrl = this.relationLiveList[0].url;
+          params.spreadUrl = this.extensionList[0].url;
           params.videoSize = this.relationLiveList[0].size; //视频大小
 
           //视频原始长宽

@@ -9,11 +9,27 @@
         @keyup.enter.native="getfansGroupList()"
         label-width="100px"
       >
-        <el-form-item label="群组名称">
+      <el-form-item label="真实姓名">
           <el-input
             clearable
             style="width: 200px"
-            v-model="groupNameForm.groupName"
+            v-model="groupNameForm.realName"
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="手机号码">
+          <el-input
+            clearable
+            style="width: 200px"
+            v-model="groupNameForm.phone"
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item label="主播昵称">
+          <el-input
+            clearable
+            style="width: 200px"
+            v-model="groupNameForm.anchorName"
             placeholder="请输入"
           ></el-input>
         </el-form-item>
@@ -421,12 +437,14 @@ export default {
         anchorId: ''
       },
       diaTableTitle: {
-        groupName: '群组名称',
+        realName: '真实姓名',
+        phone: '手机号码',
+        anchorName: '主播昵称',
+        groupName: '群组名',
         groupImage: '群组二维码',
-        showStatus: '显示状态',
-        status: '审核状态',
-        sort: '排序',
-        createDate: '创建时间'
+        updateDate: '提交时间',
+        auditDate: '审批时间',
+        status: '审核状态'
       },
       total: 0, // 群组条数
       fansGroupList: [],
@@ -532,7 +550,7 @@ export default {
     // 获取群组列表
     getfansGroupList () {
       this.dataListLoading = true
-      this.$http.get('/sys/weixinfansgroup/page', { params: this.groupNameForm }).then(({ data: res }) => {
+      this.$http.get('/sys/weixinfansgroup/pageWithManage', { params: this.groupNameForm }).then(({ data: res }) => {
         this.dataListLoading = false
         if (res.code !== 0) {
           this.fansGroupList = []
