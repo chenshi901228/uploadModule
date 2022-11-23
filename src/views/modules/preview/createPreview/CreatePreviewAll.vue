@@ -61,14 +61,20 @@
           </el-upload>
         </el-form-item>
 
-        <!-- <el-form-item label="直播推广图">
-          <custom-upload ref="frontCoverUpload" @uploadSuccess="frontCoverUploadSuccess"
-            @uploadRemove="frontCoverUploadRemove" fileWH="460/368" :fileList="frontCoverList" :fileType="['png', 'jpg', 'jpeg']"
-            :fileMaxSize="2"></custom-upload>
+        <el-form-item label="直播推广图">
+          <custom-upload
+            ref="extensionUpload"
+            @uploadSuccess="extensionUploadSuccess"
+            @uploadRemove="extensionUploadRemove"
+            :fileList="extensionList"
+            :fileType="['png', 'jpg', 'jpeg']"
+            fileWH="460/368"
+            :fileMaxSize="2"
+          ></custom-upload>
           <div>
-            格式限制：jpg/jpeg/png，图片尺寸为460px×368px，大小不得超过2M
+            格式限制：jpg/jpeg/png，图片尺寸为460px × 368px；大小不得超过2M
           </div>
-        </el-form-item> -->
+        </el-form-item>
 
 
         <el-form-item class="quill-editor" label="直播介绍" prop="liveIntroduce">
@@ -269,6 +275,7 @@ export default {
         anchorId: null,
         productIds: [],
         recommendedAnchorList: [],
+        spreadUrl:""
       },
       dialogImageUrl: "",
       // dialogVisible: false,
@@ -329,6 +336,7 @@ export default {
       anchorId: "",
       anchorOptions: [], //主播选项
       loading: false, //输入主播选择loading
+      extensionList:[],
     };
   },
   watch: {
@@ -361,6 +369,7 @@ export default {
       assistantIds: [],
       anchorId: null,
       trendsOpen: 1,
+      spreadUrl:"",
     };
     this.anchorId = this.$route.query.anchorId;
     this.getCoverPictureList();
@@ -382,6 +391,15 @@ export default {
     },
     frontCoverUploadRemove(file) {
       this.frontCoverList = this.frontCoverList.filter(
+        (item) => item.uid != file.uid
+      );
+    },
+    // 直播推广图上传
+    extensionUploadSuccess(file) {
+      this.extensionList.push(file);
+    },
+    extensionUploadRemove(file) {
+      this.extensionList = this.extensionList.filter(
         (item) => item.uid != file.uid
       );
     },
@@ -510,6 +528,7 @@ export default {
             frontCover: this.frontCoverList.length
               ? this.frontCoverList[0].url
               : "",
+            spreadUrl: this.extensionList.length ? this.extensionList[0].url : "",
             trendsOpen: this.ruleForm.trendsOpen
           };
 
@@ -536,10 +555,12 @@ export default {
                 recommendedAnchorList: [],
                 anchors: "",
                 assistantIds: [],
-                trendsOpen: 1
+                trendsOpen: 1,
+                spreadUrl:""
               };
               this.ruleForm.frontCoverUrl = this.defaultImg[0];
               this.frontCoverList = [];
+              this.extensionList=[]
 
               this.closeCurrentTab();
 
