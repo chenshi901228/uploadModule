@@ -13,7 +13,7 @@
         <el-form-item v-show="isOpen || formItemCount >= 1" label="用户" prop="nickName">
           <el-input
             style="width: 200px"
-            placeholder="请输入"
+            placeholder="请输入昵称或手机号码"
             v-model="dataForm.nickName"
             clearable
           ></el-input>
@@ -29,7 +29,7 @@
         <el-form-item v-show="isOpen || formItemCount >= 2" label="主播" prop="content">
           <el-input
             style="width: 200px"
-            placeholder="请输入"
+            placeholder="请输入姓名、昵称或手机号码"
             v-model="dataForm.anchorRealName"
             clearable
           ></el-input>

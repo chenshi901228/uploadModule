@@ -117,6 +117,7 @@
                 <el-table-column
                     header-align="center"
                     align="center"
+                    width="120"
                     label="序号">
                     <template slot-scope="{ row }">
                         <!-- <span>{{$index + 1}}</span> -->
