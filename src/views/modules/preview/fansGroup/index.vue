@@ -27,14 +27,14 @@
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">
           <el-form-item>
-            <el-button 
-              type="primary" 
-              icon="el-icon-search" 
+            <el-button
+              type="primary"
+              icon="el-icon-search"
               size="mini"
               @click="getfansGroupList">{{ $t("query") }}</el-button>
-            <el-button 
-              icon="el-icon-refresh" 
-              size="mini" 
+            <el-button
+              icon="el-icon-refresh"
+              size="mini"
               @click="reset('groupNameForm')">{{ $t("reset") }}</el-button>
             <!-- <el-button size="mini" plain @click="open">
               <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
@@ -46,13 +46,13 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <el-button 
-                size="mini" 
-                type="primary" 
+              <el-button
+                size="mini"
+                type="primary"
                 plain
                 icon="el-icon-plus"
-                @click="dialogVisibleGroup=true" 
-                style="marginBottom:10px;">创建群组</el-button>
+                @click="showFansGroup(1)"
+                style="marginBottom:10px;">创建企微粉丝群</el-button>
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
@@ -71,7 +71,13 @@
         ref="table"
         style="width: 100%"
         :height="siteContentViewHeight"
+        @cell-dblclick="dblclick"
       >
+      <el-table-column
+      label="序号"
+      type="index"
+      >
+    </el-table-column>
         <template v-for="(label, prop) in diaTableTitle">
           <el-table-column
             :prop="prop"
@@ -91,8 +97,30 @@
                 />
                 <span v-else>-</span>
               </div>
-              <span v-else-if="prop=='delFlg'">
-                {{row.delFlg==1?'隐藏':'显示'}}
+              <!-- 序号 -->
+            <div v-else-if="prop == 'sort'">
+              <el-input-number
+                v-if="sortId === row.id && sortId !== ''"
+                size="mini"
+                v-model="sortVal"
+                placeholder="请输入"
+                @blur="sortId = ''"
+                :min="0"
+                :precision="0"
+                 :controls="false"
+                :max="9999"
+                :id="'input' + row.id"
+                @keyup.enter.native="userSelect"
+              ></el-input-number>
+              <span v-else>
+                {{ row.sort || "--" }}
+              </span>
+            </div>
+              <span v-else-if="prop=='showStatus'">
+                {{row.delFlg==1?'显示':'隐藏'}}
+              </span>
+              <span v-else-if="prop=='status'">
+                {{row.status==1?'审核通过': row.status== -1 ? '审核不通过' : '审核中'}}
               </span>
               <span v-else>
                 {{ row[prop] || '-' }}
@@ -113,7 +141,21 @@
               type="text"
               icon="el-icon-view"
               @click="handleLookUser(scope.$index, scope.row)"
-              >{{scope.row.delFlg==1?'显示':'隐藏'}}</el-button
+              >{{scope.row.showStatus==1?'显示':'隐藏'}}</el-button
+            >
+            <el-button
+              size="small"
+              type="text"
+              icon="el-icon-edit"
+              @click="showFansGroup(0,scope.row)"
+              >编辑</el-button
+            >
+            <el-button
+              size="small"
+              type="text"
+              icon="el-icon-delete"
+              @click="delFansGroup(scope.row)"
+              >删除</el-button
             >
           </template>
         </el-table-column>
@@ -139,10 +181,10 @@
         <img style="maxWidth:100%;" :src="previewImgUrl" alt="">
       </div>
     </el-dialog>
-    <!-- 创建群组弹窗 -->
+    <!-- 创建企微粉丝群弹窗 -->
     <el-dialog
-      title="创建群组"
-      :visible.sync="dialogVisibleGroup"
+      :title="`${ dialogVisibleGroup.title == 1 ? '创建': '编辑' }企微粉丝群`"
+      :visible.sync="dialogVisibleGroup.dialogVisible"
       @close="cancelCreateGroup"
       width="30%"
       >
@@ -211,7 +253,7 @@
         @selection-change="noJoinUserSelectionChangeHandle"
         style="width: 100%"
         max-height="500"
-      > 
+      >
         <el-table-column
           type="selection"
           header-align="center"
@@ -407,56 +449,64 @@
 </template>
 
 <script>
-import Upload from "@/components/common/custom-upload";
-import mixinTableModule from "@/mixins/table-module";
+import Upload from '@/components/common/custom-upload'
+import mixinTableModule from '@/mixins/table-module'
 export default {
   mixins: [mixinTableModule],
-  components:{
+  components: {
     Upload
   },
-  data(){
+  data () {
     var validateGroupName = (rule, value, callback) => {
       if (value && !value.match(/^[\u4E00-\u9FA5A-Za-z0-9]{0,}$/)) {
-        return callback(new Error("限制16位汉字、字母或数字"))
+        return callback(new Error('限制16位汉字、字母或数字'))
       }
       callback()
     }
-    return{
-      previewImgDia:false,
-      previewImgUrl:'',
-      dialogVisibleGroup:false,//创建群组弹窗
-      dataListLoading:false,
-      submitLoading: false, //创建群组loading
+    return {
+      previewImgDia: false,
+      previewImgUrl: '',
+      dialogVisibleGroup: { // 创建群组弹窗
+        title: null,
+        id: null,
+        dialogVisible: false
+      }, // 弹窗标题
+      dataListLoading: false,
+      sortVal: '',
+      sortId: '',
+      submitLoading: false, // 创建群组loading
       // dialogVisibleAddUser:false,//添加成员弹窗
       // dialogVisibleLookUser:false,//添加成员弹窗
       // noJoinUserListLoading:false,
       // hasJoinUserListLoading:false,
       // dataListSelectionUsers:[],
-      groupNameForm:{
-        groupName:'',
-        delFlg:'',
+      groupNameForm: {
+        groupName: '',
+        delFlg: ''
       },
-      limit:10,
-      page:1,
-      total: 0,//群组条数
+      limit: 10,
+      page: 1,
+      total: 0, // 群组条数
       params: {
-        anchorId:'',
+        anchorId: ''
       },
-      diaTableTitle:{
-        groupName:"群组名称",
-        groupImage:"群组二维码",
-        delFlg:"显示状态",
-        createDate:"创建时间",
+      diaTableTitle: {
+        groupName: '群组名称',
+        groupImage: '群组二维码',
+        showStatus: '显示状态',
+        status: '审核状态',
+        sort: '排序',
+        createDate: '创建时间'
       },
-      fansGroupList:[],
-      createGroup:{
-        groupName:'',
+      fansGroupList: [],
+      createGroup: {
+        groupName: ''
       },
-      createGroupRules:{
+      createGroupRules: {
         groupName: [
-          { required: true, message: "请输入群组名称", trigger: "blur" },
+          { required: true, message: '请输入群组名称', trigger: 'blur' },
           { validator: validateGroupName, trigger: 'change' }
-        ],
+        ]
       },
       // noJoinFansUserForm:{//未加入群组的粉丝团成员查询
       //   nickName:'',
@@ -499,43 +549,98 @@ export default {
       // },
       // fansLevelsOptions: [], //粉丝等级options
       // currentGroupName: "", //当前查看的群组
-      fileList:[],
+      fileList: []
     }
   },
-  activated(){
-    this.params.anchorId=this.$route.query.anchorId
+  activated () {
+    this.params.anchorId = this.$route.query.anchorId
     this.getfansGroupList()
   },
-  methods:{
-    previewImg(url){//预览
-      if(url){
+  methods: {
+    // 排序
+    dblclick (row, column, cell, event) {
+      if (column.property === 'sort') {
+        this.sortId = row.id
+        this.sortVal = row.num
+        this.$nextTick(() => {
+          const id = '#' + 'input' + this.sortId
+          document.querySelector(id).focus()
+        })
+      }
+    },
+    // 回车确认
+    userSelect () {
+      if (!this.sortVal) {
+        return this.$message.warning('序号不能为空或0')
+      }
+      this.$http
+        .put('/sys/weixinfansgroup/updateSortNum', {
+          sort: this.sortVal,
+          id: this.sortId
+        })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg)
+          } else {
+            this.sortId = ''
+            this.sortVal = ''
+            this.getfansGroupList()
+          }
+        })
+        .catch((err) => {
+          throw err
+        })
+    },
+    showFansGroup (status, row) {
+      this.dialogVisibleGroup.title = status
+      this.dialogVisibleGroup.dialogVisible = true
+      if (status !== 1) {
+        this.createGroup.groupName = row.groupName
+        this.dialogVisibleGroup.id = row.id
+        this.fileList.push({ url: row.groupImage })
+      }
+    },
+    delFansGroup (row) {
+      this.submitLoading = true
+
+      this.$http.delete('/sys/weixinfansgroup', { data: [row.id] }).then(({ data: res }) => {
+        this.submitLoading = false
+        if (res.code !== 0) return this.$message.error(res.msg)
+        this.getfansGroupList()
+      }).catch(err => {
+        this.submitLoading = false
+        console.error(err)
+      })
+    },
+    previewImg (url) { // 预览
+      if (url) {
         this.previewImgUrl = url
         this.previewImgDia = true
       }
     },
     // 二维码上传
-    uploadSuccess(file) {
-        this.fileList.push(file)
+    uploadSuccess (file) {
+      this.fileList.push(file)
     },
-    uploadRemove(file) {
-        this.fileList = this.fileList.filter(item => item.uid != file.uid)
+    uploadRemove (file) {
+      this.fileList = this.fileList.filter(item => item.uid != file.uid)
     },
-    //批量选择
+    // 批量选择
     // noJoinUserSelectionChangeHandle(val) {
     //   this.dataListSelectionUsers = val;
     // },
     // 分页, 每页条数
-    pageSizeChangeHandle(val) {
-      this.page = 1;
-      this.limit = val;
-      this.query();
+    pageSizeChangeHandle (val) {
+      this.page = 1
+      this.limit = val
+      this.query()
     },
     // 分页, 当前页
-    pageCurrentChangeHandle(val) {
-      this.page = val;
-      this.query();
+    pageCurrentChangeHandle (val) {
+      this.page = val
+      this.query()
     },
-    //未加入群组的粉丝列表分页
+    // 未加入群组的粉丝列表分页
     // noJoinFansPageSizeChange(val){
     //   this.noJoinFansUserForm.page = 1;
     //   this.noJoinFansUserForm.limit = val;
@@ -557,50 +662,57 @@ export default {
     //   this.hasJoinFansUserForm.page = val;
     //   this.getHasJoinFansUserList();
     // },
-    query() {
-      this.dataListLoading = true;
-      this.$http.get('/sys/weixinfansgroup/page', { params: {...this.$httpParams(this.groupNameForm),...this.params} }).then(({ data: res }) => {
-        this.dataListLoading = false;
+    query () {
+      this.dataListLoading = true
+      this.$http.get('/sys/weixinfansgroup/page', { params: { ...this.$httpParams(this.groupNameForm), ...this.params } }).then(({ data: res }) => {
+        this.dataListLoading = false
         if (res.code !== 0) {
-          this.fansGroupList = [];
-          this.total = 0;
-          return this.$message.error(res.msg);
+          this.fansGroupList = []
+          this.total = 0
+          return this.$message.error(res.msg)
         }
-        this.fansGroupList = res.data.list;
-        this.total = res.data.total;
-      }).catch(err=>{
-        this.dataListLoading = false;
+        this.fansGroupList = res.data.list
+        this.total = res.data.total
+      }).catch(err => {
+        this.dataListLoading = false
       })
     },
-    //获取群组列表
-    getfansGroupList(){
+    // 获取群组列表
+    getfansGroupList () {
       this.page = 1
       this.query()
     },
     // 取消创建群组
-    cancelCreateGroup() {
-      this.dialogVisibleGroup = false
-      this.createGroup.groupName = ""
+    cancelCreateGroup () {
+      this.dialogVisibleGroup.dialogVisible = false
+      this.createGroup.groupName = ''
       this.fileList = []
     },
-    //创建群组
-    confirmCreateGroup(){
+    // 创建群组
+    confirmCreateGroup () {
       this.$refs.createGroupform.validate((valid) => {
         if (valid) {
-          if(!this.fileList.length){
+          if (!this.fileList.length) {
             return this.$message.error('请上传群组二维码')
           }
-          if(!this.$refs.uploadFile.isUploadAll()){
-            return this.$message.error("有附件正在上传中")
+          if (!this.$refs.uploadFile.isUploadAll()) {
+            return this.$message.error('有附件正在上传中')
           }
 
           this.submitLoading = true
-          let params = {
+          const params = {
             anchorId: this.$route.query.anchorId,
             groupName: this.createGroup.groupName,
             groupImage: this.fileList[0].url
           }
-          this.$http.post('/sys/weixinfansgroup', params).then(({ data: res })=>{
+          let groupResult = null
+          if (this.dialogVisibleGroup.title === 1) {
+            groupResult = this.$http.post('/sys/weixinfansgroup', params)
+          } else {
+            params.id = this.dialogVisibleGroup.id
+            groupResult = this.$http.put('/sys/weixinfansgroup', params)
+          }
+          groupResult.then(({ data: res }) => {
             this.submitLoading = false
             if (res.code !== 0) return this.$message.error(res.msg)
             this.cancelCreateGroup()
@@ -610,10 +722,10 @@ export default {
             console.error(err)
           })
         } else {
-          console.log('error submit!!');
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
+      })
     },
     // 获取粉丝等级
     // getFansLevels(type) {
@@ -630,53 +742,53 @@ export default {
     //     this.$message.error(JSON.stringify(err))
     //   })
     // },
-    //重置
-    reset(formName){
+    // 重置
+    reset (formName) {
       this.$refs[formName].resetFields()
       this.getfansGroupList()
     },
-    //添加成员
+    // 添加成员
     // handleAddUser(i, row){
     //   this.groupId = row.id
     //   this.dialogVisibleAddUser = true
     //   this.getNoJoinFansUserList()
     // },
-    //显示、隐藏
-    handleLookUser(i, row){
+    // 显示、隐藏
+    handleLookUser (i, row) {
       // this.groupId = row.id
       // this.currentGroupName = row.groupName
       // this.dialogVisibleLookUser = true
       // this.getHasJoinFansUserList()
 
-      let msg = row.delFlg == 1 ? "确认显示该群组，显示后，用户在小程序可在小程序扫码加入该群组" : "确认隐藏该群组，隐藏后，用户在小程序将看不到该群组"
+      const msg = row.showStatus == 1 ? '确认显示该群组，显示后，用户在小程序可在小程序扫码加入该群组' : '确认隐藏该群组，隐藏后，用户在小程序将看不到该群组'
 
-      this.$confirm(msg, row.delFlg == 1 ? '显示' : '隐藏', {
+      this.$confirm(msg, row.showStatus == 1 ? '显示' : '隐藏', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$http.put('/sys/weixinfansgroup',{id:row.id,delFlg:row.delFlg==1?0:1}).then(res=>{
-          if(res.data.code===0){
+        this.$http.put('/sys/weixinfansgroup', { id: row.id, showStatus: row.showStatus == 1 ? 0 : 1 }).then(res => {
+          if (res.data.code === 0) {
             this.$message({
               type: 'success',
               message: '修改成功'
-            }); 
+            })
             this.query()
-          }else{
+          } else {
             this.$message({
               type: 'error',
               message: res.data.msg
-            }); 
+            })
           }
         })
       }).catch(() => {
         this.$message({
           type: 'info',
           message: '已取消'
-        });          
-      });
-    },
-    //查看加入群的粉丝
+        })
+      })
+    }
+    // 查看加入群的粉丝
     // getHasJoinFansUserList(){
     //   this.hasJoinFansUserForm.groupId = this.groupId
     //   this.$http.get('/sys/weixinfansgroup/getPeople',{params:this.$httpParams(this.hasJoinFansUserForm)}).then(({data:res})=>{
@@ -691,7 +803,7 @@ export default {
     //   }).catch(err=>{
     //   })
     // },
-    //未加群的粉丝
+    // 未加群的粉丝
     // getNoJoinFansUserList(){
     //   this.$http.get('/sys/weixinfansgroup/getAnchorFans',{params:this.$httpParams(this.noJoinFansUserForm)}).then(({data:res})=>{
     //     // console.log(res)
@@ -705,7 +817,7 @@ export default {
     //   }).catch(err=>{
     //   })
     // },
-    //添加进入群组
+    // 添加进入群组
     // addUserJoinGroup(i,row){
     //   let userIds = [], data = {}
 
@@ -733,7 +845,7 @@ export default {
     //     this.getfansGroupList()
     //   }).catch(err=>{})
     // },
-    //移除群组成员
+    // 移除群组成员
     // removeUserJoinGroup(i,row){
     //   let userIds = []
     //   userIds.push(row.weixinUserId)
