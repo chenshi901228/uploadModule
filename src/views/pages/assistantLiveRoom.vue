@@ -139,13 +139,13 @@
                           item.payload.data.fansInfo &&
                           !item.payload.data.fansInfo.isFans &&
                           !item.payload.data.fansInfo.isAttention &&
-                          item.payload.data.userInfo.userId!=roomID
+                          item.payload.data.userInfo.userId!=roomId
                         "
                       >
                         <i class="el-icon-star-on" style="color: #fde7c8"></i>
                         游客&nbsp;{{ item.payload.data.fansInfo.grade }}
                       </div>
-                      <div class="fansCard" style="background:#1F6BFA;" v-else-if="item.payload.data.userInfo&&item.payload.data.userInfo.userId==roomID">
+                      <div class="fansCard" style="background:#1F6BFA;" v-else-if="item.payload.data.userInfo&&item.payload.data.userInfo.userId==roomId">
                         <i class="el-icon-star-on" style="color:#fde7c8;"></i>
                         主播&nbsp;
                       </div>
@@ -381,6 +381,7 @@
                 </div> -->
               </div>
               <video autoplay :src-object.prop="stream" id="myVideo" class="push_video"></video>
+              <video autoplay :src-object.prop="screenStream" v-if="screenStream" style="z-index:2;" class="push_video"></video>
             </div>
             <div class="connect_list">
               <div
@@ -705,6 +706,7 @@ export default {
       roomId: "",
       streamID: "",
       stream:{},
+      screenStream:null,
       groupID: "", //群聊ID
       conversation: null, //直播插件
       connectMessageInfo: [], //申请连麦信息
@@ -904,8 +906,11 @@ export default {
       if (updateType == "ADD") {
         // 流新增，开始拉流
         console.log("流新增------------", streamList);
-        streamList.forEach((streamItem) => {
+        streamList.forEach(async (streamItem) => {
           this.livePlayerList.push(streamItem);
+          if(streamItem.streamID=='shareDesk'+this.roomId){ //主播开启屏幕共享
+            this.screenStream = await this.zg.startPlayingStream('shareDesk'+this.roomId);
+          }
           this.connectMessageInfo.forEach(async (item) => {
             if (item.userInfo.userId === streamItem.user.userID) {
               item.stream = await this.zg.startPlayingStream(
@@ -928,6 +933,10 @@ export default {
           let index = this.livePlayerList.findIndex(
             (item) => item.streamID === streamItem.streamID
           );
+          if(streamItem.streamID=='shareDesk'+this.roomId){ //主播关闭屏幕共享
+            this.screenStream = null;
+            this.zg.stopPlayingStream('shareDesk'+this.roomId)
+          }
           if (index > -1) {
             this.livePlayerList.splice(index, 1);
           }
