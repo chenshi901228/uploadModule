@@ -26,7 +26,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-show="isOpen || formItemCount >= 2" label="主播" prop="content">
+        <el-form-item v-show="isOpen || formItemCount >= 3" label="主播" prop="anchorRealName">
           <el-input
             style="width: 200px"
             placeholder="请输入姓名、昵称或手机号码"
@@ -34,7 +34,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-show="isOpen || formItemCount >= 3" label="直播间名称" prop="liveTheme">
+        <el-form-item v-show="isOpen || formItemCount >= 4" label="直播间名称" prop="liveTheme">
           <el-input
             style="width: 200px"
             placeholder="请输入"
