@@ -17,6 +17,19 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
+        <el-form-item label="显示状态" prop="showStatus">
+          <el-select v-model="groupNameForm.showStatus" clearable>
+            <el-option :value="0" label="隐藏"></el-option>
+            <el-option :value="1" label="显示"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="审核状态">
+          <el-select v-model="groupNameForm.status" placeholder="请选择审核状态">
+            <el-option label="已通过" value="1"></el-option>
+            <el-option label="已驳回" value="-1"></el-option>
+            <el-option label="审核中" value="0"></el-option>
+          </el-select>
+        </el-form-item>
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">
           <el-form-item>
@@ -89,10 +102,10 @@
                 <span v-else>-</span>
               </div>
               <span v-else-if="prop=='showStatus'">
-                {{row.delFlg==1?'隐藏':'显示'}}
+                {{row.showStatus==1?'显示':'隐藏'}}
               </span>
               <span v-else-if="prop=='status'">
-                {{row.status==1?'审核通过': row.status== -1 ? '审核不通过' : '审核中'}}
+                {{row.status==1?'已通过': row.status== -1 ? '已驳回' : '审核中'}}
               </span>
               <span v-else>
                 {{ row[prop] || '-' }}
@@ -580,6 +593,8 @@ export default {
     // 重置
     reset (formName) {
       this.groupNameForm.groupName = ''
+      this.groupNameForm.showStatus = ''
+      this.groupNameForm.status = ''
       this.groupNameForm.limit = 10
       this.groupNameForm.page = 1
       this.hasJoinFansUserForm.nickName = ''
