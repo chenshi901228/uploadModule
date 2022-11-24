@@ -61,7 +61,7 @@
           </el-upload>
         </el-form-item>
 
-        <el-form-item label="直播推广图">
+        <!-- <el-form-item label="直播推广图">
           <custom-upload
             ref="extensionUpload"
             @uploadSuccess="extensionUploadSuccess"
@@ -74,7 +74,7 @@
           <div>
             格式限制：jpg/jpeg/png，图片尺寸为460px × 368px；大小不得超过2M
           </div>
-        </el-form-item>
+        </el-form-item> -->
 
 
         <el-form-item class="quill-editor" label="直播介绍" prop="liveIntroduce">

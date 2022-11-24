@@ -28,12 +28,12 @@
                     <p class="tips">格式限制：jpg/jpeg/png，建议图片尺寸不小于630px×347px，大小不得超过2M</p>
                 </el-form-item>
 
-                <el-form-item label="直播推广图">
+                <!-- <el-form-item label="直播推广图">
                     <custom-upload ref="extensionUpload" fileWH="460/368" :fileMaxSize="2" :fileType="['png', 'jpg', 'jpeg']"
                         @uploadSuccess="extensionUploadSuccess" @uploadRemove="extensionUploadRemove" :fileList="extensionList">
                     </custom-upload>
                     <p class="tips">格式限制：jpg/jpeg/png，图片尺寸为460px × 368px；大小不得超过2M</p>
-                </el-form-item>
+                </el-form-item> -->
 
                 <el-form-item label="添加商品" prop="product">
                     <!-- <el-input style="width: 400px" placeholder="请选择" v-model="dataForm.product"

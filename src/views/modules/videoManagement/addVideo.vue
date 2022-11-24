@@ -43,7 +43,7 @@
           格式限制：jpg/jpeg/png，建议图片尺寸不小于630px*347px；大小不得超过2M
         </div>
       </el-form-item>
-      <el-form-item label="视频推广图" required>
+      <!-- <el-form-item label="视频推广图">
         <custom-upload
           ref="extensionUpload"
           @uploadSuccess="extensionUploadSuccess"
@@ -56,7 +56,7 @@
         <div>
           格式限制：jpg/jpeg/png，图片尺寸为460px*368px；大小不得超过2M
         </div>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="上传视频" required>
         <custom-upload
           ref="relationLiveUpload"
@@ -307,9 +307,9 @@ export default {
           if (!this.frontCoverList.length) {
             return this.$message.error("请上传封面图");
           }
-          if (!this.extensionList.length) {
-            return this.$message.error("请上传视频推广图");
-          }
+          // if (!this.extensionList.length) {
+          //   return this.$message.error("请上传视频推广图");
+          // }
           if (!this.relationLiveList.length) {
             return this.$message.error("请上传视频");
           }
@@ -336,7 +336,7 @@ export default {
           // 附件处理
           params.frontCoverUrl = this.frontCoverList[0].url;
           params.relationLiveUrl = this.relationLiveList[0].url;
-          params.spreadUrl = this.extensionList[0].url;
+          // params.spreadUrl = this.extensionList[0].url;
           params.videoSize = this.relationLiveList[0].size; //视频大小
 
           //视频原始长宽
