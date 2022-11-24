@@ -234,6 +234,7 @@
                     item.type &&
                     item.type === 'TIMCustomElem' &&
                     item.payload.data.userInfo.userId === userInfo.userId &&
+                    item.payload.data.userInfo.type!='assistant' &&
                     (item.payload.data.message.type === 1 ||
                       item.payload.data.message.type === 3)
                   "
