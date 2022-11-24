@@ -958,19 +958,23 @@
             </div>
             <div class="block">
               <span>美白</span>
-              <el-slider @input="changeWhitenIntensity" v-model="beautifyParams.whitenIntensity"></el-slider>
+              <el-slider @input="changeWhitenIntensity" v-model="beautifyParams.whitenIntensity" :show-tooltip="false"></el-slider>
+              <span class="showTips">{{beautifyParams.whitenIntensity}}</span>
             </div>
             <div class="block">
               <span>磨皮</span>
-              <el-slider @input="changeSmoothIntensity" v-model="beautifyParams.smoothIntensity"></el-slider>
+              <el-slider @input="changeSmoothIntensity" v-model="beautifyParams.smoothIntensity" :show-tooltip="false"></el-slider>
+              <span class="showTips">{{beautifyParams.smoothIntensity}}</span>
             </div>
             <div class="block">
               <span>锐化</span>
-              <el-slider @input="changeSharpenIntensity" v-model="beautifyParams.sharpenIntensity"></el-slider>
+              <el-slider @input="changeSharpenIntensity" v-model="beautifyParams.sharpenIntensity" :show-tooltip="false"></el-slider>
+              <span class="showTips">{{beautifyParams.sharpenIntensity}}</span>
             </div>
             <div class="block">
               <span>红润</span>
-              <el-slider @input="changeRosyIntensity" v-model="beautifyParams.rosyIntensity"></el-slider>
+              <el-slider @input="changeRosyIntensity" v-model="beautifyParams.rosyIntensity" :show-tooltip="false"></el-slider>
+              <span class="showTips">{{beautifyParams.rosyIntensity}}</span>
             </div>
           </div>
         </div>
@@ -3891,7 +3895,8 @@ p {
             }
             .tool_nav_son{
               position: absolute;
-              bottom: -90px;
+              // bottom: -90px;
+              top: 100%;
               background-color: #000000;
               width: 90px;
               font-size: 14px;
@@ -4461,6 +4466,7 @@ p {
         }
         .checkd_reset{
           font-size: 12px;
+          cursor: pointer;
           >span{
             margin-left: 2px;
           }
@@ -4473,7 +4479,8 @@ p {
         color: #000000;
       }
       .el-slider{
-        width: 85%;
+        flex: 1;
+        margin: 0 10px 0 6px;
       }
       .el-slider__bar{
         background: linear-gradient(90deg, #FA3623 0%, #FE055A 100%)!important;

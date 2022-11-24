@@ -18,10 +18,17 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item label="显示状态" prop="delFlg">
-          <el-select v-model="groupNameForm.delFlg" clearable>
-            <el-option :value="0" label="显示"></el-option>
-            <el-option :value="1" label="隐藏"></el-option>
+        <el-form-item label="显示状态" prop="showStatus">
+          <el-select v-model="groupNameForm.showStatus" clearable>
+            <el-option :value="0" label="隐藏"></el-option>
+            <el-option :value="1" label="显示"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="审核状态" prop="status">
+          <el-select v-model="groupNameForm.status" placeholder="请选择审核状态">
+            <el-option label="已通过" value="1"></el-option>
+            <el-option label="审核中" value="-1"></el-option>
+            <el-option label="已驳回" value="0"></el-option>
           </el-select>
         </el-form-item>
         <!-- 搜索重置展开按钮 -->
@@ -117,10 +124,10 @@
               </span>
             </div>
               <span v-else-if="prop=='showStatus'">
-                {{row.delFlg==1?'显示':'隐藏'}}
+                {{row.showStatus==1?'显示':'隐藏'}}
               </span>
               <span v-else-if="prop=='status'">
-                {{row.status==1?'审核通过': row.status== -1 ? '审核不通过' : '审核中'}}
+                {{row.status==1?'已通过': row.status== -1 ? '审核不通过' : '审核中'}}
               </span>
               <span v-else>
                 {{ row[prop] || '-' }}
@@ -140,10 +147,12 @@
               size="small"
               type="text"
               icon="el-icon-view"
+              v-if="scope.row.status!==0"
               @click="handleLookUser(scope.$index, scope.row)"
-              >{{scope.row.showStatus==1?'显示':'隐藏'}}</el-button
+              >{{scope.row.showStatus==1?'隐藏':'显示'}}</el-button
             >
-            <el-button
+            <div v-if="scope.row.showStatus===0 && scope.row.status === 1">
+              <el-button
               size="small"
               type="text"
               icon="el-icon-edit"
@@ -157,6 +166,7 @@
               @click="delFansGroup(scope.row)"
               >删除</el-button
             >
+            </div>
           </template>
         </el-table-column>
       </el-table>
@@ -602,8 +612,12 @@ export default {
     },
     delFansGroup (row) {
       this.submitLoading = true
-
-      this.$http.delete('/sys/weixinfansgroup', { data: [row.id] }).then(({ data: res }) => {
+      this.$confirm('确定要删除该企微粉丝群', '删除', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$http.delete('/sys/weixinfansgroup', { data: [row.id] }).then(({ data: res }) => {
         this.submitLoading = false
         if (res.code !== 0) return this.$message.error(res.msg)
         this.getfansGroupList()
@@ -611,6 +625,8 @@ export default {
         this.submitLoading = false
         console.error(err)
       })
+      })
+
     },
     previewImg (url) { // 预览
       if (url) {
@@ -767,7 +783,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        this.$http.put('/sys/weixinfansgroup', { id: row.id, showStatus: row.showStatus == 1 ? 0 : 1 }).then(res => {
+        this.$http.put('/sys/weixinfansgroup/updateShowStatus', { id: row.id, showStatus: row.showStatus == 1 ? 0 : 1 }).then(res => {
           if (res.data.code === 0) {
             this.$message({
               type: 'success',

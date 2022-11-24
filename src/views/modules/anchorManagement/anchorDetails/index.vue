@@ -377,7 +377,7 @@
             <el-button size="mini" v-if="diaTbas === 6" @click="addRecommendShow" type="primary" plain
               icon="el-icon-plus">新增主播</el-button>
 
-            <el-button size="mini" icon="el-icon-user" v-if="diaTbas === 4" plain @click="fansGroup" type="primary">群组
+            <el-button size="mini" icon="el-icon-user" v-if="diaTbas === 4" plain @click="fansGroup" type="primary">企微粉丝群
             </el-button>
           </div>
 
