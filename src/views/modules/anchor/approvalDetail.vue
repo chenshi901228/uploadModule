@@ -108,6 +108,9 @@ export default {
     this.diaForm = JSON.parse(
       window.localStorage.getItem("anchor-approvalDetail")
     );
+    if (this.diaForm.status === 0) {
+      this.diaForm.auditRemark = ''
+    }
   },
   computed: {
     // 审核状态图片

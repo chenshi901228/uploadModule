@@ -83,6 +83,36 @@
       type="index"
       >
       </el-table-column>
+      <el-table-column
+            prop="realName"
+            label="真实姓名"
+            header-align="center"
+            align="center"
+          >
+        </el-table-column>
+        <el-table-column
+            prop="phone"
+            label="手机号码"
+            header-align="center"
+            align="center"
+          >
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+            prop="anchorName"
+            label="主播昵称"
+            header-align="center"
+            align="center"
+          >
+        </el-table-column>
+        <el-table-column
+          show-overflow-tooltip
+            prop="groupName"
+            label="群组名"
+            header-align="center"
+            align="center"
+          >
+        </el-table-column>
         <template v-for="(label, prop) in diaTableTitle">
           <el-table-column
             :prop="prop"
@@ -114,6 +144,22 @@
             </template>
           </el-table-column>
         </template>
+        <el-table-column
+            show-overflow-tooltip
+            prop="updateDate"
+            label="提交时间"
+            header-align="center"
+            align="center"
+          >
+        </el-table-column>
+        <el-table-column
+            show-overflow-tooltip
+            prop="auditDate"
+            label="审核时间"
+            header-align="center"
+            align="center"
+          >
+        </el-table-column>
         <el-table-column
           width="100"
           label="操作"
@@ -176,13 +222,13 @@ export default {
         status: ''
       },
       diaTableTitle: {
-        realName: '真实姓名',
-        phone: '手机号码',
-        anchorName: '主播昵称',
-        groupName: '群组名',
+        // realName: '真实姓名',
+        // phone: '手机号码',
+        // anchorName: '主播昵称',
+        // groupName: '群组名',
         groupImage: '群组二维码',
-        updateDate: '提交时间',
-        auditDate: '审批时间',
+        // updateDate: '提交时间',
+        // auditDate: '审批时间',
         status: '审核状态'
       },
       total: 0, // 群组条数

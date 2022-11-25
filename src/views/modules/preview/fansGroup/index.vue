@@ -77,13 +77,20 @@
         fit
         ref="table"
         style="width: 100%"
-        :height="siteContentViewHeight"
         @cell-dblclick="dblclick"
       >
       <el-table-column
       label="序号"
       type="index"
       >
+    </el-table-column>
+    <el-table-column
+    show-overflow-tooltip
+            prop="groupName"
+            label="群组名称"
+            header-align="center"
+            align="center"
+          >
     </el-table-column>
         <template v-for="(label, prop) in diaTableTitle">
           <el-table-column
@@ -118,6 +125,7 @@
                 :max="9999"
                 :id="'input' + row.id"
                 @keyup.enter.native="userSelect"
+                style="width:100%"
               ></el-input-number>
               <span v-else>
                 {{ row.sort || "--" }}
@@ -135,6 +143,14 @@
             </template>
           </el-table-column>
         </template>
+        <el-table-column
+    show-overflow-tooltip
+            prop="createDate"
+            label="创建时间"
+            header-align="center"
+            align="center"
+          >
+    </el-table-column>
         <el-table-column
           width="200"
           label="操作"
@@ -501,12 +517,12 @@ export default {
         anchorId: ''
       },
       diaTableTitle: {
-        groupName: '群组名称',
+        // groupName: '群组名称',
         groupImage: '群组二维码',
         showStatus: '显示状态',
         status: '审核状态',
         sort: '排序',
-        createDate: '创建时间'
+        // createDate: '创建时间'
       },
       fansGroupList: [],
       createGroup: {
@@ -571,7 +587,7 @@ export default {
     dblclick (row, column, cell, event) {
       if (column.property === 'sort') {
         this.sortId = row.id
-        this.sortVal = row.num
+        this.sortVal = row.sort
         this.$nextTick(() => {
           const id = '#' + 'input' + this.sortId
           document.querySelector(id).focus()
@@ -733,6 +749,7 @@ export default {
             if (res.code !== 0) return this.$message.error(res.msg)
             this.cancelCreateGroup()
             this.getfansGroupList()
+            this.$message.success('您已提交企微粉丝群二维码，请等待审核')
           }).catch(err => {
             this.submitLoading = false
             console.error(err)
@@ -776,9 +793,9 @@ export default {
       // this.dialogVisibleLookUser = true
       // this.getHasJoinFansUserList()
 
-      const msg = row.showStatus == 1 ? '确认显示该群组，显示后，用户在小程序可在小程序扫码加入该群组' : '确认隐藏该群组，隐藏后，用户在小程序将看不到该群组'
+      const msg = row.showStatus == 0 ? '确认显示该群组，显示后，用户在小程序可在小程序扫码加入该群组' : '确认隐藏该群组，隐藏后，用户在小程序将看不到该群组'
 
-      this.$confirm(msg, row.showStatus == 1 ? '显示' : '隐藏', {
+      this.$confirm(msg, row.showStatus == 0 ? '显示' : '隐藏', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
