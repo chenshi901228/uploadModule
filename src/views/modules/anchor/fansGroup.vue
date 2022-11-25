@@ -159,6 +159,9 @@
             header-align="center"
             align="center"
           >
+          <template slot-scope="{row}">
+            {{row.status === 0 ? '-' : row.auditDate}}
+          </template>
         </el-table-column>
         <el-table-column
           width="100"
