@@ -224,6 +224,7 @@
             :limit="1"
             :fileType="['png', 'jpg', 'jpeg']"
             ref="uploadFile"
+            fileWH="300/300"
             @uploadSuccess="uploadSuccess"
             @uploadRemove="uploadRemove"
           ></upload>
