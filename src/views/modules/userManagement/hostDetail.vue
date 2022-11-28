@@ -52,12 +52,12 @@
           </div>
         </div>
 
-        <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:bank:info')">
+        <!-- <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:bank:info')">
           <p style="font-size: 14px;font-weight: bold;color: #4057CB;">银行账户<span class="accountStatus"
               v-if="diaForm.haveApplyInfo && diaForm.userType == 2">核验中</span></p>
-        </div>
+        </div> -->
         <!-- 企业 -->
-        <div class="diaBoxLeft_mes" v-if="diaForm.userType == 2 && $hasPermission('anchor:bank:info')">
+        <!-- <div class="diaBoxLeft_mes" v-if="diaForm.userType == 2 && $hasPermission('anchor:bank:info')">
           <div style="width:50%;display: inline-block;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">公司名称</div>
             <div>
@@ -89,9 +89,9 @@
             </div>
           </div>
 
-        </div>
+        </div> -->
         <!-- 个人 -->
-        <div class="diaBoxLeft_mes" v-else-if="diaForm.userType == 1 && $hasPermission('anchor:bank:info')">
+        <!-- <div class="diaBoxLeft_mes" v-else-if="diaForm.userType == 1 && $hasPermission('anchor:bank:info')">
           <div style="width:50%;display: inline-block;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">姓名</div>
             <div>
@@ -135,7 +135,7 @@
             </div>
           </div>
 
-        </div>
+        </div> -->
         <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:amount:info')">
           <span style="font-size: 14px;font-weight: bold;color: #4057CB;">账户信息</span>
 
