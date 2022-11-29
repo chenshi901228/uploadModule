@@ -61,20 +61,26 @@
           </el-upload>
         </el-form-item>
 
-        <!-- <el-form-item label="直播推广图">
-          <custom-upload
-            ref="extensionUpload"
-            @uploadSuccess="extensionUploadSuccess"
-            @uploadRemove="extensionUploadRemove"
-            :fileList="extensionList"
-            :fileType="['png', 'jpg', 'jpeg']"
-            fileWH="460/368"
-            :fileMaxSize="2"
-          ></custom-upload>
+        <el-form-item label="直播推广图" prop="spreadUrl" class="img-item">
+          <div v-for="item in extensionImg" :key="item" class="img-box">
+            <el-image style="width: 100px; height: 100px" :src="item" fit="cover" @click="extensionImgPic(item)"></el-image>
+            <img v-if="item === ruleForm.spreadUrl" class="like-img" src="@/assets/img/like_red.png" alt="" />
+          </div>
+          <div v-for="item in extensionList" :key="item" class="img-box">
+            <el-image style="width: 100px; height: 100px" :src="item" fit="cover" @click="extensionImgPic(item)"></el-image>
+            <img v-if="item === ruleForm.spreadUrl" class="like-img" src="@/assets/img/like_red.png" alt="" />
+            <img @click="extensionRemove(item)" class="close-img" src="@/assets/img/close.png" alt="" />
+          </div>
+          <el-upload class="upload-demo" :action="uploadUrl" :on-success="extensionSuccess" list-type="picture-card"
+            :multiple="false" :show-file-list="false" :before-upload="beforeAvatarUpload">
+            <i slot="default" class="el-icon-plus"></i>
+          </el-upload>
+        </el-form-item>
+        <el-form-item>
           <div>
             格式限制：jpg/jpeg/png，图片尺寸为460px × 368px；大小不得超过2M
           </div>
-        </el-form-item> -->
+        </el-form-item>
 
 
         <el-form-item class="quill-editor" label="直播介绍" prop="liveIntroduce">
@@ -218,6 +224,9 @@ import "../../../../assets/font.css";
 import ChooseAnchor from "@/components/chooseDialog/chooseAnchor";
 import ChooseProduct from "@/components/chooseDialog/chooseProduct";
 import ComModule from "@/mixins/common-module";
+
+import { getImageWH } from "@/utils"
+
 // 自定义字体大小
 let Size = Quill.import("attributors/style/size");
 Size.whitelist = ["10px", "12px", "14px", "16px", "18px", "20px"];
@@ -336,6 +345,7 @@ export default {
       anchorId: "",
       anchorOptions: [], //主播选项
       loading: false, //输入主播选择loading
+      extensionImg:[],//直播推广图
       extensionList:[],
     };
   },
@@ -373,6 +383,7 @@ export default {
     };
     this.anchorId = this.$route.query.anchorId;
     this.getCoverPictureList();
+    this.getExtensionList()
   },
   activated() {
     
@@ -406,7 +417,7 @@ export default {
     //获取直播封面图
     getCoverPictureList() {
       this.$http
-        .get("/sys/livecoverpicture/getCoverPictureList")
+        .get("/sys/livecoverpicture/getCoverPictureList?style=0&classification=0")
         .then(({ data: res }) => {
           if (res.code !== 0) {
             return this.$message.error(res.msg);
@@ -424,6 +435,47 @@ export default {
         .catch((err) => {
           throw err;
         });
+    },
+    //获取直播推广图
+    getExtensionList() {
+      this.$http
+        .get(`/sys/livecoverpicture/getCoverPictureList?style=1&classification=3`)
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          let list = [];
+
+          if (res.data && res.data.length !== 0) {
+            res.data.forEach((v) => {
+              list.push(v.coverUrl);
+            });
+          }
+          this.extensionImg = list;
+          this.ruleForm.spreadUrl = this.extensionImg[0];
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
+    //直播推广图上传前
+    async beforeAvatarUpload(file) {
+      let type = file.type ? file.type.split("/") : file.name.split(".");
+      type = type[type.length - 1];
+      let fileSize = file.size / 1024 / 1024 < 2;
+      if (type != "jpg" && type != "jpeg" && type != "png") {
+        this.$message.warning('直播推广图只能是 jpg/jpeg/png 格式!');
+        return Promise.reject(false);
+      }
+      let res = await getImageWH(file)
+      if(res && (Math.abs(res.width - 460) > 6 || Math.abs(res.height - 368) > 6) ) {
+        this.$message.warning(`图片尺寸大小为460px*368px`);
+        return Promise.reject(false);
+      }
+      if (!fileSize) {
+        this.$message.warning('直播推广图大小不能超过 2MB!');
+        return Promise.reject(false);
+      }
     },
     onEditorChange(e) {
       e.quill.deleteText(2000, 4);
@@ -522,13 +574,13 @@ export default {
             startDate: this.ruleForm.startDate,
             estimateLiveTime: this.ruleForm.estimateLiveTime,
             frontCoverUrl: this.ruleForm.frontCoverUrl,
+            spreadUrl: this.ruleForm.spreadUrl,
             liveIntroduce: this.ruleForm.liveIntroduce,
             assistantIds: this.ruleForm.assistantIds,
             dynamicGroupIds: this.ruleForm.dynamicGroupIds,
             frontCover: this.frontCoverList.length
               ? this.frontCoverList[0].url
               : "",
-            spreadUrl: this.extensionList.length ? this.extensionList[0].url : "",
             trendsOpen: this.ruleForm.trendsOpen
           };
 
@@ -583,6 +635,11 @@ export default {
       this.fileList.push(response.data.url);
       this.ruleForm.frontCoverUrl = response.data.url;
     },
+    //上传后-直播推广图
+    extensionSuccess(response, file, fileList) {
+      this.extensionList.push(response.data.url);
+      this.ruleForm.spreadUrl = response.data.url;
+    },
     //删除照片
     handleRemove(url) {
       this.fileList.forEach((v, i) => {
@@ -595,11 +652,29 @@ export default {
       } else {
         this.ruleForm.frontCoverUrl = this.fileList[0];
       }
+    },//删除照片-直播推广图
+    extensionRemove(url) {
+      this.extensionList.forEach((v, i) => {
+        if (url === v) {
+          this.extensionList.splice(i, 1);
+        }
+      });
+      if (this.extensionList.length === 0) {
+        this.ruleForm.spreadUrl = this.extensionImg[0];
+      } else {
+        this.ruleForm.spreadUrl = this.extensionList[0];
+      }
     },
     //选择照片
     choosePic(url) {
       if (url && this.ruleForm.frontCoverUrl !== url) {
         this.ruleForm.frontCoverUrl = url;
+      }
+    },
+    //选择照片-直播推广图
+    extensionImgPic(url) {
+      if (url && this.ruleForm.spreadUrl !== url) {
+        this.ruleForm.spreadUrl = url;
       }
     },
     // 时间格式化

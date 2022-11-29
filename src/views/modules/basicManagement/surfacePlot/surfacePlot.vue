@@ -846,7 +846,10 @@ export default {
     //上传封面图
     upImg() {
       this.upImgDialog = true;
+      this.typeList=[]
+      this.imgForm.classification=""
       this.activeName="0"
+      this.dictTypeId="1594939357775560706"
       this.getTypeList()
     },
     //获取图片类型

@@ -468,4 +468,15 @@ export default {
     object-fit: cover;
   }
 }
+//给固定列设置下边距
+/deep/.el-table {
+    .el-table__fixed {
+        height:auto !important;
+        bottom:20px !important; //具体值是多少根据你横向滚动条的高度进行设置
+    }
+}
+//去掉固定列下方的横线
+/dep/.el-table__fixed::before, .el-table__fixed-right::before {
+    display:none;
+}
 </style>

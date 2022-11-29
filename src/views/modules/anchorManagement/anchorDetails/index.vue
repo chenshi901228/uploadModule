@@ -57,13 +57,13 @@
           
         </div>
 
-        <!-- <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:bank:info')">
+        <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:bank:info')">
           <p style="font-size: 14px;font-weight: bold;color: #4057CB;">银行账户<span class="accountStatus"
               v-if="anchorDetails.haveApplyInfo && anchorDetails.userType == 2">核验中</span></p>
           <el-button plain type="primary" size="mini" @click="editeUserBank" icon="el-icon-edit">编辑</el-button>
-        </div> -->
+        </div>
         <!-- 企业 -->
-        <!-- <div class="diaBoxLeft_mes" v-if="anchorDetails.userType == 2 && $hasPermission('anchor:bank:info')">
+        <div class="diaBoxLeft_mes" v-if="anchorDetails.userType == 2 && $hasPermission('anchor:bank:info')">
           <div style="width:50%;display: inline-block;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">公司名称</div>
             <div>
@@ -95,9 +95,9 @@
             </div>
           </div>
 
-        </div> -->
+        </div>
         <!-- 个人 -->
-        <!-- <div class="diaBoxLeft_mes" v-else-if="anchorDetails.userType == 1 && $hasPermission('anchor:bank:info')">
+        <div class="diaBoxLeft_mes" v-else-if="anchorDetails.userType == 1 && $hasPermission('anchor:bank:info')">
           <div style="width:50%;display: inline-block;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">姓名</div>
             <div>
@@ -141,7 +141,7 @@
             </div>
           </div>
 
-        </div> -->
+        </div>
         <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:amount:info')">
           <span style="font-size: 14px;font-weight: bold;color: #4057CB;">账户信息</span>
           <el-button plain type="primary" size="mini" @click="withdrawMoney" style="width:73px;background: rgb(64, 87, 203);
@@ -2206,11 +2206,11 @@ export default {
     //提现
     withdrawMoney() {
       // 企业银行账号核验中不可申请提现
-      return this.$confirm("信息不完善，暂不可提现", "提示", {
-        confirmButtonText: "确认",
-        showCancelButton: false,
-        showClose: false
-      }).catch(() => { })
+      // return this.$confirm("信息不完善，暂不可提现", "提示", {
+      //   confirmButtonText: "确认",
+      //   showCancelButton: false,
+      //   showClose: false
+      // }).catch(() => { })
       if (this.anchorDetails.haveApplyInfo && this.anchorDetails.userType == 2) {
         return this.$confirm("您的银行账号正在核验中，不可申请提现", "提示", {
           confirmButtonText: "确认",
