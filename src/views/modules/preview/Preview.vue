@@ -280,6 +280,7 @@
           fixed="left"
           prop="liveTheme"
           align="center"
+          show-overflow-tooltip
         >
         </el-table-column>
         <el-table-column
