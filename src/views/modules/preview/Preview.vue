@@ -115,6 +115,7 @@
           >
             <el-option label="已结束" :value="0"></el-option>
             <el-option label="预约中" :value="1"></el-option>
+            <el-option label="审核中" :value="2"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item
@@ -377,10 +378,8 @@
           prop="appointmentState"
           align="center"
         >
-          <template slot-scope="scope">
-            <span>{{
-              scope.row.appointmentState === 0 ? "已结束" : "预约中"
-            }}</span>
+          <template slot-scope="{ row }">
+            <span>{{ setAppointmentState(row.appointmentState) }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -615,6 +614,22 @@ export default {
     this.getDynamicGroupList();
   },
   methods: {
+    // 预约状态
+    setAppointmentState(state) {
+      let res = "-"
+      switch(state) {
+        case 0: 
+          res = "已结束"
+          break;
+        case 1: 
+          res = "预约中"
+          break;
+        case 2: 
+          res = "审核中"
+          break;
+      }
+      return res
+    },
     timeFlag(startDate) {
       let nowTime = new Date().getTime();
       let time = new Date(startDate).getTime();
