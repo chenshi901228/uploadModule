@@ -343,6 +343,7 @@ export default {
   methods: {
     // 打开用户详情弹窗
     openDetail(data) {
+      sessionStorage.setItem("changeTbasUser",1)
       this.$router.push({
         name: "userManagement-userDetail",
       });

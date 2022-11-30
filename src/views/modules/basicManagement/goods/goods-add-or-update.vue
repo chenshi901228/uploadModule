@@ -45,7 +45,7 @@
         >
         </el-input-number>
       </el-form-item>
-      <el-form-item label="库存数量：" prop="stock">
+      <!-- <el-form-item label="库存数量：" prop="stock">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <el-input-number
           v-model="dataForm.stock"
@@ -56,11 +56,7 @@
           :max="9999999999"
         >
         </el-input-number>
-        <!-- <el-input-number
-          v-model="dataForm.stock"
-          placeholder="库存数量"
-        ></el-input-number> -->
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="已购买人数：" prop="buyers">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
         <el-input-number
@@ -126,10 +122,10 @@ export default {
           { required: true, message: "请输入销售价格", trigger: "change" },
           { validator: blurText1, trigger: "change" },
         ],
-        stock: [
-          { required: true, message: "请输入库存数量", trigger: "change" },
-          { validator: blurText2, trigger: "change" },
-        ],
+        // stock: [
+        //   { required: true, message: "请输入库存数量", trigger: "change" },
+        //   { validator: blurText2, trigger: "change" },
+        // ],
         buyers: [
           { required: true, message: "请输入已购买人数", trigger: "change" },
           { validator: blurText3, trigger: "change" },
@@ -151,7 +147,7 @@ export default {
   methods: {
     init(data) {
       if (data) this.dataForm = JSON.parse(JSON.stringify(data));
-      this.dataForm.stock = this.dataForm.stock == null ? 0 : this.dataForm.stock
+      // this.dataForm.stock = this.dataForm.stock == null ? 0 : this.dataForm.stock
       this.visible = true;
     },
     // 取消添加
@@ -170,7 +166,7 @@ export default {
             .put("/sys/course", {
               id: params.id,
               price: params.price,
-              stock: params.stock,
+              // stock: params.stock,
               buyers: params.buyers,
               settlementPrice:params.settlementPrice
             })

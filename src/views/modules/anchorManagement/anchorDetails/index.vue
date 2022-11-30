@@ -1164,8 +1164,13 @@ export default {
         }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
     },
   },
+  destroyed() {
+    sessionStorage.setItem("changeTbas",0)
+  },
+
 
   activated() {
+    this.diaTbas=Number(sessionStorage.getItem("changeTbas"))
     this.userId = this.$store.state.user.id;
     this.$http
       .get("/sys/region/tree")
@@ -1364,7 +1369,9 @@ export default {
         });
     },
     changeTbas(n) {
-      this.diaTbas = n;
+      sessionStorage.setItem("changeTbas",n)
+      this.diaTbas=Number(sessionStorage.getItem("changeTbas"))
+      // this.diaTbas = n;
       this.page_dia = 1;
       this.diaSearchForm = {
         payType: "",

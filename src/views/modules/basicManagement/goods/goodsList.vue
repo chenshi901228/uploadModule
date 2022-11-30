@@ -332,7 +332,7 @@ export default {
         { prop: "settlementPrice", label: "APP结算价格" },
         { prop: "productType", label: "商品类型" },
         { prop: "isFree", label: "是否免费" },
-        { prop: "stock", label: "库存数量" },
+        // { prop: "stock", label: "库存数量" },
         { prop: "buyers", label: "已购买人数" },
         { prop: "linkedProductId", label: "关联产品编号", width: 320 },
         // { prop: "proportion", label: "分成比例" },

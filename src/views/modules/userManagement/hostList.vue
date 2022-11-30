@@ -402,6 +402,7 @@ export default {
   methods: {
     // 打开用户详情弹窗
     openDetail(data) {
+      sessionStorage.setItem("changeTbasAnchor",0)
       this.$router.push({
         path: "userManagement-hostDetail",
       });

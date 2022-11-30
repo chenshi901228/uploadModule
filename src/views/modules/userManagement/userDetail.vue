@@ -529,6 +529,7 @@ export default {
   },
 
   activated() {
+    this.diaTbas=Number(sessionStorage.getItem("changeTbasUser"))
     this.userId = JSON.parse(window.localStorage.getItem("userDetailData")).id;
     this.$http
       .get(
@@ -549,9 +550,14 @@ export default {
       .catch(() => { });
     this.changeTbas(this.diaTbas);
   },
+  destroyed() {
+    sessionStorage.setItem("changeTbasUser",1)
+  },
   methods: {
     changeTbas(n) {
-      this.diaTbas = n;
+      sessionStorage.setItem("changeTbasUser",n)
+      this.diaTbas=Number(sessionStorage.getItem("changeTbasUser"))
+      // this.diaTbas = n;
       this.tab=n
       this.diaSearchForm = {
         payType: "",

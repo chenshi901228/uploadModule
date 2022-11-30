@@ -780,6 +780,7 @@ export default {
     }
   },
   activated () {
+    this.diaTbas=Number(sessionStorage.getItem("changeTbasAnchor"))
     this.userId = window.localStorage.getItem('hostDetailID')
 
     this.$http
@@ -808,6 +809,9 @@ export default {
     }, 100)
 
     this.changeTbas(this.diaTbas)
+  },
+  destroyed() {
+    sessionStorage.setItem("changeTbasAnchor",0)
   },
   methods: {
     // 添加金额符号
@@ -869,7 +873,9 @@ export default {
         })
     },
     changeTbas (n) {
-      this.diaTbas = n
+      sessionStorage.setItem("changeTbasAnchor",n)
+      this.diaTbas=Number(sessionStorage.getItem("changeTbasAnchor"))
+      // this.diaTbas = n
       this.diaSearchForm = {
         payType: '',
         paySource: '',
