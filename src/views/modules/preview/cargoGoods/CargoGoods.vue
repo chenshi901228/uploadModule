@@ -158,6 +158,8 @@
         :height="siteContentViewHeight"
         style="width: 100%"
         ref="table"
+        class="stock"
+        @cell-dblclick="dblclick"
       >
         <el-table-column
           type="selection"
@@ -232,6 +234,34 @@
           show-overflow-tooltip
         ></el-table-column> -->
         <el-table-column
+          header-align="center"
+          align="center"
+          prop="stock"
+          width="140"
+          label="带货库存">
+          <template slot-scope="{ row }">
+            <div v-if="authEdit == 1">
+              <el-input-number 
+                v-if="sortId === row.productLiveId && sortId !== ''"
+                size="mini"
+                v-model="sortVal"
+                placeholder="请输入"
+                @blur="sortId = ''"
+                :min="1"
+                :precision="0"
+                 :controls="false"
+                :max="9999"
+                :id="'input' + row.productLiveId"
+                @keyup.enter.native="userSelect"
+              ></el-input-number>
+              <span v-else>
+                {{ row.stock || "--" }}
+              </span>
+            </div>
+            <div v-else>{{ row.stock || "--" }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column
           prop="isAdd"
           label="添加状态"
           header-align="center"
@@ -275,6 +305,13 @@
               @click="add(scope.row)"
               >添加</el-button
             >
+            <el-button
+              icon="el-icon-tickets"
+              type="text"
+              size="small"
+              @click="depotShow(scope.row)"
+              >出入库记录</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -297,7 +334,19 @@
       ></add-or-update>
     </div>
     <el-dialog title="批量添加" :visible.sync="dialogAddVisible" width="30%">
-      <span>确定批量添加店铺中的商品</span>
+      <span class="title"> 确定批量添加店铺中的商品</span>
+      <div class="totalNum">
+        <span class="title">带货库存</span>
+        <el-input-number 
+          size="small"
+          v-model="totalNum"
+          placeholder="请输入"
+          :min="1"
+          :precision="0"
+          :controls="false"
+          :max="9999"
+        ></el-input-number>
+      </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogAddVisible = false"
           >取 消</el-button
@@ -329,6 +378,32 @@
         >
       </span>
     </el-dialog>
+
+    <el-dialog title="出入库记录" :visible.sync="dialogVisible_depot" width="80%" top="50px">
+      <el-descriptions style="margin:0 0 20px 0" class="margin-top" :column="3" size="small" border>
+        <el-descriptions-item>
+            <template slot="label">
+                商品名称
+            </template>
+            <span>{{ depotInfo.productName || "-" }}</span>
+        </el-descriptions-item>
+      </el-descriptions>
+      <el-table v-loading="loading_depot" :data="depotList" style="width: 100%" height="400px">
+        <el-table-column prop="stock" label="数量" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="stockType" label="类型" header-align="center" align="center">
+          <template slot-scope="scope">
+            {{scope.row.stockType== -1 ? '出库' : '入库'}}
+          </template>
+        </el-table-column>
+        <el-table-column prop="orderId" label="关联订单号" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="createDate" label="创建时间" header-align="center" align="center"></el-table-column>
+      </el-table>
+      <el-pagination background :current-page="page_depot" :page-sizes="[10, 20, 50, 100]" :page-size="limit_depot"
+          :total="total_depot" layout="total, sizes, prev, pager, next, jumper" @size-change="pageSizeChangeHandle_depot"
+          @current-change="pageCurrentChangeHandle_depot">
+        </el-pagination>
+        <span slot="footer" class="dialog-footer"></span>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -353,12 +428,26 @@ export default {
       },
       dialogVisible: false,
       dialogDeleteVisible: false,
+      dialogVisible_depot:false,//出入库记录弹窗
+      loading_depot:false,//出入库存加载
       id: "",
       ids: [],
       dialogAddVisible: false,
       selectAddList: [],
       authEdit: 1, //从直播列表进来是否有编辑权限：1-有，0-没有
       productTypeOptions: [], //商品类型下拉选项
+
+      sortVal: "",//排序
+      sortId: "",//排序
+
+      totalNum:1,//批量库存
+
+      depotList:[],//出入库存列表
+      depotInfo:{},
+      limit_depot:10,
+      total_depot:0,
+      page_depot:1
+
     };
   },
   activated() {
@@ -372,7 +461,38 @@ export default {
     this.query();
   },
   methods: {
-
+    //排序
+    dblclick(row, column, cell, event) {
+      if(row.stock){
+        this.sortId = row.productLiveId;
+        this.sortVal = row.stock;
+        this.$nextTick(() => {
+          let id = "#" + "input" + this.sortId;
+          document.querySelector(id).focus();
+        });
+      }
+    },
+    //回车确认
+    userSelect() {
+      // let data=[{id:this.sortId,stock: this.sortVal}]
+       this.$http
+        .put("/sys/anchorProduct/live/updateStock", {
+          id:this.sortId,
+          stock: this.sortVal
+        })
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          } else {
+            this.sortId = "";
+            this.sortVal = "";
+            this.query();
+          }
+        })
+        .catch((err) => {
+          throw err;
+        });
+    },
 
     // 下拉获取商品类型
     getProductType(type) {
@@ -394,6 +514,13 @@ export default {
     },
     //确认批量添加
     confirmAddSelect() {
+      this.dataListSelections.forEach((v) => {
+        let data={
+          productId:v.id,
+          stock:this.totalNum
+        }
+        this.selectAddList.push(data);
+      });
       this.$http
         .post("/sys/anchorProduct/live", {
           liveId: this.dataForm.liveId,
@@ -410,6 +537,7 @@ export default {
             this.selectAddList = [];
             this.dialogAddVisible = false;
             this.$message.success("添加成功！");
+            this.totalNum=1
             this.query();
           }
         })
@@ -419,6 +547,7 @@ export default {
     },
     //批量添加
     addProduct() {
+      this.totalNum=1
       let flag = this.dataListSelections.some((val) => {
         return val.isAdd === 1;
       });
@@ -426,9 +555,6 @@ export default {
         this.$message.warning("请选择未添加商品！");
       } else {
         this.dialogAddVisible = true;
-        this.dataListSelections.forEach((v) => {
-          this.selectAddList.push(v.id);
-        });
       }
     },
     //删除
@@ -451,6 +577,7 @@ export default {
           anchorId: this.dataForm.anchorId,
           productIdList: list,
           type: this.dataForm.type,
+          productIdList:[{"productId":row.id,"stock":100}]
         })
         .then(({ data: res }) => {
           if (res.code !== 0) {
@@ -524,6 +651,46 @@ export default {
 
       this.query();
     },
+
+    //出入库记录弹窗
+    depotShow(row){
+      this.depotInfo=row
+      this.dialogVisible_depot=true
+      this.diaDataList = [];
+      this.queryDepot()
+    },
+    //获取出入库列表数据
+    queryDepot(){
+      let data={
+        liveId:this.dataForm.liveId,
+        productId:this.depotInfo.id,
+        limit: this.limit_depot,
+        page: this.page_depot,
+      }
+      this.$http.get("/sys/productLiveStock/page", { 
+        params: data,
+      }).then(({ data: res }) => {
+          if (res.code == 0) {
+              this.depotList=res.data.list
+              this.total_depot=res.data.total
+          } else {
+              this.$message.error(res.msg);
+          }
+      }).catch(err => {
+          throw err
+      })
+    },
+    // 分页, 每页条数
+    pageSizeChangeHandle_depot(val) {
+      this.page_depot = 1;
+      this.limit_depot = val;
+      this.queryDepot();
+    },
+    // 分页, 当前页
+    pageCurrentChangeHandle_depot(val) {
+      this.page_depot = val;
+      this.queryDepot();
+    },
   },
 };
 </script>
@@ -534,5 +701,28 @@ export default {
     height: 60px;
     object-fit: cover;
   }
+}
+.title{
+  margin-left: 20px;
+}
+.totalNum{
+  margin-top: 20px;
+  span{
+    margin-right: 10px;
+  }
+}
+/deep/.el-tooltip {
+  .el-input {
+    width: 80px !important;
+  }
+}
+.stock{
+  /deep/.el-input-number.is-without-controls .el-input__inner{
+    width: 80px !important;
+  }
+}
+
+/deep/.el-descriptions--small.is-bordered .el-descriptions-item__cell{
+  width: 120px !important;
 }
 </style>

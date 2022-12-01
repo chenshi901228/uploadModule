@@ -100,6 +100,7 @@
       @selection-change="dataListSelectionChangeHandle"
       height="360px"
       style="width: 100%"
+      @cell-dblclick="dblclick"
     >
       <!-- <el-table-column
         type="selection"
@@ -151,20 +152,49 @@
               row.isFree ? "是" : "否"
             }}</el-tag>
           </span>
+          <div v-else-if="item.prop == 'stock'">
+              <el-input-number 
+                v-if="sortId === row.id && sortId !== ''"
+                size="mini"
+                v-model="sortVal"
+                placeholder="请输入"
+                @blur="sortId = ''"
+                :min="1"
+                :precision="0"
+                 :controls="false"
+                :max="9999"
+                :id="'input' + row.id"
+                @keyup.enter.native="userSelect"
+                style="width:80px"
+              ></el-input-number>
+              <span v-else>
+                {{row.stock ||  "-" }}
+              </span>
+            </div>
           <!-- 是否添加 -->
-          <span v-else-if="item.prop == 'isAdd'">
+          <!-- <span v-else-if="item.prop == 'isAdd'">
             {{row.isAdd ? "已添加" : "未添加"}}
-          </span>
+          </span> -->
           <span v-else>
             {{ row[item.prop] || "-" }}
           </span>
         </template>
       </el-table-column>
+      <!-- <el-table-column 
+        width="140"  
+        header-align="center"
+        align="center" 
+        prop="stock" 
+        label="带货库存" 
+        show-overflow-tooltip>
+         
+      </el-table-column> -->
       <el-table-column
         :label="$t('handle')"
         fixed="right"
         header-align="center"
         align="center"
+        width="150"
       >
         <template slot-scope="{ row }">
           <el-button
@@ -239,12 +269,17 @@ export default {
         { prop: "price", label: "销售价格" },
         { prop: "productType", label: "商品类型" },
         { prop: "isFree", label: "是否免费" },
+        { prop: "stock", label: "带货库存", width:120},
         // { prop: "isAdd", label: "添加状态" },
       ],
       productTypeOptions: [], //商品类型下拉选项
       params: { 
         anchorId: "", //替换请求参数anchorId
-      }
+      },
+
+      sortVal: 0,
+      sortId: "",
+      stockList:[],
     };
   },
   computed: {
@@ -259,6 +294,36 @@ export default {
       this.limit = 10;
       this.dialogVisible = true;
       this.getAllData(data);
+    },
+    //排序
+    dblclick(row, column, cell, event) {
+      if (column.property === "stock" && row.stock) {
+        this.sortId = row.id;
+        this.sortVal = row.stock;
+        this.$nextTick(() => {
+          let id = "#" + "input" + this.sortId;
+          document.querySelector(id).focus();
+        });
+      }
+    },
+    //回车确认
+    userSelect() {
+      for(let item of this.dataList){
+        if(item.id==this.sortId ){
+          item.stock=this.sortVal
+        }
+      }
+      for (let i = 0; i < this.defaultSelected.length; i++) {
+        for (let j = 0; j < this.dataList.length; j++) {
+          if (this.defaultSelected[i].id == this.dataList[j].id) {
+              this.defaultSelected[j].stock=this.dataList[i].stock
+          }
+        }
+      }
+      this.stockList=this.dataList
+      this.sortId = "";
+      this.sortVal = "";
+      this.query()
     },
     //置顶
     setTop(row) {
@@ -306,6 +371,7 @@ export default {
 
     // 获取所有数据在本地操作置顶
     getAllData(sourceData) {
+      console.log(sourceData,222);
       this.dataListLoading = true;
       this.$http
         .get("/sys/wxapp/anchorProduct/listWithAnchorIdPage", {
@@ -330,7 +396,7 @@ export default {
           if(sourceData) {
             this.defaultSelected = sourceData.length ? JSON.parse(JSON.stringify(sourceData)) : [];
           }
-          
+          // console.log(this.defaultSelected,888);
 
           this.setHadSelected()
 
@@ -365,9 +431,18 @@ export default {
     // 初始所有数据重排序
     initDataSort() {
       this.$nextTick(() => {
+     
         let data = JSON.parse(JSON.stringify(this.defaultSelected))
         let allData = JSON.parse(JSON.stringify(this.allDataList))
 
+         for (let i = 0; i < data.length; i++) {
+          for (let j = 0; j < allData.length; j++) {
+            if (data[i].id == allData[j].id) {
+                allData[j].stock=data[i].stock
+            }
+          }
+        }
+       
         // 找出所有数据中包含默认选中的数据
         data = allData.filter(item => {
           return data.some(j => j.id == item.id)
@@ -377,10 +452,18 @@ export default {
         allData = allData.filter(item => {
           return !data.some(j => j.id == item.id)
         })
-
         // 由于新返回的默认选中的数据未设置选中-重新设置选中
         data.map(item => item["_isSelected"] = true)
-
+        allData.map(item => item["stock"] = item.stock)
+        data.map(item => item["stock"] = item.stock)
+        
+        // for(let obj of allData){
+        //   if(obj.stock="" || !obj.stock ){
+        //       // obj.stock=100
+        //     allData.map(item => item["stock"] = 100)
+        //   }
+        // }
+        
         allData.unshift(...data)
 
         this.allDataList = allData
@@ -442,7 +525,7 @@ export default {
 
           // 创建临时变量
           let arr = JSON.parse(JSON.stringify([...this.defaultSelected, ...this.dataListSelections]));
-
+  
           // 全选时，合并数据去重
           for (let i = 0; i < arr.length; i++) {
             for (let j = i + 1; j < arr.length; j++) {
@@ -454,11 +537,21 @@ export default {
           }
 
           this.defaultSelected = arr
-          
+
+          for(let obj of this.defaultSelected){
+            if(obj.stock=="" || !obj.stock){
+              obj.stock=100
+            }
+          }
+
+          console.log(this.defaultSelected,'保存的商品');
+
         }
         this.$message.success("添加成功")
         
+        
         this.query()
+        
       }).catch(() => this.$message.info("取消操作"));
       
     },
@@ -475,6 +568,7 @@ export default {
             if (row.id == data.id) {
               // 数据列表是否选中设为false
               row["_isSelected"] = false
+              row["stock"]=""
             }
           });
           // 默认选中数据中去掉这条数据
@@ -575,5 +669,14 @@ export default {
 //   .el-checkbox__inner{
 //     display: none;
 //   }
+// }
+
+// /deep/.el-tooltip {
+//   .el-input {
+//     width: 110px;
+//   }
+// }
+// /deep/.el-input-number .el-input-number--mini{
+//   width: 110px !important;
 // }
 </style>

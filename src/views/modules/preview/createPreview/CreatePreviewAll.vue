@@ -563,6 +563,16 @@ export default {
           this.ruleForm.startDate = this.dateFormat(this.ruleForm.startDate);
 
           // 商品、主播返回ids[]
+          if(this.ruleForm.productIds){
+            let productArr=[]
+            for(let obj of this.ruleForm.productIds){
+              productArr.push({
+                productId: obj.id,
+                stock: obj.stock,
+              })
+            }
+            dataForm.productList = productArr
+          }
           dataForm.productIds = this.ruleForm.productIds.map((item) => item.id);
           dataForm.recommendedAnchorList =
             this.ruleForm.recommendedAnchorList.map((item) => item.anchorId);

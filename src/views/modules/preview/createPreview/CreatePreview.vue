@@ -525,7 +525,6 @@ export default {
 
     // 确认添加推荐商品
     addProductConfirm(data) {
-
       this.ruleForm.productIds = data;
       this.ruleForm.goods = data.length ? `已选择${data.length}个商品` : ""
     },
@@ -538,15 +537,19 @@ export default {
           this.ruleForm.startDate = this.dateFormat(this.ruleForm.startDate);
 
           // 商品、主播返回ids[]
-          // let productArr=[]
-          // for(let obj of this.ruleForm.productIds){
-          //   productArr.push({
-          //     productId: obj.id,
-          //     stock: obj.productName,
-          //   })
-          // }
+          if(this.ruleForm.productIds){
+            let productArr=[]
+            for(let obj of this.ruleForm.productIds){
+              productArr.push({
+                productId: obj.id,
+                stock: obj.stock,
+              })
+            }
+            dataForm.productList = productArr
+          }
+         
           dataForm.productIds = this.ruleForm.productIds.map((item) => item.id);
-          // dataForm.productIds = productArr
+          
           dataForm.recommendedAnchorList =
             this.ruleForm.recommendedAnchorList.map((item) => item.anchorId);
 

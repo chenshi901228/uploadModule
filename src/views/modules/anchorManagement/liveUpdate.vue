@@ -192,6 +192,7 @@ export default {
             defaultImg:"",//直播宣传图
             showDefaultImg: false,
             showExtensionImg: false,
+            productList:[],
         }
     },
     computed: {
@@ -254,7 +255,8 @@ export default {
                 //         url: res.data.spreadUrl
                 //     }]
                 // }
-
+                this.fileList = [];
+                this.extensionList=[]
                 this.fileList.push(res.data.frontCoverUrl);
                 this.extensionList.push(res.data.spreadUrl);
 
@@ -262,6 +264,19 @@ export default {
                 // this.productIds = res.data.productIds && res.data.productIds.map(item => { return { id: item } })
                 this.recommendedAnchorList  = res.data.recommendedAnchorList && res.data.recommendedAnchorList.map((id, i) => ({ anchorId: id, username: res.data.recommendedAnchors.split(',')[i] }))
                 this.productIds  = res.data.productIds && res.data.productIds.map((id, i) => ({ id: id, productName: res.data.products.split(',')[i] }))
+
+                if(res.data.productList || res.data.productIds){
+                    let productArr=[]
+                    for(let obj of res.data.productList){
+                        productArr.push({
+                            id: obj.productId,
+                            stock: obj.stock,
+                            productName:obj.productName
+                        })
+                    }
+                    this.productIds = productArr
+                }
+                
             }).catch(err => this.$message.error(JSON.stringify(err.message)))
         },
         // 直播宣传图上传
@@ -434,8 +449,8 @@ export default {
 
         // 推荐商品弹框
         chooseProduct() {
-            console.log(this.productIds)
             this.$refs.chooseProduct.init(this.productIds)
+            // this.$refs.chooseProduct.init(this.productList)
         },
 
         closeProductId(index) {
@@ -495,6 +510,16 @@ export default {
 
 
                         // 商品ids
+                        if(this.productIds){
+                            let productArr=[]
+                            for(let obj of this.productIds){
+                                productArr.push({
+                                    productId: obj.id,
+                                    stock: obj.stock,
+                                })
+                            }
+                            params.productList = productArr
+                        }
                         if(this.productIds){
                             params.productIds = this.productIds.map(item => item.id)
                         }else{

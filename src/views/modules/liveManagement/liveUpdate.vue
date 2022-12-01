@@ -221,6 +221,7 @@ export default {
     methods: {
         // 编辑直播获取直播信息
         getLiveInfo() {
+           
             this.$http.get(`/sys/liveList/getDetailed/${this.dataForm.id}`).then(({data: res}) => {
                 if(res.code != 0) return this.$message.error(res.msg)
 
@@ -252,15 +253,29 @@ export default {
                 //         url: res.data.spreadUrl
                 //     }]
                 // }
-
+                this.fileList=[]
+                this.extensionList=[]
                 this.fileList.push(res.data.frontCoverUrl);
                 this.extensionList.push(res.data.spreadUrl);
+
+                console.log(this.fileList);
 
                 // this.recommendedAnchorList = res.data.recommendedAnchorList && res.data.recommendedAnchorList.map(item => { return { anchorId: item } })
                 // this.productIds = res.data.productIds && res.data.productIds.map(item => { return { id: item } })
                 this.recommendedAnchorList  = res.data.recommendedAnchorList && res.data.recommendedAnchorList.map((id, i) => ({ anchorId: id, username: res.data.recommendedAnchors.split(',')[i] }))
                 this.productIds  = res.data.productIds && res.data.productIds.map((id, i) => ({ id: id, productName: res.data.products.split(',')[i] }))
-                console.log(this.productIds, 'productIds')
+                
+                if(res.data.productList || res.data.productIds){
+                    let productArr=[]
+                    for(let obj of res.data.productList){
+                        productArr.push({
+                            id: obj.productId,
+                            stock: obj.stock,
+                            productName:obj.productName
+                        })
+                    }
+                    this.productIds = productArr
+                }
 
             }).catch(err => this.$message.error(JSON.stringify(err.message)))
         },
@@ -287,6 +302,7 @@ export default {
         },
          //获取直播封面图
         getCoverPictureList() {
+            this.defaultImg=[]
             this.$http
             .get("/sys/livecoverpicture/getCoverPictureList?style=0&classification=0")
             .then(({ data: res }) => {
@@ -322,7 +338,7 @@ export default {
                 });
             }
             this.extensionImg = list;
-            this.dataForm.spreadUrl = this.extensionImg[0];
+            // this.dataForm.spreadUrl = this.extensionImg[0];
             })
             .catch((err) => {
             throw err;
@@ -496,6 +512,16 @@ export default {
 
 
                         // 商品ids
+                        if(this.productIds){
+                            let productArr=[]
+                            for(let obj of this.productIds){
+                                productArr.push({
+                                    productId: obj.id,
+                                    stock: obj.stock,
+                                })
+                            }
+                            params.productList = productArr
+                        }
                         if(this.productIds)(
                             params.productIds = this.productIds.map(item => item.id)
                         )
