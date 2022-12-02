@@ -274,11 +274,10 @@
           header-align="center"
           align="center"
           width="150"
-          v-if="authEdit == 1"
         >
           <template slot-scope="scope">
             <el-button
-              v-if="scope.row.isAdd === 1"
+              v-if="scope.row.isAdd === 1 && authEdit == 1"
               icon="el-icon-delete"
               type="text"
               size="small"
@@ -286,7 +285,7 @@
               >删除</el-button
             >
             <el-button
-              v-if="scope.row.isAdd === 1"
+              v-if="scope.row.isAdd === 1 && authEdit == 1"
               icon="el-icon-upload2"
               type="text"
               size="small"
@@ -294,7 +293,7 @@
               >置顶</el-button
             >
             <el-button
-              v-if="scope.row.isAdd === 0"
+              v-if="scope.row.isAdd === 0 && authEdit == 1"
               icon="el-icon-plus"
               type="text"
               size="small"
@@ -657,7 +656,7 @@ export default {
     queryDepot(){
       this.loading_depot=true
       let data={
-        liveId:this.dataForm.liveId,
+        liveId:this.params.liveId,
         productId:this.depotInfo.id,
         limit: this.limit_depot,
         page: this.page_depot,
