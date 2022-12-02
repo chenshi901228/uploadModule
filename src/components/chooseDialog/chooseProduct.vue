@@ -162,7 +162,6 @@
                 :min="1"
                 :precision="0"
                  :controls="false"
-                :max="9999"
                 :id="'input' + row.id"
                 @keyup.enter.native="userSelect"
                 style="width:80px"

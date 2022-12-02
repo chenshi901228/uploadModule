@@ -249,8 +249,7 @@
                 @blur="sortId = ''"
                 :min="1"
                 :precision="0"
-                 :controls="false"
-                :max="9999"
+                :controls="false"
                 :id="'input' + row.productLiveId"
                 @keyup.enter.native="userSelect"
               ></el-input-number>
@@ -439,7 +438,7 @@ export default {
       sortVal: "",//排序
       sortId: "",//排序
 
-      totalNum:1,//批量库存
+      totalNum:100,//批量库存
 
       depotList:[],//出入库存列表
       depotInfo:{},
@@ -536,7 +535,7 @@ export default {
             this.selectAddList = [];
             this.dialogAddVisible = false;
             this.$message.success("添加成功！");
-            this.totalNum=1
+            this.totalNum=100
             this.query();
           }
         })
@@ -546,7 +545,7 @@ export default {
     },
     //批量添加
     addProduct() {
-      this.totalNum=1
+      this.totalNum=100
       let flag = this.dataListSelections.some((val) => {
         return val.isAdd === 1;
       });
