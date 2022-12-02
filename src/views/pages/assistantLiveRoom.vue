@@ -530,7 +530,7 @@
           :key="index"
         >
           <div class="list_top">
-            <span>{{ item.sort }}</span>
+            <span>{{ index + 1 }}</span>
             <p>{{ item.productName }}</p>
           </div>
           <div class="list_bottom">
