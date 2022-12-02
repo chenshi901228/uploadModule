@@ -1004,7 +1004,7 @@
             element-loading-background="rgba(0, 0, 0, 0.5)">
           <div class="content_list" v-for="(item, index) in goodsList" :key="index">
             <div class="list_top">
-              <span>{{item.sort}}</span>
+              <span>{{index + 1}}</span>
               <p>{{item.productName}}</p>
             </div>
             <div class="list_bottom">
