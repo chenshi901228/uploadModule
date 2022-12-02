@@ -14,6 +14,7 @@
             clearable
             v-model="dataForm.style"
             @change="styleInfo"
+            @clear="clearType"
             placeholder="请选择">
             <el-option label="封面图" :value="'0'"></el-option>
             <el-option label="分享图" :value="'1'"></el-option>
@@ -26,7 +27,6 @@
             v-model="dataForm.classification"
             :disabled="dataForm.style==''"
             placeholder="请先选择图片分类"
-            
             >
             <el-option v-for="item in typeList" :key="item.id" :label="item.dictLabel" :value="item.dictValue"></el-option>
           </el-select>
@@ -616,9 +616,15 @@ export default {
     InfoClick(){
 
     },
+    //图片类型-清空时候触发
+    clearType(){
+      this.dataForm.classification=""
+      this.typeList=[]
+    },
     //主列表图片类型
     styleInfo(){
-      console.log(this.dataForm.style);
+      this.dataForm.classification=""
+      this.typeList=[]
       if(this.dataForm.style=='0'){
         this.dictTypeId='1594939357775560706'
       }else if(this.dataForm.style=='1'){
