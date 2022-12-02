@@ -536,7 +536,7 @@
           <div class="list_bottom">
             <div class="info">
               <span>{{ item.productType }}&nbsp;|</span>
-              <p>&nbsp;本场带货销售{{ Number(item.liveSalesNum) }}</p>
+              <p>&nbsp;本场带货销售:{{ Number(item.liveSalesNum) }}&nbsp;&nbsp; 剩余库存:{{item.stock}}</p>
             </div>
             <div class="push_btn" @click="pushMethod('goods', item)">推送</div>
           </div>
