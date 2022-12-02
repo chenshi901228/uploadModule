@@ -655,6 +655,7 @@ export default {
     },
     //获取出入库列表数据
     queryDepot(){
+      this.loading_depot=true
       let data={
         liveId:this.dataForm.liveId,
         productId:this.depotInfo.id,
@@ -670,6 +671,7 @@ export default {
           } else {
               this.$message.error(res.msg);
           }
+          this.loading_depot=false
       }).catch(err => {
           throw err
       })
