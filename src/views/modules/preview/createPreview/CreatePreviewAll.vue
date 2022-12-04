@@ -45,7 +45,7 @@
             </el-select>
           </el-form-item>
 
-        <el-form-item label="直播宣传图" prop="frontCoverUrl" class="img-item">
+        <el-form-item label="直播宣传图" prop="frontCoverUrl" class="img-item is-required">
           <div v-for="item in defaultImg" :key="item" class="img-box">
             <el-image style="width: 100px; height: 100px" :src="item" fit="cover" @click="choosePic(item)"></el-image>
             <img v-if="item === ruleForm.frontCoverUrl" class="like-img" src="@/assets/img/like_red.png" alt="" />
@@ -61,7 +61,7 @@
           </el-upload>
         </el-form-item>
 
-        <el-form-item label="直播推广图" prop="spreadUrl" class="img-item">
+        <el-form-item label="直播推广图" prop="spreadUrl" class="img-item is-required">
           <div v-for="item in extensionImg" :key="item" class="img-box">
             <el-image style="width: 100px; height: 100px" :src="item" fit="cover" @click="extensionImgPic(item)"></el-image>
             <img v-if="item === ruleForm.spreadUrl" class="like-img" src="@/assets/img/like_red.png" alt="" />
@@ -562,6 +562,12 @@ export default {
           let dataForm = {};
           this.ruleForm.startDate = this.dateFormat(this.ruleForm.startDate);
 
+          if(!this.ruleForm.frontCoverUrl){
+            return this.$message.error("请先上传直播宣传图");
+          }
+          if(!this.ruleForm.spreadUrl){
+            return this.$message.error("请先上传直播推广图");
+          }
           // 商品、主播返回ids[]
           if(this.ruleForm.productIds){
             let productArr=[]

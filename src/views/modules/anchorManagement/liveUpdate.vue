@@ -28,7 +28,7 @@
                     <p class="tips">格式限制：jpg/jpeg/png，建议图片尺寸不小于630px×347px，大小不得超过2M</p>
                 </el-form-item> -->
 
-                <el-form-item label="直播宣传图" prop="frontCoverUrl" class="img-item">
+                <el-form-item label="直播宣传图" prop="frontCoverUrl" class="img-item is-required">
                     <div v-if="showDefaultImg" class="img-box-content">
                         <div v-for="item in defaultImg" :key="item" class="img-box">
                         <el-image
@@ -79,7 +79,7 @@
                     </el-upload>
                 </el-form-item>
 
-                <el-form-item label="直播推广图" prop="spreadUrl" class="img-item">
+                <el-form-item label="直播推广图" prop="spreadUrl" class="img-item is-required">
                     <div v-if="showExtensionImg" class="img-box-content">
                         <div v-for="item in extensionImg" :key="item" class="img-box">
                         <el-image style="width: 100px; height: 100px" :src="item" fit="cover" @click="extensionImgPic(item)"></el-image>
@@ -193,6 +193,7 @@ export default {
             showDefaultImg: false,
             showExtensionImg: false,
             productList:[],
+            fileList:[]
         }
     },
     computed: {
@@ -495,6 +496,12 @@ export default {
                         // if (!this.frontCoverList.length) {
                         //     return this.$message.error("请上传直播宣传图")
                         // }
+                        if(!this.dataForm.frontCoverUrl){
+                            return this.$message.error("请先上传直播宣传图");
+                        }
+                        if(!this.dataForm.spreadUrl){
+                            return this.$message.error("请先上传直播推广图");
+                        }
 
                         let params = {}
                         params = JSON.parse(JSON.stringify(this.dataForm))

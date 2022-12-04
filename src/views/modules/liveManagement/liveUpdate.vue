@@ -28,7 +28,7 @@
                     <p class="tips">格式限制：jpg/jpeg/png,建议图片尺寸不小于630px×347px，大小不得超过2M</p>
                 </el-form-item> -->
 
-                <el-form-item label="直播宣传图" prop="frontCoverUrl" class="img-item">
+                <el-form-item label="直播宣传图" prop="frontCoverUrl" class="img-item is-required">
                     <div v-if="showDefaultImg" class="img-box-content">
                         <div v-for="item in defaultImg" :key="item" class="img-box">
                         <el-image
@@ -79,7 +79,7 @@
                     </el-upload>
                 </el-form-item>
 
-                <el-form-item label="直播推广图" prop="spreadUrl" class="img-item">
+                <el-form-item label="直播推广图" prop="spreadUrl" class="img-item is-required">
                     <div v-if="showExtensionImg" class="img-box-content">
                         <div v-for="item in extensionImg" :key="item" class="img-box">
                         <el-image style="width: 100px; height: 100px" :src="item" fit="cover" @click="extensionImgPic(item)"></el-image>
@@ -192,6 +192,7 @@ export default {
             defaultImg:"",//直播宣传图
             showDefaultImg: false,
             showExtensionImg: false,
+            fileList:[]
         }
     },
     computed: {
@@ -257,8 +258,6 @@ export default {
                 this.extensionList=[]
                 this.fileList.push(res.data.frontCoverUrl);
                 this.extensionList.push(res.data.spreadUrl);
-
-                console.log(this.fileList);
 
                 // this.recommendedAnchorList = res.data.recommendedAnchorList && res.data.recommendedAnchorList.map(item => { return { anchorId: item } })
                 // this.productIds = res.data.productIds && res.data.productIds.map(item => { return { id: item } })
@@ -496,6 +495,12 @@ export default {
                         // if (!this.frontCoverList.length) {
                         //     return this.$message.error("请上传直播宣传图")
                         // }
+                        if(!this.dataForm.frontCoverUrl){
+                            return this.$message.error("请先上传直播宣传图");
+                        }
+                        if(!this.dataForm.spreadUrl){
+                            return this.$message.error("请先上传直播推广图");
+                        }
 
                         let params = {}
                         params = JSON.parse(JSON.stringify(this.dataForm))
