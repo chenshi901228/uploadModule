@@ -464,7 +464,7 @@ export default {
               }
               this.$message.success("操作成功");
               this.closeCurrentTab();
-              this.$bus.$emit("change");
+              // this.$bus.$emit("change"); 信息审批通过  不需要刷新列表
             })
             .catch(() => {});
         })

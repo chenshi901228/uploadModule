@@ -116,12 +116,14 @@
         <!-- 操作按钮 -->
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
-            <!-- <el-button 
-              type="warning"
-              plain
-              icon="el-icon-download" 
-              size="mini"
-              @click="exportHandle">{{ $t("export") }}</el-button> -->
+            <el-form-item>
+              <el-button
+                type="warning"
+                plain
+                icon="el-icon-download"
+                size="mini"
+                @click="exportHandle">{{ $t("export") }}</el-button>
+            </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
             <el-form-item>

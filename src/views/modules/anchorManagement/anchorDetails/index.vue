@@ -207,32 +207,32 @@
             </div>
           </el-tooltip>
         </div>
-        <el-form :inline="true" label-position="left" :style="{ margin: '20px' }" :model="diaSearchForm" @keyup.enter.native="queryPost_dia()"
+        <el-form :inline="true" label-position="left" :style="{ margin: '20px 0' }" :model="diaSearchForm" @keyup.enter.native="queryPost_dia()"
           size="small" ref="searchForm" label-width="100px">
-          <el-form-item label="收益类型" v-if="diaTbas === 1" prop="type">
+          <el-form-item label="收益类型" v-if="diaTbas === 1 && (isOpen || formItemCount > 1)" prop="type">
             <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.type" clearable>
               <el-option :value="1" label="直播间礼物"></el-option>
               <el-option :value="2" label="粉丝团"></el-option>
               <el-option :value="3" label="课程返利"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="结算时间" v-if="diaTbas === 1" prop="date">
+          <el-form-item label="结算时间" v-if="diaTbas === 1 && (isOpen || formItemCount > 2)" prop="date">
             <el-date-picker placeholder="请选择" v-model="diaSearchForm.date" type="datetimerange" range-separator="至"
               start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="提现单号" v-if="diaTbas === 2" prop="code">
+          <el-form-item label="提现单号" v-if="diaTbas === 2 && (isOpen || formItemCount > 1)" prop="code">
             <el-input style="width: 180px" placeholder="请输入" v-model="diaSearchForm.code" clearable></el-input>
           </el-form-item>
-          <el-form-item label="银行账号" v-if="diaTbas === 2" prop="bankAccount">
+          <el-form-item label="银行账号" v-if="diaTbas === 2 && (isOpen || formItemCount > 2)" prop="bankAccount">
             <el-input style="width: 180px" placeholder="请输入" v-model="diaSearchForm.bankAccount" clearable></el-input>
           </el-form-item>
-          <el-form-item label="提现时间" v-if="diaTbas === 2" prop="date">
+          <el-form-item label="提现时间" v-if="diaTbas === 2 && (isOpen || formItemCount > 3)" prop="date">
             <el-date-picker placeholder="请选择" v-model="diaSearchForm.date" type="daterange" range-separator="至"
               start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="提现状态" v-if="diaTbas === 2" prop="withdrawStatus">
+          <el-form-item label="提现状态" v-if="diaTbas === 2 && (isOpen || formItemCount > 4)" prop="withdrawStatus">
             <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.withdrawStatus" clearable>
               <el-option :value="-1" label="驳回"></el-option>
               <el-option :value="1" label="审核中"></el-option>
@@ -270,50 +270,50 @@
                 <el-option :value="-1" label="支付失败"></el-option>
                 </el-select>
             </el-form-item> -->
-          <el-form-item label="用户昵称" v-if="diaTbas === 3 || diaTbas === 4" prop="userName">
+          <el-form-item label="用户昵称" v-if="(diaTbas === 3 || diaTbas === 4) && (isOpen || formItemCount > 1)" prop="userName">
             <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.userName" clearable></el-input>
           </el-form-item>
           <el-form-item label="商品名称" v-if="diaTbas === 5" prop="productName">
             <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.productName" clearable></el-input>
           </el-form-item>
-          <el-form-item label="手机号码" v-if="diaTbas === 3 || diaTbas === 4 || diaTbas === 6" prop="phone">
+          <el-form-item label="主播昵称" v-if="diaTbas === 6 && (isOpen || formItemCount > 1)" prop="anchorName">
+            <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.anchorName" clearable></el-input>
+          </el-form-item>
+          <el-form-item label="手机号码" v-if="(diaTbas === 3 || diaTbas === 4 || diaTbas === 6) && (isOpen || formItemCount > 2)" prop="phone">
             <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.phone" clearable></el-input>
           </el-form-item>
-          <el-form-item label="等级" v-if="diaTbas === 4" prop="level">
+          <el-form-item label="等级" v-if="diaTbas === 4 && (isOpen || formItemCount > 3)" prop="level">
             <el-select placeholder="请选择" @visible-change="getFansLevels" style="width: 180px"
               v-model="diaSearchForm.level" clearable>
               <el-option v-for="item in fansLevelsOptions" :key="item" :value="item" :label="item"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="粉丝团身份" v-if="diaTbas === 4" prop="userType">
+          <el-form-item label="粉丝团身份" v-if="diaTbas === 4 && (isOpen || formItemCount > 4)" prop="userType">
             <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.userType" clearable>
               <el-option :value="0" label="普通用户"></el-option>
               <el-option :value="1" label="助手"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="主播昵称" v-if="diaTbas === 6" prop="anchorName">
-            <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.anchorName" clearable></el-input>
-          </el-form-item>
-          <el-form-item label="推荐状态" v-if="diaTbas === 6" prop="delFlg">
+          <el-form-item label="推荐状态" v-if="diaTbas === 6 && (isOpen || formItemCount > 4)" prop="delFlg">
             <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.delFlg" clearable>
               <el-option :value="0" label="已推荐"></el-option>
               <el-option :value="1" label="未推荐"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="商品类型" v-if="diaTbas === 0 || diaTbas === 5" prop="productType">
+          <el-form-item label="商品类型" v-if="diaTbas === (0 || diaTbas === 5) && (isOpen || formItemCount > 2)" prop="productType">
             <el-select @visible-change="getProductType" style="width: 180px" v-model="diaSearchForm.productType"
               placeholder="请选择" clearable>
               <el-option v-for="item in productTypeOptions" :key="item.productType" :value="item.productType"
                 :label="item.productType"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="商品名称" v-if="diaTbas === 0" prop="productName">
+          <el-form-item label="商品名称" v-if="diaTbas === 0 && (isOpen || formItemCount > 1)" prop="productName">
             <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.productName" clearable></el-input>
           </el-form-item>
-          <el-form-item label="用户昵称" v-if="diaTbas === 0" prop="userName">
+          <el-form-item label="用户昵称" v-if="diaTbas === 0 && (isOpen || formItemCount > 3)" prop="userName">
             <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.userName" clearable></el-input>
           </el-form-item>
-          <el-form-item label="订单状态" v-if="diaTbas === 0" prop="payStatus">
+          <el-form-item label="订单状态" v-if="diaTbas === 0 && (isOpen || formItemCount > 4)" prop="payStatus">
             <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.payStatus" clearable>
               <el-option :value="1" label="待支付"></el-option>
               <el-option :value="2" label="已支付"></el-option>
@@ -322,28 +322,28 @@
               <el-option :value="5" label="已退款"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="自用状态" v-if="diaTbas === 0" prop="activeStatus">
+          <el-form-item label="自用状态" v-if="diaTbas === 0 && (isOpen || formItemCount > 5)" prop="activeStatus">
             <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.activeStatus" clearable>
               <el-option :value="0" label="未自用"></el-option>
               <el-option :value="1" label="已自用"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="使用状态" v-if="diaTbas === 0" prop="useStatus">
+          <el-form-item label="使用状态" v-if="diaTbas === 0 && (isOpen || formItemCount > 6)" prop="useStatus">
             <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.useStatus" clearable>
               <el-option :value="0" label="未使用"></el-option>
               <el-option :value="1" label="已使用"></el-option>
               <!-- <el-option :value="2" label="待收货"></el-option> -->
             </el-select>
           </el-form-item>
-           <el-form-item label="下单入口" v-if="diaTbas === 0" prop="liveTheme">
+           <el-form-item label="下单入口" v-if="diaTbas === 0 && (isOpen || formItemCount > 7)" prop="liveTheme">
             <el-input placeholder="请输入" style="width: 180px" v-model="diaSearchForm.liveTheme" clearable></el-input>
           </el-form-item>
-          <el-form-item label="下单时间" v-if="diaTbas === 0" prop="date">
+          <el-form-item label="下单时间" v-if="diaTbas === 0 && (isOpen || formItemCount > 8)" prop="date">
             <el-date-picker placeholder="请选择" v-model="diaSearchForm.date" type="datetimerange" range-separator="至"
               start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd HH:mm:ss">
             </el-date-picker>
           </el-form-item>
-          <el-form-item label="是否免费" v-if="diaTbas === 5" prop="isFree">
+          <el-form-item label="是否免费" v-if="diaTbas === 5 && (isOpen || formItemCount > 6)" prop="isFree">
             <el-select placeholder="请选择" style="width: 180px" v-model="diaSearchForm.isFree" clearable>
               <el-option :value="0" label="否"></el-option>
               <el-option :value="1" label="是"></el-option>
@@ -364,6 +364,10 @@
             <el-button size="mini" icon="el-icon-search" type="primary" @click="queryPost_dia()">{{ $t("query") }}
             </el-button>
             <el-button size="mini" icon="el-icon-refresh" @click="mainReset">重置</el-button>
+            <el-button size="mini" plain @click="open">
+            <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button>
           </el-form-item>
 
           <div>
@@ -1009,9 +1013,10 @@
 <script>
 import { treeDataTranslate, getUUID, enCodeIdCard, numberConvert } from "@/utils";
 import Cookies from "js-cookie";
+import mixinViewModule from "@/mixins/view-module";
 export default {
   name: "LiveWebmanageUserdetail",
-
+  mixins: [mixinViewModule],
   data() {
     // 验证提现金额
     let checkWithdraw = (rule, value, callback) => {
@@ -1372,6 +1377,7 @@ export default {
       sessionStorage.setItem("changeTbas",n)
       this.diaTbas=Number(sessionStorage.getItem("changeTbas"))
       // this.diaTbas = n;
+      this.isOpen = false
       this.page_dia = 1;
       this.diaSearchForm = {
         payType: "",
