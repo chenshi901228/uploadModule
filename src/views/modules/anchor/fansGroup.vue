@@ -9,7 +9,7 @@
         @keyup.enter.native="getfansGroupList()"
         label-width="100px"
       >
-      <el-form-item label="真实姓名">
+      <el-form-item v-show="isOpen || formItemCount >= 1" label="真实姓名">
           <el-input
             clearable
             style="width: 200px"
@@ -17,7 +17,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item label="手机号码">
+        <el-form-item v-show="isOpen || formItemCount >= 2" label="手机号码">
           <el-input
             clearable
             style="width: 200px"
@@ -25,7 +25,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item label="主播昵称">
+        <el-form-item v-show="(isOpen || formItemCount >= 3)" label="主播昵称">
           <el-input
             clearable
             style="width: 200px"
@@ -33,7 +33,7 @@
             placeholder="请输入"
           ></el-input>
         </el-form-item>
-        <el-form-item label="审核状态">
+        <el-form-item v-show="(isOpen || formItemCount >= 4)" label="审核状态">
           <el-select v-model="groupNameForm.status" placeholder="请选择审核状态">
             <el-option label="已通过" value="1"></el-option>
             <el-option label="已驳回" value="-1"></el-option>
@@ -52,10 +52,10 @@
               icon="el-icon-refresh"
               size="mini"
               @click="reset('main')">{{ $t("reset") }}</el-button>
-            <!-- <el-button size="mini" plain @click="open">
+            <el-button size="mini" plain @click="open">
               <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
               {{ isOpen ? "收起" : "展开" }}
-            </el-button> -->
+            </el-button>
           </el-form-item>
         </div>
         <!-- 操作按钮 -->
