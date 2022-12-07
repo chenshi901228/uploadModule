@@ -237,6 +237,14 @@
           width="150"
         ></el-table-column> -->
         <el-table-column
+          show-overflow-tooltip
+          prop="liveNum"
+          label="直播数量"
+          header-align="center"
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
           prop="attentionNum"
           label="关注人数"
           show-overflow-tooltip
