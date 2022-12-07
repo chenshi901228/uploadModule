@@ -120,13 +120,13 @@
           </template>
         </el-table-column> -->
         <el-table-column label="操作" header-align="center" align="center">
-          <template slot-scope="scope">
+          <template slot-scope="{ $index, row }">
             <!-- <el-button icon="el-icon-sort" v-if="scope.row.appointmentState !== 0" type="text" size="small"
               @click="showThis(scope.$index, scope.row)">{{ scope.row.showStatus === 0 ? "显示" : "隐藏" }}</el-button> -->
-            <el-button v-if="scope.row.appointmentState !== 0" type="text" size="small" icon="el-icon-edit"
-              @click="handle(scope.$index, scope.row)">编辑</el-button>
-            <el-button v-if="scope.row.appointmentState !== 0" type="text" size="small" icon="el-icon-view"
-              @click="showImg(scope.$index, scope.row)">查看</el-button>
+            <el-button type="text" size="small" icon="el-icon-edit"
+              @click="handle($index, row)">编辑</el-button>
+            <el-button type="text" size="small" icon="el-icon-view"
+              @click="showImg($index, row)">查看</el-button>
             <!-- <el-button
               v-if="scope.row.appointmentState !== 0"
               type="text"
