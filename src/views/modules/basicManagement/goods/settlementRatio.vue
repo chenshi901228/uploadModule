@@ -14,7 +14,15 @@
           label-position="right"
           @keyup.enter.native="getDataList"
         >
-          <el-form-item label="主播" prop="username">
+          <el-form-item label="主播姓名" prop="realName">
+            <el-input
+              style="width: 200px"
+              v-model.trim="dataForm.realName"
+              placeholder="请输入"
+              clearable
+            ></el-input>
+          </el-form-item>
+          <el-form-item label="主播昵称" prop="username">
             <el-input
               style="width: 200px"
               v-model.trim="dataForm.username"
@@ -284,6 +292,7 @@ export default {
       dataForm: {
         username: "",
         phone: "",
+        realName:"",
       },
       params: {
         productId: null
@@ -294,7 +303,8 @@ export default {
       },
 
       tableItem: [
-        { prop: "username", label: "主播" },
+        { prop: "realName", label: "主播姓名" },
+        { prop: "username", label: "主播昵称" },
         { prop: "phone", label: "手机号" },
         { prop: "proportion", label: "结算比例" },
         { prop: "updateDate", label: "更新时间", width: 180 },

@@ -33,7 +33,7 @@
             style="width: 200px"
             :clearable="true"
             v-model="dataForm.anchorUser"
-            placeholder="请输入姓名或手机号码"
+            placeholder="请输入姓名、昵称或手机号码"
           ></el-input>
         </el-form-item>
         <el-form-item
@@ -303,7 +303,15 @@
         </el-table-column>
         <el-table-column
           width="100%"
-          label="主播"
+          label="主播姓名"
+          prop="realName"
+          align="center"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
+          width="100%"
+          label="主播昵称"
           prop="anchorUser"
           align="center"
           show-overflow-tooltip

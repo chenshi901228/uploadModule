@@ -24,9 +24,8 @@
           </el-form-item>
           <el-form-item v-show="isOpen || formItemCount >= 2" label="主播" prop="anchorUser">
             <el-input
-
               v-model.trim="dataForm.anchorUser"
-              placeholder="请输入姓名或手机号码"
+              placeholder="请输入姓名、昵称或手机号码"
               clearable
               style="width: 200px"
             >
@@ -391,6 +390,7 @@ export default {
         liveTheme: "",
         assistant: "",
         anchorUser: "",
+        realName:"",
         startDate: "",
         livingRoomId: "",
         dynamicGroupName: "",
@@ -406,7 +406,8 @@ export default {
         { prop: "liveTheme", label: "直播主题", fixed:true },
         { prop: "liveBroadcastWay", label: "推流端" },
         { prop: "showMode", label: "显示方式" },
-        { prop: "anchorUser", label: "主播" },
+        { prop: "realName", label: "主播姓名" },
+        { prop: "anchorUser", label: "主播昵称" },
         { prop: "anchorTel", label: "手机号码" },
         { prop: "assistant", label: "助手" },
         { prop: "startDate", label: "开播时间", width: 180 },

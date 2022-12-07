@@ -3,7 +3,10 @@
     <div class="mod-sys__user">
       <el-form class="headerTool" :inline="true" :model="dataForm" ref="dataForm" size="small" label-width="100px"
         label-position="right" @keyup.enter.native="getUserList(diaTbas)">
-        <el-form-item v-show="isOpen || formItemCount >= 1" label="用户名称" prop="nickName">
+        <el-form-item v-show="(isOpen || formItemCount >= 1) && diaTbas==2" label="姓名" prop="anchorRealName">
+          <el-input v-model="dataForm.anchorRealName" placeholder="请输入" clearable></el-input>
+        </el-form-item>
+        <el-form-item v-show="isOpen || formItemCount >= 1" label="昵称" prop="nickName">
           <el-input v-model="dataForm.nickName" placeholder="请输入" clearable></el-input>
         </el-form-item>
         <el-form-item v-show="isOpen || formItemCount >= 2" label="手机号码" prop="phone">
@@ -175,6 +178,7 @@ export default {
         nickName: "",
         phone: "",
         status: "",
+        anchorRealName:"",
       },
       tableItem: [],
       column: [
@@ -183,7 +187,7 @@ export default {
           prop: 'username'
         },
         {
-          label: '用户名称',
+          label: '昵称',
           prop: 'realName'
         },
         {
@@ -213,7 +217,7 @@ export default {
           prop: 'phone'
         },
         {
-          label: '用户名称',
+          label: '昵称',
           prop: 'nickName'
         },
         {
@@ -243,8 +247,12 @@ export default {
           prop: 'username'
         },
         {
-          label: '用户名称',
+          label: '昵称',
           prop: 'realName'
+        },
+        {
+          label: '姓名',
+          prop: 'anchorRealName'
         },
         {
           label: '手机号码',
@@ -374,6 +382,7 @@ export default {
         nickName: "",
         phone: "",
         status: "",
+        anchorRealName:"",
       }
       this.diaTbas = n
       this.diaDataList = [];

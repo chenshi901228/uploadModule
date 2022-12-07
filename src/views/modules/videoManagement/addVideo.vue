@@ -57,6 +57,26 @@
           格式限制：jpg/jpeg/png，图片尺寸为460px*368px；大小不得超过2M
         </div>
       </el-form-item> -->
+      <el-form-item label="视频推广图" prop="spreadUrl" class="img-item is-required">
+          <div v-for="item in extensionImg" :key="item" class="img-box">
+            <el-image style="width: 100px; height: 100px" :src="item" fit="cover" @click="extensionImgPic(item)"></el-image>
+            <img v-if="item === dataForm.spreadUrl" class="like-img" src="@/assets/img/like_red.png" alt="" />
+          </div>
+          <div v-for="item in extensionList" :key="item" class="img-box">
+            <el-image style="width: 100px; height: 100px" :src="item" fit="cover" @click="extensionImgPic(item)"></el-image>
+            <img v-if="item === dataForm.spreadUrl" class="like-img" src="@/assets/img/like_red.png" alt="" />
+            <img @click="extensionRemove(item)" class="close-img" src="@/assets/img/close.png" alt="" />
+          </div>
+          <el-upload class="upload-demo" :action="uploadUrl" :on-success="extensionSuccess" list-type="picture-card"
+            :multiple="false" :show-file-list="false" :before-upload="beforeAvatarUpload">
+            <i slot="default" class="el-icon-plus"></i>
+          </el-upload>
+      </el-form-item>
+      <el-form-item>
+          <div>
+            格式限制：jpg/jpeg/png，图片尺寸为460px×368px，大小不得超过2M
+          </div>
+      </el-form-item>
       <el-form-item label="上传视频" required>
         <custom-upload
           ref="relationLiveUpload"
@@ -120,6 +140,8 @@ import mixinTableModule from "@/mixins/table-module";
 import CustomUpload from "@/components/common/custom-upload";
 import { getVideoDuration } from "@/utils/index";
 import ChooseProduct from "./chooseDialog/chooseProduct";
+import Cookies from "js-cookie";
+import { getImageWH } from "@/utils"
 export default {
   mixins: [mixinTableModule],
   components: {
@@ -144,6 +166,7 @@ export default {
       anchorOptions: [], //主播选项
       relationLiveList: [], //视频列表
       extensionList:[],//直播推广图
+      uploadUrl: "",
       rules: {
         liveTheme: [
           { required: true, message: "请输入视频主题", trigger: "blur" },
@@ -157,11 +180,18 @@ export default {
       getDynamicGroupLoading: false, //下拉框加载数据loading
       goods: [],
       productIds: [], //推荐商品ids
+
+      extensionImg:[],//直播推广图
     };
   },
   created() {
+    this.uploadUrl = `${window.SITE_CONFIG["apiURL"]
+      }/oss/file/upload?access_token=${Cookies.get("access_token")}`;
     this.dataForm.anchorUserId = this.userInfo.id;
     this.dataForm.anchorUser = this.userInfo.realName;
+    this.extensionImg=[]
+    this.extensionList=[]
+    this.getExtensionList()
   },
   computed: {
     userInfo() {
@@ -211,6 +241,12 @@ export default {
         (item) => item.uid != file.uid
       );
     },
+    //选择照片-视频推广图
+    extensionImgPic(url) {
+      if (url && this.dataForm.spreadUrl !== url) {
+        this.dataForm.spreadUrl = url;
+      }
+    },
     // 视频推广图上传
     extensionUploadSuccess(file) {
       this.extensionList.push(file);
@@ -219,6 +255,65 @@ export default {
       this.extensionList = this.extensionList.filter(
         (item) => item.uid != file.uid
       );
+    },
+    //视频推广图上传前
+    async beforeAvatarUpload(file) {
+      let type = file.type ? file.type.split("/") : file.name.split(".");
+      type = type[type.length - 1];
+      let fileSize = file.size / 1024 / 1024 < 2;
+      if (type != "jpg" && type != "jpeg" && type != "png") {
+        this.$message.warning('视频推广图只能是 jpg/jpeg/png 格式!');
+        return Promise.reject(false);
+      }
+      let res = await getImageWH(file)
+      if(res && (Math.abs(res.width - 460) > 6 || Math.abs(res.height - 368) > 6) ) {
+        this.$message.warning(`图片尺寸大小为460px*368px`);
+        return Promise.reject(false);
+      }
+      if (!fileSize) {
+        this.$message.warning('视频推广图大小不能超过 2MB!');
+        return Promise.reject(false);
+      }
+    },
+    //删除照片-背景图
+    extensionRemove(url) {
+      this.extensionList.forEach((v, i) => {
+        if (url === v) {
+          this.extensionList.splice(i, 1);
+        }
+      });
+      if (this.extensionList.length === 0) {
+        this.dataForm.spreadUrl = this.extensionImg[0];
+      } else {
+        this.dataForm.spreadUrl = this.extensionList[0];
+      }
+    },
+    //上传后-视频推广图
+    extensionSuccess(response, file, fileList) {
+      this.extensionList.push(response.data.url);
+      this.dataForm.spreadUrl = response.data.url;
+    },
+    //获取视频推广图
+    getExtensionList() {
+      this.$http
+        .get(`/sys/livecoverpicture/getCoverPictureList?style=1&classification=7`)
+        .then(({ data: res }) => {
+          if (res.code !== 0) {
+            return this.$message.error(res.msg);
+          }
+          let list = [];
+
+          if (res.data && res.data.length !== 0) {
+            res.data.forEach((v) => {
+              list.push(v.coverUrl);
+            });
+          }
+          this.extensionImg = list;
+          this.dataForm.spreadUrl = this.extensionImg[0];
+        })
+        .catch((err) => {
+          throw err;
+        });
     },
     // 输入选择主播
     getAnchorInfo(s) {
@@ -305,11 +400,11 @@ export default {
           }
 
           if (!this.frontCoverList.length) {
-            return this.$message.error("请上传封面图");
+            return this.$message.error("请先上传视频宣传图");
           }
-          // if (!this.extensionList.length) {
-          //   return this.$message.error("请上传视频推广图");
-          // }
+          if(!this.dataForm.spreadUrl){
+            return this.$message.error("请先上传视频推广图");
+          }
           if (!this.relationLiveList.length) {
             return this.$message.error("请上传视频");
           }
@@ -337,6 +432,7 @@ export default {
           params.frontCoverUrl = this.frontCoverList[0].url;
           params.relationLiveUrl = this.relationLiveList[0].url;
           // params.spreadUrl = this.extensionList[0].url;
+          params.spreadUrl = this.dataForm.spreadUrl;
           params.videoSize = this.relationLiveList[0].size; //视频大小
 
           //视频原始长宽
@@ -359,6 +455,8 @@ export default {
                 this.$router.push({
                   path:"/videoManagement-VideoManagement"
                 })
+                // this.ruleForm.frontCoverUrl = this.defaultImg[0]; 
+                this.dataForm.spreadUrl = this.extensionImg[0]; 
               } else {
                 this.$message.error(res.msg);
               }
@@ -404,4 +502,46 @@ export default {
         margin-right: 0
     }
 }
+/deep/.img-item {
+    .el-form-item__content {
+      display: flex;
+    }
+
+    .img-box {
+      position: relative;
+
+      .el-image {
+        margin-right: 10px;
+      }
+
+      .like-img {
+        position: absolute;
+        width: 24px;
+        height: 20px;
+        left: 0;
+        top: 0;
+      }
+
+      .close-img {
+        position: absolute;
+        width: 24px;
+        height: 24px;
+        top: 0;
+        right: 10px;
+      }
+    }
+
+    .el-upload {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100px;
+      height: 100px;
+    }
+  }
+
+  /deep/.ql-container {
+    height: 300px;
+    overflow-y: scroll;
+  }
 </style>
