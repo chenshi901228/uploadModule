@@ -328,9 +328,9 @@ export default {
   },
   components: { Template },
   mounted() {
-    this.$bus.$on("change", () => {
-      this.getDataList();
-    });
+    // this.$bus.$on("change", () => {
+    //   this.getDataList();
+    // });
   },
   methods: {
     // 打开用户详情弹窗
