@@ -15,6 +15,7 @@
                 <el-form-item
                     label="直播主题"
                     prop="liveTheme"
+                    v-if="isOpen || formItemCount >= 1"
                 >
                     <el-input
                         style="width: 200px"
@@ -25,6 +26,7 @@
                 <el-form-item
                     label="主播"
                     prop="anchorUser"
+                    v-if="(isOpen || formItemCount >= 2)"
                 >
                     <el-input
                         style="width: 200px"
@@ -35,6 +37,7 @@
                 <el-form-item
                     label="直播类型"
                     prop="liveType"
+                    v-if="(isOpen || formItemCount >= 3)"
                 >
                     <el-select
                         style="width: 200px" 
@@ -64,12 +67,12 @@
                             @click="resetDataForm()"
                             >{{ $t("reset") }}</el-button
                         >
-                        <!-- <el-button size="mini" plain @click="open">
+                        <el-button size="mini" plain @click="open">
                         <i
                             :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"
                         ></i>
                         {{ isOpen ? "收起" : "展开" }}
-                        </el-button> -->
+                        </el-button>
                     </el-form-item>
                 </div>
 

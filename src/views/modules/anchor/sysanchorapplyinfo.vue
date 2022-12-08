@@ -388,9 +388,9 @@ export default {
   },
 
   mounted() {
-    this.$bus.$on("change", () => {
-      this.getDataList();
-    });
+    // this.$bus.$on("change", () => {
+    //   this.getDataList();
+    // });
   },
 };
 </script>

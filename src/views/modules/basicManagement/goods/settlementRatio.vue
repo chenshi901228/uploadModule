@@ -14,7 +14,7 @@
           label-position="right"
           @keyup.enter.native="getDataList"
         >
-          <el-form-item label="主播姓名" prop="realName">
+          <el-form-item label="主播姓名" v-if="isOpen || formItemCount >= 1" prop="realName">
             <el-input
               style="width: 200px"
               v-model.trim="dataForm.realName"
@@ -22,7 +22,7 @@
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="主播昵称" prop="username">
+          <el-form-item label="主播昵称" v-if="(isOpen || formItemCount >= 2)" prop="username">
             <el-input
               style="width: 200px"
               v-model.trim="dataForm.username"
@@ -30,7 +30,7 @@
               clearable
             ></el-input>
           </el-form-item>
-          <el-form-item label="手机号码" prop="phone">
+          <el-form-item label="手机号码" v-if="(isOpen || formItemCount >= 3)" prop="phone">
             <el-input
               style="width: 200px"
               v-model.trim="dataForm.phone"
@@ -54,6 +54,10 @@
                 @click="resetDataForm()"
                 >{{ $t("reset") }}</el-button
               >
+            <el-button size="mini" plain @click="open">
+            <i :class="isOpen ? 'el-icon-arrow-up' : 'el-icon-arrow-down'"></i>
+              {{ isOpen ? "收起" : "展开" }}
+            </el-button>
             </el-form-item>
           </div>
           <!-- 操作按钮 -->

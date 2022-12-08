@@ -9,7 +9,7 @@
           <el-input size="small" :clearable="true" style="width: 200px" v-model="dataForm.coverName" placeholder="请输入">
           </el-input>
         </el-form-item>
-        <el-form-item label="图片分类" prop="style" >
+        <el-form-item label="图片分类" v-show="(isOpen || formItemCount >= 2)" prop="style" >
           <el-select 
             clearable
             v-model="dataForm.style"
@@ -21,7 +21,7 @@
             <el-option label="背景图" :value="'2'"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="图片类型" prop="classification">
+        <el-form-item label="图片类型" v-show="(isOpen || formItemCount >= 3)" prop="classification">
           <el-select 
             clearable
             v-model="dataForm.classification"
