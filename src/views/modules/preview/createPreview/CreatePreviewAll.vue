@@ -516,7 +516,7 @@ export default {
               res.data.map((item) => {
                 arr.push({
                   value: item.weixinUserId,
-                  label: `主播：${item.username}  手机号：${item.phone}`,
+                  label: `姓名：${item.realName}  昵称：${item.username}  手机号：${item.phone}`,
                 });
               });
               this.anchorOptions = arr;
