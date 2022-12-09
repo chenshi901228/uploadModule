@@ -79,7 +79,39 @@
             <el-option :value="4" label="已退款"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item v-show="isOpen || formItemCount >= 8" label="是否注册大于众学" label-width="140" prop="isAuth">
+        <el-form-item v-show="isOpen || formItemCount >= 8" label="下单来源" prop="liveTheme">
+          <el-input
+            style="width: 200px"
+            v-model="dataForm.liveTheme"
+            clearable
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-show="isOpen || formItemCount >= 9" label="主播姓名" prop="anchorRealName">
+          <el-input
+            style="width: 200px"
+            v-model="dataForm.anchorRealName"
+            clearable
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-show="isOpen || formItemCount >= 10" label="主播昵称" prop="anchorNickName">
+          <el-input
+            style="width: 200px"
+            v-model="dataForm.anchorNickName"
+            clearable
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-show="isOpen || formItemCount >= 11" label="主播手机号码" prop="phone">
+          <el-input
+            style="width: 200px"
+            v-model="dataForm.phone"
+            clearable
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-show="isOpen || formItemCount >= 12" label="是否注册大于众学" label-width="140" prop="isAuth">
           <el-select
             style="width: 160px"
             v-model="dataForm.isAuth"
@@ -284,15 +316,6 @@
           align="center"
         >
         </el-table-column>
-        <!-- <el-table-column
-          prop="linkedProductId"
-          label="关联产品编号"
-          min-width="120px"
-          header-align="center"
-          show-overflow-tooltip
-          align="center"
-        >
-        </el-table-column> -->
         <el-table-column
           prop="createDate"
           label="下单时间"
@@ -301,6 +324,39 @@
           align="center"
           show-overflow-tooltip
         ></el-table-column>
+        <el-table-column
+          prop="liveTheme"
+          label="下单来源"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="anchorRealName"
+          label="主播姓名"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="anchorNickName"
+          label="主播昵称"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="phone"
+          label="主播手机号码"
+          header-align="center"
+          min-width="120"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column>
         <el-table-column
           prop="isAuth"
           label="是否注册大于众学"
@@ -351,6 +407,10 @@ export default {
         payType: "",
         consumptionSource: "",
         status: "",
+        liveTheme:"",
+        anchorNickName:"",
+        anchorRealName:"",
+        phone:"",
       },
       dataList: [],
       userId: "",

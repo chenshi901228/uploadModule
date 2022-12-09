@@ -22,11 +22,33 @@
         </el-form-item>
         <el-form-item v-show="isOpen || formItemCount >= 5" label="直播名称" prop="liveTheme">
           <el-input style="width: 200px" v-model="dataForm.liveTheme" clearable placeholder="请输入"></el-input>
-
         </el-form-item>
         <el-form-item v-show="isOpen || formItemCount >= 6" label="直播间id" prop="liveId">
           <el-input style="width: 200px" v-model="dataForm.liveId" clearable placeholder="请输入"></el-input>
-
+        </el-form-item>
+        <el-form-item v-show="isOpen || formItemCount >= 7" label="主播姓名" prop="anchorRealName">
+          <el-input
+            style="width: 200px"
+            v-model="dataForm.anchorRealName"
+            clearable
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-show="isOpen || formItemCount >= 8" label="主播昵称" prop="anchorNickName">
+          <el-input
+            style="width: 200px"
+            v-model="dataForm.anchorNickName"
+            clearable
+            placeholder="请输入"
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-show="isOpen || formItemCount >= 9" label="主播手机号码" prop="phone">
+          <el-input
+            style="width: 200px"
+            v-model="dataForm.phone"
+            clearable
+            placeholder="请输入"
+          ></el-input>
         </el-form-item>
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">
@@ -44,12 +66,12 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <!-- <el-button 
+              <el-button 
                 type="warning"
                 plain
                 icon="el-icon-download" 
                 size="mini"
-                @click="exportHandle">{{ $t("export") }}</el-button> -->
+                @click="exportHandle">{{ $t("export") }}</el-button>
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
@@ -102,6 +124,31 @@
             </div>
           </template>
         </el-table-column>
+        <el-table-column
+          prop="anchorRealName"
+          label="主播姓名"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="anchorNickName"
+          label="主播昵称"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="phone"
+          label="主播手机号码"
+          header-align="center"
+          min-width="120"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column>
 
         <el-table-column prop="createDate" label="创建时间" min-width="160px" header-align="center" align="center"
           show-overflow-tooltip>
@@ -135,6 +182,9 @@ export default {
         nickName: "",
         phone: "",
         delFlg: "",
+        anchorNickName:"",
+        anchorRealName:"",
+        phone:"",
       },
       dataList: [],
       userId: "",

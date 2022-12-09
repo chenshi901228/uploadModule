@@ -1,7 +1,7 @@
 <!-- 结算比例设置 -->
 <template>
   <el-dialog
-    top="20px"
+    top="100px"
     :visible.sync="visible"
     width="30%"
     :title="$t('update')"
@@ -30,6 +30,7 @@
           :min="0"
           :max="99"
           type="number"
+          style="width:80%"
         />
       </el-form-item>
       <div>结算比例范围：0%~99%</div>

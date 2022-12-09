@@ -34,7 +34,23 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-show="isOpen || formItemCount >= 4" label="主播" prop="anchorName">
+        <el-form-item v-show="isOpen || formItemCount >= 4" label="加入粉丝团来源" prop="liveTheme" label-width="140">
+          <el-input
+            style="width: 200px"
+            placeholder="请输入"
+            v-model="dataForm.liveTheme"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-show="isOpen || formItemCount >= 5" label="主播姓名" prop="anchorRealName">
+          <el-input
+            style="width: 200px"
+            placeholder="请输入"
+            v-model="dataForm.anchorRealName"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item v-show="isOpen || formItemCount >= 6" label="主播昵称" prop="anchorName">
           <el-input
             style="width: 200px"
             placeholder="请输入"
@@ -42,7 +58,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-show="isOpen || formItemCount >= 5" label="主播手机号码" prop="anchorPhone">
+        <el-form-item v-show="isOpen || formItemCount >= 7" label="主播手机号码" prop="anchorPhone">
           <el-input
             style="width: 200px"
             placeholder="请输入"
@@ -72,12 +88,12 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <!-- <el-button 
+              <el-button 
                 type="warning"
                 plain
                 icon="el-icon-download" 
                 size="mini"
-                @click="exportHandle">{{ $t("export") }}</el-button> -->
+                @click="exportHandle">{{ $t("export") }}</el-button>
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
@@ -142,7 +158,7 @@
         >
         </el-table-column>
 
-        <el-table-column
+        <!-- <el-table-column
           prop="anchorName"
           label="主播"
           header-align="center"
@@ -158,6 +174,40 @@
           header-align="center"
           align="center"
           show-overflow-tooltip
+        >
+        </el-table-column> -->
+        <el-table-column
+          prop="liveTheme"
+          label="加入粉丝团来源"
+          header-align="center"
+          min-width="140"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="anchorRealName"
+          label="主播姓名"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="anchorName"
+          label="主播昵称"
+          header-align="center"
+          show-overflow-tooltip
+          align="center"
+        >
+        </el-table-column>
+        <el-table-column
+          prop="anchorPhone"
+          label="主播手机号码"
+          header-align="center"
+          min-width="120"
+          show-overflow-tooltip
+          align="center"
         >
         </el-table-column>
 
@@ -230,6 +280,8 @@ export default {
         title: "",
         anchorName: "",
         anchorPhone: "",
+        liveTheme:"",
+        anchorRealName:"",
       },
       dataList: [],
       userId: "",

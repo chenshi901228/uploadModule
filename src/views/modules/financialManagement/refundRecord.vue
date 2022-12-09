@@ -450,7 +450,7 @@ export default {
         getDataListURL: "/sys/userRefund/confirmRefundPage",
         getDataListIsPage: true,
         deleteIsBatch: true,
-        exportURL: "/sys/manage/complaint/export",
+        exportURL: "/sys/userRefund/exportConfirmRefund",
       },
       dataForm: {
         userName: "",
