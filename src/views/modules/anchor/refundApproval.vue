@@ -441,9 +441,9 @@ export default {
   },
   components: { Template },
   mounted() {
-    this.$bus.$on("change", () => {
-      this.getDataList();
-    });
+    // this.$bus.$on("change", () => {
+    //   this.getDataList();
+    // });
   },
   methods: {
     // 审批/查看
