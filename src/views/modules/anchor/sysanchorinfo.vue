@@ -394,7 +394,7 @@ export default {
       mixinViewModuleOptions: {
         getDataListURL: "/sys/anchor/applyInfo/addPage",
         getDataListIsPage: true,
-        exportURL: "/sys/anchor/info/export",
+        exportURL: "/sys/anchor/applyInfo/export?type=1",
         deleteURL: "/sys/anchor/info",
         deleteIsBatch: true,
       },
