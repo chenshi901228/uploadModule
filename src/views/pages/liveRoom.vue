@@ -1670,6 +1670,7 @@ export default {
             this.connectOpenStatus = Number(res.data.data.openEvenWheat)
             this.giftStatus = Number(res.data.data.openLiveReward)
             this.likeStatus = Number(res.data.data.openGiveLike)
+            this.deviceNav[0].status = Number(res.data.data.openLoudspeakerMute) ? false : true
             this.isOpenDesktopSharing = JSON.parse(localStorage.getItem('isOpenDesktopSharing'))
             this.getTimUserSig()
           }).catch(()=>{
@@ -1823,8 +1824,11 @@ export default {
         //麦克风
         let result = await this.zg.muteMicrophone(data.status);
         if (result) {
+          let res = await this.$http.post('/sys/mixedflow/openOrClose', { type: 3, openOrClose: this.deviceNav[0].status ? 1 : 0 })
+          if(!res.code == 0) return this.$message.error(res.msg)
           let isMicrophoneMuted = await this.zg.isMicrophoneMuted();
           this.deviceNav[0].status = !isMicrophoneMuted; //麦克风状态
+          this.$message.success(this.deviceNav[0].status ? '您已解除静音':'您已静音')
         }
       } else if (data.type === "camera") {
         //摄像头
@@ -2234,9 +2238,11 @@ export default {
           let timer = setTimeout(()=>{
             this.$http.post("/sys/mixedflow/startEvenWheat", { //重新进入直播间发起混流任务
                   RoomId: this.roomId, //房间ID；
-                }).then((res) => {
+                }).then(async (res) => {
                   this.streamUrl = res.data.data.Data.PlayInfo[0].HLS
                   this.$message({ message: "刷新成功", type: "success" });
+                  // 设置是否静音
+                  await this.zg.muteMicrophone(!this.deviceNav[0].status)
                   if(this.livePlayerList.length){
                     let arr = JSON.stringify(this.livePlayerList)
                     arr = JSON.parse(arr)
@@ -2296,6 +2302,7 @@ export default {
         openEvenWheat: this.connectOpenStatus, // 开启/关闭连麦
         openLiveReward: this.giftStatus, // 开启/关闭礼物
         openGiveLike: this.likeStatus, // 开启/关闭互动
+        openLoudspeakerMute: this.deviceNav[0].status ? 0 : 1 //静音状态
       };
       if (
         this.$route.query.liveTheme &&
