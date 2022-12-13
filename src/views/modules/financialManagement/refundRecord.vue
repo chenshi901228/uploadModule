@@ -1,3 +1,4 @@
+<!--财务管理-退款记录-->
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-pay__order">
@@ -109,6 +110,11 @@
             <el-option :value="-1" label="退款失败"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="退款到账时间" prop="daterange" v-show="isOpen || formItemCount >= 11">
+          <el-date-picker placeholder="请选择" v-model="daterange" type="datetimerange" range-separator="至"
+            start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd HH:mm:ss">
+          </el-date-picker>
+        </el-form-item>
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">
           <el-form-item>
@@ -131,12 +137,12 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <!-- <el-button 
+              <el-button 
                 type="warning"
                 plain
                 icon="el-icon-download" 
                 size="mini"
-                @click="exportHandle">{{ $t("export") }}</el-button> -->
+                @click="exportHandle">{{ $t("export") }}</el-button>
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
@@ -354,6 +360,14 @@
         >
         </el-table-column> -->
         <el-table-column
+          prop="refundDate"
+          label="退款到账时间"
+          min-width="160px"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        ></el-table-column>
+        <el-table-column
           prop="createDate"
           label="创建时间"
           min-width="160px"
@@ -462,7 +476,9 @@ export default {
         id: "",
         refundStatus: "",
         confirmStatus:"",
-        flowStatus:""
+        flowStatus:"",
+        startPayDate: "",
+        endPayDate: ""
       },
       dataList: [],
       userId: "",
@@ -473,7 +489,19 @@ export default {
       infoWithDialogForm: {},
       submitLoading: false, //审核loading
       submitStatus: 1, //通过/驳回
+      daterange: null,
     };
+  },
+  watch: {
+    daterange (val) {
+      if (val == null) {
+        this.dataForm.startPayDate = null
+        this.dataForm.endPayDate = null
+      } else {
+        this.dataForm.startPayDate = val[0]
+        this.dataForm.endPayDate = val[1]
+      }
+    }
   },
   components: { Template },
   mounted() {
@@ -498,7 +526,10 @@ export default {
         weixinUserProductId: "",
         id: "",
         refundStatus: "",
+        startPayDate: "",
+        endPayDate: ""
       };
+      this.daterange=null
       this.$refs.salesRecord.resetFields();
       this.getDataList();
     },

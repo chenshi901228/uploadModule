@@ -157,6 +157,7 @@
             <el-select style="width: 180px" placeholder="请选择" v-model="diaSearchForm.payType" clearable>
               <el-option :value="1" label="微信"></el-option>
               <el-option :value="2" label="支付宝"></el-option>
+              <el-option :value="3" label="人工充值"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="充值来源" v-if="diaTbas === 1 && (isOpen || formItemCount > 2)" prop="paySource">
@@ -246,6 +247,10 @@
               {{ isOpen ? "收起" : "展开" }}
             </el-button>
           </el-form-item>
+        
+          <div>
+            <el-button size="mini"  v-if="diaTbas === 1" plain  @click="rechargeBtn" type="primary">充值</el-button>
+          </div>
 
           <!-- 操作按钮 -->
           <div class="headerTool-handle-btns">
@@ -278,10 +283,26 @@
               </template>
             </el-table-column>
             <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
-              show-overflow-tooltip v-else-if="prop === 'payType' && diaTbas != 3 && diaTbas != 6">
+              show-overflow-tooltip v-else-if="prop === 'payType' && diaTbas != 3 && diaTbas != 6 && diaTbas != 1">
               <template slot-scope="scope">
                 <div>
-                  {{ scope.row.payType === 1 ? "种子" : "支付宝" }}
+                  {{ scope.row.payType === 1 ? "种子" : '-'}}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              show-overflow-tooltip v-else-if="prop === 'payType' && diaTbas == 1">
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.payType === 1 ? "微信" : scope.row.payType === 3 ? "人工充值" : '支付宝'}}
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column :prop="prop" :label="label" :key="prop" header-align="center" align="center"
+              show-overflow-tooltip v-else-if="prop === 'status' && diaTbas == 1">
+              <template slot-scope="scope">
+                <div>
+                  {{ scope.row.status === 1 ? "充值成功" : scope.row.status === -1 ? "已作废" : '充值失败'}}
                 </div>
               </template>
             </el-table-column>
@@ -421,13 +442,17 @@
             </el-table-column>
             
           </template>
-          <el-table-column v-if="diaTbas === 3 || diaTbas === 6" :label="$t('handle')" fixed="right" width="180px"
+          <el-table-column v-if="diaTbas === 1 || diaTbas === 3 || diaTbas === 6" :label="$t('handle')" fixed="right" width="180px"
             header-align="center" align="center">
             <template slot-scope="scope">
-              <el-button v-if="scope.row.status == 1 || scope.row.status == 2" type="text" icon="el-icon-edit-outline"
+              <el-button v-if="(diaTbas === 3 || diaTbas === 6) && scope.row.status == 1 || scope.row.status == 2" type="text" icon="el-icon-edit-outline"
                 size="small" @click="applyRefund(scope.row)">申请退款</el-button>
-              <el-button type="text" icon="el-icon-edit-outline"
+              <el-button v-if="diaTbas === 3 " type="text" icon="el-icon-edit-outline"
                 size="small" @click="applyInfo(scope.row)">查看明细</el-button>
+              <el-button v-if="diaTbas === 1  && scope.row.payType==3 && scope.row.status != -1" type="text" icon="el-icon-circle-close"
+                size="small" @click="cancelMoney(scope.row)">作废</el-button>
+              <el-button v-if="diaTbas === 1 && scope.row.payType==3" type="text" icon="el-icon-edit-outline"
+                size="small" @click="infoMoney(scope.row)">查看备注</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -488,6 +513,47 @@
           <el-descriptions-item label="第三方流水单号">{{applyForm.orderId}}</el-descriptions-item>
       </el-descriptions>
     </el-dialog>
+
+    <el-dialog title="充值" :visible.sync="dialogRecharge" width="600px" top="100px">
+        <div>
+          <span style="width:80px">
+            种子数量：
+          </span>
+          <el-input-number @blur="rechargeBlur()" step-strictly :step="1" v-model="rechargePrice" :min="1" :controls="false" label="请输入"></el-input-number>
+        </div>
+        <div style="display:flex;margin-top:20px">
+          <span style="width:80px;">备注：</span>
+          <el-input type="textarea"
+              maxlength="150"
+              show-word-limit
+              :rows="6"
+              placeholder="请输入备注"
+              v-model="rechargeRemark">
+          </el-input>
+        </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="dialogRecharge = false">取消</el-button>
+        <el-button size="small" type="primary" @click="rechargeAdd">确定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog :title="rechargeType=='edit' ? '作废' : '查看备注'" :visible.sync="dialogRechargeRemove" width="600px" top="100px">
+        <div style="display:flex;margin-top:20px">
+          <span style="width:80px;">备注：</span>
+          <el-input v-if="rechargeType=='edit'" type="textarea"
+              maxlength="150"
+              show-word-limit
+              :rows="6"
+              placeholder="请输入备注"
+              v-model="rechargeRemark">
+          </el-input>
+          <span v-else>{{rechargeRemark}}</span>
+        </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button v-if="rechargeType=='edit'" size="small" @click="dialogRechargeRemove = false">取消</el-button>
+        <el-button v-if="rechargeType=='edit'" size="small" type="primary" @click="rechargeRemove">确定</el-button>
+        <el-button v-else size="small" type="primary" @click="dialogRechargeRemove = false">确定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -531,6 +597,14 @@ export default {
       rowCenter:{
         "text-align":"center",
       },
+
+      //充值
+      dialogRecharge:false,
+      rechargePrice:1,
+      rechargeRemark:"",
+      dialogRechargeRemove:false,
+      rechargeType:'edit',
+      orderId:'',
     };
   },
 
@@ -597,6 +671,8 @@ export default {
             amount: "支付金额",
             payType: "支付方式",
             paySource: "充值来源",
+            status: "充值状态",
+            updateDate: "充值到账时间",
             createDate: "充值时间",
           };
           break;
@@ -676,6 +752,27 @@ export default {
 
       this.queryPost_dia();
       
+    },
+
+    //获取种子数据
+    getUserInfo(){
+      this.$http
+      .get(
+        `/sys/manage/userDetail/${JSON.parse(window.localStorage.getItem("userDetailData")).id
+        }`
+      )
+      .then(({ data: res }) => {
+        if (res.code !== 0) {
+          return this.$message.error(res.msg);
+        }
+        this.diaForm = {
+          ...res.data,
+          ...JSON.parse(window.localStorage.getItem("userDetailData")),
+          priceConsumption: res.data.priceRecharge + res.data.shoppingConsumption,
+          // priceConsumption:res.data.priceConsumption,
+        };
+      })
+      .catch(() => { });
     },
 
     query(){
@@ -799,6 +896,72 @@ export default {
           this.productTypeOptions = [];
           this.$message.error(JSON.stringify(err));
         });
+    },
+    rechargeBlur(){
+      console.log(this.rechargePrice);
+      if(!this.rechargePrice){
+        this.rechargePrice=1
+      }
+    },
+    //充值
+    rechargeBtn(){
+      this.rechargePrice=1
+      this.rechargeRemark=""
+      this.dialogRecharge=true
+    },
+    //确定充值
+    rechargeAdd(){
+      // if(this.rechargePrice==0){
+      //   return this.$message.error('充值种子数量需大于0')
+      // }
+      // if(this.rechargeRemark==0){
+      //   return this.$message.error('充值种子数量需大于0')
+      // }
+      this.$http.post("/sys/user/consumption/addUserRecharge", {
+        price: this.rechargePrice,
+        remark: this.rechargeRemark,
+        userId:this.userId
+      }).then(({ data: res }) => {
+        if (res.code != 0) return this.$message.error(res.msg)
+        this.$message.success("充值成功")
+        this.dialogRecharge = false
+        this.query()
+        this.getUserInfo()
+      }).catch(err => {
+        this.dialogRecharge = false
+        this.$message.error(JSON.stringify(err))
+      })
+    },
+    //充值-作废
+    cancelMoney(row){
+      this.rechargeType='edit'
+      this.dialogRechargeRemove=true
+      this.orderId=row.id
+      this.rechargeRemark=row.remark
+      
+    },
+    rechargeRemove(){
+        this.$http.post("/sys/user/consumption/delUserRecharge", {
+        remark: this.rechargeRemark,
+        orderId:this.orderId
+      }).then(({ data: res }) => {
+        if (res.code != 0) return this.$message.error(res.msg)
+        this.$message.success("作废成功")
+        this.dialogRechargeRemove = false
+        this.query()
+        this.getUserInfo()
+      }).catch(err => {
+        this.dialogRechargeRemove = false
+        this.$message.error(JSON.stringify(err))
+      })
+      this.dialogRechargeRemove=false
+    },
+    //充值-查看备注
+    infoMoney(row){
+      this.rechargeType='info'
+      this.dialogRechargeRemove=true 
+      this.rechargeRemark=row.remark
+      this.orderId=row.id
     },
     applyRefund(row) {//申请退款
       // 书籍申请退款

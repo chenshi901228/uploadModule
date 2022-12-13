@@ -1,3 +1,4 @@
+<!--财务管理-充值记录-->
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-pay__order">
@@ -30,6 +31,7 @@
           <el-select style="width: 200px" v-model="dataForm.payType" clearable placeholder="请选择">
             <el-option :value="1" label="微信"></el-option>
             <el-option :value="2" label="支付宝"></el-option>
+            <el-option :value="2" label="人工充值"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-show="isOpen || formItemCount >= 4" label="充值来源" prop="paySource">
@@ -42,6 +44,11 @@
             <el-option :value="1" label="小程序"></el-option>
             <el-option :value="2" label="大于众学"></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="充值到账时间" prop="daterange" v-show="isOpen || formItemCount >= 5">
+          <el-date-picker placeholder="请选择" v-model="daterange" type="datetimerange" range-separator="至"
+            start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd HH:mm:ss">
+          </el-date-picker>
         </el-form-item>
         <!-- <el-form-item v-show="isOpen || formItemCount >= 5" label="充值状态" prop="delFlg">
           <el-select
@@ -76,12 +83,12 @@
         <div class="headerTool-handle-btns">
           <div class="headerTool--handle-btns-left">
             <el-form-item>
-              <!-- <el-button 
+              <el-button 
                 type="warning"
                 plain
                 icon="el-icon-download" 
                 size="mini"
-                @click="exportHandle">{{ $t("export") }}</el-button> -->
+                @click="exportHandle">{{ $t("export") }}</el-button>
             </el-form-item>
           </div>
           <div class="headerTool--handle-btns-right">
@@ -159,7 +166,7 @@
         >
           <template slot-scope="scope">
             <div>
-              {{ scope.row.payType === 1 ? "微信" : "支付宝" }}
+              {{ scope.row.payType === 1 ? "微信" : scope.row.payType === 3 ? "人工充值" : "支付宝" }}
             </div>
           </template>
         </el-table-column>
@@ -175,6 +182,24 @@
               {{ scope.row.paySource === 1 ? "小程序" : "大于众学" }}
             </div>
           </template>
+        </el-table-column>
+        <el-table-column
+          prop="remark"
+          label="备注"
+          min-width="160px"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        >
+        </el-table-column>
+        <el-table-column
+          prop="updateDate"
+          label="充值到账时间"
+          min-width="160px"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        >
         </el-table-column>
 
         <el-table-column
@@ -233,10 +258,24 @@ export default {
         nickName: "",
         phone: "",
         delFlg: "",
+        startPayDate: "",
+        endPayDate: ""
       },
       dataList: [],
       userId: "",
+      daterange: null,
     };
+  },
+  watch: {
+    daterange (val) {
+      if (val == null) {
+        this.dataForm.startPayDate = null
+        this.dataForm.endPayDate = null
+      } else {
+        this.dataForm.startPayDate = val[0]
+        this.dataForm.endPayDate = val[1]
+      }
+    }
   },
   components: { Template },
   mounted() {
@@ -248,6 +287,9 @@ export default {
     // 重置搜索条件
     resetDataForm() {
       this.$refs.rechargeRecord.resetFields();
+      this.daterange=null
+      this.dataForm.startPayDate="",
+      this.dataForm.endPayDate="",
       this.getDataList();
     },
   },

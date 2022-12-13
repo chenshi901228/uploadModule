@@ -1,3 +1,4 @@
+<!--财务管理-商品订单列表-->
 <template>
   <el-card shadow="never" class="aui-card--fill">
     <div class="mod-pay__order">
@@ -121,6 +122,11 @@
             <el-option value="0" label="否"></el-option>
             <el-option value="1" label="是"></el-option>
           </el-select>
+        </el-form-item>
+        <el-form-item label="支付完成时间" prop="daterange" v-show="isOpen || formItemCount >= 13">
+          <el-date-picker placeholder="请选择" v-model="daterange" type="datetimerange" range-separator="至"
+            start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd HH:mm:ss">
+          </el-date-picker>
         </el-form-item>
         <!-- 搜索重置展开按钮 -->
         <div class="headerTool-search-btns">
@@ -411,10 +417,24 @@ export default {
         anchorNickName:"",
         anchorRealName:"",
         phone:"",
+        startPayDate: "",
+        endPayDate: ""
       },
       dataList: [],
       userId: "",
+      daterange: null,
     };
+  },
+  watch: {
+    daterange (val) {
+      if (val == null) {
+        this.dataForm.startPayDate = null
+        this.dataForm.endPayDate = null
+      } else {
+        this.dataForm.startPayDate = val[0]
+        this.dataForm.endPayDate = val[1]
+      }
+    }
   },
   components: { Template },
   mounted() {
@@ -426,6 +446,14 @@ export default {
     // 添加金额符号
     numberConvert(m) {
       return numberConvert(m)
+    },
+    // 重置搜索条件
+    resetDataForm() {
+      this.$refs.dataForm.resetFields();
+      this.daterange=null
+      this.dataForm.startPayDate="",
+      this.dataForm.endPayDate="",
+      this.getDataList();
     },
   },
 };
