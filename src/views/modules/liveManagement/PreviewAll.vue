@@ -530,6 +530,7 @@
               v-if="
                 scope.row.delFlg !== 1 &&
                 scope.row.liveState === 3 &&
+                !overStartDate(scope.row.startDate) &&
                 scope.row.appointmentState === 2
               "
               type="text"
@@ -708,6 +709,12 @@ export default {
           break;
       }
       return res
+    },
+    // 是否超过开播时间
+    overStartDate(startDate) {
+      let nowTime = new Date().getTime();
+      let time = new Date(startDate).getTime();
+      return nowTime - time > 0;
     },
     timeFlag(startDate) {
       let nowTime = new Date().getTime();
