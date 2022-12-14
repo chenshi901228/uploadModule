@@ -313,6 +313,9 @@
           align="center"
           show-overflow-tooltip
         >
+          <template slot-scope="{ row }">
+            <span>{{ row.logisticsStatus==0 ? '待发货': row.logisticsStatus==1 ? '待收货' : row.logisticsStatus==2 ?  '已收货' : '-'}}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="createDate"
