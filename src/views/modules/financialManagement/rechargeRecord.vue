@@ -31,7 +31,7 @@
           <el-select style="width: 200px" v-model="dataForm.payType" clearable placeholder="请选择">
             <el-option :value="1" label="微信"></el-option>
             <el-option :value="2" label="支付宝"></el-option>
-            <el-option :value="2" label="人工充值"></el-option>
+            <el-option :value="3" label="人工充值"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item v-show="isOpen || formItemCount >= 4" label="充值来源" prop="paySource">

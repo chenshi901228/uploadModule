@@ -538,7 +538,7 @@
     </el-dialog>
     <el-dialog :title="rechargeType=='edit' ? '作废' : '查看备注'" :visible.sync="dialogRechargeRemove" width="600px" top="100px">
         <div style="display:flex;margin-top:20px">
-          <span style="width:80px;">备注：</span>
+          <span style="min-width:80px;">备注：</span>
           <el-input v-if="rechargeType=='edit'" type="textarea"
               maxlength="150"
               show-word-limit
