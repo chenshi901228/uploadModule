@@ -422,17 +422,17 @@
           <template slot-scope="scope">
             <div>
               {{
-                scope.row.withdrawStatus === "-1"
+                scope.row.withdrawStatus == "-1"
                   ? "--"
-                  : scope.row.withdrawStatus === "1"
+                  : scope.row.withdrawStatus == "1"
                   ? "审核中"
-                  : scope.row.withdrawStatus === "2"
+                  : scope.row.withdrawStatus == "2"
                   ? "核算中"
-                  : scope.row.withdrawStatus === "3"
+                  : scope.row.withdrawStatus == "3"
                   ? "到帐中"
-                  : scope.row.withdrawStatus === "4"
+                  : scope.row.withdrawStatus == "4"
                   ? "已到账"
-                  : scope.row.withdrawStatus === "5"
+                  : scope.row.withdrawStatus == "5"
                   ? "未到账"
                   : "--"
               }}
@@ -474,8 +474,8 @@
           <template slot-scope="scope">
             <el-button
               v-if="
-                scope.row.withdrawStatus === '2' ||
-                scope.row.withdrawStatus === '5'
+                scope.row.withdrawStatus == '2' ||
+                scope.row.withdrawStatus == '5'
               "
               type="text"
               size="small"
@@ -485,8 +485,8 @@
             >
 
             <el-button
-              v-if="scope.row.withdrawStatus === '2'||
-              scope.row.withdrawStatus === '5'
+              v-if="scope.row.withdrawStatus == '2'||
+              scope.row.withdrawStatus == '5'
               "
               type="text"
               size="small"
