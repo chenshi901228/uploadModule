@@ -460,7 +460,8 @@
           show-overflow-tooltip
         >
           <template slot-scope="scope">
-            <span>{{ scope.row.zsyhReturnDate || "--" }}</span>
+            <span v-if="scope.row.withdrawStatus == 4">{{ scope.row.zsyhReturnDate}}</span>
+            <span v-else>{{ "--"}}</span>
           </template>
         </el-table-column>
         <el-table-column
