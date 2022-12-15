@@ -769,13 +769,13 @@ export default {
     },
     //查看详情
     handleInfo(row){
-      this.$router.push({
-        path: "/anchorManagement-details-anchorInfo",
-      });
       window.localStorage.setItem(
         "anchorManagementAnchorInfo",
         JSON.stringify(row)
       );
+      this.$router.push({
+        path: "/anchorManagement-details-anchorInfo",
+      });
     }
 
 

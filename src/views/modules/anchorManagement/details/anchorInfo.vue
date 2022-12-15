@@ -106,7 +106,7 @@ export default {
    },
    activated(){
        this.assistantList=[]
-       this.ruleForm = JSON.parse(window.localStorage.getItem("liveManagementAnchorInfo"))
+       this.ruleForm = JSON.parse(window.localStorage.getItem("anchorManagementAnchorInfo"))
        console.log(this.ruleForm);
        if(this.ruleForm.assistant && this.ruleForm.assistant!=""){
            this.assistantList=this.ruleForm.assistant.split(",")
