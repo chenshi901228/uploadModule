@@ -252,12 +252,13 @@
         <el-table-column
           show-overflow-tooltip
           prop="createDate"
-          label="状态"
+          label="账号状态"
           header-align="center"
           align="center"
         >
           <template slot-scope="scope">
-            <div>{{ scope.row.status == 0 ? "禁用" : "正常" }}</div>
+            <!-- <div>{{ scope.row.status == 0 ? "禁用" : "正常" }}</div> -->
+            <el-tag size="small" :type="scope.row.status == 0 ? 'danger' : 'success'">{{scope.row.status == 0 ? "禁用" : "正常"}}</el-tag>
           </template>
         </el-table-column>
         <el-table-column
