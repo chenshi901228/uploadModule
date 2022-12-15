@@ -347,6 +347,14 @@
               @click="problemInfo(row)"
               >查看提问</el-button
             >
+            <el-button
+              type="text"
+              icon="el-icon-view"
+              size="small"
+              v-if="$hasPermission('sys:liveManagement:anchorInfo')"
+              @click="handleInfo(row)"
+              >查看详情</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -628,6 +636,16 @@ export default {
         JSON.stringify(data)
       );
     },
+    //查看详情
+    handleInfo(row){
+      this.$router.push({
+        path: "/liveManagement-details-anchorInfo",
+      });
+      window.localStorage.setItem(
+        "liveManagementAnchorInfo",
+        JSON.stringify(row)
+      );
+    }
 
 
   },

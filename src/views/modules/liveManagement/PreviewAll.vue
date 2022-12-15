@@ -587,6 +587,14 @@
               @click="checkRemark(scope.row)"
               >查看备注</el-button
             >
+            <el-button
+              type="text"
+              icon="el-icon-view"
+              size="small"
+              v-if="$hasPermission('sys:liveManagement:previewInfo')"
+              @click="handleInfo(scope.row)"
+              >查看详情</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -1041,6 +1049,16 @@ export default {
         callback: action => {}
       });
     },
+    //查看详情
+    handleInfo(row){
+      this.$router.push({
+        path: "/liveManagement-details-previewInfo",
+      });
+      window.localStorage.setItem(
+        "liveManagementPreviewInfo",
+        JSON.stringify(row)
+      );
+    }
   },
 };
 </script>
