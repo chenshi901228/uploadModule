@@ -315,7 +315,7 @@ export default {
       tableItem: [
         { prop: "frontCoverUrl", label: "直播宣传图", fixed:true },
         { prop: "liveTheme", label: "回放主题", fixed:true },
-        { prop: "anchorUser", label: "主播" },
+        { prop: "anchorUser", label: "主播昵称" },
         { prop: "anchorTel", label: "手机号码" },
         { prop: "showMode", label: "视频显示" },
         { prop: "duration", label: "视频时长" },

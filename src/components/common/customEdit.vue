@@ -346,6 +346,10 @@ export default {
         setHTML(val) {
             this.editor.setHtml(val)
         },
+        // 设置只读
+        setReadOnly() {
+            this.editor.disable()
+        },
         // 获取当前编辑器内容
         getHTML() {
             let res = this.editor.getHtml()

@@ -248,7 +248,7 @@
             fixed="right"
             header-align="center"
             align="center"
-            width="120"
+            width="200"
           >
             <template slot-scope="{ row }">
               <el-button
@@ -278,6 +278,12 @@
                 icon="el-icon-coin"
                 @click="settlementRatio(row)"
                 >主播结算比例</el-button>
+              <el-button
+                type="text"
+                size="small"
+                icon="el-icon-view"
+                @click="checkDetail(row)"
+                >查看详情</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -294,22 +300,13 @@
         </el-pagination>
       </div>
     </el-card>
-    <!-- 编辑 -->
-    <goods-add-or-update
-      ref="goodsAddOrUpdate"
-      @refreshDataList="query"
-    ></goods-add-or-update>
   </div>  
 </template>
 
 <script>
 import mixinTableModule from "@/mixins/table-module";
-import GoodsAddOrUpdate from "./goods-add-or-update.vue";
 export default {
   mixins: [mixinTableModule],
-  components: {
-    GoodsAddOrUpdate,
-  },
   data() {
     return {
       mixinTableModuleOptions: {
@@ -506,7 +503,15 @@ export default {
     },
     // 编辑
     edit(row) {
-      this.$refs.goodsAddOrUpdate.init(row);
+      this.$router.push({ name: "basicManagement-goods-goodsUpdate", query: {
+        id: row.id,
+      } })
+    },
+    // 查看商品详情
+    checkDetail(row) {
+      this.$router.push({ name: "basicManagement-goods-goodsDetails", query: {
+        id: row.id,
+      } })
     },
     // 主播结算比例
     settlementRatio(row) {
