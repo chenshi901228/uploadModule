@@ -147,7 +147,7 @@
                     :key="item.prop"
                     :prop="item.prop"
                     :label="item.label"
-                    :width="item.width || 120"
+                    :width="item.width || ''"
                     :show-overflow-tooltip="item.prop == 'productName' ? false : true"
                 >
                     <template slot-scope="{ row }">
