@@ -49,11 +49,6 @@
             </el-radio-group>
           </el-form-item>
         </el-col>
-        <el-col :span="24">
-          <el-form-item label="商品详情：">
-            <custom-edit ref="customEdit"></custom-edit>
-          </el-form-item>
-        </el-col>
       </el-row>
     </el-form>
     <div class="footer">
@@ -64,14 +59,9 @@
   </el-card>
 </template>
 <script>
-import debounce from "lodash/debounce";
 import commonModule from "@/mixins/common-module";
-import CustomEdit from "@/components/common/customEdit"
 export default {
   mixins: [commonModule],
-  components: {
-    CustomEdit
-  },
   data() {
     return {
       visible: false,
@@ -94,8 +84,6 @@ export default {
               ...res.data
             }
             if(this.dataForm.collectReceivingAddress == null) this.dataForm.collectReceivingAddress = 0
-            this.$refs.customEdit.setHTML(res.data.productMarrow)
-            this.$refs.customEdit.setReadOnly()
           } else {
             this.$message.error(res.msg);
           }

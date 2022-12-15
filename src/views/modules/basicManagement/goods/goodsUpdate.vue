@@ -77,13 +77,6 @@
             </el-radio-group>
           </el-form-item>
         </el-col>
-        <el-col :span="24">
-          <el-form-item label="商品详情：" prop="productMarrow">
-            <custom-edit 
-              ref="customEdit" 
-              @editChange="editChange"></custom-edit>
-          </el-form-item>
-        </el-col>
       </el-row>
     </el-form>
     <div class="footer">
@@ -104,12 +97,8 @@
 <script>
 import debounce from "lodash/debounce";
 import commonModule from "@/mixins/common-module";
-import CustomEdit from "@/components/common/customEdit"
 export default {
   mixins: [commonModule],
-  components: {
-    CustomEdit
-  },
   data() {
     const blurText1 = async (rule, value, callback) => {
       if (Number(value) != 0 && (!Number(value) || Number(value) < 0)) {
@@ -145,9 +134,6 @@ export default {
         collectReceivingAddress: [
           { required: true, message: "请选择是否收集收货地址", trigger: "change" },
         ],
-        productMarrow: [
-          { required: true, message: "请输入商品详情", trigger: "change" },
-        ],
         buyers: [
           { required: true, message: "请输入已购买人数", trigger: "change" },
           { validator: blurText3, trigger: "change" },
@@ -181,7 +167,6 @@ export default {
               ...res.data
             }
             if(this.dataForm.collectReceivingAddress == null) this.dataForm.collectReceivingAddress = 0
-            this.$refs.customEdit.setHTML(res.data.productMarrow)
           } else {
             this.$message.error(res.msg);
           }
@@ -190,10 +175,6 @@ export default {
           console.log(err);
         });
     },
-    // 编辑器内容变化
-    editChange(html) {
-        this.dataForm.productMarrow = html
-    },
     // 取消编辑
     cancelUpdate() {
       this.closeCurrentTab()
@@ -201,7 +182,6 @@ export default {
     // 表单提交
     submit: debounce(
       function () {
-        if(this.dataForm.productMarrow == "<p><br></p>") return this.$message.warning("请输入商品详情")
         this.$refs.dataForm.validate((valid) => {
           if (valid) {
             let params = {};
@@ -212,7 +192,6 @@ export default {
                 id: params.id,
                 price: params.price,
                 collectReceivingAddress: params.collectReceivingAddress,
-                productMarrow: params.productMarrow,
                 buyers: params.buyers,
                 settlementPrice: params.settlementPrice,
               })
