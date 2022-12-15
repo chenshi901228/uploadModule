@@ -128,7 +128,11 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item label="投放人群" prop="dynamicGroupIds">
+        <el-form-item label="投放形式" prop="launchType" class="is-required">
+            <el-radio v-model="launchType" label="1">全员开放</el-radio>
+            <el-radio v-model="launchType" label="2">动态组投放</el-radio>
+        </el-form-item>
+        <el-form-item label="投放人群" prop="dynamicGroupIds" v-if="launchType=='2'">
           <el-select
             style="width: 400px"
             v-model="ruleForm.dynamicGroupIds"
@@ -421,7 +425,7 @@ export default {
           { required: true, message: "请输入主播", trigger: "blur" },
         ],
         liveIntroduce: [
-          { required: true, message: "请填写活动形式", trigger: "blur" },
+          { required: true, message: "请填写直播介绍", trigger: "blur" },
         ],
       },
       editorOption: {
@@ -453,6 +457,8 @@ export default {
 
       extensionImg:"",//直播推广图
       extensionList:[],
+
+      launchType:'',//投放形式
     };
   },
   watch: {
@@ -487,6 +493,7 @@ export default {
       trendsOpen:1,
       spreadUrl:""
     };
+    this.launchType=""
     this.dialogImageUrl = "";
     this.showDefaultImg = false;
     this.defaultImg = [];
@@ -586,7 +593,10 @@ export default {
             this.frontCoverListDefault = res.data.frontCover ? res.data.frontCover : "";
             this.ruleForm.anchorId = res.data.anchorUser;
             if(res.data.dynamicGroupIdsString){
+              this.launchType='2'
               this.ruleForm.dynamicGroupIds = res.data.dynamicGroupIdsString.split(",");
+            }else{
+              this.launchType='1'
             }
             this.info = res.data;
           }
@@ -776,6 +786,9 @@ export default {
         if (valid) {
           let dataForm = {};
           this.ruleForm.startDate = this.dateFormat(this.ruleForm.startDate);
+          if(!this.launchType){
+            return this.$message.error("请选择投放形式");
+          }
           if(!this.ruleForm.frontCoverUrl){
             return this.$message.error("请先上传直播宣传图");
           }
@@ -803,6 +816,10 @@ export default {
             dataForm.frontCover = this.frontCoverList[0].url;
           } else if (this.frontCoverList.length === 0) {
             dataForm.frontCover = this.frontCoverListDefault;
+          }
+
+          if(this.launchType=='1'){
+            this.ruleForm.dynamicGroupIds=[]
           }
 
           // if (

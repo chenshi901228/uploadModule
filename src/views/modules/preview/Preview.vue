@@ -1,4 +1,4 @@
-// 预告列表
+// 预告列表-主播端
 
 <template>
   <el-card shadow="never" class="aui-card--fill">
@@ -536,6 +536,14 @@
               @click="checkRemark(scope.row)"
               >查看备注</el-button
             >
+            <el-button
+              type="text"
+              icon="el-icon-view"
+              size="small"
+              v-if="$hasPermission('sys:preview:previewInfo')"
+              @click="handleInfo(scope.row)"
+              >查看详情</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -976,6 +984,16 @@ export default {
         callback: action => {}
       });
     },
+    //查看详情
+    handleInfo(row){
+      this.$router.push({
+        path: "/preview-details-previewInfo",
+      });
+      window.localStorage.setItem(
+        "previewPreviewInfo",
+        JSON.stringify(row)
+      );
+    }
   },
 };
 </script>

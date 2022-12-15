@@ -37,7 +37,12 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="投放人群" prop="dynamicGroupIds">
+          <el-form-item label="投放形式" prop="launchType" class="is-required">
+              <el-radio v-model="launchType" label="1">全员开放</el-radio>
+              <el-radio v-model="launchType" label="2">动态组投放</el-radio>
+          </el-form-item>
+
+          <el-form-item label="投放人群" prop="dynamicGroupIds" v-if="launchType=='2'">
             <el-select style="width: 400px" v-model="ruleForm.dynamicGroupIds" filterable multiple placeholder="请选择"
               :clearable="true" @visible-change="changeDynamicGroupList($event)">
               <el-option v-for="(item, index) in options" :key="index" :label="item.name" :value="item.id">
@@ -347,6 +352,8 @@ export default {
       loading: false, //输入主播选择loading
       extensionImg:[],//直播推广图
       extensionList:[],
+
+      launchType:'',//投放形式
     };
   },
   watch: {
@@ -381,6 +388,7 @@ export default {
       trendsOpen: 1,
       spreadUrl:"",
     };
+    this.launchType=""
     this.anchorId = this.$route.query.anchorId;
     this.getCoverPictureList();
     this.getExtensionList()
@@ -561,7 +569,9 @@ export default {
         if (valid) {
           let dataForm = {};
           this.ruleForm.startDate = this.dateFormat(this.ruleForm.startDate);
-
+          if(!this.launchType){
+            return this.$message.error("请选择投放形式");
+          }
           if(!this.ruleForm.frontCoverUrl){
             return this.$message.error("请先上传直播宣传图");
           }
@@ -578,6 +588,9 @@ export default {
               })
             }
             dataForm.productList = productArr
+          }
+          if(this.launchType=='1'){
+            this.ruleForm.dynamicGroupIds=[]
           }
           dataForm.productIds = this.ruleForm.productIds.map((item) => item.id);
           dataForm.recommendedAnchorList =
@@ -629,6 +642,7 @@ export default {
               this.ruleForm.frontCoverUrl = this.defaultImg[0];
               this.frontCoverList = [];
               this.extensionList=[]
+              this.launchType=""
 
               this.closeCurrentTab();
 
