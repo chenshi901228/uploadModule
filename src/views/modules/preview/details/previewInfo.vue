@@ -52,7 +52,7 @@
                         </el-tag>
                     </div>
                 </el-form-item>
-                <el-form-item label="投放形式：" prop="launchType">
+                <!-- <el-form-item label="投放形式：" prop="launchType">
                     <el-radio disabled v-model="launchType" label="1">全员开放</el-radio>
                     <el-radio disabled v-model="launchType" label="2">动态组投放</el-radio>
                 </el-form-item>
@@ -65,7 +65,7 @@
                             {{item}}
                         </el-tag>
                     </div>
-                </el-form-item>
+                </el-form-item> -->
                  <el-form-item
                 class="quill-editor"
                 label="直播介绍："
