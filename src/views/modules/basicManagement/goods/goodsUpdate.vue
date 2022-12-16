@@ -56,9 +56,9 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="已购人数：" prop="buyers">
+          <el-form-item label="已购人数：" prop="salesNum">
             <el-input-number
-              v-model="dataForm.buyers"
+              v-model="dataForm.salesNum"
               :controls="false"
               :precision="0"
               :min="0"
@@ -134,7 +134,7 @@ export default {
         collectReceivingAddress: [
           { required: true, message: "请选择是否收集收货地址", trigger: "change" },
         ],
-        buyers: [
+        salesNum: [
           { required: true, message: "请输入已购买人数", trigger: "change" },
           { validator: blurText3, trigger: "change" },
         ],
@@ -192,7 +192,7 @@ export default {
                 id: params.id,
                 price: params.price,
                 collectReceivingAddress: params.collectReceivingAddress,
-                buyers: params.buyers,
+                salesNum: params.salesNum,
                 settlementPrice: params.settlementPrice,
               })
               .then(({ data: res }) => {
