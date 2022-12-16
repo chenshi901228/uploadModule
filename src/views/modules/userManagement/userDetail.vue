@@ -519,7 +519,7 @@
           <span style="width:80px">
             种子数量：
           </span>
-          <el-input-number @blur="rechargeBlur()" step-strictly :step="1" v-model="rechargePrice" :min="1" :controls="false" label="请输入"></el-input-number>
+          <el-input-number @blur="rechargeBlur()" step-strictly :step="1" v-model="rechargePrice" :min="1" :max="10000000" :controls="false" label="请输入"></el-input-number>
         </div>
         <div style="display:flex;margin-top:20px">
           <span style="width:80px;">备注：</span>
