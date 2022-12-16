@@ -43,7 +43,7 @@
                     />
                 </el-form-item>
                 <el-form-item label="助手：" prop="assistant">
-                    <div class="product-box">
+                    <div class="product-box" v-if="ruleForm.assistant && ruleForm.assistant!=''">
                         <el-tag
                             v-for="(item, index) in assistantList"
                             :key="index"
@@ -51,6 +51,7 @@
                             {{item}}
                         </el-tag>
                     </div>
+                    <div v-else>--</div>
                 </el-form-item>
                 <el-form-item label="投放形式：" prop="launchType">
                     <el-radio disabled v-model="launchType" label="1">全员开放</el-radio>

@@ -48,7 +48,7 @@
                     /> -->
                 </el-form-item>
                 <el-form-item label="助手：" prop="assistant">
-                    <div class="product-box">
+                    <div class="product-box" v-if="ruleForm.assistant && ruleForm.assistant!=''">
                         <el-tag
                             v-for="(item, index) in assistantList"
                             :key="index"
@@ -56,6 +56,7 @@
                             {{item}}
                         </el-tag>
                     </div>
+                    <div v-else>--</div>
                 </el-form-item>
                 <el-form-item label="直播背景图：" prop="frontCover">
                     <el-image 
