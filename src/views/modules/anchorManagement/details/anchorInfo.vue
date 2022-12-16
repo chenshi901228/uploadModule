@@ -15,32 +15,34 @@
                     <span>{{ruleForm.liveTime || '--'}}</span>
                 </el-form-item>
                 <el-form-item label="直播宣传图：" prop="frontCoverUrl">
-                    <!-- <el-image 
+                    <el-image 
+                        v-if="ruleForm.frontCoverUrl"
                         :preview-src-list="[ruleForm.frontCoverUrl]"
                         style="width: 100px; height:100px"
                         :src="ruleForm.frontCoverUrl "
                         alt="">
-                    </el-image> -->
-                    <img
+                    </el-image>
+                    <!-- <img
                     v-if="ruleForm.frontCoverUrl && ruleForm.frontCoverUrl!=''"
                     style="width: 100px; height:100px"
                     :src="ruleForm.frontCoverUrl"
                     alt=""
-                    />
+                    /> -->
                 </el-form-item>
                 <el-form-item label="直播推广图：" prop="spreadUrl">
-                    <!-- <el-image 
+                    <el-image 
+                        v-if="ruleForm.spreadUrl"
                         :preview-src-list="[ruleForm.spreadUrl]"
                         style="width: 100px; height:100px"
                         :src="ruleForm.spreadUrl "
                         alt="">
-                    </el-image> -->
-                    <img
+                    </el-image>
+                    <!-- <img
                     v-if="ruleForm.spreadUrl && ruleForm.spreadUrl!=''"
                     style="width: 100px; height:100px"
                     :src="ruleForm.spreadUrl "
                     alt="" 
-                    />
+                    /> -->
                 </el-form-item>
                 <el-form-item label="助手：" prop="assistant">
                     <div class="product-box">
@@ -53,18 +55,19 @@
                     </div>
                 </el-form-item>
                 <el-form-item label="直播背景图：" prop="frontCover">
-                    <!-- <el-image 
+                    <el-image 
+                        v-if="ruleForm.frontCover"
                         :preview-src-list="[ruleForm.frontCover]"
                         style="width: 100px; height:100px"
                         :src="ruleForm.frontCover "
                         alt="">
-                    </el-image> -->
-                    <img 
+                    </el-image>
+                    <!-- <img 
                     v-if="ruleForm.frontCover && ruleForm.frontCover!=''"
                     style="width: 100px; height:100px"
                     :src="ruleForm.frontCover "
                     alt="" 
-                    />
+                    /> -->
                 </el-form-item>
             </el-form>
             <div style="width:100%;text-align: right;">
