@@ -237,7 +237,13 @@ export default {
             if(!type) return
             this.$http.get("/sys/course/searchProductType").then(({data: res}) => {
                 if(res.code == 0) {
+                    for(let i in res.data){
+                        if(res.data[i].productType=='书籍'){
+                            res.data.splice(i,1);
+                        }
+                    }
                     this.productTypeOptions = res.data
+                    
                 }else {
                     this.productTypeOptions = []
                     return this.$message.error(res.msg)

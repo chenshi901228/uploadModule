@@ -38,7 +38,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="已购人数：">
-            <span>{{ dataForm.buyers }}</span>
+            <span v-if="dataForm.buyers && dataForm.salesNum">{{  parseInt(dataForm.buyers) + parseInt(dataForm.salesNum) }}</span>
           </el-form-item>
         </el-col>
         <el-col :span="24">
