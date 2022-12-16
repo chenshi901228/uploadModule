@@ -5,9 +5,9 @@
                 <el-form-item label="直播主题：" prop="liveTheme">
                     <span>{{ruleForm.liveTheme}}</span>
                 </el-form-item>
-                <el-form-item label="主播：" prop="anchorUser">
+                <!-- <el-form-item label="主播：" prop="anchorUser">
                     <span>{{ruleForm.anchorUser}}</span>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="预计开播时间：" prop="startDate">
                     <span>{{ruleForm.startDate}}</span>
                 </el-form-item>
