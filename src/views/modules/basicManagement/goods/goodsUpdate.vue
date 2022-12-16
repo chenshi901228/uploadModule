@@ -71,7 +71,7 @@
         </el-col>
         <el-col :span="24">
           <el-form-item label="是否收集收货地址：" prop="collectReceivingAddress">
-            <el-radio-group v-model="dataForm.collectReceivingAddress">
+            <el-radio-group v-model="dataForm.collectReceivingAddress" :disabled="bookType">
               <el-radio :label="1">是</el-radio>
               <el-radio :label="0">否</el-radio>
             </el-radio-group>
@@ -143,6 +143,7 @@ export default {
           { validator: blurText4, trigger: "change" },
         ],
       },
+      bookType:false,//是否禁用
     };
   },
   watch: {
@@ -160,6 +161,7 @@ export default {
   },
   methods: {
     init() {
+      this.bookType=false
       this.$http.get(`/sys/course/${this.dataForm.id}`).then(({ data: res }) => {
           if (res.code == 0) {
             this.dataForm = {
@@ -167,6 +169,10 @@ export default {
               ...res.data
             }
             if(this.dataForm.collectReceivingAddress == null) this.dataForm.collectReceivingAddress = 0
+            if(this.dataForm.productType=='书籍'){
+              this.dataForm.collectReceivingAddress = 1
+              this.bookType=true
+            }
           } else {
             this.$message.error(res.msg);
           }
