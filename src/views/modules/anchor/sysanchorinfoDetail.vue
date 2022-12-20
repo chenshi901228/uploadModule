@@ -142,195 +142,20 @@
               </div>
             </el-image>
           </div>
-        </div>
-      </div>
-      <!-- <div class="info_type">
-        <div class="type_title">
-          <span>身份认证</span>
-        </div>
-        <div class="normal_info">
-          <div>
-            <span>认证类型</span>
-            {{diaForm.userType==1?'个人':diaForm.userType==2?'企业':'-'}}
-          </div>
-        </div>
-      </div> -->
-      <div class="info_type detalilBox_top" style="margin:20px 0;display: flex;justify-content: space-between;flex-wrap: wrap;    padding: 10px 80px 10px 10px;">
-        <div
-          style="height: 50px;width:100%;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 15px;border-bottom:1px solid #EBEEF5;">
-          身份认证
-        </div>
-        <div style="display:flex;width: 48%;align-items: center;">
-          <div style="text-align: right;">认证类型</div>
-          <div style="display: flex; margin:0 10px ; width: calc(100% - 100px );">
-            <el-input v-model="diaForm.userType" disabled style="border-radius:5px" size="small"></el-input>
-          </div>
-        </div>
-      </div>
-
-      <div v-if="diaForm.userType==2 || diaForm.userType=='企业'" class="info_type detalilBox_top" style="margin:20px 0;display: flex;justify-content: space-between;flex-wrap: wrap;    padding: 10px 80px 10px 10px;">
-        <div
-          style="height: 50px;width:100%;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 15px;border-bottom:1px solid #EBEEF5;">
-          主体信息
-        </div>
-        <div class="normal_info">
-          <div style="display:flex;width: 48%;align-items: center;">
-            <div style="text-align: right;">公司名称</div>
-            <div style="display: flex; margin:0 10px ; width: calc(100% - 100px );">
-              <el-input v-model="diaForm.companyName " disabled style="border-radius:5px" size="small"></el-input>
-            </div>
-          </div>
-
-          <div style="display:flex;width: 48%;align-items: center;">
-            <div style="text-align: right;width:140px">统一社会信用代码</div>
-            <div style="display: flex; margin:0 10px ; width: calc(100% - 100px );">
-              <el-input v-model="diaForm.companyCreditCode" disabled style="border-radius:5px" size="small"></el-input>
-            </div>
-          </div>
-
           <div style="display:flex;width: 48%">
-            <!-- <span>主播二维码：</span> -->
-            <div style="text-align: right;margin-right:30px">营业执照</div>
-            <el-image 
-              style="max-width:120px;max-height:120px"
-              :src="diaForm.companyBusinessLicense" 
-              :preview-src-list="[diaForm.companyBusinessLicense]">
-            </el-image>
+            <div style="text-align: right;">通讯地址</div>
+            <span style="text-align: left; width: auto">{{ diaForm.linkAddress }}</span>
           </div>
-
           <div style="display:flex;width: 48%">
-            <div style="text-align: right;width:140px">经营所在地</div>
-            <div style="display: flex; margin:0 10px ; width: calc(100% - 100px );">
-              <el-input v-model="diaForm.companyAddress" disabled style="border-radius:5px" size="small"></el-input>
-            </div>
+            <div style="text-align: right;">详细地址</div>
+            <span style="text-align: left; width: auto">{{ diaForm.linkAddressDetail }}</span>
+          </div>
+          <div style="display:flex;width: 48%">
+            <div style="text-align: right;">合约状态</div>
+            <span style="text-align: left; width: auto" class="signStatus">{{ getSignStatus(diaForm.authStatusStr) }}</span>
           </div>
         </div>
       </div>
-
-      <div v-if="diaForm.userType==2 || diaForm.userType=='企业'" class="info_type detalilBox_top" style="margin:20px 0;display: flex;justify-content: space-between;flex-wrap: wrap;    padding: 10px 80px 10px 10px;">
-        <div
-          style="height: 50px;width:100%;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 15px;border-bottom:1px solid #EBEEF5;">
-          联系人
-        </div>
-        <div class="normal_info">
-          <div style="display:flex;width: 48%;align-items: center;">
-            <div style="text-align: right;width:50px">姓名</div>
-            <div style="display: flex; margin:0 10px ; width: calc(100% - 100px );">
-              <el-input v-model="diaForm.connectName " disabled style="border-radius:5px" size="small"></el-input>
-            </div>
-          </div>
-          <div style="display:flex;width: 48%;align-items: center;">
-            <div style="text-align: right;width:140px">手机号码</div>
-            <div style="display: flex; margin:0 10px ; width: calc(100% - 100px );">
-              <el-input v-model="diaForm.connectPhone " disabled style="border-radius:5px" size="small"></el-input>
-            </div>
-          </div>
-          <div style="display:flex;width: 48%;align-items: center;">
-            <div style="text-align: right;width:50px">邮箱</div>
-            <div style="display: flex; margin:0 10px ; width: calc(100% - 100px );">
-              <el-input v-model="diaForm.connectEmail " disabled style="border-radius:5px" size="small"></el-input>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <!-- <div class="info_type" v-if="diaForm.userType==2">
-        <div class="type_title">
-          <span>联系人</span>
-        </div>
-        <div class="normal_info">
-          <div>
-            <span>姓名</span>
-            {{diaForm.connectName|| '-'}}
-          </div>
-          <div>
-            <span>邮箱</span>
-            {{diaForm.connectEmail|| '-'}}
-          </div>
-          <div>
-            <span>手机号码</span>
-            {{diaForm.connectPhone|| '-'}}
-          </div>
-        </div>
-      </div> -->
-
-      <div v-if="diaForm.bankInfo" class="info_type detalilBox_top" style="margin:20px 0;display: flex;justify-content: space-between;flex-wrap: wrap;    padding: 10px 80px 10px 10px;">
-        <div
-          style="height: 50px;width:100%;line-height: 50px;font-size: 20px;font-family: Microsoft YaHei-Bold, Microsoft YaHei;font-weight: bold;color: #000000;margin-bottom: 15px;border-bottom:1px solid #EBEEF5;">
-          银行账号
-        </div>
-        <div class="normal_info">
-          <div style="display:flex;width: 48%;align-items: center;">
-            <div style="text-align: right">开户银行</div>
-            <div style="display: flex; margin:0 10px ; width: calc(100% - 100px );">
-              <el-input v-model="diaForm.bankInfo.depositBank" disabled style="border-radius:5px" size="small"></el-input>
-            </div>
-          </div>
-          <div style="display:flex;width: 48%;align-items: center;">
-            <div style="text-align: right;width:140px">支行名称</div>
-            <div style="display: flex; margin:0 10px ; width: calc(100% - 100px );">
-              <el-input v-model="diaForm.bankInfo.branchName " disabled style="border-radius:5px" size="small"></el-input>
-            </div>
-          </div>
-          <div style="display:flex;width: 48%;align-items: center;">
-            <div style="text-align: right">账户名称</div>
-            <div style="display: flex; margin:0 10px ; width: calc(100% - 100px );">
-              <el-input v-model="diaForm.bankInfo.accountName" disabled style="border-radius:5px" size="small"></el-input>
-            </div>
-          </div>
-          <div style="display:flex;width: 48%;align-items: center;">
-            <div style="text-align: right;width:140px">开户行所在地</div>
-            <div style="display: flex; margin:0 10px ; width: calc(100% - 100px );">
-              <el-input v-model="diaForm.bankInfo.address" disabled style="border-radius:5px" size="small"></el-input>
-            </div>
-          </div>
-          <div style="display:flex;width: 48%;align-items: center;">
-            <div style="text-align: right">银行账号</div>
-            <div style="display: flex; margin:0 10px ; width: calc(100% - 100px );">
-              <el-input v-model="diaForm.bankInfo.bankAccount" disabled style="border-radius:5px" size="small"></el-input>
-            </div>
-          </div>
-          <div v-if="diaForm.userType==2 || diaForm.userType=='企业'" style="display:flex;width: 48%;align-items: center;">
-            <div style="text-align: right;width:140px">验证金额</div>
-            <div style="display: flex; margin:0 10px ; width: calc(100% - 100px );">
-              <el-input v-model="diaForm.bankInfo.attestAmount" disabled style="border-radius:5px" size="small"></el-input>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- <div class="info_type">
-        <div class="type_title">
-          <span>银行账号</span>
-        </div>
-        <div class="normal_info">
-          <div>
-            <span>开户银行</span>
-            {{diaForm.bankInfo&&diaForm.bankInfo.depositBank||'-'}}
-          </div>
-          <div>
-            <span>支行名称</span>
-            {{diaForm.bankInfo&&diaForm.bankInfo.branchName||'-'}}
-          </div>
-          <div>
-            <span>账户名称</span>
-            {{diaForm.bankInfo&&diaForm.bankInfo.accountName||'-'}}
-          </div>
-          <div>
-            <span>银行账号</span>
-            {{diaForm.bankInfo&&diaForm.bankInfo.bankAccount||'-'}}
-          </div>
-          <div>
-            <span>开户行所在地</span>
-            {{diaForm.bankInfo&&diaForm.bankInfo.address||'-'}}
-          </div>
-          <div v-if="diaForm.userType==2">
-            <span>验证金额</span>
-            {{diaForm.bankInfo&&diaForm.bankInfo.attestAmount || 0}}
-          </div>
-        </div>
-      </div> -->
 
       <div class="info_type detalilBox_top" style="margin:20px 0;display: flex;justify-content: space-between;flex-wrap: wrap;    padding: 10px 80px 10px 10px;">
         <div v-if="diaForm.status != 0">
@@ -437,10 +262,53 @@ export default {
       if(this.diaForm && this.diaForm.status == 0) return require("@/assets/icon/icon_applying_1.png")
       if(this.diaForm && this.diaForm.status == 1) return require("@/assets/icon/icon_agree.png")
       if(this.diaForm && this.diaForm.status == -1) return require("@/assets/icon/icon_reject.png")
+      if(this.diaForm && this.diaForm.status == -2) return require("@/assets/icon/icon_recalled.png")
       return ""
     }
   },
   methods: {
+    // 合约状态
+    getSignStatus(str) {
+      let res = ""
+      switch(str) {
+        case "DRAFT":
+            res = "草稿"
+            break;
+        case "FILLING":
+            res = "拟定中"
+            break;
+        case "SIGNING":
+            res = "签署中"
+            break;
+        case "COMPLETE":
+            res = "已完成"
+            break;
+        case "REJECTED":
+            res = "已拒签"
+            break;
+        case "RECALLED":
+            res = "已撤回"
+            break;
+        case "EXPIRED":
+            res = "已过期"
+            break;
+        case "TERMINATING":
+            res = "作废中"
+            break;
+        case "TERMINATED":
+            res = "已作废"
+            break;
+        case "DELETE":
+            res = "已删除"
+            break;
+        case "FINISHED":
+            res = "强制完成"
+            break;
+        default:
+            res = "-"
+      }
+      return res
+    },
     // 审核
     updateApplyInfoStatus(status) {
       this.$confirm(
@@ -496,6 +364,13 @@ export default {
     justify-content: center;
     background: #f5f7fa;
     font-size: 12px;
+  }
+
+  .signStatus {
+    display: inline-block;
+    padding: 0 20px;
+    background: rgb(250, 205, 145);
+    color: #FFF;
   }
 
 

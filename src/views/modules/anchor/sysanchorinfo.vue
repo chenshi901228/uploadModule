@@ -53,17 +53,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-show="isOpen || formItemCount >= 6" label="认证类型" prop="userType">
-          <el-select 
-            style="width: 200px"
-            placeholder="请选择" 
-            v-model="dataForm.userType" 
-            clearable>
-            <el-option :value="1" label="个人"></el-option>
-            <el-option :value="2" label="企业"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item v-show="isOpen || formItemCount >= 7" label="审核类型" prop="updateType">
+        <el-form-item v-show="isOpen || formItemCount >= 6" label="审核类型" prop="updateType">
           <el-select 
             style="width: 200px"
             placeholder="请选择" 
@@ -76,7 +66,7 @@
             <el-option :value="5" label="主播二维码"></el-option> -->
           </el-select>
         </el-form-item>
-        <el-form-item v-show="isOpen || formItemCount >= 8" label="审批状态" prop="status">
+        <el-form-item v-show="isOpen || formItemCount >= 7" label="审批状态" prop="status">
           <el-select 
             style="width: 200px"
             placeholder="请选择" 
@@ -85,6 +75,7 @@
             <el-option :value="0" label="待审批"></el-option>
             <el-option :value="1" label="已通过"></el-option>
             <el-option :value="-1" label="已驳回"></el-option>
+            <el-option :value="-2" label="已撤回"></el-option>
           </el-select>
         </el-form-item>
         <!-- 搜索重置展开按钮 -->
@@ -134,51 +125,6 @@
         style="width: 100%"
         ref="table"
       >
-        <!-- <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-        <el-table-column prop="weixinUserId" label="主播ID" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="phone" label="手机号" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="username" label="用户名" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="avatarUrl" label="头像" header-align="center" align="center">
-           <template slot-scope="scope">
-             <img :src="scope.row.avatarUrl" style="width:100px;height:100px;">
-          </template>
-        </el-table-column>
-        <el-table-column prop="backgroundImage" label="背景图" header-align="center" align="center">
-           <template slot-scope="scope">
-             <img :src="scope.row.backgroundImage" style="width:100px;height:100px;">
-          </template>
-        </el-table-column>
-        <el-table-column prop="gender" label="性别" header-align="center" align="center">
-          <template slot-scope="scope">
-             <el-tag v-if="scope.row.status === 0" type="info">男</el-tag>
-             <el-tag v-if="scope.row.status === 1" type="info">女</el-tag>
-             <el-tag v-if="scope.row.status === 2" type="info">保密</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column prop="introduce" label="介绍" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="legalizeFlg" label="认证用户" header-align="center" align="center">
-          <template slot-scope="scope">
-             {{ scope.row.legalizeFlg === 1 ? '认证' : '未认证' }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="tutorFlg" label="是否导师" header-align="center" align="center">
-          <template slot-scope="scope">
-             {{ scope.row.tutorFlg === 1 ? '认证' : '未认证' }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="createDate" label="申请时间" header-align="center" align="center"></el-table-column>
-        <el-table-column prop="updateDate" label="操作时间" header-align="center" align="center">
-          <template slot-scope="scope">
-            {{ scope.row.status === 0 ? '' : scope.row.updateDate }}
-          </template>
-        </el-table-column> -->
-
-        <!-- <el-table-column
-          type="selection"
-          header-align="center"
-          align="center"
-          width="50"
-        ></el-table-column> -->
         <el-table-column
           prop="avatarUrl"
           label="主播头像"
@@ -241,14 +187,6 @@
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip
-          prop="introduce"
-          label="主播介绍"
-          header-align="center"
-          align="center"
-          width="120"
-        ></el-table-column>
-        <el-table-column
-          show-overflow-tooltip
           prop="legalizeFlg"
           label="是否认证"
           header-align="center"
@@ -272,37 +210,12 @@
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          prop="userType"
-          label="认证类型"
+          prop="linkAddress"
+          label="通讯地址"
           header-align="center"
           align="center"
           width="120"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.userType === 1 ? "个人" : "企业" }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          show-overflow-tooltip
-          prop="attestAmount"
-          label="验证金额"
-          header-align="center"
-          align="center"
-          width="120"
-        >
-        </el-table-column>
-        <el-table-column
-          show-overflow-tooltip
-          prop="updateType"
-          label="审核类型"
-          header-align="center"
-          align="center"
-          width="120"
-        >
-          <template slot-scope="scope">
-            {{ scope.row.updateType==1?'主播申请':scope.row.updateType==6?'账户信息':'-' }}
-          </template>
-        </el-table-column>
+        ></el-table-column>
         <el-table-column
           show-overflow-tooltip
           prop="createDate"
@@ -323,18 +236,21 @@
             {{ scope.row.status === 0 ? "" : scope.row.updateDate }}
           </template>
         </el-table-column>
-        <!-- <el-table-column
+        <el-table-column
           show-overflow-tooltip
-          prop="remark"
-          label="备注"
+          prop="authStatus"
+          label="合约状态"
           header-align="center"
           align="center"
-          width="180"
-        ></el-table-column> -->
+        >
+          <template slot-scope="{ row }">
+            <span>{{ getSignStatus(row.authStatusStr) }}</span>
+          </template>
+        </el-table-column>
         <el-table-column
           show-overflow-tooltip
           prop="status"
-          label="状态"
+          label="审批状态"
           header-align="center"
           align="center"
         >
@@ -342,6 +258,7 @@
             <el-tag v-if="scope.row.status === 0" type="info">待审批</el-tag>
             <el-tag v-if="scope.row.status === 1" type="success">已通过</el-tag>
             <el-tag v-if="scope.row.status === -1" type="danger">已驳回</el-tag>
+            <el-tag v-if="scope.row.status === -2" type="warning">已撤回</el-tag>
           </template>
         </el-table-column>
         <el-table-column
@@ -349,7 +266,7 @@
           fixed="right"
           header-align="center"
           align="center"
-          width="100"
+          width="150"
         >
           <template slot-scope="scope">
            <el-button
@@ -358,6 +275,13 @@
               icon="el-icon-document"
               @click="openDetail(scope.row.id)"
               >查看</el-button
+            >
+           <el-button
+              type="text"
+              size="mini"
+              icon="el-icon-view"
+              @click="signDetails(scope.row.contractId)"
+              >查看合约</el-button
             >
           </template>
         </el-table-column>
@@ -373,19 +297,12 @@
         @current-change="pageCurrentChangeHandle"
       >
       </el-pagination>
-      <!-- 弹窗, 新增 / 修改 -->
-      <add-or-update
-        v-if="addOrUpdateVisible"
-        ref="addOrUpdate"
-        @refreshDataList="getDataList"
-      ></add-or-update>
     </div>
   </el-card>
 </template>
 
 <script>
 import mixinViewModule from "@/mixins/view-module";
-import AddOrUpdate from "./sysanchorinfo-add-or-update";
 import debounce from "lodash/debounce";
 export default {
   mixins: [mixinViewModule],
@@ -400,21 +317,75 @@ export default {
       },
       dataForm: {
         realName: "",
-        idCard: "",
-        username: "",
         phone: "",
+        idCard: "",
         gender: "",
-        userType:"",
+        username: "",
         updateType:"",
         status: "",
       },
     };
   },
-  watch: {},
-  components: {
-    AddOrUpdate,
-  },
   methods: {
+    // 合约状态
+    getSignStatus(str) {
+      let res = ""
+      switch(str) {
+        case "DRAFT":
+            res = "草稿"
+            break;
+        case "FILLING":
+            res = "拟定中"
+            break;
+        case "SIGNING":
+            res = "签署中"
+            break;
+        case "COMPLETE":
+            res = "已完成"
+            break;
+        case "REJECTED":
+            res = "已拒签"
+            break;
+        case "RECALLED":
+            res = "已撤回"
+            break;
+        case "EXPIRED":
+            res = "已过期"
+            break;
+        case "TERMINATING":
+            res = "作废中"
+            break;
+        case "TERMINATED":
+            res = "已作废"
+            break;
+        case "DELETE":
+            res = "已删除"
+            break;
+        case "FINISHED":
+            res = "强制完成"
+            break;
+        default:
+            res = "-"
+      }
+      return res
+    },
+    // 查看合约
+    signDetails(contractId) {
+      if(!contractId) return this.$message.warning("未查询到合约ID")
+      this.$http.get(`/sys/anchor/applyInfo/getSignUrlWithView?contractId=${contractId}`).then(({data: res}) => {
+        if(res.code == 0) {
+          if(res.data && res.data.signUrl) {
+            window.open(res.data.signUrl)
+          }else {
+            this.$message.warning("未查询到合约，联系管理员")
+          }
+        }else {
+          return this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        this.$message.error(JSON.stringify(err))
+      })
+    },
      // 打开信息审批详情
     openDetail(id) {
       this.$router.push({
