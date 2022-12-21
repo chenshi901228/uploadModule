@@ -53,20 +53,7 @@
             clearable
           ></el-input>
         </el-form-item>
-        <el-form-item v-show="isOpen || formItemCount >= 6" label="审核类型" prop="updateType">
-          <el-select 
-            style="width: 200px"
-            placeholder="请选择" 
-            v-model="dataForm.updateType" 
-            clearable>
-            <el-option :value="1" label="主播申请"></el-option>
-            <el-option :value="6" label="账户信息"></el-option>
-            <!-- <el-option :value="3" label="修改简介"></el-option>
-            <el-option :value="4" label="修改头像"></el-option>
-            <el-option :value="5" label="主播二维码"></el-option> -->
-          </el-select>
-        </el-form-item>
-        <el-form-item v-show="isOpen || formItemCount >= 7" label="审批状态" prop="status">
+        <el-form-item v-show="isOpen || formItemCount >= 6" label="审批状态" prop="status">
           <el-select 
             style="width: 200px"
             placeholder="请选择" 
@@ -321,7 +308,6 @@ export default {
         idCard: "",
         gender: "",
         username: "",
-        updateType:"",
         status: "",
       },
     };

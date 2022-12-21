@@ -17,7 +17,8 @@
               <template slot="label" style="width:100px">
                 验证类型
               </template>
-              <span style="padding:0 10px">{{ diaForm.updateType==1?'主播申请':diaForm.updateType==2?'账户信息':'-' }}</span>
+              <span style="padding:0 10px">主播申请</span>
+              <!-- <span style="padding:0 10px">{{ diaForm.updateType==1?'主播申请':diaForm.updateType==2?'账户信息':'-' }}</span> -->
             </el-descriptions-item>
           </el-descriptions>
         </div>
@@ -144,14 +145,18 @@
           </div>
           <div style="display:flex;width: 48%">
             <div style="text-align: right;">通讯地址</div>
-            <span style="text-align: left; width: auto">{{ diaForm.linkAddress }}</span>
+            <el-tooltip class="item" effect="dark" :content="diaForm.linkAddress || '-'" placement="top">
+              <span style="text-align: left; width: auto" class="spanStyle">{{ diaForm.linkAddress || "-" }}</span>
+            </el-tooltip>
           </div>
           <div style="display:flex;width: 48%">
             <div style="text-align: right;">详细地址</div>
-            <span style="text-align: left; width: auto">{{ diaForm.linkAddressDetail }}</span>
+            <el-tooltip class="item" effect="dark" :content="diaForm.linkAddressDetail || '-'" placement="top">
+              <span style="text-align: left; width: auto" class="spanStyle">{{ diaForm.linkAddressDetail || "-" }}</span>
+            </el-tooltip>
           </div>
           <div style="display:flex;width: 48%">
-            <div style="text-align: right;">合约状态</div>
+            <div style="text-align: right; line-height: 24px">合约状态</div>
             <span style="text-align: left; width: auto" class="signStatus">{{ getSignStatus(diaForm.authStatusStr) }}</span>
           </div>
         </div>
@@ -240,19 +245,9 @@ export default {
             default:
               res.data.data.tutorFlg = '否'
         }
-        switch (res.data.data.userType){
-            case 1:
-              res.data.data.userType = '个人'
-              break;
-            case 2:
-              res.data.data.userType = '企业'
-              break;
-            default:
-              res.data.data.userType=''
-        }
         
         this.diaForm = res.data.data
-        this.diaForm.remark = res.data.data.remark||''
+        this.diaForm.remark = res.data.data.remark || ''
       }
     })
   },
@@ -366,11 +361,21 @@ export default {
     font-size: 12px;
   }
 
+  .spanStyle {
+    display: inline-block;
+    max-width: 80%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
   .signStatus {
     display: inline-block;
-    padding: 0 20px;
+    padding: 0 14px;
     background: rgb(250, 205, 145);
-    color: #FFF;
+    color: #FFF !important;
+    line-height: 24px;
+    border-radius: 20px;
   }
 
 
