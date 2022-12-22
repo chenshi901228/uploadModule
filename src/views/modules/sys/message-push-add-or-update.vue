@@ -24,7 +24,7 @@
         <el-input v-model="ruleForm.route" :disabled="isDisable" style="width:600px" placeholder="例如：http：//2376482" clearable></el-input>
       </el-form-item> -->
       <el-form-item label-width="120px" style="display:inline-block" label="跳转页面" prop="type">
-        <el-select v-model="ruleForm.type" :disabled="isDisable" @change="selectPage" placeholder="请选择分类" clearable>
+        <el-select v-model="ruleForm.type" :disabled="isDisable" @clear="clearBtn" @change="selectPage" placeholder="请选择分类" clearable>
           <el-option
             v-for="item in pageType"
             :key="item.id"
@@ -231,9 +231,9 @@ export default {
         configurationKey: [
           { required: true, message: '请输入配置key', trigger: 'blur' }
         ],
-        type: [
-          { required: true, message: '请选择分类', trigger: 'change' }
-        ],
+        // type: [
+        //   { required: true, message: '请选择分类', trigger: 'change' }
+        // ],
         pushTitle: [
           { required: true, message: '请输入推送标题', trigger: 'blur' }
         ],
@@ -308,6 +308,12 @@ export default {
         this.selectType.type = 'other'
       }
     },
+    clearBtn(){
+      this.ruleForm.route = ''
+      this.ruleForm.parameter = ''
+      this.selectType.type=''
+      this.ruleForm.anchorId=""
+    },
     changeAnchorId(value){
       this.pushBusinesParams.anchorId = value
       if(this.pushBusinesParams.anchorId&&this.pushBusinesParams.anchorId!='other'&&this.pushBusinesParams.anchorId!=''){
@@ -357,27 +363,35 @@ export default {
         if (this.$route.query.type === '1' || this.$route.query.type === '2') {
           this.$http.get(`/sys/syspush/${this.$route.query.id}`).then(({data:res}) => {
             res.data.isTiming = (res.data.isTiming).toString()
-            res.data.parameter = res.data.parameter.split(',')
-            let type = res.data.parameter[res.data.parameter.length-1]
-            if(type!==''){
-              this.pageType.forEach(item=>{
-              if(JSON.parse(item.dictValue).type==type){
-                  this.ruleForm.type = item.dictValue
-                  this.selectType = JSON.parse(item.dictValue)
+            if(res.data.parameter){
+                res.data.parameter = res.data.parameter.split(',')
+                let type = res.data.parameter[res.data.parameter.length-1]
+                if(type!==''){
+                  this.pageType.forEach(item=>{
+                  if(JSON.parse(item.dictValue).type==type){
+                      this.ruleForm.type = item.dictValue
+                      this.selectType = JSON.parse(item.dictValue)
+                    }
+                  })
+                  this.anchorOptions=[{label:res.data.anchorUser,value:res.data.parameter[0]}]
+                  this.ruleForm.anchorId= res.data.parameter[0]
+                  this.pushBusinesParams.type = this.selectType.type
+                  this.pushBusinesParams.anchorId = res.data.parameter[0]
+                  this.getPushBusines(()=>{
+                    this.ruleForm.pushBusines = res.data.parameter[1]
+                  })
+                }else{
+                  this.ruleForm.type = "{}"
+                  this.ruleForm.parameter = res.data.parameter
+                  this.selectType.type = 'other'
                 }
-              })
-              this.anchorOptions=[{label:res.data.anchorUser,value:res.data.parameter[0]}]
-              this.ruleForm.anchorId= res.data.parameter[0]
-              this.pushBusinesParams.type = this.selectType.type
-              this.pushBusinesParams.anchorId = res.data.parameter[0]
-              this.getPushBusines(()=>{
-                this.ruleForm.pushBusines = res.data.parameter[1]
-              })
             }else{
-              this.ruleForm.type = "{}"
-              this.ruleForm.parameter = res.data.parameter
-              this.selectType.type = 'other'
+
+                  this.ruleForm.type = ""
+                  this.ruleForm.parameter = res.data.parameter
+                  this.selectType.type = ''
             }
+           
             // 动态组id转array
             res.data.dynamicGroupId = res.data.dynamicGroupId ? res.data.dynamicGroupId.split(",") : []
             this.ruleForm = { ...this.ruleForm, ...res.data }
@@ -425,7 +439,7 @@ export default {
           //   confirmButtonText:'确认',
           //   cancelButtonText:'取消',
           // }).then(()=>{
-          if(this.selectType.type!='other'){
+          if((this.selectType.type===0 || this.selectType.type!='') && this.selectType.type!='other'){
             if(!this.ruleForm.anchorId){
               return this.$message.warning("请选择主播")
             }
@@ -440,7 +454,7 @@ export default {
               this.ruleForm.parameter = this.ruleForm.anchorId+','+this.selectType.type
             }
             this.ruleForm.route = this.selectType.url
-          }else{
+          }else if((this.selectType.type===0 || this.selectType.type!='') && this.selectType.type=='other'){
             if(!this.ruleForm.route){
               return this.$message.warning("请输入路由")
             }
@@ -448,6 +462,8 @@ export default {
               return this.$message.warning("请输入参数")
             }
             this.ruleForm.parameter =this.ruleForm.parameter+','+5
+          }else{
+            this.ruleForm.parameter=""
           }
           if(!this.$refs.uploadFile.isUploadAll()) {
             return this.$message.warning("还有附件正在上传，请稍后")
