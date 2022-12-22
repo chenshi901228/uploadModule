@@ -1387,13 +1387,14 @@ export default {
     },
     async getTimUserSig() {
       try {
+        let VUE_APP_NODE_ENV = window.SITE_CONFIG['nodeEnv']
         let res = await this.$http.get(
           "/sys/manage/tencentCloudIm/getTxCloudUserSig"
         );
         //获取腾讯IM签名
         let userId = res.data.data.liveUserId && res.data.data.liveUserId;
         let userSig = res.data.data.userSig && res.data.data.userSig;
-        this.groupID = "LIVE@" + this.anchorUserId;
+        this.groupID = "LIVE@" + this.anchorUserId + (VUE_APP_NODE_ENV === "prod" ? "" : "_test");
         let options = {
           SDKAppID: parseInt(window.SITE_CONFIG["SDKAppID"]), // 接入时需要将0替换为您的即时通信 IM 应用的 SDKAppID
         };

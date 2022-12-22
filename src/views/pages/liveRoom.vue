@@ -2524,6 +2524,7 @@ export default {
     async getTimUserSig() {
       try{
         this.$loading({ background: "rgba(0,0,0,.5)", text: "获取消息配置" })
+        let VUE_APP_NODE_ENV = window.SITE_CONFIG['nodeEnv']
         let res = await this.$http.get(
           "/sys/manage/tencentCloudIm/getTxCloudUserSig"
         );
@@ -2531,7 +2532,7 @@ export default {
         let userId = res.data.data.liveUserId && res.data.data.liveUserId;
         let userSig = res.data.data.userSig && res.data.data.userSig;
         let userInfo = res.data.data.userInfo;
-        this.groupID = "LIVE@" + userInfo.id;
+        this.groupID = "LIVE@" + userInfo.id + (VUE_APP_NODE_ENV === "prod" ? "" : "_test");
         this.roomId = userInfo.id;
         this.userID = userInfo.id;
         this.userName = userInfo.username;
