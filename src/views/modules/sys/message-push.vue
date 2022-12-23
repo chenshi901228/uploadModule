@@ -127,10 +127,11 @@ export default {
   },
   methods: {
     push (id) {
+      this.$message.success('消息推送成功')
       this.$http.get(`/sys/syspush/push/${id}`).then(({ data: res }) => {
-        if (res.success) {
-          this.$message.success('消息推送成功')
-        }
+        // if (res.success) {
+        //   this.$message.success('消息推送成功')
+        // }
       })
     },
     operation (id, type) {
