@@ -139,13 +139,13 @@
                           item.payload.data.fansInfo &&
                           !item.payload.data.fansInfo.isFans &&
                           !item.payload.data.fansInfo.isAttention &&
-                          item.payload.data.userInfo.userId!=roomId
+                          item.payload.data.userInfo.weixinUserId!=roomId
                         "
                       >
                         <i class="el-icon-star-on" style="color: #fde7c8"></i>
                         游客&nbsp;{{ item.payload.data.fansInfo.grade }}
                       </div>
-                      <div class="fansCard" style="background:#1F6BFA;" v-else-if="item.payload.data.userInfo&&item.payload.data.userInfo.userId==roomId">
+                      <div class="fansCard" style="background:#1F6BFA;" v-else-if="item.payload.data.userInfo&&item.payload.data.userInfo.weixinUserId==roomId">
                         <i class="el-icon-star-on" style="color:#fde7c8;"></i>
                         主播&nbsp;
                       </div>
@@ -1485,6 +1485,20 @@ export default {
                 }
 							} 
 						}
+            if(tempObj.haveTouristJoin) { //未登录用户进入直播间的消息
+              list.push(Object.assign({
+                type: "TIMCustomElem",
+                payload: {
+                  data: {
+                    userInfo: {},
+                    message: {
+                      type: 10,
+                      text: "游客"
+                    }
+                  }
+                }
+              }))
+						}
           }
         }
         if (
@@ -1560,12 +1574,12 @@ export default {
                   this.connectMessageInfo.push(applyInfo);
                 }
               }
+              //用户取消/挂断连麦，把取消的信息移除
               if (
                 applyInfo.message.replyType &&
                 (applyInfo.message.replyType === -1 ||
                   applyInfo.message.replyType === 2)
               ) {
-                //把取消的信息移除
                 this.connectMessageInfo = this.connectMessageInfo.filter(
                   (item) => item.userInfo.userId != applyInfo.userInfo.userId
                 );
@@ -1576,15 +1590,15 @@ export default {
                   clearTimeout(this.connectTimer[applyInfo.userInfo.userId]);
                   delete this.connectTimer[applyInfo.userInfo.userId];
                 }
-                this.$loading().close();
+                // this.$loading().close();
               }
             }
+            //用户端切换连麦
             if (
               applyInfo.message &&
               applyInfo.message.type &&
               applyInfo.message.type === 30
             ) {
-              //用户端切换连麦
               this.connectMessageInfo.forEach((item) => {
                 if (item.userInfo.userId == applyInfo.userInfo.userId) {
                   item.message.connectType = applyInfo.message.connectType;

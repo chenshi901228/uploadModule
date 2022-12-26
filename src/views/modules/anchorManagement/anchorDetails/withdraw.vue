@@ -61,6 +61,16 @@
               >
               <el-row>
                 <el-col :span="12">
+                    <el-form-item label="账户类型">
+                        <el-select v-model="anchorDetails.userType" placeholder="请选择" size="mini" style="width:80px">
+                            <el-option label="企业" :value="2" />
+                            <el-option label="个人" :value="1" />
+                        </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col :span="12">
                   <el-form-item label="姓名" v-if="anchorDetails.userType == 1">
                     <el-input
                       v-model="anchorDetails.realName"
@@ -71,7 +81,7 @@
                   </el-form-item>
                   <el-form-item label="公司名称" v-if="anchorDetails.userType == 2">
                     <el-input
-                      v-model="anchorDetails.companyName"
+                      v-model="enterpriseBankInfo.companyName"
                       placeholder="请输入"
                       disabled
                     >
@@ -81,7 +91,7 @@
                 <el-col v-if="anchorDetails.userType == 2 && $hasPermission('anchor:bank:info')" :span="12">
                   <el-form-item label="统一社会信用代码"  >
                     <el-input
-                        v-model="anchorDetails.companyCreditCode"
+                        v-model="enterpriseBankInfo.companyCreditCode"
                         placeholder="请输入"
                         disabled
                       >
@@ -111,10 +121,10 @@
                     
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="12" v-if="anchorDetails.userType == 1">
                   <el-form-item label="开户银行" >
                     <el-input
-                        v-model="anchorDetails.depositBank"
+                        v-model="personalBankInfo.depositBank"
                         placeholder="请输入"
                         disabled
                       >
@@ -122,10 +132,21 @@
                     
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="12" v-if="anchorDetails.userType == 2">
+                  <el-form-item label="开户银行" >
+                    <el-input
+                        v-model="enterpriseBankInfo.depositBank"
+                        placeholder="请输入"
+                        disabled
+                      >
+                      </el-input>
+                    
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12" v-if="anchorDetails.userType == 1">
                   <el-form-item label="支行名称" >
                     <el-input
-                        v-model="anchorDetails.branchName"
+                        v-model="personalBankInfo.branchName"
                         placeholder="请输入"
                         disabled
                       >
@@ -133,30 +154,50 @@
                     
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="12" v-if="anchorDetails.userType == 1">
                   <el-form-item label="账户名称" >
                     <el-input
-                        v-model="anchorDetails.accountName"
+                        v-model="personalBankInfo.accountName"
                         placeholder="请输入"
                         disabled
                       >
                       </el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="12" v-if="anchorDetails.userType == 2">
+                  <el-form-item label="账户名称" >
+                    <el-input
+                        v-model="enterpriseBankInfo.accountName"
+                        placeholder="请输入"
+                        disabled
+                      >
+                      </el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12" v-if="anchorDetails.userType == 1">
                   <el-form-item label="银行账号" >
                     <el-input
-                        v-model="anchorDetails.bankAccount"
+                        v-model="personalBankInfo.bankAccount"
                         placeholder="请输入"
                         disabled
                       >
                       </el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="12" v-if="anchorDetails.userType == 2">
+                  <el-form-item label="银行账号" >
+                    <el-input
+                        v-model="enterpriseBankInfo.bankAccount"
+                        placeholder="请输入"
+                        disabled
+                      >
+                      </el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12" v-if="anchorDetails.userType == 1">
                   <el-form-item label="开户行所在地" >
                     <el-input
-                        v-model="anchorDetails.address"
+                        v-model="personalBankInfo.address"
                         placeholder="请输入"
                         disabled
                       >
@@ -390,12 +431,15 @@ export default {
       invoiceAddress: {}, //发票地址信息
       nextBtnLoading: false, //下一步请求协议
       submitLoading: false, //提交申请loading
+      personalBankInfo:{} ,//个人提现银行卡信息
+      enterpriseBankInfo:{} ,//企业提现银行卡信息
     };
   },
   activated() {
     this.userId = this.$store.state.user.id;
     this.getAnchorInfo()
     this.getAccountAmount()
+    this.handleGetBankInfo()
   },
   methods: {
     // 获取用户详细信息
@@ -406,6 +450,19 @@ export default {
         this.anchorDetails = { ...this.anchorDetails, ...res.data };
       }).catch((err) => this.$message.error(JSON.stringify(err.message)));
     },
+
+    //获取银行卡相关信息
+    handleGetBankInfo() {
+        this.$http.post('sys/anchorWithdraw/checkWithdraw').then(({ data:res }) => {
+            console.log(res)
+            if ( res && +res.code === 0 ) {
+                const { bankInfo } = res.data
+                this.personalBankInfo = bankInfo.filter(item => +item.userType === 1)[0]
+                this.enterpriseBankInfo = bankInfo.filter(item => +item.userType === 2)[0]
+            }
+        })
+    },
+
     // 获取用户账户金额信息
     getAccountAmount() {
       this.$http

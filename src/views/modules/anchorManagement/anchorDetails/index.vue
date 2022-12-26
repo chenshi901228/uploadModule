@@ -58,88 +58,184 @@
         </div>
 
         <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:bank:info')">
-          <p style="font-size: 14px;font-weight: bold;color: #4057CB;">银行账户<span class="accountStatus"
-              v-if="anchorDetails.haveApplyInfo && anchorDetails.userType == 2">核验中</span></p>
-          <el-button plain type="primary" size="mini" @click="editeUserBank" icon="el-icon-edit">编辑</el-button>
+          <p style="font-size: 14px;font-weight: bold;color: #4057CB;">认证信息</p>
+            <!-- <span class="accountStatus" v-if="anchorDetails.haveApplyInfo && anchorDetails.userType == 2">核验中</span> -->
+          <!-- <el-button plain type="primary" size="mini" @click="editeUserBank" icon="el-icon-edit">编辑</el-button> -->
+            <el-select v-model="anchorDetails.userType" placeholder="请选择" size="mini" style="width:80px">
+                <el-option label="企业" :value="2" />
+                <el-option label="个人" :value="1" />
+            </el-select>
         </div>
+
+        
         <!-- 企业 -->
         <div class="diaBoxLeft_mes" v-if="anchorDetails.userType == 2 && $hasPermission('anchor:bank:info')">
-          <div style="width:50%;display: inline-block;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">公司名称</div>
-            <div>
-              {{ anchorDetails.companyName || '-' }}
-            </div>
-          </div>
-          <div style="width:50%;display: inline-block;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">统一社会信用代码</div>
-            <div>
-              {{ anchorDetails.companyCreditCode || '-' }}
-            </div>
-          </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">开户银行</div>
-            <div>
-              {{ anchorDetails.depositBank || '-' }}
-            </div>
-          </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">账户名称</div>
-            <div>
-              {{ anchorDetails.accountName || '-' }}
-            </div>
-          </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">银行账号</div>
-            <div>
-              {{ anchorDetails.bankAccount || '-' }}
-            </div>
-          </div>
+            <div v-if="enterpriseCertification">
+                <div class="certification-edit-btn">
+                    <div class="certification-part-title">主体信息<span class="account-status" v-show="enterpriseCertification.haveApply">核验中</span></div>
+                    <div class="re-certificat" @click="handleReCertificat">重新认证</div>
+                </div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">公司名称</div>
+                        <div>{{ enterpriseCertification.companyName || '-' }}</div>
+                    </div>
+                    <div class="certification-part-item">
+                        <div class="item-title">统一社会信用代码</div>
+                        <div>{{ enterpriseCertification.companyCreditCode || '-' }}</div>
+                    </div>
+                </div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">经营所在地</div>
+                        <div>{{ enterpriseCertification.companyAddress ? enterpriseCertification.companyAddress.replaceAll('/', '') : '-' }}</div>
+                    </div>
+                    <div class="certification-part-item">
+                        <div class="item-title">营业执照</div>
+                        <el-image
+                            :src="enterpriseCertification.companyBusinessLicense"
+                            style="width: 120px; height: 120px"
+                            fit="cover"
+                        ></el-image>
+                    </div>
+                </div>
 
+                <div class="certification-part-title">联系人</div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">姓名</div>
+                        <div>{{ enterpriseCertification.connectName || '-' }}</div>
+                    </div>
+                    <div class="certification-part-item">
+                        <div class="item-title">姓名</div>
+                        <div>{{ enterpriseCertification.connectPhone || '-' }}</div>
+                    </div>
+                </div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">邮箱</div>
+                        <div>{{ enterpriseCertification.connectEmail || '-' }}</div>
+                    </div>
+                </div>
+
+                <div class="certification-part-title">银行账户</div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">开户银行</div>
+                        <div>{{ enterpriseCertification.depositBank || '-' }}</div>
+                    </div>
+                    <div class="certification-part-item">
+                        <div class="item-title">账户名称</div>
+                        <div>{{ enterpriseCertification.accountName || '-' }}</div>
+                    </div>
+                </div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">银行账号</div>
+                        <div>{{ enterpriseCertification.bankAccount || '-' }}</div>
+                    </div>
+                </div>
+            </div>
+          
+            <div v-else class="not-certification">
+                <div>您还未认证企业身份</div>
+                <div class="go-certification" @click="$router.push('/anchorManagement-certification-enterprise')">去认证<i class="el-icon-arrow-right"></i></div>
+            </div>
         </div>
+        
+        
+
         <!-- 个人 -->
-        <div class="diaBoxLeft_mes" v-else-if="anchorDetails.userType == 1 && $hasPermission('anchor:bank:info')">
-          <div style="width:50%;display: inline-block;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">姓名</div>
-            <div>
-              {{ anchorDetails.realName || '-' }}
+        <div class="diaBoxLeft_mes" v-if="anchorDetails.userType == 1 && $hasPermission('anchor:bank:info')">
+            <div v-if="personalCertification">
+                <div class="certification-edit-btn">
+                    <div class="certification-part-title">个人信息<span class="account-status" v-show="personalCertification.haveApply">核验中</span></div>
+                    <div class="re-certificat"  @click="handleReCertificat">重新认证</div>
+                </div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">姓名</div>
+                        <div>{{ anchorDetails.realName || '-' }}</div>
+                    </div>
+                    <div class="certification-part-item">
+                        <div class="item-title">身份证号</div>
+                        <div>{{ enCodeIdCard(anchorDetails.idCard) || '-' }}</div>
+                    </div>
+                </div>
+                <div class="certification-part-title">银行账户</div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">开户银行</div>
+                        <div>{{ personalCertification.depositBank || '-' }}</div>
+                    </div>
+                    <div class="certification-part-item">
+                        <div class="item-title">支行名称</div>
+                        <div>{{ personalCertification.branchName || '-' }}</div>
+                    </div>
+                </div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">账户名称</div>
+                        <div>{{ personalCertification.accountName || '-' }}</div>
+                    </div>
+                    <div class="certification-part-item">
+                        <div class="item-title">银行账号</div>
+                        <div>{{ personalCertification.bankAccount || '-' }}</div>
+                    </div>
+                </div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">开户行所在地</div>
+                        <div>{{ personalCertification.address || '-' }}</div>
+                    </div>
+                </div>
+                <!-- <div style="width:50%;display: inline-block;">
+                    <div style="    color:#A8AAB3;margin-bottom: 10px;">姓名</div>
+                    <div>
+                    {{ anchorDetails.realName || '-' }}
+                    </div>
+                </div>
+                <div style="width:50%;display: inline-block;">
+                    <div style="    color:#A8AAB3;margin-bottom: 10px;">身份证号</div>
+                    <div>
+                    {{ enCodeIdCard(anchorDetails.idCard) || '-' }}
+                    </div>
+                </div>
+                <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+                    <div style="    color:#A8AAB3;margin-bottom: 10px;">开户银行</div>
+                    <div>
+                    {{ anchorDetails.depositBank || '-' }}
+                    </div>
+                </div>
+                <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+                    <div style="    color:#A8AAB3;margin-bottom: 10px;">支行名称</div>
+                    <div>
+                    {{ anchorDetails.branchName || '-' }}
+                    </div>
+                </div>
+                <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+                    <div style="    color:#A8AAB3;margin-bottom: 10px;">账户名称</div>
+                    <div>
+                    {{ anchorDetails.accountName || '-' }}
+                    </div>
+                </div>
+                <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+                    <div style="    color:#A8AAB3;margin-bottom: 10px;">银行账号</div>
+                    <div>
+                    {{ anchorDetails.bankAccount || '-' }}
+                    </div>
+                </div>
+                <div style="width:50%;display: inline-block;margin: 20px 0 0;">
+                    <div style="    color:#A8AAB3;margin-bottom: 10px;">开户行所在地</div>
+                    <div>
+                    {{ anchorDetails.address || '-' }}
+                    </div>
+                </div> -->
             </div>
-          </div>
-          <div style="width:50%;display: inline-block;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">身份证号</div>
-            <div>
-              {{ enCodeIdCard(anchorDetails.idCard) || '-' }}
+            <div v-else class="not-certification">
+                <div>您还未认证个人身份</div>
+                <div class="go-certification" @click="$router.push('/anchorManagement-certification-personal')">去认证<i class="el-icon-arrow-right"></i></div>
             </div>
-          </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">开户银行</div>
-            <div>
-              {{ anchorDetails.depositBank || '-' }}
-            </div>
-          </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">支行名称</div>
-            <div>
-              {{ anchorDetails.branchName || '-' }}
-            </div>
-          </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">账户名称</div>
-            <div>
-              {{ anchorDetails.accountName || '-' }}
-            </div>
-          </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">银行账号</div>
-            <div>
-              {{ anchorDetails.bankAccount || '-' }}
-            </div>
-          </div>
-          <div style="width:50%;display: inline-block;margin: 20px 0 0;">
-            <div style="    color:#A8AAB3;margin-bottom: 10px;">开户行所在地</div>
-            <div>
-              {{ anchorDetails.address || '-' }}
-            </div>
-          </div>
 
         </div>
         <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:amount:info')">
@@ -1161,6 +1257,8 @@ export default {
       pageRecommend:1,//主播页
       limitRecommend:10,//主播当前条
       totalRecommend:0,//主播当前总数
+      personalCertification: {},//个人认证信息
+      enterpriseCertification: {},//企业认证信息
     };
   },
   computed: {
@@ -1188,6 +1286,7 @@ export default {
       })
       .catch(() => { });
     this.getAnchorInfo()
+    this.handleGetBankInfo()
     this.getAccountAmount();
     // if (this.$hasPermission('anchor:gain:list')) {
     //   this.changeTbas(1);
@@ -1303,6 +1402,18 @@ export default {
           throw err;
         });
     },
+
+    //获取认证信息
+    handleGetBankInfo() {
+        this.$http.get('sys/sysbankinfo/getBankInfo').then(({ data:res }) => {
+            if ( res && +res.code === 0 ) {
+                this.personalCertification = res.data.filter(item => +item.userType === 1)[0]
+                this.enterpriseCertification = res.data.filter(item => +item.userType === 2)[0]
+                
+            }
+        })
+    },
+
     // 获取用户详细信息
     getAnchorInfo() {
       this.$http.get(`/sys/anchor/info/getInfoWithAnchor`, { params: { anchorId: this.userId } }).then(({ data: res }) => {
@@ -2129,6 +2240,27 @@ export default {
       //     }
       // });
     },
+
+    //重新认证
+    handleReCertificat() {
+        if ( this.anchorDetails.haveWithdraw ) {
+            return this.$confirm("您还有未到账的提现，暂不可编辑银行账户信息", "提示", {
+                confirmButtonText: "确认",
+                showCancelButton: false,
+                showClose: false
+            }).catch(() => { })
+        }
+
+        let path = `anchorManagement-certification-${this.anchorDetails.userType == 2 ? "enterprise" : "personal"}`
+
+        this.$router.push({ 
+            path,
+            query:{
+                reCertificat: 1
+            }
+        })
+    },
+
     subimtEditBank() {
       this.$refs.bankForm_host.validate((valid) => {
         if (valid) {
@@ -2615,4 +2747,54 @@ export default {
     background: #f5f7fa;
     font-size: 12px;
   }
+.not-certification{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: #f2f2f2;
+    border-radius: 5px;
+    margin: 0 20px;
+    .go-certification{
+        color: #4057cb;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+}
+.certification-edit-btn{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-right: -10px;
+    .re-certificat{
+        color: #4057cb;
+        cursor: pointer;
+    }
+}
+.certification-part-title{
+    font-weight: bold;
+    color: #666;
+    margin: 10px 0;
+    .account-status {
+        display: inline-block;
+        line-height: 20px;
+        padding: 0 6px;
+        background: #E6A23C;
+        color: #fff;
+        margin-left: 10px;
+    }
+}
+.certification-part-line{
+    display: flex;
+    .certification-part-item{
+        width: 50%;
+        margin-bottom: 20px;
+        .item-title{
+            color:#A8AAB3;
+            margin-bottom: 10px;
+        }
+    }
+}
+
 </style>
