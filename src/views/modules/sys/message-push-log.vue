@@ -46,7 +46,8 @@
         <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
         <el-table-column prop="pushIcon" label="推送图标" header-align="center" align="center">
            <template slot-scope="scope">
-              <img    style="width: 100%;" :src="scope.row.pushIcon" alt="">
+              <img v-if="scope.row.pushIcon && scope.row.pushType == 1" style="width: 100%;" :src="scope.row.pushIcon" alt="">
+              <div v-else></div>
           </template>
         </el-table-column>
         <el-table-column prop="planName" label="计划名称" header-align="center" align="center"></el-table-column>
