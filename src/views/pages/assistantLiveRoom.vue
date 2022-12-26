@@ -774,6 +774,7 @@ export default {
       connectOpenStatus:1,//是否开启连麦
       player:null,
       loadingLive:false,
+      initConnectInfo: false, //首次进入直播间刷新连麦列表
     };
   },
   created() {
@@ -956,6 +957,31 @@ export default {
         });
       }
     });
+  
+  
+    //房间流附加消息-首次进入更新连麦列表
+    this.zg.on("streamExtraInfoUpdate", (roomID, streamList) => {
+      if(!this.initConnectInfo && !this.connectMessageInfo.length) {
+        streamList.map(async item => {
+          let info = item.extraInfo && JSON.parse(item.extraInfo)
+          let stream = await this.zg.startPlayingStream(item.streamID)
+          this.connectMessageInfo.push({
+            getReplyConnectLoading: false,
+            connectStatus: true,
+            message: {
+              connectType: info.connectType
+            },
+            userInfo: {
+              userId: item.user.userID,
+              avatarUrl: info.avatarUrl,
+              nickName: info.username
+            },
+            stream
+          })
+        })
+        this.initConnectInfo = true
+      }
+    })
   },
   watch: {
     livePlayerList(n) {
