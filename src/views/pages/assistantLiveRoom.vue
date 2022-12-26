@@ -139,13 +139,13 @@
                           item.payload.data.fansInfo &&
                           !item.payload.data.fansInfo.isFans &&
                           !item.payload.data.fansInfo.isAttention &&
-                          item.payload.data.userInfo.userId!=roomId
+                          item.payload.data.userInfo.weixinUserId!=roomId
                         "
                       >
                         <i class="el-icon-star-on" style="color: #fde7c8"></i>
                         游客&nbsp;{{ item.payload.data.fansInfo.grade }}
                       </div>
-                      <div class="fansCard" style="background:#1F6BFA;" v-else-if="item.payload.data.userInfo&&item.payload.data.userInfo.userId==roomId">
+                      <div class="fansCard" style="background:#1F6BFA;" v-else-if="item.payload.data.userInfo&&item.payload.data.userInfo.weixinUserId==roomId">
                         <i class="el-icon-star-on" style="color:#fde7c8;"></i>
                         主播&nbsp;
                       </div>
