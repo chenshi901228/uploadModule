@@ -519,6 +519,7 @@ export default {
             .post("/sys/anchorWithdraw", {
               amount: this.amount,
               uuid: getUUID(),
+              userType:this.anchorDetails.userType
             })
             .then(({ data: res }) => {
               this.submitLoading = false

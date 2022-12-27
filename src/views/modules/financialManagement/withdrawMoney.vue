@@ -423,7 +423,7 @@
             <div>
               {{
                 scope.row.withdrawStatus == "-1"
-                  ? "--"
+                  ? "驳回"
                   : scope.row.withdrawStatus == "1"
                   ? "审核中"
                   : scope.row.withdrawStatus == "2"
@@ -498,9 +498,17 @@
               v-if="scope.row.withdrawStatus == '2'|| scope.row.withdrawStatus == '5' "
               type="text"
               size="small"
-              icon="el-icon-edit"
+              icon="el-icon-circle-close"
               @click="reject(scope.row)"
               >驳回</el-button
+            >
+            <el-button
+              type="text"
+              icon="el-icon-view"
+              size="small"
+              v-if="scope.row.withdrawStatus == '-1'"
+              @click="checkRemark(scope.row)"
+              >查看备注</el-button
             >
           </template>
         </el-table-column>
@@ -591,7 +599,6 @@
           <p style="width:50px; margin:0">备注<span style="color:red">*</span></p>
           <el-input
               type="textarea"
-              maxlength="100"
               show-word-limit
               :rows="6"
               placeholder="请输入备注"
@@ -600,7 +607,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="small" @click="remarkDialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="confirmShowState"
+        <el-button size="small" type="primary" @click="rejectBtn"
           >确 定</el-button
         >
       </span>
@@ -702,6 +709,7 @@ export default {
 
       remark:'',//备注
       remarkDialogVisible:false,//驳回弹窗
+      rejectInfo:"",
     };
   },
   components: { Template },
@@ -784,13 +792,43 @@ export default {
       this.dialogFormVisible = true;
     },
     //驳回弹窗
-    reject(){
+    reject(row){
       this.remark=''
+      this.rejectInfo=row
+      this.uuid = getUUID();
       this.remarkDialogVisible=true
     },
     //确认驳回
-    confirmShowState(){
-
+    rejectBtn(){
+      if(this.remark==''){
+         return this.$message.error("请填写备注");
+      }
+      this.$http
+        .put("sys/finance/anchorWithdraw/rejectApply", {
+          id: this.rejectInfo.id,
+          uuid: this.uuid,
+          confirmReason:this.remark,
+          approveStatus:-1
+        })
+        .then(({ data: res }) => {
+          if (res.code == 0) {
+            this.getDataList();
+            this.$message.success("驳回成功");
+            this.remarkDialogVisible=false
+          } else {
+            this.$message.error(res.msg);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    //查看备注
+    checkRemark({ confirmReason }) {
+      this.$alert(confirmReason || '暂无备注', '查看备注', {
+        confirmButtonText: '关闭',
+        callback: action => {}
+      });
     },
     //打款
     confirm(id) {

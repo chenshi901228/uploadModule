@@ -957,7 +957,7 @@ export default {
         })
         .catch(() => { })
     }, 100)
-    this.getUserInfo()
+    this.getDefaultInfo()
     this.changeTbas(this.diaTbas)
   },
   destroyed() {
@@ -1480,7 +1480,24 @@ export default {
       this.$http.get(`sys/anchor/info/getBankInfo/${this.userId}?userType=${this.anchorType}`).then(({ data: res }) => {
         if (res.code == 0) {
           this.anchorUserInfo = res.data
-          console.log(res.data);
+        } else {
+          this.anchorUserInfo={}
+          return this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        this.$message.error(JSON.stringify(err))
+      })
+    },
+    //获取默认有数据的展示
+    getDefaultInfo(){
+      this.$http.get(`sys/anchor/info/getBankInfo/${this.userId}?userType=${this.anchorType}`).then(({ data: res }) => {
+        if (res.code == 0) {
+          this.anchorUserInfo = res.data
+          if(!this.anchorUserInfo){
+            this.anchorType=1
+            this.getUserInfo()
+            return
+          }
         } else {
           this.anchorUserInfo={}
           return this.$message.error(res.msg)
