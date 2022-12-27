@@ -69,7 +69,7 @@
       <el-form-item label-width="120px" label="推送标题" prop="pushTitle">
         <el-input :maxlength="50" show-word-limit v-model="ruleForm.pushTitle" :disabled="isDisable" style="width:600px" placeholder="请输入" clearable></el-input>
       </el-form-item>
-      <el-form-item label-width="120px" class="quill-editor" label="推送内容">
+      <el-form-item label-width="120px" class="quill-editor" label="推送内容" v-if="ruleForm.pushType=='1'">
           <quill-editor :disabled="isDisable" v-model="ruleForm.pushContent" ref="myQuillEditor" style="width: 800px;"
             :options="editorOption" @change="onEditorChange($event)">
             <!-- 自定义toolar -->
@@ -125,7 +125,19 @@
             style="position: absolute; left: 730px; bottom: 40px"
             >{{ TiLength }}/2000</span
           > -->
-        </el-form-item>
+      </el-form-item>
+      <el-form-item label-width="120px" label="推送内容" v-if="ruleForm.pushType=='2'">
+        <el-input
+            style="width: 800px;"
+              type="textarea"
+              :rows="4"
+              placeholder="请输入内容"
+              :disabled="isDisable"
+              maxlength='200'
+              show-word-limit
+              v-model="ruleForm.pushContent">
+          </el-input>
+      </el-form-item>
       <el-form-item label-width="120px" label="动态组">
         <el-select v-model="ruleForm.dynamicGroupId" :disabled="isDisable" style="width:600px" multiple :placeholder="isDisable?'':'请选择,可多选'" clearable>
           <el-option v-for="item in allDynamicGroup" :key="item.id" :label="item.name" :value="item.id"></el-option>

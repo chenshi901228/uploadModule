@@ -183,7 +183,7 @@
             </div>
           
             <div v-else class="not-certification">
-                <div>您还未认证企业身份</div>
+                <div>未认证企业身份</div>
             </div>
         </div>
         
@@ -276,7 +276,7 @@
                 </div>
             </div>
             <div v-else class="not-certification">
-                <div>您还未认证个人身份</div>
+                <div>未认证个人身份</div>
             </div>
         </div>
 
