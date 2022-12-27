@@ -108,7 +108,7 @@
                         <div>{{ enterpriseCertification.connectName || '-' }}</div>
                     </div>
                     <div class="certification-part-item">
-                        <div class="item-title">姓名</div>
+                        <div class="item-title">手机号码</div>
                         <div>{{ enterpriseCertification.connectPhone || '-' }}</div>
                     </div>
                 </div>
