@@ -62,7 +62,7 @@
               <el-row>
                 <el-col :span="12">
                     <el-form-item label="账户类型">
-                        <el-select v-model="anchorDetails.userType" placeholder="请选择" size="mini" style="width:80px">
+                        <el-select @change="handleChangeUserType" v-model="anchorDetails.userType" placeholder="请选择" size="mini" style="width:80px">
                             <el-option label="企业" :value="2" />
                             <el-option label="个人" :value="1" />
                         </el-select>
@@ -451,14 +451,23 @@ export default {
       }).catch((err) => this.$message.error(JSON.stringify(err.message)));
     },
 
+    //切换账户类型
+    handleChangeUserType(value) {
+        if ( value === 2 && Object.keys(this.enterpriseBankInfo).length === 0 ) {
+            this.anchorDetails.userType = 1
+            this.$message.info('您还未认证企业')
+        }
+    },
+
     //获取银行卡相关信息
     handleGetBankInfo() {
         this.$http.post('sys/anchorWithdraw/checkWithdraw').then(({ data:res }) => {
-            console.log(res)
             if ( res && +res.code === 0 ) {
                 const { bankInfo } = res.data
-                this.personalBankInfo = bankInfo.filter(item => +item.userType === 1)[0]
-                this.enterpriseBankInfo = bankInfo.filter(item => +item.userType === 2)[0]
+                this.personalBankInfo = bankInfo.filter(item => +item.userType === 1)[0] || {}
+                this.enterpriseBankInfo = bankInfo.filter(item => +item.userType === 2)[0] || {}
+            } else {
+                this.$message.info(res.msg)
             }
         })
     },
@@ -563,10 +572,7 @@ export default {
       this.$refs.withdrawForm_host.validate((valid) => {
         if (valid) {
           // 企业银行账号核验中不可申请提现
-          if (
-            this.anchorDetails.haveApplyInfo &&
-            this.anchorDetails.userType == 2
-          ) {
+          if ( this.anchorDetails.haveApplyInfo ) {
             return this.$confirm(
               "您的银行账号正在核验中，不可申请提现",
               "提示",
