@@ -38,12 +38,12 @@
                       placeholder="请输入"
                       :precision="2"
                       :step="0.1"
-                      :min="0"
+                      :min="1"
                       :max="anchorDetails.anchorBalance"
                     >
                     </el-input-number>
                     <div>
-                      <span style="color: red">（提现金额需大于0元）</span>
+                      <span style="color: red">（提现金额需大于1元）</span>
                     </div>
                   </el-form-item>
                 </el-col>
@@ -62,7 +62,7 @@
               <el-row>
                 <el-col :span="12">
                     <el-form-item label="账户类型">
-                        <el-select @change="handleChangeUserType" v-model="anchorDetails.userType" placeholder="请选择" size="mini" style="width:80px">
+                        <el-select @change="handleChangeUserType" v-model="accountType" placeholder="请选择" size="mini" style="width:80px">
                             <el-option label="企业" :value="2" />
                             <el-option label="个人" :value="1" />
                         </el-select>
@@ -71,7 +71,7 @@
               </el-row>
               <el-row>
                 <el-col :span="12">
-                  <el-form-item label="姓名" v-if="anchorDetails.userType == 1">
+                  <el-form-item label="姓名" v-if="accountType == 1">
                     <el-input
                       v-model="anchorDetails.realName"
                       placeholder="请输入"
@@ -79,7 +79,7 @@
                     >
                     </el-input>
                   </el-form-item>
-                  <el-form-item label="公司名称" v-if="anchorDetails.userType == 2">
+                  <el-form-item label="公司名称" v-if="accountType == 2">
                     <el-input
                       v-model="enterpriseBankInfo.companyName"
                       placeholder="请输入"
@@ -88,7 +88,7 @@
                     </el-input>
                   </el-form-item>
                 </el-col>
-                <el-col v-if="anchorDetails.userType == 2 && $hasPermission('anchor:bank:info')" :span="12">
+                <el-col v-if="accountType == 2 && $hasPermission('anchor:bank:info')" :span="12">
                   <el-form-item label="统一社会信用代码"  >
                     <el-input
                         v-model="enterpriseBankInfo.companyCreditCode"
@@ -113,7 +113,7 @@
                 <el-col :span="12">
                   <el-form-item label="账户类型" >
                     <el-input
-                        :value='anchorDetails.userType == 2 ? "企业" : "个人"'
+                        :value='accountType == 2 ? "企业" : "个人"'
                         placeholder="请输入"
                         disabled
                       >
@@ -121,7 +121,7 @@
                     
                   </el-form-item>
                 </el-col>
-                <el-col :span="12" v-if="anchorDetails.userType == 1">
+                <el-col :span="12" v-if="accountType == 1">
                   <el-form-item label="开户银行" >
                     <el-input
                         v-model="personalBankInfo.depositBank"
@@ -132,7 +132,7 @@
                     
                   </el-form-item>
                 </el-col>
-                <el-col :span="12" v-if="anchorDetails.userType == 2">
+                <el-col :span="12" v-if="accountType == 2">
                   <el-form-item label="开户银行" >
                     <el-input
                         v-model="enterpriseBankInfo.depositBank"
@@ -143,7 +143,7 @@
                     
                   </el-form-item>
                 </el-col>
-                <el-col :span="12" v-if="anchorDetails.userType == 1">
+                <el-col :span="12" v-if="accountType == 1">
                   <el-form-item label="支行名称" >
                     <el-input
                         v-model="personalBankInfo.branchName"
@@ -154,7 +154,7 @@
                     
                   </el-form-item>
                 </el-col>
-                <el-col :span="12" v-if="anchorDetails.userType == 1">
+                <el-col :span="12" v-if="accountType == 1">
                   <el-form-item label="账户名称" >
                     <el-input
                         v-model="personalBankInfo.accountName"
@@ -164,7 +164,7 @@
                       </el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="12" v-if="anchorDetails.userType == 2">
+                <el-col :span="12" v-if="accountType == 2">
                   <el-form-item label="账户名称" >
                     <el-input
                         v-model="enterpriseBankInfo.accountName"
@@ -174,7 +174,7 @@
                       </el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="12" v-if="anchorDetails.userType == 1">
+                <el-col :span="12" v-if="accountType == 1">
                   <el-form-item label="银行账号" >
                     <el-input
                         v-model="personalBankInfo.bankAccount"
@@ -184,7 +184,7 @@
                       </el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="12" v-if="anchorDetails.userType == 2">
+                <el-col :span="12" v-if="accountType == 2">
                   <el-form-item label="银行账号" >
                     <el-input
                         v-model="enterpriseBankInfo.bankAccount"
@@ -194,7 +194,7 @@
                       </el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="12" v-if="anchorDetails.userType == 1">
+                <el-col :span="12" v-if="accountType == 1">
                   <el-form-item label="开户行所在地" >
                     <el-input
                         v-model="personalBankInfo.address"
@@ -431,6 +431,7 @@ export default {
       invoiceAddress: {}, //发票地址信息
       nextBtnLoading: false, //下一步请求协议
       submitLoading: false, //提交申请loading
+      accountType: 2,
       personalBankInfo:{} ,//个人提现银行卡信息
       enterpriseBankInfo:{} ,//企业提现银行卡信息
     };
@@ -453,9 +454,22 @@ export default {
 
     //切换账户类型
     handleChangeUserType(value) {
-        if ( value === 2 && Object.keys(this.enterpriseBankInfo).length === 0 ) {
-            this.anchorDetails.userType = 1
-            this.$message.info('您还未认证企业')
+        if ( value === 2 ) {
+            if ( Object.keys(this.enterpriseBankInfo).length === 0 ) {
+                this.accountType = 1
+                this.$message.warning('您还未认证企业身份')
+            } else if ( this.enterpriseBankInfo.haveApply ) {
+                this.accountType = 1
+                this.$message.warning('您的企业身份认证正在审核中，暂不可提现')
+            }
+        } else if ( value === 1 ) {
+            if ( Object.keys(this.personalBankInfo).length === 0 ) {
+                this.accountType = 2
+                this.$message.warning('您还未认证个人身份')
+            } else if ( this.personalBankInfo.haveApply ) {
+                this.accountType = 2
+                this.$message.warning('您的个人身份认证正在审核中，暂不可提现')
+            }
         }
     },
 
@@ -466,8 +480,10 @@ export default {
                 const { bankInfo } = res.data
                 this.personalBankInfo = bankInfo.filter(item => +item.userType === 1)[0] || {}
                 this.enterpriseBankInfo = bankInfo.filter(item => +item.userType === 2)[0] || {}
+                //未认证企业 || 企业在审核中 默认展示个人信息
+                if ( Object.keys(this.enterpriseBankInfo).length === 0 || this.enterpriseBankInfo.haveApply ) this.accountType = 1 
             } else {
-                this.$message.info(res.msg)
+                this.$message.warning(res.msg)
             }
         })
     },
@@ -519,7 +535,7 @@ export default {
             .post("/sys/anchorWithdraw", {
               amount: this.amount,
               uuid: getUUID(),
-              userType:this.anchorDetails.userType
+              userType:this.accountType
             })
             .then(({ data: res }) => {
               this.submitLoading = false
@@ -573,17 +589,17 @@ export default {
       this.$refs.withdrawForm_host.validate((valid) => {
         if (valid) {
           // 企业银行账号核验中不可申请提现
-          if ( this.anchorDetails.haveApplyInfo ) {
-            return this.$confirm(
-              "您的银行账号正在核验中，不可申请提现",
-              "提示",
-              {
-                confirmButtonText: "确认",
-                showCancelButton: false,
-                showClose: false,
-              }
-            ).catch(() => {});
-          }
+        //   if ( this.anchorDetails.haveApplyInfo ) {
+        //     return this.$confirm(
+        //       "您的银行账号正在核验中，不可申请提现",
+        //       "提示",
+        //       {
+        //         confirmButtonText: "确认",
+        //         showCancelButton: false,
+        //         showClose: false,
+        //       }
+        //     ).catch(() => {});
+        //   }
 
           this.btnDisabled = true;
           this.init();

@@ -2372,15 +2372,28 @@ export default {
       //   showCancelButton: false,
       //   showClose: false
       // }).catch(() => { })
-      if (this.anchorDetails.haveApplyInfo && this.anchorDetails.userType == 2) {
-        return this.$confirm("您的银行账号正在核验中，不可申请提现", "提示", {
-          confirmButtonText: "确认",
-          showCancelButton: false,
-          showClose: false
-        }).catch(() => { })
-      }
+        if ( !this.personalCertification && !this.enterpriseCertification ) {
+            return this.$confirm("您还未进行身份认证，请先进行身份认证", "提示", {
+                confirmButtonText: "确认",
+                showCancelButton: false,
+                showClose: false
+            }).catch(() => { })
+        }
 
-      this.$router.push({ path: 'anchorManagement-anchorDetails-withdraw' })
+        //个人已认证并且不在审核中 || 企业已认证并且不在审核中
+        if ( 
+            ( this.personalCertification && !this.personalCertification.haveApplyInfo ) || 
+            ( this.enterpriseCertification && !this.enterpriseCertification.haveApplyInfo )
+        ) {
+            this.$router.push({ path: 'anchorManagement-anchorDetails-withdraw' })
+        } else {
+            return this.$confirm("您的银行账号正在审核中，不可申请提现", "提示", {
+                confirmButtonText: "确认",
+                showCancelButton: false,
+                showClose: false
+            }).catch(() => { })
+        }
+
 
       // this.dialogVisible_withdraw = true;
     },

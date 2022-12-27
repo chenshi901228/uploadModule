@@ -113,13 +113,13 @@
                 <el-col :span="10">
                     <div class="info-item">
                         <div class="label">开户银行</div>
-                        <div>{{ detailData.bankInfo.depositBank || '--' }}</div>
+                        <div>{{ detailData.bankInfo ? detailData.bankInfo.depositBank : '--' }}</div>
                     </div>
                 </el-col>
                 <el-col :span="10">
                     <div class="info-item">
                         <div class="label">账户名称</div>
-                        <div>{{ detailData.bankInfo.accountName || '--' }}</div>
+                        <div>{{ detailData.bankInfo ? detailData.bankInfo.accountName : '--' }}</div>
                     </div>
                 </el-col>
             </el-row>
@@ -127,13 +127,13 @@
                 <el-col :span="10">
                     <div class="info-item">
                         <div class="label">支行名称</div>
-                        <div>{{ detailData.bankInfo.branchName || '--' }}</div>
+                        <div>{{ detailData.bankInfo ? detailData.bankInfo.branchName : '--' }}</div>
                     </div>
                 </el-col>
                 <el-col :span="10">
                     <div class="info-item">
                         <div class="label">开户行所在地</div>
-                        <div>{{ detailData.bankInfo.address ? detailData.bankInfo.address.replaceAll('/', '') : '--' }}</div>
+                        <div>{{ detailData.bankInfo ? detailData.bankInfo.address.replaceAll('/', '') : '--' }}</div>
                     </div>
                 </el-col>
             </el-row>
@@ -141,7 +141,7 @@
                 <el-col :span="10">
                     <div class="info-item">
                         <div class="label">银行账号</div>
-                        <div>{{ detailData.bankInfo.bankAccount || '--' }}</div>
+                        <div>{{ detailData.bankInfo ? detailData.bankInfo.bankAccount : '--' }}</div>
                     </div>
                 </el-col>
                 <el-col :span="10">
@@ -296,6 +296,7 @@ export default {
         font-weight: 700;
         color: #606266;
         margin-right: 50px;
+        width: 60px;
     }
 }
 </style>
