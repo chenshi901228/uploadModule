@@ -220,12 +220,12 @@
           width="180"
         >
           <template slot-scope="scope">
-            {{ scope.row.status === 0 ? "" : scope.row.updateDate }}
+            {{ scope.row.status === 0 ? "-" : scope.row.updateDate }}
           </template>
         </el-table-column>
         <el-table-column
           show-overflow-tooltip
-          prop="authStatus"
+          prop="authStatusStr"
           label="合约状态"
           header-align="center"
           align="center"
@@ -290,7 +290,6 @@
 
 <script>
 import mixinViewModule from "@/mixins/view-module";
-import debounce from "lodash/debounce";
 export default {
   mixins: [mixinViewModule],
   data() {
@@ -299,8 +298,6 @@ export default {
         getDataListURL: "/sys/anchor/applyInfo/addPage",
         getDataListIsPage: true,
         exportURL: "/sys/anchor/applyInfo/export?type=1",
-        deleteURL: "/sys/anchor/info",
-        deleteIsBatch: true,
       },
       dataForm: {
         realName: "",
