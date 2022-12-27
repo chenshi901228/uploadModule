@@ -11,7 +11,7 @@
         <div class="diaBoxLeft_mes">
           <div class="avatar">
             <img :src="anchorDetails.avatarUrl || require('@/assets/img/default_avatar.png')" alt="">
-            <div class="role">{{ anchorDetails.userType == 2 ? "企业" : "个人" }}</div>
+            <!-- <div class="role">{{ anchorDetails.userType == 2 ? "企业" : "个人" }}</div> -->
           </div>
           <div style="width:50%;display: inline-block">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">主播昵称</div>
@@ -61,7 +61,7 @@
           <p style="font-size: 14px;font-weight: bold;color: #4057CB;">认证信息</p>
             <!-- <span class="accountStatus" v-if="anchorDetails.haveApplyInfo && anchorDetails.userType == 2">核验中</span> -->
           <!-- <el-button plain type="primary" size="mini" @click="editeUserBank" icon="el-icon-edit">编辑</el-button> -->
-            <el-select v-model="anchorDetails.userType" placeholder="请选择" size="mini" style="width:80px">
+            <el-select v-model="certificationType" placeholder="请选择" @change="handleGetBankInfo" size="mini" style="width:80px">
                 <el-option label="企业" :value="2" />
                 <el-option label="个人" :value="1" />
             </el-select>
@@ -69,10 +69,10 @@
 
         
         <!-- 企业 -->
-        <div class="diaBoxLeft_mes" v-if="anchorDetails.userType == 2 && $hasPermission('anchor:bank:info')">
+        <div class="diaBoxLeft_mes" v-if="certificationType == 2 && $hasPermission('anchor:bank:info')">
             <div v-if="enterpriseCertification">
                 <div class="certification-edit-btn">
-                    <div class="certification-part-title">主体信息<span class="account-status" v-show="enterpriseCertification.haveApply">核验中</span></div>
+                    <div class="certification-part-title">主体信息<span class="account-status" v-show="enterpriseCertification.haveApplyInfo">核验中</span></div>
                     <div class="re-certificat" @click="handleReCertificat">重新认证</div>
                 </div>
                 <div class="certification-part-line">
@@ -96,6 +96,7 @@
                             :src="enterpriseCertification.companyBusinessLicense"
                             style="width: 120px; height: 120px"
                             fit="cover"
+                            :preview-src-list="[enterpriseCertification.companyBusinessLicense]"
                         ></el-image>
                     </div>
                 </div>
@@ -146,10 +147,10 @@
         
 
         <!-- 个人 -->
-        <div class="diaBoxLeft_mes" v-if="anchorDetails.userType == 1 && $hasPermission('anchor:bank:info')">
+        <div class="diaBoxLeft_mes" v-if="certificationType == 1 && $hasPermission('anchor:bank:info')">
             <div v-if="personalCertification">
                 <div class="certification-edit-btn">
-                    <div class="certification-part-title">个人信息<span class="account-status" v-show="personalCertification.haveApply">核验中</span></div>
+                    <div class="certification-part-title">个人信息<span class="account-status" v-show="personalCertification.haveApplyInfo">核验中</span></div>
                     <div class="re-certificat"  @click="handleReCertificat">重新认证</div>
                 </div>
                 <div class="certification-part-line">
@@ -186,7 +187,7 @@
                 <div class="certification-part-line">
                     <div class="certification-part-item">
                         <div class="item-title">开户行所在地</div>
-                        <div>{{ personalCertification.address || '-' }}</div>
+                        <div>{{ personalCertification.address ? personalCertification.address.replaceAll('/', '') : '-' }}</div>
                     </div>
                 </div>
                 <!-- <div style="width:50%;display: inline-block;">
@@ -1257,6 +1258,7 @@ export default {
       pageRecommend:1,//主播页
       limitRecommend:10,//主播当前条
       totalRecommend:0,//主播当前总数
+      certificationType: 2,
       personalCertification: {},//个人认证信息
       enterpriseCertification: {},//企业认证信息
     };
@@ -1286,7 +1288,7 @@ export default {
       })
       .catch(() => { });
     this.getAnchorInfo()
-    this.handleGetBankInfo()
+    this.handleGetBankInfo(2)
     this.getAccountAmount();
     // if (this.$hasPermission('anchor:gain:list')) {
     //   this.changeTbas(1);
@@ -1404,12 +1406,13 @@ export default {
     },
 
     //获取认证信息
-    handleGetBankInfo() {
-        this.$http.get('sys/sysbankinfo/getBankInfo').then(({ data:res }) => {
+    handleGetBankInfo(userType) {
+        this.$http.get(`sys/anchor/info/getBankInfo/${this.userId}`, { params: { userType } }).then(({ data:res }) => {
             if ( res && +res.code === 0 ) {
-                this.personalCertification = res.data.filter(item => +item.userType === 1)[0]
-                this.enterpriseCertification = res.data.filter(item => +item.userType === 2)[0]
-                
+                // this.personalCertification = res.data.filter(item => +item.userType === 1)[0]
+                // this.enterpriseCertification = res.data.filter(item => +item.userType === 2)[0]
+                if ( userType == 1 ) this.personalCertification = res.data
+                else if ( userType == 2 ) this.enterpriseCertification = res.data
             }
         })
     },
@@ -2251,7 +2254,7 @@ export default {
             }).catch(() => { })
         }
 
-        let path = `anchorManagement-certification-${this.anchorDetails.userType == 2 ? "enterprise" : "personal"}`
+        let path = `anchorManagement-certification-${this.certificationType == 2 ? "enterprise" : "personal"}`
 
         this.$router.push({ 
             path,

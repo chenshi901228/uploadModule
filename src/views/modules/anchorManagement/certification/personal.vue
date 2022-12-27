@@ -117,9 +117,9 @@
                     <div class="desc">随机金额，请按照指定金额汇款以作验证</div>
                 </div>
             </div>
-            <div class="mt-15">收款账号：{{ invoiceInfo.open_account && invoiceInfo.open_account.substring(9) }}</div>
-            <div class="mt-15">收款公司：{{ invoiceInfo.name }}</div>
-            <div class="mt-15">开户银行：{{ invoiceInfo.open_account && invoiceInfo.open_account.substring(0, 9) }}</div>
+            <div class="mt-15">收款账号：121926682010505</div>
+            <div class="mt-15">收款公司：甘肃艺博教育文化传播股份有限公司</div>
+            <div class="mt-15">开户银行：招商银行兰州渭源路支行</div>
             <div class="tips">等待核验中，7~15个工作日内给予回复</div>
         </div>
 
@@ -201,7 +201,10 @@ export default {
                 branchName: "",
                 accountName: "",
                 bankAccount: "",
-                address: ""
+                address: "",
+                province: "",
+                city: "",
+                county: "",
             },
             dataBankListLoading: false, //开户银行下拉选择loading
             restaurants:[],
@@ -220,6 +223,8 @@ export default {
         this.handleGetAddress()
         if ( !this.$route.query.reCertificat ) {
             this.handleGetApplyInfo()
+        } else {
+            this.handleGetBankInfo()
         }
     },
 
@@ -307,6 +312,22 @@ export default {
             this.formData.depositBankValue = item.dictValue
         },
 
+        //获取认证信息
+        handleGetBankInfo() {
+            this.$http.get(`sys/anchor/info/getBankInfo/${this.userId}`, { params: { userType: 1 } }).then(({ data:res }) => {
+                if ( res && +res.code === 0 ) {
+                    const { province, city, county, depositBank, branchName, accountName, bankAccount } = res.data
+                    this.formData = {
+                        depositBank,
+                        branchName,
+                        accountName,
+                        bankAccount,
+                        address: [ province, city, county ]
+                    }
+                }
+            })
+        },
+
         // 获取地址
         handleGetAddress() {
             this.$http
@@ -334,7 +355,7 @@ export default {
                         this.certificationStep = res.data ? res.data.applyStatus : -1
                         if ( this.certificationStep === 0 ) {
                             this.$message.info("您提交的企业认证信息正在审批中，请等待")
-                            this.handleGetInvoiceInfo()
+                            // this.handleGetInvoiceInfo()
                         }
                     }
                 }).catch((err) => {
@@ -351,8 +372,11 @@ export default {
                         cancelButtonText: "取消",
                         type: "warning",
                     }).then(() => {
-                        let address = "";
-                        this.formData.address.forEach((i) => {
+                        let address = ""
+                        this.formData.province = this.formData.address[0]
+                        this.formData.city = this.formData.address[1]
+                        this.formData.county = this.formData.address[2]
+                        this.formData.address.forEach((i,index) => {
                             this.regionDataAll.forEach((v) => {
                                 if (v.id === i) {
                                     address += `${v.name}/`
@@ -368,6 +392,8 @@ export default {
                             if ( res && +res.code === 0 ) {
                                 // this.$message.success("提交成功")
                                 this.handleGetApplyInfo()
+                            } else {
+                                this.$message.warning(res.msg)
                             }
                         }).catch((err) => {
                             this.$message.error(JSON.stringify(err.message))

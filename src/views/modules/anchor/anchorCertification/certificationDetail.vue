@@ -44,7 +44,7 @@
             </el-row>
         </div>
 
-        <div class="part-info">
+        <div class="part-info" v-show="detailData.userType == 2">
             <div class="part-title">主体信息</div>
             <el-row type="flex" justify="space-around">
                 <el-col :span="10">
@@ -74,13 +74,14 @@
                             :src="detailData.companyBusinessLicense"
                             style="width: 120px; height: 120px"
                             fit="cover"
+                            :preview-src-list="[detailData.companyBusinessLicense]"
                         ></el-image>
                     </div>
                 </el-col>
             </el-row>
         </div>
 
-        <div class="part-info">
+        <div class="part-info" v-show="detailData.userType == 2">
             <div class="part-title">联系人</div>
             <el-row type="flex" justify="space-around">
                 <el-col :span="10">
@@ -119,6 +120,20 @@
                     <div class="info-item">
                         <div class="label">账户名称</div>
                         <div>{{ detailData.bankInfo.accountName || '--' }}</div>
+                    </div>
+                </el-col>
+            </el-row>
+            <el-row type="flex" justify="space-around" v-show="detailData.userType == 1">
+                <el-col :span="10">
+                    <div class="info-item">
+                        <div class="label">支行名称</div>
+                        <div>{{ detailData.bankInfo.branchName || '--' }}</div>
+                    </div>
+                </el-col>
+                <el-col :span="10">
+                    <div class="info-item">
+                        <div class="label">开户行所在地</div>
+                        <div>{{ detailData.bankInfo.address ? detailData.bankInfo.address.replaceAll('/', '') : '--' }}</div>
                     </div>
                 </el-col>
             </el-row>
@@ -179,7 +194,7 @@ export default {
         }
     },
 
-    created() {
+    activated() {
         this.handleGetDetailData()
     },
 

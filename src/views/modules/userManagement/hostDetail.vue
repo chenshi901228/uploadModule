@@ -8,7 +8,7 @@
         <div class="diaBoxLeft_mes">
           <div class="avatar">
             <img :src="diaForm.avatarUrl || require('@/assets/img/default_avatar.png')" alt="">
-            <div class="role">{{ diaForm.userType == 2 ? "企业" : "个人" }}</div>
+            <!-- <div class="role">{{ diaForm.userType == 2 ? "企业" : "个人" }}</div> -->
           </div>
           <div style="width:50%;display: inline-block">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">主播昵称</div>

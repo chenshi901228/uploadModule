@@ -69,6 +69,7 @@
                                 :limit="1"
                                 accept="image/png,image/jpeg,image/jpg,image/gif"
                                 :on-exceed="handleExceed"
+                                :file-list="fileList"
                             >
                                 <i slot="default" class="el-icon-plus"></i>
                             </el-upload>
@@ -185,9 +186,9 @@
                     <div class="desc">随机金额，请按照指定金额汇款以作验证</div>
                 </div>
             </div>
-            <div class="mt-15">收款账号：{{ invoiceInfo.open_account && invoiceInfo.open_account.substring(9) }}</div>
-            <div class="mt-15">收款公司：{{ invoiceInfo.name }}</div>
-            <div class="mt-15">开户银行：{{ invoiceInfo.open_account && invoiceInfo.open_account.substring(0, 9) }}</div>
+            <div class="mt-15">收款账号：121926682010505</div>
+            <div class="mt-15">收款公司：甘肃艺博教育文化传播股份有限公司</div>
+            <div class="mt-15">开户银行：招商银行兰州渭源路支行</div>
             <div class="tips">等待核验中，7~15个工作日内给予回复</div>
         </div>
 
@@ -304,7 +305,6 @@ export default {
                 connectPhone: '',
                 connectEmail: '',
                 depositBank: '',
-                depositBankValue: '',
                 accountName: '',
                 bankAccount: ''
             },
@@ -326,6 +326,8 @@ export default {
         this.queryBankList()
         if ( !this.$route.query.reCertificat ) {
             this.handleGetApplyInfo()
+        } else {
+            this.handleGetBankInfo()
         }
     },
 
@@ -373,13 +375,14 @@ export default {
         },
 
         handleSuccessImg(response) {
-            this.fileList.push(response.data.url)
+            this.fileList.push({url: response.data.url})
             this.formData.companyBusinessLicense = response.data.url
         },
 
         handleRemoveImg(file) {
-            const url = file.response.data.url
-            this.fileList = this.fileList.filter(item => item !== url)
+            console.log(file)
+            const url = file.url
+            this.fileList = this.fileList.filter(item => item.url !== url)
             this.formData.companyBusinessLicense = ''
         },
 
@@ -432,7 +435,42 @@ export default {
         // 选择开户银行
         handleSelect(item) {
             this.formData.depositBank = item.value
-            this.formData.depositBankValue = item.dictValue
+        },
+
+        //获取认证信息
+        handleGetBankInfo() {
+            this.$http.get(`sys/anchor/info/getBankInfo/${this.anchorId}`, { params: { userType: 2 } }).then(({ data:res }) => {
+                if ( res && +res.code === 0 ) {
+                    const { 
+                        companyName, 
+                        companyCreditCode, 
+                        companyAddress,  
+                        companyAddressCode,
+                        companyBusinessLicense,
+                        connectName,
+                        connectPhone,
+                        connectEmail,
+                        depositBank,
+                        accountName,
+                        bankAccount
+                    } = res.data
+                    this.formData = {
+                        companyName, 
+                        companyCreditCode, 
+                        companyAddress,  
+                        companyAddressCode,
+                        companyBusinessLicense,
+                        connectName,
+                        connectPhone,
+                        connectEmail,
+                        depositBank,
+                        accountName,
+                        bankAccount
+                    }
+                    this.formData.companyAddressCode = res.data.companyAddressCode.split('/')
+                    this.fileList.push({url : res.data.companyBusinessLicense})
+                }
+            })
         },
 
         //获取申请信息
@@ -448,7 +486,7 @@ export default {
                         this.certificationStep = res.data ? res.data.applyStatus : -1
                         if ( this.certificationStep === 0 ) {
                             this.$message.info("您提交的企业认证信息正在审批中，请等待")
-                            this.handleGetInvoiceInfo()
+                            // this.handleGetInvoiceInfo()
                         }
                     }
                 }).catch((err) => {
@@ -483,6 +521,8 @@ export default {
                             if ( res && +res.code === 0 ) {
                                 // this.$message.success("提交成功")
                                 this.handleGetApplyInfo()
+                            } else {
+                                this.$message.warning(res.msg)
                             }
                         }).catch((err) => {
                             this.$message.error(JSON.stringify(err.message))
