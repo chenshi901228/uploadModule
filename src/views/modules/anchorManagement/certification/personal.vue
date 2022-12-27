@@ -190,7 +190,10 @@
 
 <script>
 import { treeDataTranslate, enCodeIdCard } from "@/utils";
+import ComModule from "@/mixins/common-module"
 export default {
+    mixins: [ComModule],
+    
     data() {
         return {
             userId: "",
@@ -394,6 +397,7 @@ export default {
                                 this.handleGetApplyInfo()
                             } else {
                                 this.$message.warning(res.msg)
+                                this.closeCurrentTab()
                             }
                         }).catch((err) => {
                             this.$message.error(JSON.stringify(err.message))

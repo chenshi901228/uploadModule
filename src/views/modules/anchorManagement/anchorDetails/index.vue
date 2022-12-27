@@ -72,7 +72,7 @@
         <div class="diaBoxLeft_mes" v-if="certificationType == 2 && $hasPermission('anchor:bank:info')">
             <div v-if="enterpriseCertification">
                 <div class="certification-edit-btn">
-                    <div class="certification-part-title">主体信息<span class="account-status" v-show="enterpriseCertification.haveApplyInfo">核验中</span></div>
+                    <div class="certification-part-title">主体信息<span class="account-status" v-show="enterpriseCertification.haveApplyInfo">审核中</span></div>
                     <div class="re-certificat" @click="handleReCertificat">重新认证</div>
                 </div>
                 <div class="certification-part-line">
@@ -150,7 +150,7 @@
         <div class="diaBoxLeft_mes" v-if="certificationType == 1 && $hasPermission('anchor:bank:info')">
             <div v-if="personalCertification">
                 <div class="certification-edit-btn">
-                    <div class="certification-part-title">个人信息<span class="account-status" v-show="personalCertification.haveApplyInfo">核验中</span></div>
+                    <div class="certification-part-title">个人信息<span class="account-status" v-show="personalCertification.haveApplyInfo">审核中</span></div>
                     <div class="re-certificat"  @click="handleReCertificat">重新认证</div>
                 </div>
                 <div class="certification-part-line">
@@ -1288,7 +1288,7 @@ export default {
       })
       .catch(() => { });
     this.getAnchorInfo()
-    this.handleGetBankInfo(2)
+    // this.handleGetBankInfo(2)
     this.getAccountAmount();
     // if (this.$hasPermission('anchor:gain:list')) {
     //   this.changeTbas(1);
@@ -1299,6 +1299,19 @@ export default {
     // }
     this.changeTbas(this.diaTbas);
     this.queryBankList();
+    this.$http.get(`sys/anchor/info/getBankInfo/${this.userId}`, { params: { userType: 2 } }).then(({ data:res }) => {
+        if ( res && +res.code === 0 ) {
+            this.enterpriseCertification = res.data
+            if ( !res.data ) {
+                this.certificationType = 1
+                this.$http.get(`sys/anchor/info/getBankInfo/${this.userId}`, { params: { userType: 1 } }).then(({ data:personRes }) => {
+                    if ( personRes && +personRes.code === 0 ) {
+                        this.personalCertification = personRes.data
+                    }
+                })
+            }
+        }
+    })
   },
   methods: {
     // 添加金额符号
@@ -2783,8 +2796,7 @@ export default {
         display: inline-block;
         line-height: 20px;
         padding: 0 6px;
-        background: #E6A23C;
-        color: #fff;
+        color: #E6A23C;
         margin-left: 10px;
     }
 }

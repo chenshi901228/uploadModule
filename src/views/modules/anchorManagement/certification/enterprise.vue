@@ -290,7 +290,10 @@
 <script>
 import { treeDataTranslate } from "@/utils";
 import Cookies from "js-cookie";
+import ComModule from "@/mixins/common-module"
 export default {
+    mixins: [ComModule],
+    
     data() {
         return {
             anchorId: '',
@@ -523,6 +526,7 @@ export default {
                                 this.handleGetApplyInfo()
                             } else {
                                 this.$message.warning(res.msg)
+                                this.closeCurrentTab()
                             }
                         }).catch((err) => {
                             this.$message.error(JSON.stringify(err.message))
