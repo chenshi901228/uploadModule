@@ -300,7 +300,18 @@
           header-align="center"
           align="center"
         >
-        </el-table-column>      
+        </el-table-column>     
+        <el-table-column
+          show-overflow-tooltip
+          prop="authStatusStr"
+          label="合约状态"
+          header-align="center"
+          align="center"
+        >
+          <template slot-scope="{ row }">
+            <span>{{ getSignStatus(row.authStatusStr) }}</span>
+          </template>
+        </el-table-column> 
         <el-table-column
           prop="disabledFlg"
           label="账号状态"
@@ -323,7 +334,7 @@
           :label="$t('handle')"
           fixed="right"
           header-align="center"
-          min-width="160px"
+          min-width="180px"
           align="center"
         >
           <template slot-scope="scope">
@@ -340,6 +351,21 @@
               size="small"
               @click="editDetail(scope.row)"
               >编辑</el-button
+            >
+           <el-button
+              type="text"
+              size="mini"
+              icon="el-icon-document-copy"
+              @click="signDetails(scope.row.contractId)"
+              >查看合约</el-button
+            >
+           <el-button
+              type="text"
+              size="mini"
+              icon="el-icon-edit-outline"
+              v-if="scope.row.authStatusStr=='EXPIRED' || scope.row.authStatusStr=='DELETE' || scope.row.authStatusStr=='REJECTED'"
+              @click="againDetails(scope.row.id)"
+              >重新签约</el-button
             >
             <!-- <el-button
               type="text"
@@ -410,6 +436,93 @@ export default {
   },
   components: { Template },
   methods: {
+    // 合约状态
+    getSignStatus(str) {
+      let res = ""
+      switch(str) {
+        case "DRAFT":
+            res = "草稿"
+            break;
+        case "FILLING":
+            res = "拟定中"
+            break;
+        case "SIGNING":
+            res = "签署中"
+            break;
+        case "COMPLETE":
+            res = "已完成"
+            break;
+        case "REJECTED":
+            res = "已拒签"
+            break;
+        case "RECALLED":
+            res = "已撤回"
+            break;
+        case "EXPIRED":
+            res = "已过期"
+            break;
+        case "TERMINATING":
+            res = "作废中"
+            break;
+        case "TERMINATED":
+            res = "已作废"
+            break;
+        case "DELETE":
+            res = "已删除"
+            break;
+        case "FINISHED":
+            res = "强制完成"
+            break;
+        default:
+            res = "-"
+      }
+      return res
+    },
+    // 查看合约
+    signDetails(contractId) {
+      if(!contractId) return this.$message.warning("未查询到合约ID")
+      this.$http.get(`sys/anchor/info/getSignUrlWithView?contractId=${contractId}`).then(({data: res}) => {
+        if(res.code == 0) {
+          if(res.data && res.data.signUrl) {
+            window.open(res.data.signUrl)
+          }else {
+            this.$message.warning("未查询到合约，联系管理员")
+          }
+        }else {
+          return this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        this.$message.error(JSON.stringify(err))
+      })
+    },
+    //重新签约
+    againDetails(id) {
+      this.$confirm('您确定重新发起签约?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        if(!id) return this.$message.warning("未查询到合约ID")
+        this.$http.post(`sys/anchor/info/replayContract/${id}`).then(({data: res}) => {
+          if(res.code == 0) {
+            this.$message({
+              type: 'success',
+              message: '重新发起签约成功!'
+            });
+            this.query()
+          }else {
+            return this.$message.error(res.msg)
+          }
+        }).catch(err => {
+          this.$message.error(JSON.stringify(err))
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消操作'
+        });          
+      });
+    },
     // 打开用户详情弹窗
     openDetail(data) {
       sessionStorage.setItem("changeTbasAnchor",0)

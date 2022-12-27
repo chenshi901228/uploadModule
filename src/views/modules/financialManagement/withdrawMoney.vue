@@ -469,7 +469,7 @@
           fixed="right"
           header-align="center"
           align="center"
-          width="100"
+          width="160"
         >
           <template slot-scope="scope">
             <el-button
@@ -493,6 +493,14 @@
               icon="el-icon-edit"
               @click="edite(scope.row)"
               >修改税费</el-button
+            >
+            <el-button
+              v-if="scope.row.withdrawStatus == '2'|| scope.row.withdrawStatus == '5' "
+              type="text"
+              size="small"
+              icon="el-icon-edit"
+              @click="reject(scope.row)"
+              >驳回</el-button
             >
           </template>
         </el-table-column>
@@ -576,6 +584,26 @@
           >确 定</el-button
         >
       </div>
+    </el-dialog>
+
+    <el-dialog title="驳回" :visible.sync="remarkDialogVisible" width="30%">
+      <div class="dialog" style="display:flex;">
+          <p style="width:50px; margin:0">备注<span style="color:red">*</span></p>
+          <el-input
+              type="textarea"
+              maxlength="100"
+              show-word-limit
+              :rows="6"
+              placeholder="请输入备注"
+              v-model="remark">
+          </el-input>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="remarkDialogVisible = false">取 消</el-button>
+        <el-button size="small" type="primary" @click="confirmShowState"
+          >确 定</el-button
+        >
+      </span>
     </el-dialog>
   </el-card>
 </template>
@@ -671,6 +699,9 @@ export default {
         },
       },
       daterange:null,
+
+      remark:'',//备注
+      remarkDialogVisible:false,//驳回弹窗
     };
   },
   components: { Template },
@@ -751,6 +782,15 @@ export default {
         personalIncomeTax: row.personalIncomeTax,
       };
       this.dialogFormVisible = true;
+    },
+    //驳回弹窗
+    reject(){
+      this.remark=''
+      this.remarkDialogVisible=true
+    },
+    //确认驳回
+    confirmShowState(){
+
     },
     //打款
     confirm(id) {
