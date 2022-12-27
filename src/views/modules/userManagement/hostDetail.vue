@@ -52,12 +52,12 @@
           </div>
         </div>
 
-        <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:bank:info')">
+        <!-- <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:bank:info')">
           <p style="font-size: 14px;font-weight: bold;color: #4057CB;">银行账户<span class="accountStatus"
               v-if="diaForm.haveApplyInfo && diaForm.userType == 2">核验中</span></p>
-        </div>
+        </div> -->
         <!-- 企业 -->
-        <div class="diaBoxLeft_mes" v-if="diaForm.userType == 2 && $hasPermission('anchor:bank:info')">
+        <!-- <div class="diaBoxLeft_mes" v-if="diaForm.userType == 2 && $hasPermission('anchor:bank:info')">
           <div style="width:50%;display: inline-block;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">公司名称</div>
             <div>
@@ -89,9 +89,106 @@
             </div>
           </div>
 
+        </div> -->
+
+        <div class="diaBoxLeft_title">
+          <p style="font-size: 14px;font-weight: bold;color: #4057CB;">认证信息</p>
+            <!-- <span class="accountStatus" v-if="anchorDetails.haveApplyInfo && anchorDetails.userType == 2">核验中</span> -->
+          <!-- <el-button plain type="primary" size="mini" @click="editeUserBank" icon="el-icon-edit">编辑</el-button> -->
+            <el-select @change="userChange" v-model="anchorType" placeholder="请选择" size="mini" style="width:80px">
+                <el-option label="企业" :value="2" />
+                <el-option label="个人" :value="1" />
+            </el-select>
         </div>
+        
+        <!-- 企业 -->
+        <div class="diaBoxLeft_mes" v-if="anchorType == 2">
+            <div v-if="anchorUserInfo">
+                <div class="certification-edit-btn">
+                    <div class="certification-part-title">主体信息<span class="account-status" v-show="diaForm.haveApply">核验中</span></div>
+                </div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">公司名称</div>
+                        <div>{{ anchorUserInfo.companyName || '-' }}</div>
+                    </div>
+                    <div class="certification-part-item">
+                        <div class="item-title">统一社会信用代码</div>
+                        <div>{{ anchorUserInfo.companyCreditCode || '-' }}</div>
+                    </div>
+                </div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">经营所在地</div>
+                        <div>{{ anchorUserInfo.companyAddress ? anchorUserInfo.companyAddress.replaceAll('/', '') : '-' }}</div>
+                    </div>
+                    <div class="certification-part-item">
+                        <div class="item-title">营业执照</div>
+                        <!-- <el-image
+                            :src="anchorUserInfo.companyBusinessLicense"
+                            style="width: 120px; height: 120px"
+                            fit="cover"
+                        ></el-image> -->
+                        <el-image :preview-src-list="[anchorUserInfo.companyBusinessLicense]" style="width:120px;height:120px" v-if="anchorUserInfo.companyBusinessLicense" :src="anchorUserInfo.companyBusinessLicense" alt=""></el-image>
+                        <span v-else>-</span>
+                    </div>
+                </div>
+
+                <div class="certification-part-title">联系人</div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">姓名</div>
+                        <div>{{ anchorUserInfo.connectName || '-' }}</div>
+                    </div>
+                    <div class="certification-part-item">
+                        <div class="item-title">姓名</div>
+                        <div>{{ anchorUserInfo.connectPhone || '-' }}</div>
+                    </div>
+                </div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">邮箱</div>
+                        <div>{{ anchorUserInfo.connectEmail || '-' }}</div>
+                    </div>
+                </div>
+
+                <div class="certification-part-title">银行账户</div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">公司名称</div>
+                        <div>{{ anchorUserInfo.companyName || '-' }}</div>
+                    </div>
+                    <div class="certification-part-item">
+                        <div class="item-title">统一社会信用代码</div>
+                        <div>{{ anchorUserInfo.companyCreditCode || '-' }}</div>
+                    </div>
+                   
+                </div>
+                <div class="certification-part-line">
+                   <div class="certification-part-item">
+                        <div class="item-title">开户银行</div>
+                        <div>{{ anchorUserInfo.depositBank || '-' }}</div>
+                    </div>
+                    <div class="certification-part-item">
+                        <div class="item-title">账户名称</div>
+                        <div>{{ anchorUserInfo.accountName || '-' }}</div>
+                    </div>
+                </div>
+                <div class="certification-part-line">
+                   <div class="certification-part-item">
+                        <div class="item-title">银行账号</div>
+                        <div>{{ anchorUserInfo.bankAccount || '-' }}</div>
+                    </div>
+                </div>
+            </div>
+          
+            <div v-else class="not-certification">
+                <div>您还未认证企业身份</div>
+            </div>
+        </div>
+        
         <!-- 个人 -->
-        <div class="diaBoxLeft_mes" v-else-if="diaForm.userType == 1 && $hasPermission('anchor:bank:info')">
+        <!-- <div class="diaBoxLeft_mes" v-else-if="diaForm.userType == 1 && $hasPermission('anchor:bank:info')">
           <div style="width:50%;display: inline-block;">
             <div style="    color:#A8AAB3;margin-bottom: 10px;">姓名</div>
             <div>
@@ -134,8 +231,55 @@
               {{ diaForm.address || '-' }}
             </div>
           </div>
-
+        </div> -->
+        <div class="diaBoxLeft_mes" v-if="anchorType == 1">
+            <div v-if="anchorUserInfo">
+                <div class="certification-edit-btn">
+                    <div class="certification-part-title">个人信息<span class="account-status" v-show="anchorUserInfo.haveApply">核验中</span></div>
+                </div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">姓名</div>
+                        <div>{{ anchorUserInfo.realName || '-' }}</div>
+                    </div>
+                    <div class="certification-part-item">
+                        <div class="item-title">身份证号</div>
+                        <div>{{ enCodeIdCard(anchorUserInfo.idCard) || '-' }}</div>
+                    </div>
+                </div>
+                <div class="certification-part-title">银行账户</div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">开户银行</div>
+                        <div>{{ anchorUserInfo.depositBank || '-' }}</div>
+                    </div>
+                    <div class="certification-part-item">
+                        <div class="item-title">支行名称</div>
+                        <div>{{ anchorUserInfo.branchName || '-' }}</div>
+                    </div>
+                </div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">账户名称</div>
+                        <div>{{ anchorUserInfo.accountName || '-' }}</div>
+                    </div>
+                    <div class="certification-part-item">
+                        <div class="item-title">银行账号</div>
+                        <div>{{ anchorUserInfo.bankAccount || '-' }}</div>
+                    </div>
+                </div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">开户行所在地</div>
+                        <div>{{ anchorUserInfo.address || '-' }}</div>
+                    </div>
+                </div>
+            </div>
+            <div v-else class="not-certification">
+                <div>您还未认证个人身份</div>
+            </div>
         </div>
+
         <div class="diaBoxLeft_title" v-if="$hasPermission('anchor:amount:info')">
           <span style="font-size: 14px;font-weight: bold;color: #4057CB;">账户信息</span>
 
@@ -778,7 +922,11 @@ export default {
       dataListSelectionUsers: [],
       dialogUserFormVisible: false,
       productTypeOptions: [], // 商品类型下拉选项
-      fansLevelsOptions: [] // 粉丝等级options
+      fansLevelsOptions: [], // 粉丝等级options
+
+      //主播个人，企业详情
+      anchorUserInfo:{},
+      anchorType:2
     }
   },
   activated () {
@@ -809,7 +957,7 @@ export default {
         })
         .catch(() => { })
     }, 100)
-
+    this.getUserInfo()
     this.changeTbas(this.diaTbas)
   },
   destroyed() {
@@ -1321,7 +1469,26 @@ export default {
     pageCurrentChangeUserHandle (val) {
       this.userListPage = val
       this.queryUserList()
-    }
+    },
+
+    userChange(){
+      this.getUserInfo()
+    },
+
+    //获取个人，企业信息
+    getUserInfo(){
+      this.$http.get(`sys/anchor/info/getBankInfo/${this.userId}?userType=${this.anchorType}`).then(({ data: res }) => {
+        if (res.code == 0) {
+          this.anchorUserInfo = res.data
+          console.log(res.data);
+        } else {
+          this.anchorUserInfo={}
+          return this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        this.$message.error(JSON.stringify(err))
+      })
+    },
   }
 }
 </script>
@@ -1543,4 +1710,53 @@ export default {
       margin: 0;
     }
   }
+.not-certification{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background: #f2f2f2;
+    border-radius: 5px;
+    margin: 0 20px;
+    .go-certification{
+        color: #4057cb;
+        margin-top: 10px;
+        cursor: pointer;
+    }
+}
+.certification-edit-btn{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    margin-right: -10px;
+    .re-certificat{
+        color: #4057cb;
+        cursor: pointer;
+    }
+}
+.certification-part-title{
+    font-weight: bold;
+    color: #666;
+    margin: 10px 0;
+    .account-status {
+        display: inline-block;
+        line-height: 20px;
+        padding: 0 6px;
+        background: #E6A23C;
+        color: #fff;
+        margin-left: 10px;
+    }
+}
+.certification-part-line{
+    display: flex;
+    .certification-part-item{
+        width: 50%;
+        margin-bottom: 20px;
+        .item-title{
+            color:#A8AAB3;
+            margin-bottom: 10px;
+        }
+    }
+}
 </style>

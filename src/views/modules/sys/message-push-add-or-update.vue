@@ -23,7 +23,7 @@
       <!-- <el-form-item label="路由" prop="route">
         <el-input v-model="ruleForm.route" :disabled="isDisable" style="width:600px" placeholder="例如：http：//2376482" clearable></el-input>
       </el-form-item> -->
-      <el-form-item label-width="120px" style="display:inline-block" label="跳转页面" prop="type">
+      <el-form-item label-width="120px" style="display:inline-block" label="跳转页面" prop="type" v-if="ruleForm.pushType=='1'">
         <el-select v-model="ruleForm.type" :disabled="isDisable" @clear="clearBtn" @change="selectPage" placeholder="请选择分类" clearable>
           <el-option
             v-for="item in pageType"
@@ -33,27 +33,27 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item style="display:inline-block" prop="anchorId">
+      <el-form-item style="display:inline-block" prop="anchorId" v-if="ruleForm.pushType=='1'">
         <el-select v-if="selectType.type!=='other'" style="marginLeft:10px;width:300px;" :disabled="isDisable" v-model="ruleForm.anchorId" filterable remote reserve-keyword clearable
           placeholder="请输入选择主播" :remote-method="getAnchorInfo" :loading="loading" @change="changeAnchorId">
           <el-option v-for="item in anchorOptions" :key="item.value" :label="item.label" :value="item.value">
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item style="display:inline-block" prop="pushBusines">
+      <el-form-item style="display:inline-block" prop="pushBusines" v-if="ruleForm.pushType=='1'">
         <el-select v-if="selectType.type===0||selectType.type===1||selectType.type===2" style="marginLeft:10px;width:300px;" :disabled="isDisable" v-model="ruleForm.pushBusines" clearable
           :placeholder="selectType.type===0?'请选择直播':selectType.type===1?'请选择直播预告':'请选择短视频'" @change="changePushBusines">
           <el-option v-for="item in pushBusines" :key="item.id" :label="item.liveTheme" :value="item.id">
           </el-option>
         </el-select>
       </el-form-item>
-      <el-form-item style="display:inline-block" prop="route">
+      <el-form-item style="display:inline-block" prop="route" v-if="ruleForm.pushType=='1'">
         <el-input style="marginLeft:10px;width:300px;" v-if="selectType.type==='other'" v-model="ruleForm.route" :disabled="isDisable" placeholder="请输入路由" clearable></el-input>
       </el-form-item>
-      <el-form-item style="display:inline-block" prop="parameter">
+      <el-form-item style="display:inline-block" prop="parameter" v-if="ruleForm.pushType=='1'">
         <el-input style="marginLeft:10px;width:300px;" v-if="selectType.type==='other'" v-model="ruleForm.parameter" :disabled="isDisable" placeholder="请输入参数" clearable></el-input>
       </el-form-item>
-      <el-form-item label-width="120px" label="推送图标" required>
+      <el-form-item label-width="120px" label="推送图标" required v-if="ruleForm.pushType=='1'">
         <upload
           :fileList="fileList"
           :disabled="isDisable"
@@ -258,6 +258,7 @@ export default {
         type:'',
       },
       pushBusines:[],
+      fileUrl:'',//图标
     }
   },
   created () {
@@ -267,6 +268,7 @@ export default {
     this.$http.get('/sys/dynamicGroup/getAllDynamicGroupList').then(({data: res}) => {
       this.allDynamicGroup = res.data
     })
+    this.fileUrl=''
   },
   mounted () {
     
@@ -465,10 +467,16 @@ export default {
           }else{
             this.ruleForm.parameter=""
           }
-          if(!this.$refs.uploadFile.isUploadAll()) {
-            return this.$message.warning("还有附件正在上传，请稍后")
+          if(this.ruleForm.pushType=='1'){
+             if(!this.$refs.uploadFile.isUploadAll()) {
+              return this.$message.warning("还有附件正在上传，请稍后")
+            }
+            if (!this.fileList.length) return this.$message.error('请上传推送图标')
+            this.fileUrl=this.fileList[0].url
+          }else{
+            this.fileUrl=''
           }
-          if (!this.fileList.length) return this.$message.error('请上传推送图标')
+          
           const loading = this.$loading({
             lock: true,
             text: '信息修改中',
@@ -491,10 +499,11 @@ export default {
           if(this.ruleForm.isTiming=='0'){
             this.ruleForm.timing = ''
           }
+          
           const params = {
             id: this.id,
             ...this.ruleForm,
-            pushIcon: this.fileList[0].url,
+            pushIcon: this.fileUrl,
             dynamicGroupId: dynamicGroupIds,
             dynamicGroupName: dynamicGroupNames
           }

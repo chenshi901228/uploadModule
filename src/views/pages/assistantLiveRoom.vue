@@ -139,13 +139,13 @@
                           item.payload.data.fansInfo &&
                           !item.payload.data.fansInfo.isFans &&
                           !item.payload.data.fansInfo.isAttention &&
-                          item.payload.data.userInfo.userId!=roomId
+                          item.payload.data.userInfo.weixinUserId!=roomId
                         "
                       >
                         <i class="el-icon-star-on" style="color: #fde7c8"></i>
                         游客&nbsp;{{ item.payload.data.fansInfo.grade }}
                       </div>
-                      <div class="fansCard" style="background:#1F6BFA;" v-else-if="item.payload.data.userInfo&&item.payload.data.userInfo.userId==roomId">
+                      <div class="fansCard" style="background:#1F6BFA;" v-else-if="item.payload.data.userInfo&&item.payload.data.userInfo.weixinUserId==roomId">
                         <i class="el-icon-star-on" style="color:#fde7c8;"></i>
                         主播&nbsp;
                       </div>
@@ -774,6 +774,7 @@ export default {
       connectOpenStatus:1,//是否开启连麦
       player:null,
       loadingLive:false,
+      initConnectInfo: false, //首次进入直播间刷新连麦列表
     };
   },
   created() {
@@ -956,6 +957,31 @@ export default {
         });
       }
     });
+  
+  
+    //房间流附加消息-首次进入更新连麦列表
+    this.zg.on("streamExtraInfoUpdate", (roomID, streamList) => {
+      if(!this.initConnectInfo && !this.connectMessageInfo.length) {
+        streamList.map(async item => {
+          let info = item.extraInfo && JSON.parse(item.extraInfo)
+          let stream = await this.zg.startPlayingStream(item.streamID)
+          this.connectMessageInfo.push({
+            getReplyConnectLoading: false,
+            connectStatus: true,
+            message: {
+              connectType: info.connectType
+            },
+            userInfo: {
+              userId: item.user.userID,
+              avatarUrl: info.avatarUrl,
+              nickName: info.username
+            },
+            stream
+          })
+        })
+        this.initConnectInfo = true
+      }
+    })
   },
   watch: {
     livePlayerList(n) {
@@ -1484,6 +1510,20 @@ export default {
                   },5000)
                 }
 							} 
+						}
+            if(tempObj.haveTouristJoin) { //未登录用户进入直播间的消息
+              list.push(Object.assign({
+                type: "TIMCustomElem",
+                payload: {
+                  data: {
+                    userInfo: {},
+                    message: {
+                      type: 10,
+                      text: "游客"
+                    }
+                  }
+                }
+              }))
 						}
           }
         }
