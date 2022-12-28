@@ -153,7 +153,7 @@
                 </div>
 
                 <div class="certification-part-title">银行账户</div>
-                <div class="certification-part-line">
+                <!-- <div class="certification-part-line">
                     <div class="certification-part-item">
                         <div class="item-title">公司名称</div>
                         <div>{{ anchorUserInfo.companyName || '-' }}</div>
@@ -163,18 +163,23 @@
                         <div>{{ anchorUserInfo.companyCreditCode || '-' }}</div>
                     </div>
                    
-                </div>
+                </div> -->
                 <div class="certification-part-line">
                    <div class="certification-part-item">
                         <div class="item-title">开户银行</div>
                         <div>{{ anchorUserInfo.depositBank || '-' }}</div>
                     </div>
-                    <div class="certification-part-item">
-                        <div class="item-title">账户名称</div>
-                        <div>{{ anchorUserInfo.accountName || '-' }}</div>
+                   <div class="certification-part-item">
+                        <div class="item-title">支行名称</div>
+                        <div>{{ anchorUserInfo.branchName || '-' }}</div>
                     </div>
+                    
                 </div>
                 <div class="certification-part-line">
+                  <div class="certification-part-item">
+                      <div class="item-title">账户名称</div>
+                      <div>{{ anchorUserInfo.accountName || '-' }}</div>
+                  </div>
                    <div class="certification-part-item">
                         <div class="item-title">银行账号</div>
                         <div>{{ anchorUserInfo.bankAccount || '-' }}</div>
