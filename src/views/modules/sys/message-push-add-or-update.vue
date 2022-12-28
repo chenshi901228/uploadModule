@@ -133,7 +133,7 @@
               :rows="4"
               placeholder="请输入内容"
               :disabled="isDisable"
-              maxlength='200'
+              maxlength='60'
               show-word-limit
               v-model="ruleForm.pushContent">
           </el-input>
