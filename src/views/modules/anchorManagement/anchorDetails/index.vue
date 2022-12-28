@@ -126,11 +126,15 @@
                         <div>{{ enterpriseCertification.depositBank || '-' }}</div>
                     </div>
                     <div class="certification-part-item">
-                        <div class="item-title">账户名称</div>
-                        <div>{{ enterpriseCertification.accountName || '-' }}</div>
+                        <div class="item-title">支行名称</div>
+                        <div>{{ enterpriseCertification.branchName || '-' }}</div>
                     </div>
                 </div>
                 <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">账户名称</div>
+                        <div>{{ enterpriseCertification.accountName || '-' }}</div>
+                    </div>
                     <div class="certification-part-item">
                         <div class="item-title">银行账号</div>
                         <div>{{ enterpriseCertification.bankAccount || '-' }}</div>

@@ -143,7 +143,7 @@
                     
                   </el-form-item>
                 </el-col>
-                <el-col :span="12" v-if="accountType == 1">
+                <el-col :span="12">
                   <el-form-item label="支行名称" >
                     <el-input
                         v-model="personalBankInfo.branchName"
