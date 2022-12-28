@@ -7,6 +7,7 @@
             ref="certificationForm"
             label-width="150px"
             v-if="certificationStep === -1"
+            :disabled="isDisable"
         >
             <div class="part-info">
                 <div class="part-title">主体信息</div>
@@ -46,6 +47,8 @@
                                 style="width:300px"
                                 placeholder="请输入支行名称"
                                 clearable
+                                maxlength="20"
+                                show-word-limit
                             >
                             </el-input>
                         </el-form-item>
@@ -60,6 +63,8 @@
                                 style="width:300px"
                                 placeholder="请输入账户名称"
                                 clearable
+                                maxlength="20"
+                                show-word-limit
                             >
                             </el-input>
                         </el-form-item>
@@ -71,6 +76,8 @@
                                 style="width:300px"
                                 placeholder="请输入银行账号"
                                 clearable
+                                maxlength="20"
+                                show-word-limit
                             >
                             </el-input>
                         </el-form-item>
@@ -193,7 +200,7 @@ import { treeDataTranslate, enCodeIdCard } from "@/utils";
 import ComModule from "@/mixins/common-module"
 export default {
     mixins: [ComModule],
-    
+
     data() {
         return {
             userId: "",
@@ -215,7 +222,8 @@ export default {
             regionData: [],
             anchorInfo: {},
             applyInfo: {},
-            invoiceInfo: {}
+            invoiceInfo: {},
+            isDisable: false
         }
     },
 
@@ -228,6 +236,21 @@ export default {
             this.handleGetApplyInfo()
         } else {
             this.handleGetBankInfo()
+            this.$http.get("/sys/sysbankinfo/getUserNewestApply", {
+                params: {
+                    anchorId: this.userId,
+                    userType: 1,
+                },
+            }).then(({ data: res }) => {
+                if ( res && +res.code === 0 ) {
+                    if ( res.data && res.data.applyStatus === 0 ) {
+                        this.isDisable = true
+                        this.$message.warning("您提交的个人认证信息正在审批中，请等待")
+                    }
+                }
+            }).catch((err) => {
+                this.$message.error(JSON.stringify(err.message))
+            })
         }
     },
 
@@ -353,17 +376,17 @@ export default {
                     userType: 1,
                 },
             }).then(({ data: res }) => {
-                    if ( res && +res.code === 0 ) {
-                        this.applyInfo = res.data
-                        this.certificationStep = res.data ? res.data.applyStatus : -1
-                        if ( this.certificationStep === 0 ) {
-                            this.$message.info("您提交的企业认证信息正在审批中，请等待")
-                            // this.handleGetInvoiceInfo()
-                        }
+                if ( res && +res.code === 0 ) {
+                    this.applyInfo = res.data
+                    this.certificationStep = res.data ? res.data.applyStatus : -1
+                    if ( this.certificationStep === 0 ) {
+                        this.$message.warning("您提交的个人认证信息正在审批中，请等待")
+                        // this.handleGetInvoiceInfo()
                     }
-                }).catch((err) => {
-                    this.$message.error(JSON.stringify(err.message))
-                })
+                }
+            }).catch((err) => {
+                this.$message.error(JSON.stringify(err.message))
+            })
         },
 
         //提交

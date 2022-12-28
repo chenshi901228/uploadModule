@@ -14,6 +14,7 @@
             ref="certificationForm"
             label-width="150px"
             v-if="certificationStep === -1"
+            :disabled="isDisable"
         >
             <div class="part-info">
                 <div class="part-title">主体信息</div>
@@ -93,7 +94,15 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="10">
-                        <el-form-item label="手机号码" prop="connectPhone" required :rules="{ required: true, message: '手机号码' }">
+                        <el-form-item 
+                            label="手机号码" 
+                            prop="connectPhone" 
+                            required 
+                            :rules="[
+                                { required: true, message: '手机号码' },
+                                { pattern:/^1[0-9]{10}$/, message: '请输入正确的手机号码', trigger: ['blur', 'change'] }
+                            ]"
+                        >
                             <el-input
                                 v-model.trim="formData.connectPhone"
                                 style="width:300px"
@@ -107,7 +116,15 @@
 
                 <el-row>
                     <el-col :span="10" :offset="1">
-                        <el-form-item label="邮箱" prop="connectEmail" required :rules="{ required: true, message: '请输入邮箱' }">
+                        <el-form-item 
+                            label="邮箱" 
+                            prop="connectEmail" 
+                            required 
+                            :rules="[
+                                { required: true, message: '请输入邮箱' },
+                                { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+                            ]"
+                        >
                             <el-input
                                 v-model.trim="formData.connectEmail"
                                 style="width:300px"
@@ -142,6 +159,8 @@
                                 style="width:300px"
                                 placeholder="请输入账户名称"
                                 clearable
+                                maxlength="20"
+                                show-word-limit
                             >
                             </el-input>
                         </el-form-item>
@@ -156,6 +175,8 @@
                                 style="width:300px"
                                 placeholder="请输入银行账号"
                                 clearable
+                                maxlength="20"
+                                show-word-limit
                             >
                             </el-input>
                         </el-form-item>
@@ -293,7 +314,7 @@ import Cookies from "js-cookie";
 import ComModule from "@/mixins/common-module"
 export default {
     mixins: [ComModule],
-    
+
     data() {
         return {
             anchorId: '',
@@ -318,7 +339,8 @@ export default {
             dataBankListLoading: false, //开户银行下拉选择loading
             restaurants:[],
             applyInfo: {},
-            invoiceInfo: {}
+            invoiceInfo: {},
+            isDisable: false
         }
     },
 
@@ -331,6 +353,21 @@ export default {
             this.handleGetApplyInfo()
         } else {
             this.handleGetBankInfo()
+            this.$http.get("/sys/sysbankinfo/getUserNewestApply", {
+                params: {
+                    anchorId: this.anchorId,
+                    userType: 2,
+                },
+            }).then(({ data: res }) => {
+                if ( res && +res.code === 0 ) {
+                    if ( res.data && res.data.applyStatus === 0 ) {
+                        this.isDisable = true
+                        this.$message.warning("您提交的企业认证信息正在审批中，请等待")
+                    }
+                }
+            }).catch((err) => {
+                this.$message.error(JSON.stringify(err.message))
+            })
         }
     },
 
@@ -484,17 +521,17 @@ export default {
                     userType: 2,
                 },
             }).then(({ data: res }) => {
-                    if ( res && +res.code === 0 ) {
-                        this.applyInfo = res.data
-                        this.certificationStep = res.data ? res.data.applyStatus : -1
-                        if ( this.certificationStep === 0 ) {
-                            this.$message.info("您提交的企业认证信息正在审批中，请等待")
-                            // this.handleGetInvoiceInfo()
-                        }
+                if ( res && +res.code === 0 ) {
+                    this.applyInfo = res.data
+                    this.certificationStep = res.data ? res.data.applyStatus : -1
+                    if ( this.certificationStep === 0 ) {
+                        this.$message.warning("您提交的企业认证信息正在审批中，请等待")
+                        // this.handleGetInvoiceInfo()
                     }
-                }).catch((err) => {
-                    this.$message.error(JSON.stringify(err.message))
-                })
+                }
+            }).catch((err) => {
+                this.$message.error(JSON.stringify(err.message))
+            })
         },
 
         //提交

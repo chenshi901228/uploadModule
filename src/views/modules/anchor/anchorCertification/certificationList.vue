@@ -278,7 +278,7 @@ export default {
       mixinViewModuleOptions: {
         getDataListURL: "sys/anchor/applyInfo/bankInfoPage",
         getDataListIsPage: true,
-        exportURL: "/sys/anchor/applyInfo/export?type=1",
+        exportURL: "/sys/anchor/applyInfo/exportWithBank?type=1",
       },
       dataForm: {
         realName: "",
