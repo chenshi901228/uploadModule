@@ -113,38 +113,38 @@
                 <el-col :span="10">
                     <div class="info-item">
                         <div class="label">开户银行</div>
-                        <div>{{ detailData.bankInfo ? detailData.bankInfo.depositBank : '--' }}</div>
+                        <div>{{ (detailData.bankInfo && detailData.bankInfo.depositBank) || '--' }}</div>
                     </div>
                 </el-col>
-                <el-col :span="10">
-                    <div class="info-item">
-                        <div class="label">账户名称</div>
-                        <div>{{ detailData.bankInfo ? detailData.bankInfo.accountName : '--' }}</div>
-                    </div>
-                </el-col>
-            </el-row>
-            <el-row type="flex" justify="space-around" v-show="detailData.userType == 1">
                 <el-col :span="10">
                     <div class="info-item">
                         <div class="label">支行名称</div>
-                        <div>{{ detailData.bankInfo ? detailData.bankInfo.branchName : '--' }}</div>
-                    </div>
-                </el-col>
-                <el-col :span="10">
-                    <div class="info-item">
-                        <div class="label">开户行所在地</div>
-                        <div>{{ detailData.bankInfo ? detailData.bankInfo.address.replaceAll('/', '') : '--' }}</div>
+                        <div>{{ (detailData.bankInfo && detailData.bankInfo.branchName) || '--' }}</div>
                     </div>
                 </el-col>
             </el-row>
             <el-row type="flex" justify="space-around">
                 <el-col :span="10">
                     <div class="info-item">
-                        <div class="label">银行账号</div>
-                        <div>{{ detailData.bankInfo ? detailData.bankInfo.bankAccount : '--' }}</div>
+                        <div class="label">账户名称</div>
+                        <div>{{ (detailData.bankInfo && detailData.bankInfo.accountName) || '--' }}</div>
                     </div>
                 </el-col>
                 <el-col :span="10">
+                    <div class="info-item">
+                        <div class="label">银行账号</div>
+                        <div>{{ (detailData.bankInfo && detailData.bankInfo.bankAccount) || '--' }}</div>
+                    </div>
+                </el-col>
+            </el-row>
+            <el-row type="flex" :justify="detailData.userType == 1 ? 'space-around' : 'start'">
+                <el-col :span="10" v-show="detailData.userType == 1">
+                    <div class="info-item">
+                        <div class="label">开户行所在地</div>
+                        <div>{{ (detailData.bankInfo && detailData.bankInfo.address.replaceAll('/', '')) || '--' }}</div>
+                    </div>
+                </el-col>
+                <el-col :span="10" :offset="detailData.userType == 1 ? 0 : 1">
                     <div class="info-item">
                         <div class="label">验证金额</div>
                         <div>{{ detailData.attestAmount || '--' }}</div>

@@ -153,6 +153,22 @@
                         </el-form-item>
                     </el-col>
                     <el-col :span="10">
+                        <el-form-item label="支行名称" prop="branchName" required :rules="{ required: true, message: '请输入支行名称' }">
+                            <el-input
+                                v-model.trim="formData.branchName"
+                                style="width:300px"
+                                placeholder="请输入支行名称"
+                                clearable
+                                maxlength="20"
+                                show-word-limit
+                            >
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <el-row type="flex" justify="space-around">
+                    <el-col :span="10">
                         <el-form-item label="账户名称" prop="accountName" required :rules="{ required: true, message: '请输入账户名称' }">
                             <el-input
                                 v-model.trim="formData.accountName"
@@ -165,10 +181,7 @@
                             </el-input>
                         </el-form-item>
                     </el-col>
-                </el-row>
-
-                <el-row>
-                    <el-col :span="10" :offset="1">
+                    <el-col :span="10">
                         <el-form-item label="银行账号" prop="bankAccount" required :rules="{ required: true, message: '请输入银行账号' }">
                             <el-input
                                 v-model.trim="formData.bankAccount"
@@ -289,14 +302,20 @@
                     </el-col>
                     <el-col :span="10">
                         <div class="info-item">
-                            <div class="label">账户名称</div>
-                            <div>{{ applyInfo.accountName || '--' }}</div>
+                            <div class="label">支行名称</div>
+                            <div>{{ applyInfo.branchName || '--' }}</div>
                         </div>
                     </el-col>
                 </el-row>
 
                 <el-row>
-                    <el-col :span="10" :offset="1">
+                    <el-col :span="10">
+                        <div class="info-item">
+                            <div class="label">账户名称</div>
+                            <div>{{ applyInfo.accountName || '--' }}</div>
+                        </div>
+                    </el-col>
+                    <el-col :span="10">
                         <div class="info-item">
                             <div class="label">银行账号</div>
                             <div>{{ applyInfo.bankAccount || '--' }}</div>
@@ -330,7 +349,8 @@ export default {
                 connectEmail: '',
                 depositBank: '',
                 accountName: '',
-                bankAccount: ''
+                bankAccount: '',
+                branchName: ''
             },
             regionDataAll: [],
             regionData: [],
@@ -492,7 +512,8 @@ export default {
                         connectEmail,
                         depositBank,
                         accountName,
-                        bankAccount
+                        bankAccount,
+                        branchName
                     } = res.data
                     this.formData = {
                         companyName, 
@@ -505,7 +526,8 @@ export default {
                         connectEmail,
                         depositBank,
                         accountName,
-                        bankAccount
+                        bankAccount,
+                        branchName
                     }
                     this.formData.companyAddressCode = res.data.companyAddressCode.split('/')
                     this.fileList.push({url : res.data.companyBusinessLicense})
