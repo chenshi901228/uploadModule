@@ -464,6 +464,20 @@
             <span v-else>{{ "--"}}</span>
           </template>
         </el-table-column>
+
+        <el-table-column
+          prop="cbsComment"
+          label="打款失败备注"
+          min-width="160px"
+          header-align="center"
+          align="center"
+          show-overflow-tooltip
+        >
+          <template slot-scope="scope">
+            <span>{{ scope.row.cbsComment || '--' }}</span>
+          </template>
+        </el-table-column>
+
         <el-table-column
           :label="$t('handle')"
           fixed="right"

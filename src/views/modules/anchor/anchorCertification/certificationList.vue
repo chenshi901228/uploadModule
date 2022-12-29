@@ -170,7 +170,7 @@
           label="主播昵称"
           header-align="center"
           align="center"
-          width="120"
+          width="150"
         ></el-table-column>
 
         <el-table-column
@@ -179,7 +179,7 @@
           label="手机号码"
           header-align="center"
           align="center"
-          width="120"
+          width="150"
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -187,7 +187,7 @@
           label="身份证号"
           header-align="center"
           align="center"
-          width="120"
+          width="180"
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -207,7 +207,7 @@
           label="申请时间"
           header-align="center"
           align="center"
-          width="180"
+          width="200"
         ></el-table-column>
         <el-table-column
           show-overflow-tooltip
@@ -215,7 +215,7 @@
           label="审批时间"
           header-align="center"
           align="center"
-          width="180"
+          width="200"
         >
           <template slot-scope="scope">
             {{ scope.row.status === 0 ? "" : scope.row.updateDate }}

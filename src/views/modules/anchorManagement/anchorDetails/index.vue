@@ -1311,6 +1311,7 @@ export default {
                 this.$http.get(`sys/anchor/info/getBankInfo/${this.userId}`, { params: { userType: 1 } }).then(({ data:personRes }) => {
                     if ( personRes && +personRes.code === 0 ) {
                         this.personalCertification = personRes.data
+                        if ( !personRes.data )  this.certificationType = 2
                     }
                 })
             }
