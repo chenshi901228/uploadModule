@@ -267,37 +267,27 @@ export default {
       let res = ""
       switch(str) {
         case "DRAFT":
-            res = "草稿"
-            break;
         case "FILLING":
-            res = "拟定中"
+            res = "待签约"
             break;
         case "SIGNING":
-            res = "签署中"
+            res = "签约中"
             break;
         case "COMPLETE":
+        case "FINISHED":
             res = "已完成"
             break;
         case "REJECTED":
             res = "已拒签"
             break;
         case "RECALLED":
-            res = "已撤回"
+        case "TERMINATING":
+        case "TERMINATED":
+        case "DELETE":
+            res = "已终止"
             break;
         case "EXPIRED":
             res = "已过期"
-            break;
-        case "TERMINATING":
-            res = "作废中"
-            break;
-        case "TERMINATED":
-            res = "已作废"
-            break;
-        case "DELETE":
-            res = "已删除"
-            break;
-        case "FINISHED":
-            res = "强制完成"
             break;
         default:
             res = "-"
