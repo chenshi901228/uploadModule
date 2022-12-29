@@ -270,6 +270,13 @@
               @click="signDetails(scope.row.contractId)"
               >查看合约</el-button
             >
+           <!-- <el-button
+              type="text"
+              size="mini"
+              icon="el-icon-view"
+              @click="againDetails(scope.row.contractId)"
+              >重新签约</el-button
+            > -->
           </template>
         </el-table-column>
       </el-table>
@@ -285,6 +292,19 @@
       >
       </el-pagination>
     </div>
+
+    <el-dialog
+      title=""
+      :visible.sync="dialogVisible"
+      width="30%"
+      top="200px"
+      >
+      <div class="copyDialog">签约地址：http://www.baidu.com</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="copy">复 制</el-button>
+      </span>
+    </el-dialog>
   </el-card>
 </template>
 
@@ -307,6 +327,7 @@ export default {
         username: "",
         status: "",
       },
+      dialogVisible:false
     };
   },
   methods: {
@@ -369,7 +390,28 @@ export default {
         this.$message.error(JSON.stringify(err))
       })
     },
-     // 打开信息审批详情
+    //重新签约
+    againDetails(){
+      this.dialogVisible=true
+    },
+    //复制签约地址
+    copy(){
+    //  var copyInput = document.createElement("input"); // 创建元素
+    //   //val是要复制的内容
+    //   copyInput.setAttribute("value", '112233');
+    //   document.body.appendChild(copyInput);
+    //   copyInput.select();
+    //   try {
+    //     var copyed = document.execCommand("copy");
+    //     if (copyed) {
+    //       document.body.removeChild(copyInput);
+    //       this.$Message.success("复制成功");
+    //     }
+    //   } catch {
+    //     this.$Message.error("复制失败，请检查浏览器兼容");
+    //   }
+    },
+    // 打开信息审批详情
     openDetail(id) {
       this.$router.push({
         path: "/anchor-sysanchorinfoDetail",
@@ -386,3 +428,10 @@ export default {
  
 };
 </script>
+<style lang="scss" scoped>
+.copyDialog{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+</style>

@@ -128,25 +128,22 @@ export default {
   },
   methods: {
     push (id) {
-      this.$http.get(`/sys/syspush/push/${id}`).then(({ data: res }) => {
-        // if (res.success) {
-        //   this.$message.success('消息推送成功')
-        // }
-        this.$confirm("确认推送？", "提示", {
-          confirmButtonText: "确认",
-          showCancelButton: true,
-          showClose: false,
-        })
-          .then(() => {
-            this.$message.success('消息推送成功')
-          })
-          .catch(() => {
-            this.$message({
-              type: "info",
-              message: "已取消操作",
-            });
-          });
-        })
+      this.$confirm("确认推送？", "提示", {
+        confirmButtonText: "确认",
+        showCancelButton: true,
+        showClose: false,
+      })
+      .then(() => {
+        this.$message.success('消息推送成功')
+        this.$http.get(`/sys/syspush/push/${id}`).then(({ data: res }) => {})
+      })
+      .catch(() => {
+        this.$message({
+          type: "info",
+          message: "已取消操作",
+        });
+      });
+     
     },
     operation (id, type) {
       this.$router.push({
