@@ -359,14 +359,14 @@
               @click="signDetails(scope.row.contractId)"
               >查看合约</el-button
             >
-           <el-button
+           <!-- <el-button
               type="text"
               size="mini"
               icon="el-icon-edit-outline"
               v-if="scope.row.authStatusStr=='EXPIRED' || scope.row.authStatusStr=='DELETE' || scope.row.authStatusStr=='REJECTED'"
               @click="againDetails(scope.row.id)"
               >重新签约</el-button
-            >
+            > -->
             <!-- <el-button
               type="text"
               icon="el-icon-sort"
