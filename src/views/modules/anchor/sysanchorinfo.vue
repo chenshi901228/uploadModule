@@ -270,13 +270,14 @@
               @click="signDetails(scope.row.contractId)"
               >查看合约</el-button
             >
-           <!-- <el-button
+           <el-button
               type="text"
               size="mini"
               icon="el-icon-view"
-              @click="againDetails(scope.row.contractId)"
+              v-if="scope.row.authStatusStr=='FILLING'"
+              @click="againDetails(scope.row.id)"
               >重新签约</el-button
-            > -->
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -298,11 +299,12 @@
       :visible.sync="dialogVisible"
       width="30%"
       top="200px"
+      center
       >
-      <div class="copyDialog">签约地址：http://www.baidu.com</div>
+      <div class="copyDialog">复制签约链接在浏览器打开即可签约：{{detailsUrl}}</div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="copy">复 制</el-button>
+        <el-button size="small" @click="dialogVisible = false">取 消</el-button>
+        <el-button size="small" style="margin-left:80px" type="primary" @click="copy">复制链接</el-button>
       </span>
     </el-dialog>
   </el-card>
@@ -327,7 +329,8 @@ export default {
         username: "",
         status: "",
       },
-      dialogVisible:false
+      dialogVisible:false,
+      detailsUrl:'',//重新签约链接
     };
   },
   methods: {
@@ -391,25 +394,40 @@ export default {
       })
     },
     //重新签约
-    againDetails(){
+    againDetails(id){
       this.dialogVisible=true
+       this.$http.get(`/sys/anchor/applyInfo/getSignUrlWithUser?id=${id}`).then(({data: res}) => {
+        if(res.code == 0) {
+          if(res.data && res.data.signUrl) {
+            this.detailsUrl=res.data.signUrl
+          }else {
+            this.$message.warning("未查询到合约，联系管理员")
+          }
+        }else {
+          return this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        this.$message.error(JSON.stringify(err))
+      })
     },
     //复制签约地址
     copy(){
-    //  var copyInput = document.createElement("input"); // 创建元素
-    //   //val是要复制的内容
-    //   copyInput.setAttribute("value", '112233');
-    //   document.body.appendChild(copyInput);
-    //   copyInput.select();
-    //   try {
-    //     var copyed = document.execCommand("copy");
-    //     if (copyed) {
-    //       document.body.removeChild(copyInput);
-    //       this.$Message.success("复制成功");
-    //     }
-    //   } catch {
-    //     this.$Message.error("复制失败，请检查浏览器兼容");
-    //   }
+     // 模拟 输入框
+      let cInput = document.createElement("input");
+      cInput.value = this.detailsUrl;
+      document.body.appendChild(cInput);
+      // 选取文本框内容
+      cInput.select();
+ 
+      // 执行浏览器复制命令
+      // 复制命令会将当前选中的内容复制到剪切板中（这里就是创建的input标签）
+      // Input要在正常的编辑状态下原生复制方法才会生效
+      document.execCommand("copy");
+ 
+      this.$message({type: "success", message: "复制成功"});
+      // 复制成功后再将构造的标签 移除
+      document.body.removeChild(cInput);
+      this.dialogVisible=false
     },
     // 打开信息审批详情
     openDetail(id) {
