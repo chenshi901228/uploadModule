@@ -1500,7 +1500,7 @@ export default {
           this.anchorUserInfo = res.data
           if(!this.anchorUserInfo){
             this.anchorType=1
-            this.getUserInfo()
+            this.getEnterpriseInfo()
             return
           }
         } else {
@@ -1511,6 +1511,24 @@ export default {
         this.$message.error(JSON.stringify(err))
       })
     },
+    //默认企业
+    getEnterpriseInfo(){
+       this.$http.get(`sys/anchor/info/getBankInfo/${this.userId}?userType=${this.anchorType}`).then(({ data: res }) => {
+        if (res.code == 0) {
+          this.anchorUserInfo = res.data
+          if(!this.anchorUserInfo){
+            this.anchorType=2
+            this.getUserInfo()
+            return
+          }
+        } else {
+          this.anchorUserInfo={}
+          return this.$message.error(res.msg)
+        }
+      }).catch(err => {
+        this.$message.error(JSON.stringify(err))
+      })
+    }
   }
 }
 </script>
