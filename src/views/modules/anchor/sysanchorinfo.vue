@@ -273,7 +273,7 @@
            <el-button
               type="text"
               size="mini"
-              icon="el-icon-view"
+              icon="el-icon-edit"
               v-if="scope.row.authStatusStr=='FILLING'"
               @click="againDetails(scope.row.id)"
               >重新签约</el-button
