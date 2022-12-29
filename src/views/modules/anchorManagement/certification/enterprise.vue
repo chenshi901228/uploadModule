@@ -26,6 +26,8 @@
                                 style="width:300px"
                                 placeholder="请输入公司名称"
                                 clearable
+                                maxlength="30"
+                                show-word-limit
                             >
                             </el-input>
                         </el-form-item>
@@ -37,6 +39,8 @@
                                 style="width:300px"
                                 placeholder="请输入统一社会信用代码"
                                 clearable
+                                maxlength="20"
+                                show-word-limit
                             >
                             </el-input>
                         </el-form-item>
@@ -89,6 +93,8 @@
                                 style="width:300px"
                                 placeholder="请输入姓名"
                                 clearable
+                                maxlength="20"
+                                show-word-limit
                             >
                             </el-input>
                         </el-form-item>

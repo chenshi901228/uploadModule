@@ -143,10 +143,21 @@
                     
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
+                <el-col :span="12" v-if="accountType == 1">
                   <el-form-item label="支行名称" >
                     <el-input
                         v-model="personalBankInfo.branchName"
+                        placeholder="请输入"
+                        disabled
+                      >
+                      </el-input>
+                    
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12" v-if="accountType == 2">
+                  <el-form-item label="支行名称" >
+                    <el-input
+                        v-model="enterpriseBankInfo.branchName"
                         placeholder="请输入"
                         disabled
                       >
@@ -482,6 +493,9 @@ export default {
                 this.enterpriseBankInfo = bankInfo.filter(item => +item.userType === 2)[0] || {}
                 //未认证企业 || 企业在审核中 默认展示个人信息
                 if ( Object.keys(this.enterpriseBankInfo).length === 0 || this.enterpriseBankInfo.haveApply ) this.accountType = 1 
+            } else if ( res && res.code == -3 ) {//今日已提现
+                this.closeCurrentTab()
+                this.$message.warning(res.msg)
             } else {
                 this.$message.warning(res.msg)
             }
