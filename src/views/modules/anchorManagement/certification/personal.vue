@@ -438,6 +438,9 @@ export default {
     /deep/.el-row{
         margin-bottom: 20px;
     }
+    /deep/.el-input--suffix .el-input__inner{
+        padding-right: 72px;
+    }
     .btns{
         display: flex;
         justify-content: flex-end;
