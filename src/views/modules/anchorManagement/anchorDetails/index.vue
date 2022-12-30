@@ -687,7 +687,7 @@
               v-else-if="prop === 'withdrawStatus' && diaTbas === 2">
               <template slot-scope="scope">
                 <div>
-                  {{ scope.row. withdrawStatus =='-1' ? "--" : scope.row.withdrawStatus == '1' ? "审核中" :
+                  {{ scope.row. withdrawStatus =='-1' ? "已驳回" : scope.row.withdrawStatus == '1' ? "审核中" :
                       scope.row.withdrawStatus == '2' ? "核算中" : scope.row.withdrawStatus == '3' ? "到帐中" :
                         scope.row.withdrawStatus == '4' ? "已到账" : scope.row.withdrawStatus == '5' ? "未到账" : "--"
                   }}

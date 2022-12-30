@@ -423,7 +423,7 @@
             <div>
               {{
                 scope.row.withdrawStatus == "-1"
-                  ? "驳回"
+                  ? "已驳回"
                   : scope.row.withdrawStatus == "1"
                   ? "审核中"
                   : scope.row.withdrawStatus == "2"
