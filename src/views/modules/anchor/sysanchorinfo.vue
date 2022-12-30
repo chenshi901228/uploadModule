@@ -311,6 +311,8 @@
 </template>
 
 <script>
+import Cookies from 'js-cookie'
+import qs from 'qs'
 import mixinViewModule from "@/mixins/view-module";
 export default {
   mixins: [mixinViewModule],
@@ -319,7 +321,7 @@ export default {
       mixinViewModuleOptions: {
         getDataListURL: "/sys/anchor/applyInfo/addPage",
         getDataListIsPage: true,
-        exportURL: "/sys/anchor/applyInfo/export?type=1",
+        exportURL: "/sys/anchor/applyInfo/export",
       },
       dataForm: {
         realName: "",
@@ -426,6 +428,16 @@ export default {
         query:{id}
       });
       // window.localStorage.setItem("sysanchorinfoDetailData", JSON.stringify(data));
+    },
+    // 导出
+    exportHandle () {
+      var params = qs.stringify({
+        'access_token': Cookies.get('access_token'),
+        ...this.$httpParams(this.dataForm),
+        ...this.$httpParams(this.params),
+        type: 1
+      })
+      window.location.href = `${window.SITE_CONFIG['apiURL']}${this.mixinViewModuleOptions.exportURL}?${params}`
     },
   },
    mounted() {

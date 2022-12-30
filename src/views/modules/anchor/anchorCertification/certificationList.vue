@@ -270,6 +270,8 @@
 </template>
   
   <script>
+import Cookies from 'js-cookie'
+import qs from 'qs'
 import mixinViewModule from "@/mixins/view-module";
 export default {
   mixins: [mixinViewModule],
@@ -278,7 +280,7 @@ export default {
       mixinViewModuleOptions: {
         getDataListURL: "sys/anchor/applyInfo/bankInfoPage",
         getDataListIsPage: true,
-        exportURL: "/sys/anchor/applyInfo/exportWithBank?type=1",
+        exportURL: "/sys/anchor/applyInfo/exportWithBank",
       },
       dataForm: {
         realName: "",
@@ -298,6 +300,16 @@ export default {
         path: "/anchor-anchorCertification-certificationDetail",
         query: { id },
       })
+    },
+    // 导出
+    exportHandle () {
+      var params = qs.stringify({
+        'access_token': Cookies.get('access_token'),
+        ...this.$httpParams(this.dataForm),
+        ...this.$httpParams(this.params),
+        type: 1
+      })
+      window.location.href = `${window.SITE_CONFIG['apiURL']}${this.mixinViewModuleOptions.exportURL}?${params}`
     },
   },
 
