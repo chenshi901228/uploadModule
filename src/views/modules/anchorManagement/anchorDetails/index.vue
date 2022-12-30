@@ -73,7 +73,7 @@
             <div v-if="enterpriseCertification">
                 <div class="certification-edit-btn">
                     <div class="certification-part-title">主体信息<span class="account-status" v-show="enterpriseCertification.haveApplyInfo">审核中</span></div>
-                    <div class="re-certificat" @click="handleReCertificat">重新认证</div>
+                    <div class="re-certificat" v-show="!enterpriseCertification.haveApplyInfo" @click="handleReCertificat">重新认证</div>
                 </div>
                 <div class="certification-part-line">
                     <div class="certification-part-item">
@@ -155,7 +155,7 @@
             <div v-if="personalCertification">
                 <div class="certification-edit-btn">
                     <div class="certification-part-title">个人信息<span class="account-status" v-show="personalCertification.haveApplyInfo">审核中</span></div>
-                    <div class="re-certificat"  @click="handleReCertificat">重新认证</div>
+                    <div class="re-certificat" v-show="!personalCertification.haveApplyInfo"  @click="handleReCertificat">重新认证</div>
                 </div>
                 <div class="certification-part-line">
                     <div class="certification-part-item">
@@ -2265,7 +2265,7 @@ export default {
     //重新认证
     handleReCertificat() {
         if ( this.anchorDetails.haveWithdraw ) {
-            return this.$confirm("您还有未到账的提现，暂不可编辑银行账户信息", "提示", {
+            return this.$confirm("您还有未到账的提现，暂不可重新认证", "提示", {
                 confirmButtonText: "确认",
                 showCancelButton: false,
                 showClose: false
