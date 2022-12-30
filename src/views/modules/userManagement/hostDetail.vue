@@ -650,7 +650,9 @@
                           ? "到账中"
                           : scope.row.confirmStatus === 1 &&
                             scope.row.payStatus === 1
-                            ? "已到账"
+                            ? "已到账" 
+                            : scope.row.withdrawStatus == '-1' 
+                            ? '已驳回'
                             : "到账失败"
                   }}
                 </div>

@@ -220,6 +220,9 @@ export default {
         case '5':
           src = require('@/assets/img/not_received_yl.png')
           break
+        case '-1':
+          src = require('@/assets/icon/icon_reject.png')
+          break
         default:
           src = require('@/assets/img/not_received_yl.png')
       }

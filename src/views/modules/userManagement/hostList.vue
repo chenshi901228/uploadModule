@@ -444,10 +444,10 @@ export default {
             res = "草稿"
             break;
         case "FILLING":
-            res = "拟定中"
+            res = "待签约"
             break;
         case "SIGNING":
-            res = "签署中"
+            res = "签约中"
             break;
         case "COMPLETE":
             res = "已完成"
@@ -468,7 +468,7 @@ export default {
             res = "已作废"
             break;
         case "DELETE":
-            res = "已删除"
+            res = "已终止"
             break;
         case "FINISHED":
             res = "强制完成"
