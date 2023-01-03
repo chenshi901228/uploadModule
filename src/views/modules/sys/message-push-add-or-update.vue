@@ -14,7 +14,7 @@
       <el-form-item label-width="120px" label="配置KEY" prop="configurationKey">
         <el-input :maxlength="50" show-word-limit v-model="ruleForm.configurationKey" :disabled="isDisable" style="width:600px" placeholder="请输入KEY" clearable></el-input>
       </el-form-item>
-      <el-form-item label-width="120px" label="推送类型">
+      <el-form-item label-width="120px" label="推送类型" prop="pushType">
         <el-select v-model="ruleForm.pushType" :disabled="isDisable" style="width:600px" placeholder="请选择" clearable>
           <el-option label="站内信" value="1"></el-option>
           <el-option label="短信" value="2"></el-option>
@@ -69,7 +69,7 @@
       <el-form-item label-width="120px" label="推送标题" prop="pushTitle">
         <el-input :maxlength="50" show-word-limit v-model="ruleForm.pushTitle" :disabled="isDisable" style="width:600px" placeholder="请输入" clearable></el-input>
       </el-form-item>
-      <el-form-item label-width="120px" class="quill-editor" label="推送内容" v-if="ruleForm.pushType=='1'">
+      <el-form-item label-width="120px" class="quill-editor" label="推送内容" v-if="ruleForm.pushType=='1'" prop="pushContent">
           <quill-editor :disabled="isDisable" v-model="ruleForm.pushContent" ref="myQuillEditor" style="width: 800px;"
             :options="editorOption" @change="onEditorChange($event)">
             <!-- 自定义toolar -->
@@ -126,7 +126,7 @@
             >{{ TiLength }}/2000</span
           > -->
       </el-form-item>
-      <el-form-item label-width="120px" label="推送内容" v-if="ruleForm.pushType=='2'">
+      <el-form-item label-width="120px" label="推送内容" v-if="ruleForm.pushType=='2'" prop="pushContent">
         <el-input
             style="width: 800px;"
               type="textarea"
@@ -138,7 +138,7 @@
               v-model="ruleForm.pushContent">
           </el-input>
       </el-form-item>
-      <el-form-item label-width="120px" label="动态组">
+      <el-form-item label-width="120px" label="动态组" prop="dynamicGroupId">
         <el-select v-model="ruleForm.dynamicGroupId" :disabled="isDisable" style="width:600px" multiple :placeholder="isDisable?'':'请选择,可多选'" clearable>
           <el-option v-for="item in allDynamicGroup" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
@@ -149,7 +149,7 @@
           <el-radio label="0" :disabled="isDisable" >否</el-radio>
         </el-radio-group>
       </el-form-item>
-      <el-form-item label-width="120px" prop="timing"  v-if="ruleForm.isTiming === '1'"  label="计划推送时间">
+      <el-form-item label-width="120px" prop="timing" v-if="ruleForm.isTiming === '1'" label="计划推送时间">
         <el-popover v-model="cronPopover">
           <cron v-show="!isDisable" @change="changeCron" @close="cronPopover=false" i18n="cn"></cron>
           <el-input slot="reference" @click="cronPopover=true" :disabled="isDisable" v-model="ruleForm.timing" :placeholder="$t('schedule.cronExpressionTips')"></el-input>
@@ -542,6 +542,7 @@ export default {
             }
             loading.close()
           } catch (e) {
+            console.log(e)
             loading.close(e)
           }
           // this.$http.put('/sys/syspush', params).then(({ data: res }) => {

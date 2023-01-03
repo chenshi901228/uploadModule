@@ -63,7 +63,7 @@
         ref="table">
         <el-table-column show-overflow-tooltip prop="pushIcon" label="推送图标" header-align="center" align="center">
            <template slot-scope="scope">
-              <img v-if="scope.row.pushIcon && scope.row.pushType == 1" style="width: 100%;" :src="scope.row.pushIcon" alt="">
+              <img v-if="scope.row.pushIcon && scope.row.pushType == 1" style="width: 80px;height: 80px" :src="scope.row.pushIcon" alt="">
               <div v-else></div>
           </template>
         </el-table-column>
