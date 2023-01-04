@@ -2274,22 +2274,51 @@ export default {
 
     //重新认证
     handleReCertificat() {
-        if ( this.anchorDetails.haveWithdraw ) {
-            return this.$confirm("您还有未到账的提现，暂不可重新认证", "提示", {
-                confirmButtonText: "确认",
-                showCancelButton: false,
-                showClose: false
-            }).catch(() => { })
-        }
-
-        let path = `anchorManagement-certification-${this.certificationType == 2 ? "enterprise" : "personal"}`
-
-        this.$router.push({ 
-            path,
-            query:{
-                reCertificat: 1
+        if ( this.certificationType == 1 ) {
+            if ( this.personalCertification.haveWithdraw ) {
+                return this.$confirm("您还有未到账的提现，暂不可重新认证", "提示", {
+                    confirmButtonText: "确认",
+                    showCancelButton: false,
+                    showClose: false
+                }).catch(() => { })
             }
-        })
+            this.$router.push({ 
+                path: 'anchorManagement-certification-personal',
+                query: {
+                    reCertificat: 1
+                }
+            })
+        } else if ( this.certificationType == 2 ) {
+            if ( this.enterpriseCertification.haveWithdraw ) {
+                return this.$confirm("您还有未到账的提现，暂不可重新认证", "提示", {
+                    confirmButtonText: "确认",
+                    showCancelButton: false,
+                    showClose: false
+                }).catch(() => { })
+            }
+            this.$router.push({ 
+                path: 'anchorManagement-certification-enterprise',
+                query: {
+                    reCertificat: 1
+                }
+            })
+        }
+        // if ( this.anchorDetails.haveWithdraw ) {
+        //     return this.$confirm("您还有未到账的提现，暂不可重新认证", "提示", {
+        //         confirmButtonText: "确认",
+        //         showCancelButton: false,
+        //         showClose: false
+        //     }).catch(() => { })
+        // }
+
+        // let path = `anchorManagement-certification-${this.certificationType == 2 ? "enterprise" : "personal"}`
+
+        // this.$router.push({ 
+        //     path,
+        //     query:{
+        //         reCertificat: 1
+        //     }
+        // })
     },
 
     subimtEditBank() {
