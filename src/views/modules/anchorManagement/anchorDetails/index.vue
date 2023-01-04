@@ -1306,14 +1306,24 @@ export default {
     this.$http.get(`sys/anchor/info/getBankInfo/${this.userId}`, { params: { userType: 2 } }).then(({ data:res }) => {
         if ( res && +res.code === 0 ) {
             this.enterpriseCertification = res.data
-            if ( !res.data ) {
+            if ( !res.data ) {//企业未认证
                 this.certificationType = 1
                 this.$http.get(`sys/anchor/info/getBankInfo/${this.userId}`, { params: { userType: 1 } }).then(({ data:personRes }) => {
                     if ( personRes && +personRes.code === 0 ) {
                         this.personalCertification = personRes.data
-                        if ( !personRes.data )  this.certificationType = 2
+                        if ( !personRes.data )  this.certificationType = 2 //个人未认证
                     }
                 })
+            } else {//企业已认证
+                if ( res.data.haveApplyInfo ) {//企业在审核中
+                    this.certificationType = 1
+                    this.$http.get(`sys/anchor/info/getBankInfo/${this.userId}`, { params: { userType: 1 } }).then(({ data:personRes }) => {
+                        if ( personRes && +personRes.code === 0 ) {
+                            this.personalCertification = personRes.data
+                            if ( !personRes.data )  this.certificationType = 2 //个人未认证
+                        }
+                    })
+                }
             }
         }
     })
