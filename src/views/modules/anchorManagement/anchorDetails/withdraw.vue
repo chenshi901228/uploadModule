@@ -38,12 +38,12 @@
                       placeholder="请输入"
                       :precision="2"
                       :step="0.1"
-                      :min="1"
+                      :min="0"
                       :max="anchorDetails.anchorBalance"
                     >
                     </el-input-number>
                     <div>
-                      <span style="color: red">（提现金额需大于1元）</span>
+                      <span style="color: red">（提现金额需大于0元）</span>
                     </div>
                   </el-form-item>
                 </el-col>
