@@ -137,14 +137,14 @@
                     </div>
                 </el-col>
             </el-row>
-            <el-row type="flex" :justify="detailData.userType == 1 ? 'space-around' : 'start'">
-                <el-col :span="10" v-show="detailData.userType == 1">
+            <el-row type="flex" justify="space-around">
+                <el-col :span="10">
                     <div class="info-item">
                         <div class="label">开户行所在地</div>
                         <div>{{ (detailData.bankInfo && detailData.bankInfo.address.replaceAll('/', '')) || '--' }}</div>
                     </div>
                 </el-col>
-                <el-col :span="10" :offset="detailData.userType == 1 ? 0 : 1">
+                <el-col :span="10">
                     <div class="info-item">
                         <div class="label">验证金额</div>
                         <div>{{ detailData.attestAmount || '--' }}</div>

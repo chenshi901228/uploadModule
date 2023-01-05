@@ -205,10 +205,21 @@
                       </el-input>
                   </el-form-item>
                 </el-col>
+
                 <el-col :span="12" v-if="accountType == 1">
                   <el-form-item label="开户行所在地" >
                     <el-input
                         v-model="personalBankInfo.address"
+                        placeholder="请输入"
+                        disabled
+                      >
+                      </el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="12" v-if="accountType == 2">
+                  <el-form-item label="开户行所在地" >
+                    <el-input
+                        v-model="enterpriseBankInfo.address"
                         placeholder="请输入"
                         disabled
                       >

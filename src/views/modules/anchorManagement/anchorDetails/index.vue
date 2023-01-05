@@ -140,6 +140,12 @@
                         <div>{{ enterpriseCertification.bankAccount || '-' }}</div>
                     </div>
                 </div>
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">开户行所在地</div>
+                        <div>{{ enterpriseCertification.address ? enterpriseCertification.address.replaceAll('/', '') : '-' }}</div>
+                    </div>
+                </div>
             </div>
           
             <div v-else class="not-certification">

@@ -185,6 +185,13 @@
                         <div>{{ anchorUserInfo.bankAccount || '-' }}</div>
                     </div>
                 </div>
+
+                <div class="certification-part-line">
+                    <div class="certification-part-item">
+                        <div class="item-title">开户行所在地</div>
+                        <div>{{ anchorUserInfo.address || '-' }}</div>
+                    </div>
+                </div>
             </div>
           
             <div v-else class="not-certification">

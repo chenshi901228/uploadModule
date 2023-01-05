@@ -201,6 +201,23 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
+
+                <el-row>
+                    <el-col :span="10" :offset="1">
+                        <el-form-item label="开户行所在地" prop="address" required :rules="{ required: true, message: '请选择开户行所在地' }">
+                            <el-cascader
+                                :options="regionData"
+                                filterable
+                                style="width: 300px"
+                                v-model="formData.address"
+                                :props="{ label: 'name', value: 'id', children: 'children' }"
+                                :clearable="true"
+                                :placeholder="'请选择省/市/区县'"
+                            >
+                            </el-cascader>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
             </div>
 
             <el-row>
@@ -328,6 +345,15 @@
                         </div>
                     </el-col>
                 </el-row>
+
+                <el-row>
+                    <el-col :span="10" :offset="1">
+                        <div class="info-item">
+                            <div class="label">开户行所在地</div>
+                            <div>{{ applyInfo.address ? applyInfo.address.replaceAll('/', '') : '' }}</div>
+                        </div>
+                    </el-col>
+                </el-row>
             </div>
         </div>
     </el-card>
@@ -354,9 +380,11 @@ export default {
                 connectPhone: '',
                 connectEmail: '',
                 depositBank: '',
+                depositBankCode: '',
                 accountName: '',
                 bankAccount: '',
-                branchName: ''
+                branchName: '',
+                address: "",
             },
             regionDataAll: [],
             regionData: [],
@@ -501,6 +529,7 @@ export default {
         // 选择开户银行
         handleSelect(item) {
             this.formData.depositBank = item.value
+            this.formData.depositBankCode = item.dictValue
         },
 
         //获取认证信息
@@ -517,9 +546,13 @@ export default {
                         connectPhone,
                         connectEmail,
                         depositBank,
+                        depositBankCode,
                         accountName,
                         bankAccount,
-                        branchName
+                        branchName,
+                        province,
+                        city,
+                        county
                     } = res.data
                     this.formData = {
                         companyName, 
@@ -531,9 +564,11 @@ export default {
                         connectPhone,
                         connectEmail,
                         depositBank,
+                        depositBankCode,
                         accountName,
                         bankAccount,
-                        branchName
+                        branchName,
+                        address: [ province, city, county ]
                     }
                     this.formData.companyAddressCode = res.data.companyAddressCode.split('/')
                     this.fileList.push({url : res.data.companyBusinessLicense})
@@ -581,6 +616,26 @@ export default {
                         })
                         this.formData.companyAddress = companyAddress.slice(0, companyAddress.length - 1)
                         this.formData.companyAddressCode = this.formData.companyAddressCode.join('/')
+
+                        let address = ""
+                        this.formData.province = this.formData.address[0]
+                        this.formData.city = this.formData.address[1]
+                        this.formData.county = this.formData.address[2]
+                        this.formData.address.forEach((i,index) => {
+                            this.regionDataAll.forEach((v) => {
+                                if (v.id === i) {
+                                    address += `${v.name}/`
+                                }
+                            })
+                        })
+                        this.formData.address = address.slice(0, address.length - 1)
+
+                        this.restaurants.forEach((v) => {
+                            if ( this.formData.depositBank && this.formData.depositBank === v.value ) {
+                                this.formData.depositBankCode = v.dictValue
+                            }
+                        })
+
                         const params = {
                             ...this.formData,
                             userType: 2

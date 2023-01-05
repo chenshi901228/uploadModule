@@ -207,7 +207,7 @@ export default {
             certificationStep: -1,
             formData: {
                 depositBank: "",
-                depositBankValue: "",
+                depositBankCode: "",
                 branchName: "",
                 accountName: "",
                 bankAccount: "",
@@ -335,16 +335,17 @@ export default {
         // 选择开户银行
         handleSelect(item) {
             this.formData.depositBank = item.value
-            this.formData.depositBankValue = item.dictValue
+            this.formData.depositBankCode = item.dictValue
         },
 
         //获取认证信息
         handleGetBankInfo() {
             this.$http.get(`sys/anchor/info/getBankInfo/${this.userId}`, { params: { userType: 1 } }).then(({ data:res }) => {
                 if ( res && +res.code === 0 ) {
-                    const { province, city, county, depositBank, branchName, accountName, bankAccount } = res.data
+                    const { province, city, county, depositBank, branchName, accountName, bankAccount, depositBankCode } = res.data
                     this.formData = {
                         depositBank,
+                        depositBankCode,
                         branchName,
                         accountName,
                         bankAccount,
@@ -410,6 +411,13 @@ export default {
                             })
                         })
                         this.formData.address = address.slice(0, address.length - 1)
+
+                        this.restaurants.forEach((v) => {
+                            if ( this.formData.depositBank && this.formData.depositBank === v.value ) {
+                                this.formData.depositBankCode = v.dictValue
+                            }
+                        })
+
                         const params = {
                             ...this.formData,
                             userType: 1
