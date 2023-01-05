@@ -104,7 +104,7 @@
                             </span>
                         </template>
                     </el-table-column>
-                    <el-table-column  prop="createDate" label="创建时间" header-align="center" align="center" min-width="120px" show-overflow-tooltip></el-table-column>
+                    <el-table-column  prop="createDate" label="创建时间" header-align="center" align="center" min-width="150px" show-overflow-tooltip></el-table-column>
 
                     <el-table-column :label="$t('handle')" fixed="right" header-align="center" align="center"
                         width="250">
