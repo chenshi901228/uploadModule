@@ -274,7 +274,7 @@
               type="text"
               size="mini"
               icon="el-icon-edit"
-              v-if="scope.row.authStatusStr=='FILLING'"
+              v-if="scope.row.authStatusStr=='FILLING' && scope.row.status != -2"
               @click="againDetails(scope.row.id)"
               >重新签约</el-button
             >
