@@ -3055,6 +3055,7 @@ export default {
       if (type === "goods") {
         //推送商品
         this.sendMessage({ type: 8, pushData: data,isHigh:true }, () => {
+          this.goodsDialogVisible = false
           this.$message({ message: "商品推送成功", type: "success" })
           // 推送成功同时置顶该商品
           if(data.productLiveId) {
