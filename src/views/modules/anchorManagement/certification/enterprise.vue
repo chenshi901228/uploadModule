@@ -165,7 +165,7 @@
                                 style="width:300px"
                                 placeholder="请输入支行名称"
                                 clearable
-                                maxlength="20"
+                                maxlength="50"
                                 show-word-limit
                             >
                             </el-input>
@@ -181,7 +181,7 @@
                                 style="width:300px"
                                 placeholder="请输入账户名称"
                                 clearable
-                                maxlength="20"
+                                maxlength="50"
                                 show-word-limit
                             >
                             </el-input>

@@ -288,6 +288,11 @@ export default {
             width: 120px;
             text-align: right;
         }
+        div{
+            &:last-child{
+                width: 500px;
+            }
+        }
     }
 }
 .remark{
