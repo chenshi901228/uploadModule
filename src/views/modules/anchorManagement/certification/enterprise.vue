@@ -26,7 +26,7 @@
                                 style="width:300px"
                                 placeholder="请输入公司名称"
                                 clearable
-                                maxlength="30"
+                                maxlength="50"
                                 show-word-limit
                             >
                             </el-input>

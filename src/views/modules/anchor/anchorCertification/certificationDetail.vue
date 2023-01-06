@@ -70,12 +70,15 @@
                 <el-col :span="10">
                     <div class="info-item">
                         <div class="label">营业执照</div>
-                        <el-image
-                            :src="detailData.companyBusinessLicense"
-                            style="width: 120px; height: 120px"
-                            fit="cover"
-                            :preview-src-list="[detailData.companyBusinessLicense]"
-                        ></el-image>
+                        <div>
+                            <el-image
+                                :src="detailData.companyBusinessLicense"
+                                style="width: 120px; height: 120px"
+                                fit="cover"
+                                :preview-src-list="[detailData.companyBusinessLicense]"
+                            ></el-image>
+                        </div>
+                        
                     </div>
                 </el-col>
             </el-row>
