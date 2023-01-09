@@ -35,3 +35,8 @@ export default {
   }
 }
 </script>
+<style lang="scss" scoped>
+/deep/.aui-sidebar__inner{
+  padding-bottom: 50px;
+}
+</style>
