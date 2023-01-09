@@ -149,6 +149,10 @@
                         <i class="el-icon-star-on" style="color:#fde7c8;"></i>
                         主播&nbsp;
                       </div>
+                      <div class="fansCard" style="background:#1F6BFA;" v-else-if="item.payload.data.userInfo&&item.payload.data.userInfo.type=='assistant'">
+                        <i class="el-icon-star-on" style="color:#fde7c8;"></i>
+                        助手&nbsp;
+                      </div>
                     </div>
                     <p class="normalMsg">
                       {{
