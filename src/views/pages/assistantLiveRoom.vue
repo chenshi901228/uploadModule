@@ -99,7 +99,7 @@
                   v-if="
                     item.type &&
                     item.type === 'TIMCustomElem' &&
-                    item.payload.data.userInfo.type != 'assistant' &&
+                    item.flow === 'in' &&
                     (item.payload.data.message.type === 1 ||
                       item.payload.data.message.type === 3)
                   "
@@ -114,7 +114,8 @@
                         class="fansCard"
                         v-if="
                           item.payload.data.fansInfo &&
-                          item.payload.data.fansInfo.isFans
+                          item.payload.data.fansInfo.isFans &&
+                          item.payload.data.userInfo.type != 'assistant'
                         "
                       >
                         <i class="el-icon-star-on" style="color: #c2f8ff"></i>
@@ -126,7 +127,8 @@
                         v-else-if="
                           item.payload.data.fansInfo &&
                           item.payload.data.fansInfo.isAttention &&
-                          !item.payload.data.fansInfo.isFans
+                          !item.payload.data.fansInfo.isFans &&
+                          item.payload.data.userInfo.type != 'assistant'
                         "
                       >
                         <i class="el-icon-star-on" style="color: #fde7c8"></i>
@@ -139,17 +141,18 @@
                           item.payload.data.fansInfo &&
                           !item.payload.data.fansInfo.isFans &&
                           !item.payload.data.fansInfo.isAttention &&
-                          item.payload.data.userInfo.weixinUserId!=roomId
+                          item.payload.data.userInfo.weixinUserId!=roomId &&
+                          item.payload.data.userInfo.type != 'assistant'
                         "
                       >
                         <i class="el-icon-star-on" style="color: #fde7c8"></i>
                         游客&nbsp;{{ item.payload.data.fansInfo.grade }}
                       </div>
-                      <div class="fansCard" style="background:#1F6BFA;" v-else-if="item.payload.data.userInfo&&item.payload.data.userInfo.weixinUserId==roomId">
+                      <div class="fansCard" style="background:#1F6BFA;" v-else-if="item.payload.data.userInfo && item.payload.data.userInfo.weixinUserId==roomId && item.payload.data.userInfo.type != 'assistant'">
                         <i class="el-icon-star-on" style="color:#fde7c8;"></i>
                         主播&nbsp;
                       </div>
-                      <div class="fansCard" style="background:#1F6BFA;" v-else-if="item.payload.data.userInfo&&item.payload.data.userInfo.type=='assistant'">
+                      <div class="fansCard" style="background:#1F6BFA;" v-else-if="item.payload.data.userInfo && item.payload.data.userInfo.type=='assistant'">
                         <i class="el-icon-star-on" style="color:#fde7c8;"></i>
                         助手&nbsp;
                       </div>
@@ -237,6 +240,7 @@
                   v-if="
                     item.type &&
                     item.type === 'TIMCustomElem' &&
+                    item.flow === 'out' &&
                     item.payload.data.userInfo.userId === userInfo.userId &&
                     item.payload.data.userInfo.type ==='assistant' &&
                     (item.payload.data.message.type === 1 ||
