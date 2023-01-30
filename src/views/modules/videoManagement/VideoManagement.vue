@@ -55,6 +55,7 @@
             size="small"
             style="width: 200px"
             v-model="dataForm.approveStatus"
+            @change="approveStatusType"
             placeholder="请选择"
           >
             <el-option label="审核中" :value="0"></el-option>
@@ -372,12 +373,31 @@ export default {
   },
   created() {},
   activated() {
-    this.dataForm.approveStatus = 3;
+    // this.dataForm.approveStatus = 3;
+    this.dataForm.approveStatusKey="3"
     this.query();
-    this.dataForm.approveStatus = "";
-
+    // this.dataForm.approveStatus = "";
   },
   methods: {
+    //状态选择
+    approveStatusType(){
+      if(this.dataForm.approveStatus==0 || this.dataForm.approveStatus==1){
+        this.dataForm.approveStatusKey=""
+      }else{
+        this.dataForm.approveStatusKey="3"
+      }
+    },
+    resetDataForm(){
+      console.log(111);
+      this.dataForm.liveTheme=""
+      this.dataForm.anchorUser=""
+      this.dataForm.showMode=null
+      this.dataForm.showState=null
+      this.dataForm.liveState=null
+      this.dataForm.approveStatus=null
+      this.dataForm.approveStatusKey="3"
+      this.query();
+    },
     //新增视频
     addOrUpdateHandle() {
       this.$router.push({
