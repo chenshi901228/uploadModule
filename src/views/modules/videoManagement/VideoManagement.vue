@@ -388,7 +388,6 @@ export default {
       }
     },
     resetDataForm(){
-      console.log(111);
       this.dataForm.liveTheme=""
       this.dataForm.anchorUser=""
       this.dataForm.showMode=null
