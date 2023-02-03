@@ -1934,9 +1934,15 @@ export default {
         this.getCommodityList();
     },
     //推送商品、直播预告
-    pushMethod(type, data) {
+    async pushMethod(type, data) {
       if (type === "goods") {
         //推送商品
+        let { data: isCanPushData } = await this.$http.get(`/sys/anchorProduct/live/checkPush/${data.productLiveId}`)
+        if(isCanPushData.code != 0) {
+          return this.$message.error(isCanPushData.msg)
+        }
+        if(!isCanPushData.data) return this.$message.warning("商品已下架，无法推送")
+
         this.sendMessage({ type: 8, pushData: data, isHigh: true }, () => {
           this.goodsDialogVisible = false
           this.$message({ message: "商品推送成功", type: "success" });
